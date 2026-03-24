@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="da">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Tribunetour Support</title>
+    <meta name="description" content="Supportside for Tribunetour. Find kontaktoplysninger, FAQ og information om privatliv.">
+    <style>
+        :root {
+            --bg: #0a0a0b;
+            --panel: #151517;
+            --panel-2: #1d1d21;
+            --text: #f5f5f7;
+            --muted: #b1b1b9;
+            --line: rgba(255, 255, 255, 0.08);
+            --accent: #31d158;
+            --accent-2: #76f39d;
+            --warning: #ff9f0a;
+            --max: 920px;
+            --radius: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            color-scheme: dark;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(49, 209, 88, 0.16), transparent 28%),
+                radial-gradient(circle at top left, rgba(118, 243, 157, 0.09), transparent 24%),
+                linear-gradient(180deg, #0d0d0f 0%, #080809 100%);
+            color: var(--text);
+        }
+
+        a {
+            color: inherit;
+        }
+
+        .shell {
+            width: min(var(--max), calc(100% - 32px));
+            margin: 0 auto;
+        }
+
+        .hero {
+            padding: 72px 0 28px;
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 14px;
+            border-radius: 999px;
+            background: rgba(49, 209, 88, 0.12);
+            color: var(--accent-2);
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        h1 {
+            margin: 18px 0 12px;
+            font-size: clamp(42px, 7vw, 72px);
+            line-height: 0.95;
+            letter-spacing: -0.04em;
+        }
+
+        .lead {
+            max-width: 680px;
+            margin: 0;
+            color: var(--muted);
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .quick-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 0 16px;
+            border: 1px solid var(--line);
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.02);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .chip.primary {
+            background: linear-gradient(135deg, var(--accent), #27b64b);
+            color: #041006;
+            border-color: transparent;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 20px;
+            padding-bottom: 56px;
+        }
+
+        .card {
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.015));
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 26px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.24);
+        }
+
+        .card + .card {
+            margin-top: 20px;
+        }
+
+        h2 {
+            margin: 0 0 12px;
+            font-size: 26px;
+            letter-spacing: -0.03em;
+        }
+
+        p {
+            margin: 0;
+            color: var(--muted);
+            line-height: 1.65;
+        }
+
+        .list {
+            display: grid;
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .item {
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: var(--panel-2);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .item strong {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 15px;
+        }
+
+        .item p {
+            font-size: 15px;
+        }
+
+        .contact-box {
+            display: grid;
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        .contact-link {
+            display: block;
+            padding: 18px;
+            border-radius: 18px;
+            background: var(--panel-2);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            text-decoration: none;
+        }
+
+        .contact-link small {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .contact-link strong {
+            font-size: 18px;
+        }
+
+        .faq {
+            display: grid;
+            gap: 14px;
+            margin-top: 18px;
+        }
+
+        details {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            background: var(--panel-2);
+            padding: 16px 18px;
+        }
+
+        summary {
+            cursor: pointer;
+            list-style: none;
+            font-weight: 700;
+        }
+
+        summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details p {
+            margin-top: 10px;
+            font-size: 15px;
+        }
+
+        .notice {
+            margin-top: 18px;
+            padding: 16px 18px;
+            border-radius: 18px;
+            background: rgba(255, 159, 10, 0.08);
+            border: 1px solid rgba(255, 159, 10, 0.18);
+            color: #ffd8a0;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        footer {
+            padding: 0 0 44px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        @media (max-width: 840px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding-top: 48px;
+            }
+
+            .card {
+                padding: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="hero">
+        <div class="shell">
+            <div class="eyebrow">Tribunetour Support</div>
+            <h1>Support til kampdage, stadions og dine egne oplevelser.</h1>
+            <p class="lead">
+                Tribunetour hjælper dig med at finde kampe, holde styr på hvilke stadions du har besøgt
+                og planlægge kommende stadionture. Her finder du den korte vej til hjælp, kontakt og
+                de vigtigste svar.
+            </p>
+            <nav class="quick-links" aria-label="Hurtig navigation">
+                <a class="chip primary" href="mailto:support@tribunetour.dk">Kontakt support</a>
+                <a class="chip" href="#faq">Se FAQ</a>
+                <a class="chip" href="privacy.html">Privatliv</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="shell grid">
+        <section>
+            <article class="card" id="about">
+                <h2>Om Tribunetour</h2>
+                <p>
+                    Appen samler kommende kampe, stadiondata og din personlige progression i ét flow.
+                    Du kan markere stadions som besøgt, gemme billeder og anmeldelser og bygge en plan
+                    for din næste tur.
+                </p>
+                <div class="list">
+                    <div class="item">
+                        <strong>Find kommende kampe</strong>
+                        <p>Brug filtre og søgning til at finde relevante opgør og stadions.</p>
+                    </div>
+                    <div class="item">
+                        <strong>Hold styr på dine stadionbesøg</strong>
+                        <p>Marker besøg, tilføj billeder og følg din egen progression.</p>
+                    </div>
+                    <div class="item">
+                        <strong>Planlæg stadionture</strong>
+                        <p>Saml kampe i en plan og få overblik over næste weekend eller midtuge.</p>
+                    </div>
+                </div>
+            </article>
+
+            <article class="card" id="faq">
+                <h2>FAQ</h2>
+                <div class="faq">
+                    <details open>
+                        <summary>Hvorfor kan jeg ikke se mine data på en ny enhed?</summary>
+                        <p>
+                            Personlige data synkroniseres via iCloud/CloudKit. Du skal være logget ind
+                            med iCloud på den nye enhed, og iCloud Drive skal være tilgængelig.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Hvorfor er et kamptidspunkt forkert?</summary>
+                        <p>
+                            I denne version bruger appen indbyggede kampdata. Hvis du finder en fejl,
+                            så send gerne stadion, kamp og korrekt tidspunkt til support, så vi kan rette det.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Hvordan rapporterer jeg en fejl?</summary>
+                        <p>
+                            Send en kort beskrivelse, hvilken enhed du bruger, din iOS-version og gerne
+                            et screenshot. Så er det muligt at fejlsøge langt hurtigere.
+                        </p>
+                    </details>
+                    <details>
+                        <summary>Hvorfor beder appen om lokation?</summary>
+                        <p>
+                            Lokation bruges til funktioner som afstand til stadioner og visning af hvilke
+                            stadioner der er tættest på dig. Du kan stadig bruge resten af appen uden at dele lokation.
+                        </p>
+                    </details>
+                </div>
+            </article>
+        </section>
+
+        <aside>
+            <article class="card" id="contact">
+                <h2>Kontakt</h2>
+                <p>
+                    Brug mailen herunder, hvis du vil rapportere en fejl, foreslå en forbedring eller har
+                    spørgsmål til appen.
+                </p>
+                <div class="contact-box">
+                    <a class="contact-link" href="mailto:support@tribunetour.dk">
+                        <small>Supportmail</small>
+                        <strong>support@tribunetour.dk</strong>
+                    </a>
+                    <div class="item">
+                        <strong>Forventet svartid</strong>
+                        <p>Normalt inden for 2-5 hverdage.</p>
+                    </div>
+                </div>
+                <div class="notice">
+                    Ved fejlrapporter hjælper det at inkludere device-model, iOS-version og et screenshot.
+                </div>
+            </article>
+
+            <article class="card" id="privacy">
+                <h2>Privatliv</h2>
+                <p>
+                    Tribunetour bruger lokation til afstands- og nærhedsfunktioner og bruger iCloud/CloudKit
+                    til at synkronisere personlige data som besøg, noter, anmeldelser, billeder og planer.
+                </p>
+                <div class="list">
+                    <div class="item">
+                        <strong>Ingen tracking</strong>
+                        <p>Appen bruger ikke tredjeparts annoncering eller tracking som en del af denne version.</p>
+                    </div>
+                    <div class="item">
+                        <strong>Læs mere</strong>
+                        <p><a href="privacy.html">Åbn privacy-siden</a></p>
+                    </div>
+                </div>
+            </article>
+        </aside>
+    </main>
+
+    <footer class="shell">
+        <p>© Tribunetour. Supportside for App Store og brugersupport.</p>
+    </footer>
+</body>
+</html>

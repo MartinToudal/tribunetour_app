@@ -1,0 +1,7 @@
+id,kickoff,round,homeTeamId,awayTeamId,venueClubId,status,homeScore,awayScore
+r19-fcn-sjf,2026-02-08T14:00:00+01:00,Runde 19,fcn,sjf,fcn,scheduled,,
+r19-sif-vff,2026-02-08T14:00:00+01:00,Runde 19,sif,vff,sif,scheduled,,
+r19-fcm-fck,2026-02-08T16:00:00+01:00,Runde 19,fcm,fck,fcm,scheduled,,
+r19-bif-rfc,2026-02-08T18:00:00+01:00,Runde 19,bif,rfc,bif,scheduled,,
+r19-vb-fcf,2026-02-09T19:00:00+01:00,Runde 19,vb,fcf,vb,scheduled,,
+r19-agf-ob,2026-02-09T21:00:00+01:00,Runde 19,agf,ob,agf,scheduled,,
