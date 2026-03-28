@@ -286,6 +286,9 @@ Den anbefalede rækkefølge afspejler implementeringsrisiko:
 Den næste fælles datamodel efter `visited` er nu besluttet til at være:
 - `notes`
 
+Første kontraktniveau for dette spor ligger i:
+- `NOTES_SHARED_MODEL.md`
+
 ### Hvorfor `notes`
 `notes` er det mest naturlige næste skridt, fordi:
 - det ligger tæt på den eksisterende `visited`-model
