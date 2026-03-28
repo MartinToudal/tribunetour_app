@@ -187,6 +187,98 @@ Begrundelse:
 - enklere ved senere konfliktløsning
 - undgår forskel på “ingen record” og “record nulstillet” som driftsteknisk specialtilfælde
 
+### 3. Bootstrap visited from app on first app login
+
+#### Formål
+Bruges én gang pr. bruger, når appen logger ind første gang og skal gøre shared backend til et billede af appens eksisterende visited-data.
+
+#### Request
+`POST /visited/bootstrap`
+
+#### Auth
+Required
+
+#### Request body
+```json
+{
+  "source": "ios",
+  "replaceExisting": true,
+  "items": [
+    {
+      "clubId": "brondby-if",
+      "visited": true,
+      "visitedDate": "2024-05-12T00:00:00Z"
+    },
+    {
+      "clubId": "fck",
+      "visited": false,
+      "visitedDate": null
+    }
+  ]
+}
+```
+
+#### Regler
+- endpointet må kun kunne kaldes, hvis brugeren endnu ikke er bootstrap-migreret
+- `replaceExisting` skal i v1 være `true`
+- backend skal behandle payloaden som et komplet snapshot fra appen
+- backend må ikke merge gamle web-data oven i resultatet
+
+#### Semantik
+Dette endpoint er ikke en almindelig sync-write.
+
+Det er en engangs-migration, hvor:
+- appens snapshot er autoritativt
+- shared backend overskrives til at matche appens sandhed
+
+#### Success response
+```json
+{
+  "bootstrapped": true,
+  "bootstrapSource": "ios",
+  "bootstrappedAt": "2025-08-18T09:15:00Z",
+  "itemCount": 48
+}
+```
+
+#### Error cases
+- `409` hvis brugeren allerede er bootstrap-migreret
+- `400` hvis payloaden ikke er et komplet eller gyldigt snapshot
+- `401/403` ved manglende auth
+
+## Migration state-kontrakt
+
+For at afgøre om bootstrap stadig mangler, bør backend have en lille migrationsstatus pr. bruger.
+
+### Read current migration state
+
+#### Request
+`GET /visited/migration-state`
+
+#### Response
+```json
+{
+  "bootstrapRequired": true,
+  "bootstrappedAt": null,
+  "bootstrapSource": null
+}
+```
+
+Efter bootstrap:
+
+```json
+{
+  "bootstrapRequired": false,
+  "bootstrappedAt": "2025-08-18T09:15:00Z",
+  "bootstrapSource": "ios"
+}
+```
+
+### Backendansvar
+Backend skal selv eje denne sandhed.
+
+Klienten må ikke selv beslutte permanent, at bootstrap er gennemført, uden at backend også har markeret det.
+
 ## Validering
 
 ### `clubId`
@@ -220,6 +312,28 @@ Hvis flere klienter skriver til samme `(userId, clubId)`, skal vi have forudsige
 
 ### Praktisk konsekvens
 Backend må ikke bare bruge “last write wins” ukritisk på hele recorden, da det kan fjerne et registreret besøg.
+
+## Besluttet steady-state
+
+Denne kontrakt gælder som steady-state for `visited`, når bootstrap er gennemført.
+
+Det betyder:
+- shared backend er den autoritative model
+- app og web er ligeværdige klienter mod samme backend-kontrakt
+- bootstrap er en engangs-etablering, ikke en permanent særregel for appen
+
+### Konsekvens for klienter
+Klienterne må ikke efter bootstrap:
+- behandle lokal app-state som overordnet sandhed
+- genintroducere app-first merge-logik som normaldrift
+- kommunikere til brugeren, at web bør ignoreres som standard
+
+### Konsekvens for CloudKit
+CloudKit kan godt eksistere som internt eller sekundært lag i appen i en overgangsperiode.
+
+Men i forhold til shared `visited` gælder:
+- CloudKit er ikke den autoritative tværplatformskilde
+- shared backend er den eneste fælles sandhed for steady-state
 
 ## Response-shape
 Konsekvent response-shape gør UI-arbejdet enklere.

@@ -120,6 +120,12 @@ Målet er:
 - at brugerens identitet bliver fælles
 - selv før alle brugerdata er fuldt migreret
 
+Status i app-koden:
+- appen har nu et eksplicit `AppAuthSession` seam
+- shared/hybrid visited backends henter senere token via denne session
+- visited sync mode kan vælges via et runtime-flag til intern test
+- login-flowet er endnu ikke aktivt i UI
+
 ### Fase 3: Fælles brugerdata
 Flyt eller spejl udvalgte brugerdata til fælles backend-model.
 
@@ -183,6 +189,113 @@ Det er ikke acceptabelt, hvis:
 - brugerens data er uklare
 - samme handling giver forskellige resultater på web og app uden forklaring
 
+## Besluttet steady-state for visited
+
+Denne beslutning er nu låst for `visited`:
+
+### 1. Shared backend er autoritativ efter bootstrap
+Når en bruger har gennemført app-bootstrap eller allerede har shared `visited`-state etableret, er shared backend den autoritative kilde for `visited`.
+
+Det betyder:
+- web læser og skriver shared backend
+- app læser og skriver shared backend som primær fælles model
+- klienterne må ikke fortsætte med at behandle appens lokale historik som den langsigtede sandhed bagefter
+
+### 2. Appen er kun autoritativ i bootstrap-øjeblikket
+Appens eksisterende lokale data er kun sandheden i selve bootstrap-overgangen.
+
+Det betyder:
+- appens snapshot bruges til at etablere første fælles tilstand
+- denne særregel ophører, når bootstrap er markeret som gennemført for brugeren
+
+### 3. CloudKit er sekundært efter bootstrap
+CloudKit er ikke den fælles source of truth for `visited` efter bootstrap.
+
+CloudKits rolle efter bootstrap er:
+- lokal kompatibilitet i overgangsperioden
+- eventuel mirror/legacy-støtte, hvis appen stadig har brug for det internt
+
+CloudKit er ikke:
+- autoritativ tværplatformssandhed
+- stedet hvor web skal læse fra
+- et separat beslutningslag for brugerens endelige `visited`-status
+
+### 4. Konfliktretning i steady-state
+Efter bootstrap skal konflikter løses inden for shared-modellen, ikke ved at falde tilbage til “appen har nok ret”.
+
+Det betyder:
+- shared backend-kontrakten styrer konfliktreglerne
+- app og web skal behandles som klienter mod samme sandhed
+
+### 5. Produktkonsekvens
+Når denne steady-state er aktiv, må produktcopy ikke længere sige:
+- at appen generelt er den primære sandhed
+- at brugeren bør rette status i appen først som normalregel
+
+Den type copy er kun korrekt i den snævre migrationsperiode før bootstrap er afsluttet.
+
+## Shared vs app-only datamatrix
+
+Denne matrix låser den aktuelle produktretning for brugerdata, så app og web ikke udvikles ud fra forskellige antagelser.
+
+| Dataområde | Status | Autoritativ model lige nu | Web | App | Note |
+| --- | --- | --- | --- | --- | --- |
+| `visited` | Shared nu | Shared backend efter bootstrap | Læs/skriv | Læs/skriv | Fælles kerneområde |
+| `visitedDate` | Shared nu | Shared backend efter bootstrap | Skrives sammen med `visited` | Del af `VisitedStore` + shared sync | Behandles som del af samme model |
+| `notes` | App-only | `VisitedStore` / lokal + CloudKit legacy | Ikke delt | Fuldt understøttet | Deles ikke endnu |
+| `review` | App-only | `VisitedStore` / lokal + CloudKit legacy | Ikke delt | Fuldt understøttet | Rig datamodel med scores og kategori-noter |
+| `photos` | App-only | Lokal filstorage + CloudKit legacy | Ikke delt | Fuldt understøttet | Højere kompleksitet og konfliktflade |
+| `weekend plan` | App-only | `WeekendPlanStore` / lokal + CloudKit | Ikke delt | Fuldt understøttet | Separat brugerdata-spor |
+| `achievements/progression UI` | App-only | Lokal app-state | Ikke delt | Understøttet | Kan vises afledt, men er ikke delt datalag |
+
+### Konsekvens pr. kategori
+
+#### Shared nu
+- `visited`
+- `visitedDate`
+
+Disse data må behandles som fælles tværplatformsdata og er grundlaget for:
+- `Min tur`
+- visited-filtre
+- visited-status på stadioner og kampe
+
+#### App-only
+- `notes`
+- `review`
+- `photos`
+- `weekend plan`
+- achievements og lokal progressionstilstand
+
+Disse data må ikke implicit loves som tværplatformsdata i produktcopy eller UI.
+
+#### Shared senere
+Følgende områder er kandidater til senere fælles model, men er ikke besluttet som næste implementering:
+1. `notes`
+2. `review`
+3. `weekend plan`
+4. `photos`
+
+Den anbefalede rækkefølge afspejler implementeringsrisiko:
+- `notes` er lettest at dele efter `visited`
+- `review` kræver kontrakt for rig struktur
+- `weekend plan` kræver beslutning om web-scope
+- `photos` er mest komplekst pga. storage, metadata og konfliktregler
+
+#### Ikke planlagt nu
+Der er ikke taget beslutning om at gøre achievements til shared backend-data.
+Hvis web senere skal vise mere progression, bør det i første omgang afledes fra shared `visited`, ikke fra en ny shared achievements-model.
+
+## Konkrete produktregler
+
+1. Web må kun vise og redigere data, der faktisk er shared eller eksplicit web-ejet.
+2. Appen må fortsat eje richer stadiondata, så længe det er tydeligt, at de ikke deles endnu.
+3. Nye integrationsopgaver skal placeres i én af fire kasser:
+   - `shared nu`
+   - `shared senere`
+   - `app-only`
+   - `ikke planlagt`
+4. Hvis et dataområde flyttes fra `app-only` til `shared senere`, skal der først skrives en backend-kontrakt og en brugerforventning.
+
 ## Hvad vi ikke beslutter endnu
 Dette dokument låser ikke:
 - specifikt backend-skema
@@ -198,3 +311,5 @@ Det låser kun retningen:
 1. definere første fælles brugerdata-model for `visited`
 2. beskrive backend- og sync-retning for web/app
 3. bruge den model som grundlag for næste web-iteration
+
+Se `VISITED_SHARED_MODEL.md` for den konkrete første shared model.

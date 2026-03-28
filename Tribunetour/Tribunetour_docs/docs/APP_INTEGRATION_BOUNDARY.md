@@ -124,6 +124,14 @@ Mulige overgangsretninger:
 - lokal model som cache
 - gradvis migration af enkelte felter
 
+Status:
+- appen har nu en eksplicit `SharedVisitedSyncBackend` klientstruktur i koden
+- shared backend-seamet har request/response-mapping, auth-token seam og soft-delete via `visited = false`
+- appen har et separat `AppAuthSession` seam, så token ikke senere skal hentes direkte fra views eller globals
+- appen har også en `HybridVisitedSyncBackend`, der kan lade appen forblive primær og senere spejle writes til shared backend
+- ingen af de shared-baserede backends er aktive i runtime endnu
+- de bruges kun som forberedte seams til næste hybridfase
+
 ### Fase 4
 Beslut om CloudKit visited skal:
 - udfases
@@ -147,6 +155,30 @@ Anbefalet budskab:
 - at appen tidligere var den primære kilde
 - at brugeren bør kontrollere sine besøg første gang efter login
 
+## Første login i appen: bootstrap-ansvar
+Ved første login i appen skal appen ikke forsøge at merge webens visited-data ind i lokale app-data.
+
+Reglen er:
+- appen er autoritativ ved første bootstrap
+- shared backend skal bringes i overensstemmelse med appens snapshot
+- først derefter går brugeren over i almindelig fælles sync
+
+Det betyder for app-flowet:
+1. hent `migration-state` fra backend efter login
+2. hvis bootstrap kræves:
+   - vis engangsadvarsel
+   - kræv aktiv bekræftelse
+3. send komplet bootstrap-snapshot fra appens `VisitedStore`
+4. vent på backend-bekræftelse
+5. skift derefter til normal shared sync
+
+Det betyder også:
+- der skal være en tydelig forskel i koden mellem:
+  - almindelig visited sync
+  - bootstrap-migration
+
+Bootstrap er en særskilt operation og må ikke gemmes som bare endnu et sæt almindelige `PUT /visited/:clubId` writes.
+
 
 ## Source Of Truth i overgangsperioden
 Indtil en egentlig fælles visited-sync er implementeret end-to-end, gælder:
@@ -161,6 +193,8 @@ Det betyder i praksis:
 ## Praktisk release-regel
 Så længe den næste app-release kun rører reference-data-sporet, er integrationsarbejdet på web/backend ikke en blocker.
 
+Appen har nu også et runtime-flag for visited sync mode. Det gør det muligt at teste hybrid/shared forberedelse på enkelte enheder uden at ændre standardadfærden for alle brugere.
+
 Det er den vigtigste beslutning i dette dokument.
 
 ## Hvad vi bør gøre bagefter
@@ -168,6 +202,7 @@ Når din reference-data-appopdatering er landet, er det rigtige næste app-arbej
 1. definere en app-side adapter for visited
 2. flytte CloudKit-kendskab bag adapteren
 3. først derefter begynde egentlig app/shared visited-konvergens
+4. bruge `HYBRID_SYNC_TEST_PLAN.md` som kontrolleret intern test-runbook før runtime-skift aktiveres bredere
 
 ## Konklusion
 Appen er ikke i vejen for det samlede produktunivers.
