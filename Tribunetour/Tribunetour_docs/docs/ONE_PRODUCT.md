@@ -149,6 +149,9 @@ For at Tribunetour kan opleves som ét produkt uden at love for meget, gælder d
 - `App-only`: noter, reviews, billeder, weekend-plan, achievements
 - `Shared senere`: noter, reviews, weekend-plan og evt. billeder, hvis scope og backend-kontrakt besluttes
 
+Den næste valgte shared datamodel er:
+- `notes`
+
 Det betyder i praksis:
 - web og app skal føles ens omkring besøgsstatus
 - web må gerne være enklere på richer brugerdata, så længe det er bevidst

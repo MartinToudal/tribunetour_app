@@ -446,7 +446,7 @@ Web har en enklere udgave, mens appen har den modne oplevelse.
 ## Fase 5: Shared brugerdata ud over visited
 
 ### INT-40 Beslut rækkefølge for næste shared datatyper
-**Status:** Senere
+**Status:** Lukket
 
 **Problem**
 Appen har noter, reviews, billeder og planer, men alt bør ikke gøres shared på én gang.
@@ -459,11 +459,15 @@ Appen har noter, reviews, billeder og planer, men alt bør ikke gøres shared p�
 - en realistisk konvergensplan i stedet for en stor omskrivning
 
 ### INT-41 Noter
-**Status:** Senere
+**Status:** Næste
 
 **Arbejdet**
 - beslut om noter skal være shared
 - hvis ja: definér kontrakt, conflict policy og UI-forventning
+
+**Aktuel beslutning**
+- `notes` er valgt som næste shared datamodel efter `visited`
+- næste arbejde er derfor ikke at vælge område igen, men at definere kontrakt og scope
 
 ### INT-42 Reviews
 **Status:** Senere

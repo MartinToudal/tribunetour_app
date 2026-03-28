@@ -281,6 +281,34 @@ Den anbefalede rækkefølge afspejler implementeringsrisiko:
 - `weekend plan` kræver beslutning om web-scope
 - `photos` er mest komplekst pga. storage, metadata og konfliktregler
 
+## Næste shared dataområde
+
+Den næste fælles datamodel efter `visited` er nu besluttet til at være:
+- `notes`
+
+### Hvorfor `notes`
+`notes` er det mest naturlige næste skridt, fordi:
+- det ligger tæt på den eksisterende `visited`-model
+- det giver reel brugeroplevelsesværdi på tværs af app og web
+- konfliktfladen er mindre end for fotos og reviews
+- det kræver ikke, at web først får hele plan-flowet eller review-UI’et
+
+### Hvad denne beslutning betyder
+Det betyder ikke, at `notes` skal implementeres med det samme i alle flader.
+
+Det betyder:
+- næste shared dataarbejde skal tage udgangspunkt i `notes`
+- `review`, `photos` og `weekend plan` tages ikke som parallelle dataspot nu
+- hvis et nyt integrationsspor kræver endnu et shared dataområde, skal det vurderes op mod denne prioritet
+
+### Hvad der bevidst ikke tages nu
+- `review`
+  - rigere struktur og større UI-konsekvens
+- `photos`
+  - høj storage- og sync-kompleksitet
+- `weekend plan`
+  - kræver først tydeligere beslutning om web-scope og personlig planmodel
+
 #### Ikke planlagt nu
 Der er ikke taget beslutning om at gøre achievements til shared backend-data.
 Hvis web senere skal vise mere progression, bør det i første omgang afledes fra shared `visited`, ikke fra en ny shared achievements-model.
