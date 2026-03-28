@@ -118,6 +118,24 @@ Det betyder for release-arbejde:
 
 Denne checkliste er den aktuelle go/no-go liste for integrationen mellem app og web.
 
+### Hurtig sanity-rutine
+Denne rutine er den hurtigste måde at bekræfte, at integrationskernen stadig holder efter ændringer.
+
+Kør den i denne rækkefølge:
+1. byg web og app grønt
+2. åbn appen som gæst og bekræft at centrale flader loader
+3. log ind i appen og bekræft at session genoptages korrekt
+4. gennemfør bootstrap med en bruger uden shared `visited`, hvis det er den type release der testes
+5. markér et stadion som besøgt i appen og bekræft ændringen på web
+6. markér et stadion som besøgt på web og bekræft ændringen i appen efter normal aktivering/fokus
+7. markér et stadion som ubesøgt den ene vej og bekræft at det forbliver stabilt den anden vej
+8. bekræft at app-only data stadig kun opfører sig som app-only data
+
+Resultatet skal læses sådan:
+- hvis alt ovenfor er grønt, er integrationsfundamentet grønt
+- hvis noget fejler, skal fejlen placeres som enten `auth`, `bootstrap`, `visited`, `reference-data` eller `app-only data`
+- manglende realtime er ikke i sig selv en blocker, hvis fokus- og aktiveringsflowet virker som forventet
+
 ### 1. Build og validering
 - web build er grøn med `npm run build`
 - reference-data validering er grøn med `npm run validate:data`
