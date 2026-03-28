@@ -222,6 +222,7 @@ final class VisitedStore: ObservableObject {
     // MARK: - State
 
     @Published private(set) var records: [String: Record] = [:] // key = Club.id (String)
+    @Published private(set) var lastSyncIssue: String?
 
     // MARK: - Cloud sync
 
@@ -443,6 +444,10 @@ final class VisitedStore: ObservableObject {
         scheduleCloudPush()
     }
 
+    func retrySyncNow() {
+        scheduleCloudPush()
+    }
+
     // MARK: - Persistence
 
     private func persist() {
@@ -616,6 +621,7 @@ final class VisitedStore: ObservableObject {
 
     private func pushLocalChangesToCloud() async {
         let snapshot = records
+        var latestSyncIssue: String?
 
         for (clubId, rec) in snapshot {
             do {
@@ -626,6 +632,7 @@ final class VisitedStore: ObservableObject {
                 }
             } catch {
                 dlog("☁️ Visited push error for \(clubId): \(error)")
+                latestSyncIssue = syncIssueMessage(for: error)
             }
 
             do {
@@ -638,6 +645,21 @@ final class VisitedStore: ObservableObject {
                     dlog("☁️ Photo sync error for \(clubId): \(error)")
                 }
             }
+        }
+
+        lastSyncIssue = latestSyncIssue
+    }
+
+    private func syncIssueMessage(for error: Error) -> String {
+        switch error {
+        case SharedVisitedSyncBackendError.missingAuthToken:
+            return "Vi kunne ikke synkronisere din visited-status, fordi din session er udloebet. Log ind igen for at fortsaette."
+        case SharedVisitedSyncBackendError.notConfigured:
+            return "Delt visited-sync er ikke sat helt op endnu paa denne enhed."
+        case SharedVisitedSyncBackendError.invalidHTTPStatus:
+            return "Vi kunne ikke gemme din visited-status paa serveren lige nu. Proev igen om lidt."
+        default:
+            return "Vi kunne ikke synkronisere din visited-status lige nu. Proev igen om lidt."
         }
     }
 

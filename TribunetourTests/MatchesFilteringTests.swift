@@ -1,3 +1,4 @@
+#if canImport(XCTest)
 import XCTest
 
 final class MatchesFilteringTests: XCTestCase {
@@ -73,4 +74,24 @@ final class MatchesFilteringTests: XCTestCase {
         }
         XCTAssertEqual(filtered.map { $0.id }, ["1"]) // matches Aarhus
     }
+
+    func testCopenhagenDSTDateRangeFilteringRemainsStable() throws {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+
+        // Efter sommertid (CEST, +02:00)
+        let kickoff = try XCTUnwrap(formatter.date(from: "2026-04-20T20:00:00+02:00"))
+        let windowStart = try XCTUnwrap(formatter.date(from: "2026-04-20T00:00:00+02:00"))
+        let windowEnd = try XCTUnwrap(formatter.date(from: "2026-04-21T00:00:00+02:00"))
+
+        XCTAssertTrue(kickoff >= windowStart)
+        XCTAssertTrue(kickoff < windowEnd)
+
+        let localFormatter = DateFormatter()
+        localFormatter.locale = Locale(identifier: "da_DK")
+        localFormatter.timeZone = TimeZone(identifier: "Europe/Copenhagen")
+        localFormatter.dateFormat = "HH:mm"
+        XCTAssertEqual(localFormatter.string(from: kickoff), "20:00")
+    }
 }
+#endif

@@ -6,23 +6,87 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		1E1A1A1A3010000000BDDABE /* AppIntents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E1A1A1B3010000000BDDABE /* AppIntents.framework */; };
+		1EE262D42F72C1CF00BDDABE /* SharedVisitedSyncBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE262D32F72C1CF00BDDABE /* SharedVisitedSyncBackend.swift */; };
+		1EE262D62F72C27500BDDABE /* HybridVisitedSyncBackend.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE262D52F72C27500BDDABE /* HybridVisitedSyncBackend.swift */; };
+		1EE262D82F72C32400BDDABE /* SharedVisitedSyncModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE262D72F72C32400BDDABE /* SharedVisitedSyncModels.swift */; };
+		1EE262DA2F72C3CA00BDDABE /* AppAuthSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE262D92F72C3CA00BDDABE /* AppAuthSession.swift */; };
+		1EE262DC2F72C4C400BDDABE /* AppVisitedSyncRuntimeFlags.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE262DB2F72C4C400BDDABE /* AppVisitedSyncRuntimeFlags.swift */; };
+		1EE2634B2F72CCBD00BDDABE /* AppAuthConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE2634A2F72CCBD00BDDABE /* AppAuthConfiguration.swift */; };
+		1EE2634D2F72CCBD00BDDABE /* AppAuthClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1EE2634C2F72CCBD00BDDABE /* AppAuthClient.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		1EEDF0AC2F555EEB000DB2A4 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 1EF571F12F328CD6000D6B18 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1EF571F82F328CD6000D6B18;
+			remoteInfo = Tribunetour;
+		};
+/* End PBXContainerItemProxy section */
+
 /* Begin PBXFileReference section */
+		1E1A1A1B3010000000BDDABE /* AppIntents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppIntents.framework; path = System/Library/Frameworks/AppIntents.framework; sourceTree = SDKROOT; };
+		1EE262D32F72C1CF00BDDABE /* SharedVisitedSyncBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedVisitedSyncBackend.swift; sourceTree = "<group>"; };
+		1EE262D52F72C27500BDDABE /* HybridVisitedSyncBackend.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HybridVisitedSyncBackend.swift; sourceTree = "<group>"; };
+		1EE262D72F72C32400BDDABE /* SharedVisitedSyncModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedVisitedSyncModels.swift; sourceTree = "<group>"; };
+		1EE262D92F72C3CA00BDDABE /* AppAuthSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAuthSession.swift; sourceTree = "<group>"; };
+		1EE262DB2F72C4C400BDDABE /* AppVisitedSyncRuntimeFlags.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppVisitedSyncRuntimeFlags.swift; sourceTree = "<group>"; };
+		1EE2634A2F72CCBD00BDDABE /* AppAuthConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAuthConfiguration.swift; sourceTree = "<group>"; };
+		1EE2634C2F72CCBD00BDDABE /* AppAuthClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAuthClient.swift; sourceTree = "<group>"; };
+		1EEDF0A82F555EEB000DB2A4 /* TribunetourTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TribunetourTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1EF571F92F328CD6000D6B18 /* Tribunetour.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tribunetour.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		1E5334802F47A7CA0028CF61 /* Exceptions for "Tribunetour" folder in "Tribunetour" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Tribunetour_docs/CloudKit Schemas/cloudkit-development-fixed.ckdb",
+				"Tribunetour_docs/CloudKit Schemas/cloudkit-development.ckdb",
+				Tribunetour_docs/docs/ARCHITECTURE.md,
+				Tribunetour_docs/docs/BACKLOG.md,
+				Tribunetour_docs/docs/CHANGELOG.md,
+				Tribunetour_docs/docs/DATA_MODEL.md,
+				Tribunetour_docs/docs/RELEASE.md,
+				Tribunetour_docs/docs/UX.md,
+				Tribunetour_docs/README.md,
+			);
+			target = 1EF571F82F328CD6000D6B18 /* Tribunetour */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		1EEDF0A92F555EEB000DB2A4 /* TribunetourTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TribunetourTests;
+			sourceTree = "<group>";
+		};
 		1EF571FB2F328CD6000D6B18 /* Tribunetour */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				1E5334802F47A7CA0028CF61 /* Exceptions for "Tribunetour" folder in "Tribunetour" target */,
+			);
 			path = Tribunetour;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1EEDF0A52F555EEB000DB2A4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1EF571F62F328CD6000D6B18 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1E1A1A1A3010000000BDDABE /* AppIntents.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -32,8 +96,17 @@
 		1EF571F02F328CD6000D6B18 = {
 			isa = PBXGroup;
 			children = (
+				1E1A1A1B3010000000BDDABE /* AppIntents.framework */,
 				1EF571FB2F328CD6000D6B18 /* Tribunetour */,
+				1EEDF0A92F555EEB000DB2A4 /* TribunetourTests */,
 				1EF571FA2F328CD6000D6B18 /* Products */,
+				1EE262D32F72C1CF00BDDABE /* SharedVisitedSyncBackend.swift */,
+				1EE262D52F72C27500BDDABE /* HybridVisitedSyncBackend.swift */,
+				1EE262D72F72C32400BDDABE /* SharedVisitedSyncModels.swift */,
+				1EE262D92F72C3CA00BDDABE /* AppAuthSession.swift */,
+				1EE262DB2F72C4C400BDDABE /* AppVisitedSyncRuntimeFlags.swift */,
+				1EE2634A2F72CCBD00BDDABE /* AppAuthConfiguration.swift */,
+				1EE2634C2F72CCBD00BDDABE /* AppAuthClient.swift */,
 			);
 			sourceTree = "<group>";
 		};
@@ -41,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				1EF571F92F328CD6000D6B18 /* Tribunetour.app */,
+				1EEDF0A82F555EEB000DB2A4 /* TribunetourTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,6 +122,29 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		1EEDF0A72F555EEB000DB2A4 /* TribunetourTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1EEDF0AE2F555EEB000DB2A4 /* Build configuration list for PBXNativeTarget "TribunetourTests" */;
+			buildPhases = (
+				1EEDF0A42F555EEB000DB2A4 /* Sources */,
+				1EEDF0A52F555EEB000DB2A4 /* Frameworks */,
+				1EEDF0A62F555EEB000DB2A4 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				1EEDF0AD2F555EEB000DB2A4 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				1EEDF0A92F555EEB000DB2A4 /* TribunetourTests */,
+			);
+			name = TribunetourTests;
+			packageProductDependencies = (
+			);
+			productName = TribunetourTests;
+			productReference = 1EEDF0A82F555EEB000DB2A4 /* TribunetourTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		1EF571F82F328CD6000D6B18 /* Tribunetour */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 1EF572042F328CD7000D6B18 /* Build configuration list for PBXNativeTarget "Tribunetour" */;
@@ -77,9 +174,13 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2620;
+				LastSwiftUpdateCheck = 2630;
 				LastUpgradeCheck = 2620;
 				TargetAttributes = {
+					1EEDF0A72F555EEB000DB2A4 = {
+						CreatedOnToolsVersion = 26.3;
+						TestTargetID = 1EF571F82F328CD6000D6B18;
+					};
 					1EF571F82F328CD6000D6B18 = {
 						CreatedOnToolsVersion = 26.2;
 					};
@@ -100,11 +201,19 @@
 			projectRoot = "";
 			targets = (
 				1EF571F82F328CD6000D6B18 /* Tribunetour */,
+				1EEDF0A72F555EEB000DB2A4 /* TribunetourTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		1EEDF0A62F555EEB000DB2A4 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		1EF571F72F328CD6000D6B18 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -115,16 +224,80 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		1EF571F52F328CD6000D6B18 /* Sources */ = {
+		1EEDF0A42F555EEB000DB2A4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		1EF571F52F328CD6000D6B18 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1EE2634D2F72CCBD00BDDABE /* AppAuthClient.swift in Sources */,
+				1EE262DA2F72C3CA00BDDABE /* AppAuthSession.swift in Sources */,
+				1EE262DC2F72C4C400BDDABE /* AppVisitedSyncRuntimeFlags.swift in Sources */,
+				1EE262D42F72C1CF00BDDABE /* SharedVisitedSyncBackend.swift in Sources */,
+				1EE262D62F72C27500BDDABE /* HybridVisitedSyncBackend.swift in Sources */,
+				1EE2634B2F72CCBD00BDDABE /* AppAuthConfiguration.swift in Sources */,
+				1EE262D82F72C32400BDDABE /* SharedVisitedSyncModels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		1EEDF0AD2F555EEB000DB2A4 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1EF571F82F328CD6000D6B18 /* Tribunetour */;
+			targetProxy = 1EEDF0AC2F555EEB000DB2A4 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		1EEDF0AF2F555EEB000DB2A4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9HZZ899Q57;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = everystadium.TribunetourTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tribunetour.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tribunetour";
+			};
+			name = Debug;
+		};
+		1EEDF0B02F555EEB000DB2A4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9HZZ899Q57;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = everystadium.TribunetourTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tribunetour.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tribunetour";
+			};
+			name = Release;
+		};
 		1EF572022F328CD7000D6B18 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -251,11 +424,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Tribunetour/Tribunetour.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = 9HZZ899Q57;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleURLTypes_0_CFBundleTypeRole = Editor;
+				INFOPLIST_KEY_CFBundleURLTypes_0_CFBundleURLName = everystadium.Tribunetour.auth;
+				INFOPLIST_KEY_CFBundleURLTypes_0_CFBundleURLSchemes_0 = tribunetour;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Bruges til at vise stadion tættest på din position";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -265,9 +444,13 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+				);
+				MARKETING_VERSION = 0.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = everystadium.Tribunetour;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -283,11 +466,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Tribunetour/Tribunetour.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = 9HZZ899Q57;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleURLTypes_0_CFBundleTypeRole = Editor;
+				INFOPLIST_KEY_CFBundleURLTypes_0_CFBundleURLName = everystadium.Tribunetour.auth;
+				INFOPLIST_KEY_CFBundleURLTypes_0_CFBundleURLSchemes_0 = tribunetour;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Bruges til at vise stadion tættest på din position";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -297,9 +486,13 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+				);
+				MARKETING_VERSION = 0.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = everystadium.Tribunetour;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
@@ -313,6 +506,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1EEDF0AE2F555EEB000DB2A4 /* Build configuration list for PBXNativeTarget "TribunetourTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1EEDF0AF2F555EEB000DB2A4 /* Debug */,
+				1EEDF0B02F555EEB000DB2A4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		1EF571F42F328CD6000D6B18 /* Build configuration list for PBXProject "Tribunetour" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

@@ -9,6 +9,8 @@ struct FixturesLoadResult {
     let fixtures: [Fixture]
     let source: Source
     let version: String?
+    let remoteURL: URL?
+    let fallbackReason: String?
 }
 
 enum RemoteFixturesProviderError: LocalizedError {
@@ -29,13 +31,21 @@ struct RemoteFixturesProvider {
     typealias FetchData = (URL) async throws -> Data
     typealias LocalFallback = () throws -> [Fixture]
 
-    private static let remoteURLKey = "fixtures.remote.url"
+    static let remoteURLKey = "fixtures.remote.url"
 
     private let remoteURL: URL?
     private let fetchData: FetchData
     private let localFallback: LocalFallback
 
-    init(remoteURL: URL? = RemoteFixturesProvider.remoteURLFromDefaults()) {
+    init() {
+        self.remoteURL = RemoteFixturesProvider.remoteURLFromDefaults()
+        self.fetchData = RemoteFixturesProvider.defaultFetch
+        self.localFallback = {
+            try FixturesCSVImporter.loadFixturesFromBundle(csvFileName: "fixtures")
+        }
+    }
+
+    init(remoteURL: URL?) {
         self.remoteURL = remoteURL
         self.fetchData = RemoteFixturesProvider.defaultFetch
         self.localFallback = {
@@ -56,7 +66,13 @@ struct RemoteFixturesProvider {
     func loadFixtures() async throws -> FixturesLoadResult {
         guard let remoteURL else {
             let local = try localFallback()
-            return FixturesLoadResult(fixtures: local, source: .localFallback, version: nil)
+            return FixturesLoadResult(
+                fixtures: local,
+                source: .localFallback,
+                version: nil,
+                remoteURL: nil,
+                fallbackReason: "Ingen remote fixtures-URL er konfigureret"
+            )
         }
 
         do {
@@ -64,11 +80,23 @@ struct RemoteFixturesProvider {
             let envelope = try decodeEnvelope(from: raw)
             let mapped = try envelope.fixtures.map { try $0.toFixture() }.sorted { $0.kickoff < $1.kickoff }
             guard !mapped.isEmpty else { throw RemoteFixturesProviderError.invalidPayload }
-            return FixturesLoadResult(fixtures: mapped, source: .remote, version: envelope.metadata?.version)
+            return FixturesLoadResult(
+                fixtures: mapped,
+                source: .remote,
+                version: envelope.metadata?.version,
+                remoteURL: remoteURL,
+                fallbackReason: nil
+            )
         } catch {
             dlogFixturesLoad(source: .localFallback, version: nil, reason: error.localizedDescription)
             let local = try localFallback()
-            return FixturesLoadResult(fixtures: local, source: .localFallback, version: nil)
+            return FixturesLoadResult(
+                fixtures: local,
+                source: .localFallback,
+                version: nil,
+                remoteURL: remoteURL,
+                fallbackReason: error.localizedDescription
+            )
         }
     }
 
@@ -79,8 +107,16 @@ struct RemoteFixturesProvider {
     }
 
     private static func remoteURLFromDefaults() -> URL? {
-        guard let raw = UserDefaults.standard.string(forKey: remoteURLKey),
-              let url = URL(string: raw),
+        if let raw = UserDefaults.standard.string(forKey: remoteURLKey),
+           let url = validatedRemoteURL(from: raw) {
+            return url
+        }
+
+        return AppAuthConfiguration.load().fixturesRemoteURL
+    }
+
+    private static func validatedRemoteURL(from raw: String) -> URL? {
+        guard let url = URL(string: raw),
               let scheme = url.scheme,
               ["https", "http"].contains(scheme.lowercased()) else {
             return nil

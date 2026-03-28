@@ -7,13 +7,35 @@ final class AppState: ObservableObject {
     @Published private(set) var clubById: [String: Club] = [:]
     @Published var fixtures: [Fixture] = []
     @Published var loadError: String?
+    @Published private(set) var syncRuntimeInfoMessage: String?
+    @Published private(set) var fixturesLoadSource: FixturesLoadResult.Source?
+    @Published private(set) var fixturesVersion: String?
+    @Published private(set) var fixturesRemoteURL: URL?
+    @Published private(set) var fixturesFallbackReason: String?
 
     let visitedStore: VisitedStore
+    let authSession = AppAuthSession()
+    let authClient = AppAuthClient()
+    let visitedSyncMode: AppVisitedSyncMode
+    let visitedBootstrapCoordinator: AppVisitedBootstrapCoordinator
     let locationStore = LocationStore()
     private var cancellables = Set<AnyCancellable>()
 
     init() {
-        let visitedSyncConfiguration = AppVisitedSyncFactory.makeConfiguration()
+        let sharedVisitedBackend = AppVisitedSyncFactory.makeSharedBackend(
+            authSession: authSession,
+            authClient: authClient
+        )
+        let resolvedVisitedSyncMode = AppVisitedSyncRuntimeFlags.resolvedMode(
+            userEmail: authSession.snapshot.userEmail
+        )
+        let visitedSyncConfiguration = AppVisitedSyncFactory.makeConfiguration(
+            mode: resolvedVisitedSyncMode,
+            authSession: authSession,
+            authClient: authClient
+        )
+        self.visitedSyncMode = resolvedVisitedSyncMode
+        self.visitedBootstrapCoordinator = AppVisitedBootstrapCoordinator(sharedBackend: sharedVisitedBackend)
         self.visitedStore = VisitedStore(
             syncBackend: visitedSyncConfiguration.backend,
             mergePolicy: visitedSyncConfiguration.mergePolicy
@@ -27,6 +49,27 @@ final class AppState: ObservableObject {
                 self.refreshWeekendReminder()
             }
             .store(in: &cancellables)
+
+        authSession.$snapshot
+            .removeDuplicates()
+            .sink { [weak self] snapshot in
+                guard let self else { return }
+                if snapshot.isAuthenticated {
+                    self.visitedStore.retrySyncNow()
+                    Task {
+                        await self.reconcileSharedSyncModeAfterSessionRestore(snapshot: snapshot)
+                    }
+                } else {
+                    self.syncRuntimeInfoMessage = nil
+                }
+            }
+            .store(in: &cancellables)
+
+        if authSession.snapshot.isAuthenticated {
+            Task {
+                await reconcileSharedSyncModeAfterSessionRestore(snapshot: authSession.snapshot)
+            }
+        }
     }
 
     func loadData() {
@@ -50,10 +93,18 @@ final class AppState: ObservableObject {
                 self.clubs = clubs
                 self.clubById = Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
                 self.fixtures = fixtures
+                self.fixturesLoadSource = fixturesResult.source
+                self.fixturesVersion = fixturesResult.version
+                self.fixturesRemoteURL = fixturesResult.remoteURL
+                self.fixturesFallbackReason = fixturesResult.fallbackReason
                 self.loadError = nil
                 self.refreshWeekendReminder()
             } catch {
                 self.clubById = [:]
+                self.fixturesLoadSource = nil
+                self.fixturesVersion = nil
+                self.fixturesRemoteURL = nil
+                self.fixturesFallbackReason = nil
                 self.loadError = error.localizedDescription
             }
         }
@@ -74,6 +125,47 @@ final class AppState: ObservableObject {
                 visitedVenueClubIds: visitedVenueClubIds,
                 clubById: clubByIdSnapshot
             )
+        }
+    }
+
+    func handleOpenURL(_ url: URL) {
+        guard authClient.canHandleCallbackURL(url) else { return }
+        do {
+            let result = try authClient.parseCallbackURL(url)
+            authSession.updateAuthenticatedSession(
+                userEmail: result.userEmail,
+                bearerToken: result.accessToken,
+                refreshToken: result.refreshToken
+            )
+        } catch {
+            dlog("Auth callback kunne ikke behandles: \(error.localizedDescription)")
+        }
+    }
+
+    private func reconcileSharedSyncModeAfterSessionRestore(snapshot: AppSessionSnapshot) async {
+        guard snapshot.isAuthenticated else {
+            syncRuntimeInfoMessage = nil
+            return
+        }
+
+        do {
+            let status = try await visitedBootstrapCoordinator.fetchStatus(localRecords: visitedStore.records)
+            if status.bootstrapRequired {
+                AppVisitedSyncRuntimeFlags.clearBootstrapCompleted(for: snapshot.userEmail)
+                syncRuntimeInfoMessage = nil
+                return
+            }
+
+            if AppVisitedSyncRuntimeFlags.promoteToSharedModeIfNeeded(
+                currentMode: visitedSyncMode,
+                userEmail: snapshot.userEmail
+            ) {
+                syncRuntimeInfoMessage = "Din konto har allerede faelles visited-data. Genstart appen for at skifte denne enhed over til delt sync."
+            } else {
+                syncRuntimeInfoMessage = nil
+            }
+        } catch {
+            dlog("Kunne ikke afstemme shared sync mode ved session-gendannelse: \(error.localizedDescription)")
         }
     }
 }
