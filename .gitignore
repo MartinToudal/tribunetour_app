@@ -1,0 +1,11 @@
+.DS_Store
+
+# Xcode user-specific state
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+xcuserdata/
+*.xcworkspace/xcuserdata/
+
+# Nested web repository is managed as its own git repo
+Website repo/
