@@ -164,3 +164,5 @@ Det er vigtigt, at `notes` ikke genbruger review-noter eller anden rig struktur 
 1. beskrive backend/read-write-kontrakten for notes
 2. lave en tydelig app-boundary mellem lokal note-model og shared note-model
 3. derefter implementere ét bevidst note-flow i app og web
+
+Se `NOTES_BACKEND_CONTRACT.md` for første read/write-kontrakt.
