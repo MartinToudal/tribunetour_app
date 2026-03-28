@@ -14,6 +14,7 @@ final class AppState: ObservableObject {
     @Published private(set) var fixturesFallbackReason: String?
 
     let visitedStore: VisitedStore
+    let notesStore: AppNotesStore
     let authSession = AppAuthSession()
     let authClient = AppAuthClient()
     let visitedSyncMode: AppVisitedSyncMode
@@ -40,6 +41,7 @@ final class AppState: ObservableObject {
             syncBackend: visitedSyncConfiguration.backend,
             mergePolicy: visitedSyncConfiguration.mergePolicy
         )
+        self.notesStore = AppNotesStore(visitedStore: self.visitedStore)
 
         visitedStore.$records
             .dropFirst()

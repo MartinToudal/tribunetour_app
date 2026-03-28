@@ -6,17 +6,20 @@ struct MatchesView: View {
     let clubById: [String: Club]
     let fixtures: [Fixture]
     @ObservedObject var visitedStore: VisitedStore
+    @ObservedObject var notesStore: AppNotesStore
 
     init(
         clubs: [Club],
         clubById: [String: Club]? = nil,
         fixtures: [Fixture],
-        visitedStore: VisitedStore
+        visitedStore: VisitedStore,
+        notesStore: AppNotesStore
     ) {
         self.clubs = clubs
         self.clubById = clubById ?? Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
         self.fixtures = fixtures
         self.visitedStore = visitedStore
+        self.notesStore = notesStore
     }
 
     // MARK: - Time filter chips
@@ -255,6 +258,7 @@ struct MatchesView: View {
                                     fixture: f,
                                     clubById: clubById,
                                     visitedStore: visitedStore,
+                                    notesStore: notesStore,
                                     fixtures: fixtures
                                 )
                             } label: {

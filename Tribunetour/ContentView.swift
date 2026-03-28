@@ -25,13 +25,19 @@ struct ContentView: View {
                 }
             } else {
                 TabView {
-                    StadiumsView(clubs: appState.clubs, fixtures: appState.fixtures, visitedStore: appState.visitedStore)
+                    StadiumsView(
+                        clubs: appState.clubs,
+                        fixtures: appState.fixtures,
+                        visitedStore: appState.visitedStore,
+                        notesStore: appState.notesStore
+                    )
                         .tabItem { Label("Stadions", systemImage: "map") }
 
                     MatchesView(
                         clubs: appState.clubs,
                         fixtures: appState.fixtures,
-                        visitedStore: appState.visitedStore
+                        visitedStore: appState.visitedStore,
+                        notesStore: appState.notesStore
                     )
                         .tabItem { Label("Kampe", systemImage: "sportscourt") }
 
@@ -42,6 +48,7 @@ struct ContentView: View {
                     StatsView(
                         clubs: appState.clubs,
                         visitedStore: appState.visitedStore,
+                        notesStore: appState.notesStore,
                         authSession: appState.authSession,
                         authClient: appState.authClient,
                         bootstrapCoordinator: appState.visitedBootstrapCoordinator,
@@ -73,6 +80,7 @@ struct StadiumsView: View {
     let clubs: [Club]
     let fixtures: [Fixture]
     @ObservedObject var visitedStore: VisitedStore
+    @ObservedObject var notesStore: AppNotesStore
 
     @EnvironmentObject private var locationStore: LocationStore
 
@@ -305,6 +313,7 @@ struct StadiumsView: View {
                             StadiumDetailView(
                                 club: club,
                                 visitedStore: visitedStore,
+                                notesStore: notesStore,
                                 clubById: clubByIdMap,
                                 fixtures: fixtures
                             )
@@ -437,6 +446,7 @@ struct StadiumsView: View {
                 StadiumDetailView(
                     club: club,
                     visitedStore: visitedStore,
+                    notesStore: notesStore,
                     clubById: clubByIdMap,
                     fixtures: fixtures
                 )

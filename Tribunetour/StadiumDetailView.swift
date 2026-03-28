@@ -8,6 +8,7 @@ struct StadiumDetailView: View {
     let clubById: [String: Club]
     let fixtures: [Fixture]
     @ObservedObject var visitedStore: VisitedStore
+    @ObservedObject var notesStore: AppNotesStore
     @State private var expandedReviewCategories: Set<VisitedStore.ReviewCategory> = []
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
     @State private var selectedPhotoFileName: String?
@@ -23,11 +24,13 @@ struct StadiumDetailView: View {
     init(
         club: Club,
         visitedStore: VisitedStore,
+        notesStore: AppNotesStore,
         clubById: [String: Club] = [:],
         fixtures: [Fixture] = []
     ) {
         self.club = club
         self.visitedStore = visitedStore
+        self.notesStore = notesStore
         self.clubById = clubById.isEmpty ? [club.id: club] : clubById
         self.fixtures = fixtures
     }
@@ -348,8 +351,8 @@ struct StadiumDetailView: View {
 
     private var notesBinding: Binding<String> {
         Binding(
-            get: { visitedStore.notes(for: club.id) },
-            set: { visitedStore.setNotes(club.id, $0) }
+            get: { notesStore.note(for: club.id) },
+            set: { notesStore.setNote($0, for: club.id) }
         )
     }
 
