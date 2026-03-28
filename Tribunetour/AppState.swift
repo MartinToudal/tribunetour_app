@@ -168,7 +168,7 @@ final class AppState: ObservableObject {
                 currentMode: visitedSyncMode,
                 userEmail: snapshot.userEmail
             ) {
-                syncRuntimeInfoMessage = "Din konto har allerede faelles visited-data. Genstart appen for at skifte denne enhed over til delt sync."
+                syncRuntimeInfoMessage = "Din konto er klar til faelles visited paa tværs af app og web. Luk og aabn appen igen, hvis denne enhed ikke opdaterer med det samme."
             } else {
                 syncRuntimeInfoMessage = nil
             }

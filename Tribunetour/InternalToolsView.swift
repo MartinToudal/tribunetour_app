@@ -106,14 +106,14 @@ struct InternalToolsView: View {
                 }
             }
 
-            Section("Visited sync") {
+            Section("Sync (internt)") {
                 Picker("Sync-mode", selection: $visitedSyncModeRaw) {
                     ForEach(AppVisitedSyncMode.allCases) { mode in
                         Text(mode.title).tag(mode.rawValue)
                     }
                 }
 
-                Text("Gaelder foerst efter genstart af appen. Brug kun CloudKit (legacy) hvis du specifikt tester overgangsadfaerd.")
+                Text("Gaelder foerst efter genstart af appen. Brug kun 'Kun app-data' hvis du specifikt tester lokal fallback eller intern fejlfinding.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

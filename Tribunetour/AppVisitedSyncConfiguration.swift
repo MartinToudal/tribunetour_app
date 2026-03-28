@@ -9,7 +9,7 @@ enum AppVisitedSyncMode: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .cloudKitPrimary:
-            return "CloudKit (legacy)"
+            return "Kun app-data"
         case .hybridPrepared:
             return "Faelles visited"
         }

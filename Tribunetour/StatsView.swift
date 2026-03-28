@@ -666,7 +666,7 @@ struct StatsView: View {
             } message: {
                 Text("Du skal have en mailkonto sat op i Mail-app’en for at sende feedback herfra.")
             }
-            .alert("Brug appens besøg som udgangspunkt?", isPresented: $showBootstrapAlert, presenting: pendingBootstrapStatus) { status in
+            .alert("Brug appens nuvaerende besoeg som udgangspunkt?", isPresented: $showBootstrapAlert, presenting: pendingBootstrapStatus) { status in
                 Button("Ikke nu", role: .cancel) {}
                 Button("Brug appens data") {
                     Task {
@@ -674,7 +674,7 @@ struct StatsView: View {
                     }
                 }
             } message: { status in
-                Text("Foerste gang du logger ind, bruger vi dine \(status.localVisitedCount) registreringer i appen til at oprette din faelles visited-status. Eventuelle tidligere visited-markeringer paa web bliver erstattet.")
+                Text("Foerste gang du logger ind, bruger vi dine \(status.localVisitedCount) registreringer i appen til at oprette din samlede visited-status. Hvis du allerede har markeret noget paa web, bliver appens nuvaerende registreringer brugt som udgangspunkt.")
             }
             .onAppear {
                 syncSeenUnlockedIds()
@@ -795,13 +795,13 @@ struct StatsView: View {
             if status.shouldPromptUser {
                 pendingBootstrapStatus = status
                 showBootstrapAlert = true
-                loginInfoMessage = "Du er logget ind. Bekraeft nu at appens nuvaerende registreringer skal oprette din faelles visited-status."
+                loginInfoMessage = "Du er logget ind. Bekraeft nu om appens nuvaerende registreringer skal oprette din samlede visited-status."
             } else if isNewAccount {
                 AppVisitedSyncRuntimeFlags.markBootstrapCompleted(for: authSession.snapshot.userEmail)
                 loginInfoMessage = "Konto oprettet og logget ind."
             } else {
                 AppVisitedSyncRuntimeFlags.markBootstrapCompleted(for: authSession.snapshot.userEmail)
-                loginInfoMessage = "Du er nu logget ind, og din konto bruger den faelles visited-model."
+                loginInfoMessage = "Du er nu logget ind, og din konto bruger samme visited-status paa tværs af app og web."
             }
         } catch {
             if isNewAccount {
@@ -822,7 +822,7 @@ struct StatsView: View {
             let response = try await bootstrapCoordinator.performBootstrap(localRecords: visitedStore.records)
             AppVisitedSyncRuntimeFlags.markBootstrapCompleted(for: authSession.snapshot.userEmail)
             pendingBootstrapStatus = nil
-            loginInfoMessage = "Din faelles visited-status er nu oprettet ud fra appens registreringer. Bootstrap gennemfoert med \(response.itemCount ?? status.localVisitedCount) poster. Genstart appen for at skifte denne enhed over til delt sync."
+            loginInfoMessage = "Din samlede visited-status er nu oprettet ud fra appens registreringer. Vi gemte \(response.itemCount ?? status.localVisitedCount) poster. Luk og aabn appen igen, hvis denne enhed ikke opdaterer med det samme."
         } catch {
             loginErrorMessage = bootstrapExecutionMessage(for: error)
         }
@@ -849,7 +849,7 @@ struct StatsView: View {
         case SharedVisitedSyncBackendError.missingAuthToken:
             return "Bootstrap kunne ikke starte, fordi appen mangler en gyldig session. Proev at logge ind igen."
         case SharedVisitedSyncBackendError.bootstrapAlreadyCompleted:
-            return "Din konto har allerede en faelles visited-status. Proev at genstarte appen."
+            return "Din konto har allerede en samlet visited-status. Luk og aabn appen igen, hvis status ikke vises korrekt endnu."
         case SharedVisitedSyncBackendError.invalidHTTPStatus:
             return "Bootstrap kunne ikke gennemfoeres lige nu paa grund af en serverfejl. Proev igen om lidt."
         default:
