@@ -135,6 +135,7 @@ Resultatet skal læses sådan:
 - hvis alt ovenfor er grønt, er integrationsfundamentet grønt
 - hvis noget fejler, skal fejlen placeres som enten `auth`, `bootstrap`, `visited`, `reference-data` eller `app-only data`
 - manglende realtime er ikke i sig selv en blocker, hvis fokus- og aktiveringsflowet virker som forventet
+- kendte begrænsninger skal beskrives eksplicit, men må ikke blandes sammen med reelle blockers
 
 ### 1. Build og validering
 - web build er grøn med `npm run build`
@@ -185,14 +186,16 @@ Go:
 - app-only data forbliver stabile og bliver ikke fejlagtigt præsenteret som shared
 
 Aktuel vurdering:
-- integrationen er nu tæt på `Go` for den delte `visited`-model
+- integrationen er nu `Go med kendt begrænsning` for den delte `visited`-model
 - kendt begrænsning: tværflade-sync er fokus/aktiveringsbaseret, ikke realtime
+- den begrænsning er acceptabel, så længe sanity-rutinen fortsat er grøn
 
 No-Go:
 - app og web viser forskellig visited-status uden forklaring
 - bootstrap overskriver eller taber brugerens forventede visited-data
 - reference-data divergerer mellem fladerne
 - nye integrationsændringer introducerer compile-fejl eller reel regressionswarning
+- produktcopy lover deling af data, som stadig er app-only
 
 ## AS2 Submission Readiness Status
 

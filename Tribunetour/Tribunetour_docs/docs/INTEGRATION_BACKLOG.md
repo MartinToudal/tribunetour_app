@@ -749,6 +749,10 @@ Leverance:
 Hvorfor nu:
 - næste release-vurdering skal bygge på det, vi faktisk har verificeret, ikke på den gamle migrationsforståelse
 
+Status:
+- lukket
+- release-checklisten skelner nu tydeligt mellem `Go med kendt begrænsning` og reelle blockers
+
 ### Sprint 2 DoD
 
 Sprint 2 er færdig når:
@@ -766,6 +770,10 @@ Så vil næste sprint naturligt kunne fokusere på:
 - næste shared datamodel
 - webens mål-paritet
 - evt. realtime/subscription-sync som forbedring og ikke som redning
+
+Aktuel vurdering:
+- Sprint 2 er nu lukket som dokumentations- og stabiliseringssprint
+- næste naturlige produktspor er `INT-41 Noter`
 
 ---
 
