@@ -88,6 +88,88 @@ Det næste ønskede slutbillede er:
 - tydelig versionsmarkering
 - mindst mulig manuel dobbeltopdatering
 
+## Operativt driftsspor lige nu
+
+Reference-data skal nu behandles som ét opdateringsflow, ikke som separate app- og webopdateringer.
+
+### Canonical source i drift
+Den operationelle canonical source er nu:
+- [stadiums.csv](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Tribunetour/stadiums.csv)
+- [fixtures.csv](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Tribunetour/fixtures.csv)
+
+Det betyder:
+- nye stadioner og kampopdateringer laves først her
+- webens JSON-filer er genererede artefakter
+- appens remote feed er et distribueret artefakt af samme datasæt
+
+### Genererede artefakter
+Når canonical source opdateres, genereres disse filer i webrepoet:
+- [stadiums.json](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Website%20repo/data/stadiums.json)
+- [fixtures.json](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Website%20repo/data/fixtures.json)
+- [fixtures.remote.json](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Website%20repo/public/reference-data/fixtures.remote.json)
+
+De genereres af:
+- [generate-reference-data.mjs](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Website%20repo/scripts/generate-reference-data.mjs)
+
+### Distribution
+Efter generering gælder denne distribution:
+- web læser reference-data via sit `referenceData`-lag
+- websitet publicerer `fixtures.remote.json`
+- appen udleder remote feed-URL fra [AppAuthConfiguration.swift](/Users/martintoudal/Documents/Tribunetour/Tribunetour/AppAuthConfiguration.swift)
+- appen læser feedet via `RemoteFixturesProvider`
+- appen falder kun tilbage til lokale CSV-data, hvis remote feed ikke kan bruges
+
+### Vercel og CI
+I CI og på Vercel findes appens CSV-filer ikke direkte.
+
+Derfor gælder:
+- lokalt hos os genereres web-artefakter fra canonical CSV
+- i Vercel bruges de committede web-JSON-filer som input
+- Vercel genererer stadig det publicerede remote envelope, så website og app-feed forbliver konsistente med det sidst godkendte datasæt
+
+Det betyder:
+- ændringer i reference-data skal altid genereres og committes lokalt før deploy
+- deploy alene er ikke stedet, hvor nye reference-data “opfindes”
+
+## Update-flow ved reference-data-ændring
+
+Når stadioner eller kampe ændres, er den korrekte rækkefølge nu:
+
+1. opdatér canonical CSV i apprepoet
+2. kør `npm run generate:data` i webrepoet
+3. kør `npm run validate:data` i webrepoet
+4. verificér at de genererede JSON-filer ser rigtige ud
+5. commit appens CSV-ændring og webens genererede artefakter
+6. deploy webrepoet
+7. verificér live feed på `/reference-data/fixtures.remote.json`
+8. verificér i appens `Interne værktøjer`, at fixtures-kilden er `remote`
+
+### Hvad der tæller som grønt
+Et reference-data-update er grønt når:
+- validatoren består
+- web build består
+- live feed kan åbnes
+- appen kan læse feedet som `remote`
+- stadion- og kamp-ID’er stadig matcher `visited`-modellen
+
+### Hvad der tæller som no-go
+Et reference-data-update er ikke klar hvis:
+- validatoren fejler
+- `fixtures.remote.json` ikke er live efter deploy
+- appen falder tilbage til `local fallback` uden bevidst grund
+- relationer mellem `venueClubId`, `homeTeamId`, `awayTeamId` og stadium IDs er brudt
+
+## Ejerskab og ansvar
+
+For at holde flowet enkelt gælder denne arbejdsdeling:
+- apprepoet ejer canonical CSV
+- webrepoet ejer generering, validering og publicering af artefakter
+- deploy af web er også deploy af appens remote fixtures-feed
+
+Det betyder i praksis:
+- reference-data bør tænkes som ét fælles driftsansvar
+- men ændringerne lander stadig i to repos, fordi source og distribution endnu ikke fysisk bor samme sted
+
 ## Kontrakt for stadium records
 Hver stadium-record skal mindst have:
 - `id`
