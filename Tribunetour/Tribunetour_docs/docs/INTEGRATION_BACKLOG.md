@@ -777,6 +777,93 @@ Aktuel vurdering:
 
 ---
 
+## Sprint 3
+
+Dette er den næste konkrete arbejdspakke, hvor Tribunetour går fra delt `visited` til første richer shared brugerdata.
+
+Målet med Sprint 3 er:
+- at gøre `notes` til den næste bevidste shared datamodel
+- at holde scope smalt, så vi ikke blander reviews, fotos og plan ind samtidig
+- at definere kontrakt og forventning før bred UI-udbygning
+
+### Sprint 3 scope
+
+#### S3-01 Definér shared notes-kontrakten
+Bygger på:
+- `INT-41`
+
+Leverance:
+- skrevet kontrakt for `notes`
+- beslutning om tom note, opdateringstidspunkt og conflict-retning
+- tydelig regel for hvordan note knytter sig til `clubId`
+
+Hvorfor nu:
+- uden kontrakt risikerer vi at bygge app og web mod hver sin note-model
+
+#### S3-02 Lav en app-boundary for notes
+Bygger på:
+- `INT-41`
+
+Leverance:
+- én tydelig seam mellem lokal/app-only note-model og kommende shared note-model
+- ingen skjult spredning af note-logik i mange views
+
+Hvorfor nu:
+- notes skal kunne deles uden at gøre `VisitedStore` endnu mere mudret
+
+#### S3-03 Etabler første shared backend-retning for notes
+Bygger på:
+- `S3-01`
+- `S3-02`
+
+Leverance:
+- første repository/backend-kontrakt for notes
+- klar læse-/skriveretning for samme bruger på app og web
+
+Hvorfor nu:
+- vi skal bevise modellen end-to-end tidligt, ikke kun dokumentere den
+
+#### S3-04 Vis notes ét sted på web og ét sted i appen
+Bygger på:
+- `S3-03`
+
+Leverance:
+- ét enkelt, tydeligt note-entrypoint i web
+- ét tilsvarende note-entrypoint i appen
+- ingen bred paritet endnu, kun et bevidst første flow
+
+Hvorfor nu:
+- det er nok til at validere brugeroplevelsen uden at åbne hele UI-fladen på én gang
+
+#### S3-05 Tilføj en notes sanity-test
+Bygger på:
+- `S3-04`
+
+Leverance:
+- kort testflow for note opret/redigér på tværs af app og web
+- tydelig placering af fejl som `notes`, ikke generisk sync
+
+Hvorfor nu:
+- `notes` skal ikke gentage det tidlige `visited`-forløb med uklar ansvarslinje
+
+### Sprint 3 DoD
+
+Sprint 3 er færdig når:
+- shared notes-kontrakten er skrevet og godkendt
+- app og web kan læse/skrive samme note-model i mindst ét bevidst flow
+- notes har en lille, gentagelig tværflade-test
+- reviews, fotos og plan stadig bevidst er ude af scope
+
+### Sprint 3 anbefalet rækkefølge
+
+1. `S3-01` kontrakt
+2. `S3-02` app-boundary
+3. `S3-03` backend/repository
+4. `S3-04` første UI-flow
+5. `S3-05` sanity-test
+
+---
+
 ## Konkrete tickets
 
 Denne sektion omsætter backloggen til konkrete arbejdspakker med:
