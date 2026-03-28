@@ -448,6 +448,32 @@ final class VisitedStore: ObservableObject {
         scheduleCloudPush()
     }
 
+    func refreshFromRemote() async {
+        do {
+            let remote = try await syncBackend.fetchAll()
+            mergeRemoteIntoLocal(remote)
+            persist()
+            lastSyncIssue = nil
+        } catch {
+            dlog("☁️ Visited remote refresh error: \(error)")
+            lastSyncIssue = syncIssueMessage(for: error)
+        }
+
+        do {
+            let remotePhotos = try await syncBackend.fetchAllPhotos()
+            mergeRemotePhotosIntoLocal(remotePhotos)
+            persist()
+        } catch {
+            if isPhotoQueryIndexError(error) {
+                disablePhotoQueriesIfNeeded(reason: "CloudKit photo type mangler query-index")
+            } else {
+                dlog("☁️ Photo remote refresh error: \(error)")
+            }
+        }
+
+        scheduleCloudPush()
+    }
+
     // MARK: - Persistence
 
     private func persist() {

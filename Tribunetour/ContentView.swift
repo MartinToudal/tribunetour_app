@@ -4,6 +4,7 @@ import CoreLocation
 
 struct ContentView: View {
     @StateObject private var appState = AppState()
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         Group {
@@ -55,6 +56,10 @@ struct ContentView: View {
         }
         .onOpenURL { url in
             appState.handleOpenURL(url)
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .active else { return }
+            appState.refreshSharedVisitedFromRemote()
         }
         .environmentObject(appState)
         .environmentObject(appState.locationStore)

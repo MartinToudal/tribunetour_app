@@ -55,8 +55,8 @@ final class AppState: ObservableObject {
             .sink { [weak self] snapshot in
                 guard let self else { return }
                 if snapshot.isAuthenticated {
-                    self.visitedStore.retrySyncNow()
                     Task {
+                        await self.visitedStore.refreshFromRemote()
                         await self.reconcileSharedSyncModeAfterSessionRestore(snapshot: snapshot)
                     }
                 } else {
@@ -125,6 +125,14 @@ final class AppState: ObservableObject {
                 visitedVenueClubIds: visitedVenueClubIds,
                 clubById: clubByIdSnapshot
             )
+        }
+    }
+
+    func refreshSharedVisitedFromRemote() {
+        guard authSession.snapshot.isAuthenticated else { return }
+        Task {
+            await visitedStore.refreshFromRemote()
+            await reconcileSharedSyncModeAfterSessionRestore(snapshot: authSession.snapshot)
         }
     }
 
