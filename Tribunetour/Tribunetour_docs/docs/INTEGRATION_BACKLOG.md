@@ -671,6 +671,100 @@ Så vil næste sprint naturligt kunne fokusere på:
 
 ---
 
+## Sprint 2
+
+Dette er den aktuelle næste arbejdspakke efter, at shared `visited` og remote reference-data nu virker i praksis.
+
+Målet med Sprint 2 er:
+- at gøre integrationsfundamentet releaseklart som fast rutine
+- at færdiggøre reference-data-flowet som driftsspor
+- at rydde mere overgangslag ud, nu hvor steady-state er stabil
+- at vælge næste shared datamodel bevidst i stedet for at sprede arbejdet
+
+### Sprint 2 scope
+
+#### S2-01 Kør og fastlås en kort integrations sanity-check
+Bygger på:
+- `NEXT-03`
+- `INT-14`
+
+Leverance:
+- en kort gentagelig testrutine for gæst, login, bootstrap og `visited` begge veje
+- tydelig markering af hvad der er grønt nu, og hvad der stadig kun er kendt begrænsning
+
+Hvorfor nu:
+- vi har stabiliseret meget hurtigt, og nu skal det kunne gentages uden at opfinde testen hver gang
+
+#### S2-02 Færdiggør reference-data-pipelinen som ét driftsspor
+Bygger på:
+- `INT-01`
+- `INT-03`
+- `INT-04`
+
+Leverance:
+- klart update-flow fra canonical source til web-artefakter og app-feed
+- kort beskrivelse af hvem der opdaterer data, og hvordan det verificeres
+
+Hvorfor nu:
+- reference-data er nu den største tilbageværende strukturelle risiko for nyt mismatch
+
+#### S2-03 Ryd mere migrationslag ud af appen
+Bygger på:
+- `INT-21`
+- `INT-22`
+- `INT-23`
+
+Leverance:
+- identificeret liste over resterende legacy-copy, debug-seams og overgangsantagelser
+- første sikre oprydningsrunde i normal brugerflade
+
+Hvorfor nu:
+- `visited` er stabil nok til, at produktet bør føles mindre som migration og mere som drift
+
+#### S2-04 Beslut næste shared dataområde
+Bygger på:
+- `NEXT-02`
+- `INT-40`
+
+Leverance:
+- én skrevet beslutning om næste datamodel efter `visited`
+- fravalg for de områder, der ikke tages nu
+
+Hvorfor nu:
+- ellers risikerer vi at sprede indsatsen over noter, reviews, fotos og plan på samme tid
+
+#### S2-05 Stram release-checklisten til egentlig drift
+Bygger på:
+- `INT-51`
+- `INT-52`
+
+Leverance:
+- opdateret go/no-go med den nuværende integrationsvirkelighed
+- klar skelnen mellem blockers og kendte ikke-realtime-begrænsninger
+
+Hvorfor nu:
+- næste release-vurdering skal bygge på det, vi faktisk har verificeret, ikke på den gamle migrationsforståelse
+
+### Sprint 2 DoD
+
+Sprint 2 er færdig når:
+- integrations sanity-check kan køres hurtigt og gentages uden tvivl
+- reference-data update-flowet er beskrevet som én driftspipeline
+- mindst én runde migrationscopy og legacy-seams er ryddet væk
+- næste shared datamodel er valgt bevidst
+- release-checklisten afspejler den faktiske steady-state for `visited`
+
+### Sprint 2 næste konsekvens
+
+Hvis Sprint 2 lukkes, bliver næste sprint langt mere produktorienteret.
+
+Så vil næste sprint naturligt kunne fokusere på:
+- næste shared datamodel
+- webens mål-paritet
+- evt. realtime/subscription-sync som forbedring og ikke som redning
+
+---
+
 ## Konkrete tickets
 
 Denne sektion omsætter backloggen til konkrete arbejdspakker med:
