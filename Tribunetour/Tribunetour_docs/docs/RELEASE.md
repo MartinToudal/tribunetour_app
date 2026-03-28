@@ -149,6 +149,11 @@ Denne checkliste er den aktuelle go/no-go liste for integrationen mellem app og 
 - `/`, `/my`, `/matches`, `/stadiums/[id]` og `/matches/[id]` viser samme visited-status på web
 - `Min tur` viser konsistent progression mellem app og web inden for den delte model
 
+Aktuel status:
+- verificeret manuelt som fungerende begge veje
+- steady-state er nu shared backend for `visited`
+- sync er stabil ved app-aktivering og browserfokus, men er ikke bygget som realtime-subscription
+
 ### 6. App-only data opfører sig ærligt
 - noter, reviews, fotos og weekend-plan er stadig synlige og stabile i appen
 - web lover ikke, at disse data deles på tværs endnu
@@ -160,6 +165,10 @@ Go:
 - auth, bootstrap og delt `visited` virker i praksis på tværs af app og web
 - reference-data opleves konsistente i de centrale produktflader
 - app-only data forbliver stabile og bliver ikke fejlagtigt præsenteret som shared
+
+Aktuel vurdering:
+- integrationen er nu tæt på `Go` for den delte `visited`-model
+- kendt begrænsning: tværflade-sync er fokus/aktiveringsbaseret, ikke realtime
 
 No-Go:
 - app og web viser forskellig visited-status uden forklaring

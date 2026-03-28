@@ -470,8 +470,6 @@ final class VisitedStore: ObservableObject {
                 dlog("☁️ Photo remote refresh error: \(error)")
             }
         }
-
-        scheduleCloudPush()
     }
 
     // MARK: - Persistence
@@ -552,8 +550,6 @@ final class VisitedStore: ObservableObject {
             }
         }
 
-        // Efter merge: push vores samlede state op, så cloud også får lokale ændringer
-        scheduleCloudPush()
     }
 
     private func scheduleCloudPush() {

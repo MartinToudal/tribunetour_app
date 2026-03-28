@@ -115,8 +115,8 @@ struct AppVisitedMergePolicy {
         }
 
         return VisitedStore.Record(
-            visited: local.visited,
-            visitedDate: local.visitedDate ?? remote.visitedDate,
+            visited: remote.visited,
+            visitedDate: remote.visited ? (remote.visitedDate ?? local.visitedDate) : remote.visitedDate,
             notes: mergedNotes,
             review: mergedReview,
             photoFileNames: mergedPhotoNames,

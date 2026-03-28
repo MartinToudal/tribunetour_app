@@ -136,7 +136,7 @@ Denne sektion er den operative læserækkefølge.
   - plan/weekend-plan
 
 #### NEXT-03 Lav tværflade test- og releasecheck
-**Status:** Næste
+**Status:** Lukket
 
 **Mål**
 - kunne kalde integrationen en reel leverance og ikke bare en løbende retning
@@ -144,6 +144,11 @@ Denne sektion er den operative læserækkefølge.
 **Leverance**
 - checkliste for build, login, bootstrap, visited og reference-data
 - kort go/no-go før næste integrationsegnede release
+
+**Resultat**
+- checkliste findes
+- `visited` er verificeret manuelt begge veje mellem app og web
+- kendt restpunkt er realtime/subscription-niveau, ikke grundlæggende datakonsistens
 
 ### Senere
 
@@ -246,7 +251,7 @@ Shared `visited` findes, men opleves stadig som migrationsspor.
 - app og web taler om samme visited-record
 
 ### INT-11 Beslut endelig source of truth efter bootstrap
-**Status:** Nu
+**Status:** Lukket
 
 **Problem**
 Appen er stadig primær i overgangsfasen, men steady-state er ikke helt låst produktmæssigt.
@@ -258,6 +263,22 @@ Appen er stadig primær i overgangsfasen, men steady-state er ikke helt låst pr
 
 **Resultat**
 - teamet ved hvad “færdig” betyder for `visited`
+
+### INT-12 Stabiliser tværflade-sync for `visited`
+**Status:** Lukket
+
+**Problem**
+`visited` blev først synkroniseret, men kunne vippe mellem app og web, fordi hybrid-laget stadig blandede legacy-state ind.
+
+**Arbejdet**
+- appen refresher shared `visited` ved login og aktivering
+- web refetche’r `visited` ved fokus og visibility
+- shared backend er gjort autoritativ for `visited` i steady-state
+- passiv remote refresh pusher ikke længere automatisk data tilbage
+
+**Resultat**
+- `visited` forbliver stabil mellem app og web efter ændringer
+- shared backend fungerer nu som reel fælles sandhed for `visited`
 
 ### INT-12 Gør bootstrap-flowet produktklart
 **Status:** Nu

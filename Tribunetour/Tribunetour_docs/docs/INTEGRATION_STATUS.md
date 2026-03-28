@@ -28,13 +28,13 @@ App og web deler nu:
 
 Men løsningen er stadig i en overgangsfase, fordi:
 - reference-data ikke kommer fra én fælles pipeline endnu
-- appens gamle lokale/CloudKit-model stadig lever ved siden af shared backend
+- appens gamle lokale/CloudKit-model stadig lever for app-only spor
 - ikke alle brugerdatafelter er fælles endnu
 
 ### Kort sagt
 Status lige nu er:
 
-`App og web hænger sammen på login og begyndende visited-sync, men ikke endnu på én fuld fælles datamodel og én fælles reference-data-pipeline.`
+`App og web hænger nu sammen på login og delt visited i praksis, men endnu ikke på én fuld fælles datamodel og én fælles reference-data-pipeline.`
 
 ---
 
@@ -52,7 +52,7 @@ flowchart TD
 
     B --> E
     C --> H[SharedVisitedSyncBackend]
-    C --> I[CloudKit]
+    C --> I[CloudKit app-only spor]
     H --> J[Supabase shared backend]
     F --> J
 
@@ -72,7 +72,7 @@ flowchart TD
 - Appen har også et shared visited-sync-spor mod backend.
 - Web bruger shared visited-model.
 - App og web er endnu ikke koblet på samme reference-data-loader.
-- CloudKit lever stadig i appen som del af overgangsarkitekturen.
+- CloudKit lever stadig i appen for app-only data, men er ikke længere fælles sandhed for `visited`.
 
 ---
 
@@ -101,6 +101,7 @@ Det betyder:
 - backend-kontrakten er beskrevet
 - appen har klientkode til shared visited-backend
 - web er bygget videre på shared visited-retningen
+- tværflade-sync er nu verificeret i praksis mellem app og web
 
 Centrale dokumenter:
 - `VISITED_SHARED_MODEL.md`
@@ -156,21 +157,22 @@ Konsekvens:
 - nye mismatch kan opstå igen, hvis data kun opdateres ét sted
 
 ### 2. Visited-sync i appen
-Visited-sync fungerer, men arkitekturen bærer stadig præg af migration.
+Visited-sync fungerer nu i praksis på tværs af app og web, men arkitekturen bærer stadig præg af migration omkring app-only data.
 
 #### Det der virker
 - appen kan logge ind
 - appen kan bruge shared backend
 - appen kan bootstrap’e shared visited-state
 - token-refresh fungerer nu
+- app og web kan ændre `visited`, og ændringen forbliver stabil på tværs
 
 #### Det der stadig er overgang
 - runtime-modes er reduceret, men `CloudKit (legacy)` lever stadig som fallback/internt spor
-- CloudKit er stadig en del af appens model
-- shared sync er endnu ikke tydeligt den endelige eneste model i appen
+- CloudKit er stadig en del af appens model for app-only data
+- foto/review/plan er endnu ikke flyttet til fælles model
 
 Konsekvens:
-- systemet virker, men er endnu mere “migrationsklart” end “færdigkonsolideret”
+- `visited` er nu fælles i praksis, men resten af appens datamodel er ikke fuldt konsolideret
 
 ### 3. Brugerdata ud over `visited`
 Appen har langt mere funktionalitet end web.
@@ -240,8 +242,8 @@ Det gælder især:
 | Token refresh i app | Bygget | Udløbet JWT håndteres nu |
 | Shared visited backend | Bygget | App kan tale med shared backend |
 | Bootstrap fra app til shared | Bygget | Første login har særskilt bootstrap-retning |
-| Web visited-model | Delvist færdig | Fælles retning findes, men stadig en overgangshistorik |
-| Visited steady-state | Bygget | Shared backend er låst som autoritativ efter bootstrap |
+| Web visited-model | Bygget | Web læser og skriver shared `visited` som produktmodel |
+| Visited steady-state | Bygget | Shared backend er autoritativ efter bootstrap og verificeret i praksis |
 | Reference-data-kontrakt | Bygget | IDs og regler er dokumenteret |
 | Fælles reference-data-pipeline | Mangler | App og web læser ikke samme tekniske pipeline endnu |
 | Kampprogram i indhold | Bygget | Web og app er i sync lige nu |
