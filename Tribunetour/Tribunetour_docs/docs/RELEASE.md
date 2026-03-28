@@ -137,6 +137,22 @@ Resultatet skal læses sådan:
 - manglende realtime er ikke i sig selv en blocker, hvis fokus- og aktiveringsflowet virker som forventet
 - kendte begrænsninger skal beskrives eksplicit, men må ikke blandes sammen med reelle blockers
 
+### Notes sanity-rutine
+Denne rutine er den hurtigste måde at bekræfte, at det første delte notes-flow stadig holder.
+
+Kør den i denne rækkefølge:
+1. log ind med samme bruger i app og på web
+2. åbn et stadion med note-felt i appen og skriv en tydelig testnote
+3. åbn samme stadion på web og bekræft at noten vises efter normal fokus/opdatering
+4. redigér noten på web og gem
+5. gå tilbage til appen og bekræft at den opdaterede note vises efter normal aktivering
+6. slet noteindholdet ét sted og bekræft at tom note-tilstand står stabilt det andet sted
+
+Resultatet skal læses sådan:
+- hvis flowet holder i begge retninger, er notes-sporet grønt i første version
+- hvis noget fejler, skal fejlen placeres som `notes auth`, `notes read`, `notes write` eller `notes merge`
+- manglende realtime er ikke i sig selv en blocker, hvis fokus- og aktiveringsflowet virker som forventet
+
 ### 1. Build og validering
 - web build er grøn med `npm run build`
 - reference-data validering er grøn med `npm run validate:data`

@@ -846,6 +846,9 @@ Leverance:
 Hvorfor nu:
 - `notes` skal ikke gentage det tidlige `visited`-forløb med uklar ansvarslinje
 
+Status:
+- lukket i første version via notes sanity-rutine i `RELEASE.md`
+
 ### Sprint 3 DoD
 
 Sprint 3 er færdig når:
@@ -853,6 +856,10 @@ Sprint 3 er færdig når:
 - app og web kan læse/skrive samme note-model i mindst ét bevidst flow
 - notes har en lille, gentagelig tværflade-test
 - reviews, fotos og plan stadig bevidst er ude af scope
+
+Aktuel status:
+- `S3-01` til `S3-05` er lukket i første version
+- næste naturlige spor efter Sprint 3 er reel notes-sync-implementering mod shared backend
 
 ### Sprint 3 anbefalet rækkefølge
 
