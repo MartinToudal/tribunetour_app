@@ -6,7 +6,7 @@ Dette dokument giver et samlet overblik over, hvordan Tribunetour hænger sammen
 - web
 - auth
 - reference-data
-- brugerdata (`visited`)
+- brugerdata (`visited`, `notes`)
 
 Målet er at gøre det tydeligt:
 - hvad der allerede er bygget sammen
@@ -34,7 +34,7 @@ Men løsningen er stadig i en overgangsfase, fordi:
 ### Kort sagt
 Status lige nu er:
 
-`App og web hænger nu sammen på login og delt visited i praksis, men endnu ikke på én fuld fælles datamodel og én fælles reference-data-pipeline.`
+`App og web hænger nu sammen på login, delt visited i praksis og et første shared notes-flow på web, men endnu ikke på én fuld fælles datamodel og én fælles reference-data-pipeline.`
 
 ---
 
@@ -191,6 +191,24 @@ Konsekvens:
 - appen er stadig den egentlige primære produktflade
 - web er endnu ikke feature-paritet, selv om retningen er fælles
 
+### 4. Første shared notes-flow
+`notes` er nu taget ud af ren planlægningsfase og ind i første reel produktintegration.
+
+#### Det der virker
+- shared notes-model og backend-kontrakt er skrevet
+- Supabase SQL for `notes`-tabellen, grants og RLS er beskrevet
+- web har ét konkret note-entrypoint på stadiondetaljen
+- notes kan nu gemmes og persists på web for loggede brugere
+
+#### Det der ikke er helt færdigt
+- appen er endnu ikke koblet på shared notes-backend
+- notes er endnu ikke verificeret tværflade mellem app og web
+- notes-sync er derfor ikke på samme modenhedsniveau som `visited`
+
+Konsekvens:
+- `notes` er nu startet som delt datamodel
+- men kun webflowet er i drift i første version
+
 ---
 
 ## Hvad der mangler
@@ -244,6 +262,9 @@ Det gælder især:
 | Bootstrap fra app til shared | Bygget | Første login har særskilt bootstrap-retning |
 | Web visited-model | Bygget | Web læser og skriver shared `visited` som produktmodel |
 | Visited steady-state | Bygget | Shared backend er autoritativ efter bootstrap og verificeret i praksis |
+| Shared notes-model | Bygget | Kontrakt, SQL-runbook og første webflow er på plads |
+| Notes på web | Bygget | Loggede brugere kan gemme noter på stadiondetaljen |
+| Notes app/web sync | Delvist | Webflow virker, men appen er endnu ikke koblet på shared notes-backend |
 | Reference-data-kontrakt | Bygget | IDs og regler er dokumenteret |
 | Fælles reference-data-pipeline | Mangler | App og web læser ikke samme tekniske pipeline endnu |
 | Kampprogram i indhold | Bygget | Web og app er i sync lige nu |
