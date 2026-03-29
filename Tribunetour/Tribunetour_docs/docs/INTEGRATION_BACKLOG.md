@@ -471,11 +471,15 @@ Appen har noter, reviews, billeder og planer, men alt bør ikke gøres shared p�
 - næste arbejde er derfor ikke at vælge område igen, men at modne notes yderligere eller vælge næste datamodel
 
 ### INT-42 Reviews
-**Status:** Senere
+**Status:** Næste
 
 **Arbejdet**
 - beslut om reviews skal være shared eller app-first
 - afklar struktur, ejerskab og visningsbehov på web
+
+**Aktuel beslutning**
+- `reviews` er nu det næste bevidste shared dataområde efter `notes`
+- arbejdet skal holdes smallere end den nuværende appmodel, så vi ikke blander billeder, kategori-noter og summary-flow sammen for tidligt
 
 ### INT-43 Fotos
 **Status:** Senere
@@ -870,6 +874,93 @@ Aktuel status:
 3. `S3-03` backend/repository
 4. `S3-04` første UI-flow
 5. `S3-05` sanity-test
+
+---
+
+## Sprint 4
+
+Dette er den næste konkrete arbejdspakke, hvor Tribunetour går fra delt `notes` til første shared `reviews`-model.
+
+Målet med Sprint 4 er:
+- at gøre `reviews` til den næste bevidste shared datamodel
+- at holde scope smalt, så vi ikke forsøger at dele hele review- og fotooplevelsen på én gang
+- at bevise én lille, værdifuld review-model før bred paritet
+
+### Sprint 4 scope
+
+#### S4-01 Definér shared reviews-kontrakten
+Bygger på:
+- `INT-42`
+
+Leverance:
+- skrevet kontrakt for `reviews`
+- beslutning om hvilke felter der er med i v1
+- tydelig konfliktretning og relation til `clubId`
+
+Hvorfor nu:
+- reviews er mere komplekse end `notes`, så vi skal være endnu skarpere på modellen før implementering
+
+#### S4-02 Lav en app-boundary for reviews
+Bygger på:
+- `INT-42`
+
+Leverance:
+- én tydelig seam mellem lokal review-model og kommende shared review-model
+- mindre direkte kobling mellem UI og `VisitedStore`
+
+Hvorfor nu:
+- appens review-model er allerede rig, og vi skal kunne skære en mindre shared version ud uden at mudre resten
+
+#### S4-03 Etabler første shared backend-retning for reviews
+Bygger på:
+- `S4-01`
+- `S4-02`
+
+Leverance:
+- første repository/backend-kontrakt for reviews
+- klar read/write-retning for samme bruger på app og web
+
+Hvorfor nu:
+- vi skal bevise drift og ikke kun datadesign
+
+#### S4-04 Vis reviews ét sted på web og ét sted i appen
+Bygger på:
+- `S4-03`
+
+Leverance:
+- ét enkelt review-entrypoint på web
+- ét tilsvarende review-entrypoint i appen
+- ingen bred paritet endnu
+
+Hvorfor nu:
+- det giver nok bruger- og produktvalidering uden at åbne alle reviewflader samtidig
+
+#### S4-05 Tilføj en review sanity-test
+Bygger på:
+- `S4-04`
+
+Leverance:
+- kort testflow for review opret/redigér på tværs af app og web
+- tydelig fejlplacering som `review auth`, `review read`, `review write` eller `review merge`
+
+Hvorfor nu:
+- reviews skal følge samme driftsdisciplin som `visited` og `notes`
+
+### Sprint 4 DoD
+
+Sprint 4 er færdig når:
+- shared review-kontrakten er skrevet og godkendt
+- app og web kan læse/skrive samme review-model i mindst ét bevidst flow
+- reviews har en lille, gentagelig tværflade-test
+- fotos og weekend-plan stadig bevidst er ude af scope
+
+### Sprint 4 anbefalet rækkefølge
+
+1. `S4-01` kontrakt
+2. `S4-02` app-boundary
+3. `S4-03` backend/repository
+4. `S4-04` første UI-flow
+5. `S4-05` sanity-test
 
 ---
 
