@@ -8,18 +8,21 @@ struct MatchDetailView: View {
     let fixtures: [Fixture]
     @ObservedObject var visitedStore: VisitedStore
     @ObservedObject var notesStore: AppNotesStore
+    @ObservedObject var reviewsStore: AppReviewsStore
 
     init(
         fixture: Fixture,
         clubById: [String: Club],
         visitedStore: VisitedStore,
         notesStore: AppNotesStore,
+        reviewsStore: AppReviewsStore,
         fixtures: [Fixture] = []
     ) {
         self.fixture = fixture
         self.clubById = clubById
         self.visitedStore = visitedStore
         self.notesStore = notesStore
+        self.reviewsStore = reviewsStore
         self.fixtures = fixtures
     }
     private let matchTimeZone = TimeZone(identifier: "Europe/Copenhagen") ?? .current
@@ -96,6 +99,7 @@ struct MatchDetailView: View {
                             club: venueClub,
                             visitedStore: visitedStore,
                             notesStore: notesStore,
+                            reviewsStore: reviewsStore,
                             clubById: clubById,
                             fixtures: fixtures
                         )

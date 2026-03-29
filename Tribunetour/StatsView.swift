@@ -6,6 +6,7 @@ struct StatsView: View {
     let clubs: [Club]
     @ObservedObject var visitedStore: VisitedStore
     @ObservedObject var notesStore: AppNotesStore
+    @ObservedObject var reviewsStore: AppReviewsStore
     @ObservedObject var authSession: AppAuthSession
     let authClient: AppAuthClient
     let bootstrapCoordinator: AppVisitedBootstrapCoordinator
@@ -103,13 +104,11 @@ struct StatsView: View {
     }
 
     private var reviewedCount: Int {
-        visitedStore.records.values.reduce(0) { acc, r in
-            acc + ((r.review?.hasMeaningfulContent == true) ? 1 : 0)
-        }
+        reviewsStore.reviewsByClubId.count
     }
 
     private var averageReviewScoreText: String? {
-        let averages = visitedStore.records.values.compactMap { $0.review?.averageScore }
+        let averages = reviewsStore.reviewsByClubId.values.compactMap { $0.averageScore }
         guard !averages.isEmpty else { return nil }
         let total = averages.reduce(0, +)
         let overall = total / Double(averages.count)
@@ -570,6 +569,7 @@ struct StatsView: View {
                                     club: item.club,
                                     visitedStore: visitedStore,
                                     notesStore: notesStore,
+                                    reviewsStore: reviewsStore,
                                     clubById: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
                                 )
                             } label: {
@@ -606,6 +606,7 @@ struct StatsView: View {
                                     club: club,
                                     visitedStore: visitedStore,
                                     notesStore: notesStore,
+                                    reviewsStore: reviewsStore,
                                     clubById: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
                                 )
                             } label: {

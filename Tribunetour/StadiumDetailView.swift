@@ -9,6 +9,7 @@ struct StadiumDetailView: View {
     let fixtures: [Fixture]
     @ObservedObject var visitedStore: VisitedStore
     @ObservedObject var notesStore: AppNotesStore
+    @ObservedObject var reviewsStore: AppReviewsStore
     @State private var expandedReviewCategories: Set<VisitedStore.ReviewCategory> = []
     @State private var selectedPhotoItems: [PhotosPickerItem] = []
     @State private var selectedPhotoFileName: String?
@@ -25,12 +26,14 @@ struct StadiumDetailView: View {
         club: Club,
         visitedStore: VisitedStore,
         notesStore: AppNotesStore,
+        reviewsStore: AppReviewsStore,
         clubById: [String: Club] = [:],
         fixtures: [Fixture] = []
     ) {
         self.club = club
         self.visitedStore = visitedStore
         self.notesStore = notesStore
+        self.reviewsStore = reviewsStore
         self.clubById = clubById.isEmpty ? [club.id: club] : clubById
         self.fixtures = fixtures
     }
@@ -246,11 +249,11 @@ struct StadiumDetailView: View {
                 TextField("Tags (kommasepareret)", text: reviewTagsBinding)
 
                 Button(role: .destructive) {
-                    visitedStore.setReview(club.id, nil)
+                    reviewsStore.clearReview(for: club.id)
                 } label: {
                     Label("Ryd anmeldelse", systemImage: "trash")
                 }
-                .disabled(visitedStore.review(for: club.id)?.hasMeaningfulContent != true)
+                .disabled(!reviewsStore.hasMeaningfulReview(for: club.id))
             } header: {
                 Text("Stadion-anmeldelse")
             } footer: {
@@ -358,46 +361,31 @@ struct StadiumDetailView: View {
 
     private var reviewMatchBinding: Binding<String> {
         Binding(
-            get: { visitedStore.review(for: club.id)?.matchLabel ?? "" },
-            set: { newValue in
-                var review = visitedStore.review(for: club.id) ?? VisitedStore.StadiumReview()
-                review.matchLabel = newValue
-                review.updatedAt = Date()
-                visitedStore.setReview(club.id, review)
-            }
+            get: { reviewsStore.review(for: club.id)?.matchLabel ?? "" },
+            set: { newValue in reviewsStore.setMatchLabel(newValue, for: club.id) }
         )
     }
 
     private var reviewSummaryBinding: Binding<String> {
         Binding(
-            get: { visitedStore.review(for: club.id)?.summary ?? "" },
-            set: { newValue in
-                var review = visitedStore.review(for: club.id) ?? VisitedStore.StadiumReview()
-                review.summary = newValue
-                review.updatedAt = Date()
-                visitedStore.setReview(club.id, review)
-            }
+            get: { reviewsStore.review(for: club.id)?.summary ?? "" },
+            set: { newValue in reviewsStore.setSummary(newValue, for: club.id) }
         )
     }
 
     private var reviewTagsBinding: Binding<String> {
         Binding(
-            get: { visitedStore.review(for: club.id)?.tags ?? "" },
-            set: { newValue in
-                var review = visitedStore.review(for: club.id) ?? VisitedStore.StadiumReview()
-                review.tags = newValue
-                review.updatedAt = Date()
-                visitedStore.setReview(club.id, review)
-            }
+            get: { reviewsStore.review(for: club.id)?.tags ?? "" },
+            set: { newValue in reviewsStore.setTags(newValue, for: club.id) }
         )
     }
 
     private var scoredCategoryCount: Int {
-        visitedStore.review(for: club.id)?.scores.count ?? 0
+        reviewsStore.review(for: club.id)?.scores.count ?? 0
     }
 
     private func reviewScoreValue(for category: VisitedStore.ReviewCategory) -> Int? {
-        visitedStore.review(for: club.id)?.score(for: category)
+        reviewsStore.review(for: club.id)?.score(for: category)
     }
 
     private func reviewScoreLabel(for category: VisitedStore.ReviewCategory) -> String {
@@ -406,19 +394,12 @@ struct StadiumDetailView: View {
     }
 
     private func reviewNotePreview(for category: VisitedStore.ReviewCategory) -> String? {
-        let note = visitedStore.review(for: club.id)?.note(for: category).trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let note = reviewsStore.review(for: club.id)?.note(for: category).trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         return note.isEmpty ? nil : note
     }
 
     private func setReviewScore(for category: VisitedStore.ReviewCategory, to score: Int?) {
-        var review = visitedStore.review(for: club.id) ?? VisitedStore.StadiumReview()
-        if let score {
-            review.scores[category] = min(10, max(1, score))
-        } else {
-            review.scores[category] = nil
-        }
-        review.updatedAt = Date()
-        visitedStore.setReview(club.id, review)
+        reviewsStore.setScore(score, for: category, clubId: club.id)
     }
 
     private func incrementScore(for category: VisitedStore.ReviewCategory) {
@@ -446,23 +427,13 @@ struct StadiumDetailView: View {
 
     private func reviewCategoryNoteBinding(for category: VisitedStore.ReviewCategory) -> Binding<String> {
         Binding(
-            get: { visitedStore.review(for: club.id)?.note(for: category) ?? "" },
-            set: { newValue in
-                var review = visitedStore.review(for: club.id) ?? VisitedStore.StadiumReview()
-                let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
-                if trimmed.isEmpty {
-                    review.categoryNotes[category] = nil
-                } else {
-                    review.categoryNotes[category] = newValue
-                }
-                review.updatedAt = Date()
-                visitedStore.setReview(club.id, review)
-            }
+            get: { reviewsStore.review(for: club.id)?.note(for: category) ?? "" },
+            set: { newValue in reviewsStore.setCategoryNote(newValue, for: category, clubId: club.id) }
         )
     }
 
     private var reviewAverageText: String? {
-        guard let avg = visitedStore.review(for: club.id)?.averageScore else { return nil }
+        guard let avg = reviewsStore.review(for: club.id)?.averageScore else { return nil }
         return String(format: "%.1f", avg)
     }
 

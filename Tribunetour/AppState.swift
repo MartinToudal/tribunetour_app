@@ -16,6 +16,7 @@ final class AppState: ObservableObject {
 
     let visitedStore: VisitedStore
     let notesStore: AppNotesStore
+    let reviewsStore: AppReviewsStore
     let authSession = AppAuthSession()
     let authClient = AppAuthClient()
     let visitedSyncMode: AppVisitedSyncMode
@@ -46,6 +47,9 @@ final class AppState: ObservableObject {
             visitedStore: self.visitedStore,
             syncBackend: AppNotesSyncFactory.makeSharedBackend(authSession: authSession, authClient: authClient),
             authSession: self.authSession
+        )
+        self.reviewsStore = AppReviewsStore(
+            visitedStore: self.visitedStore
         )
 
         visitedStore.$records

@@ -29,7 +29,8 @@ struct ContentView: View {
                         clubs: appState.clubs,
                         fixtures: appState.fixtures,
                         visitedStore: appState.visitedStore,
-                        notesStore: appState.notesStore
+                        notesStore: appState.notesStore,
+                        reviewsStore: appState.reviewsStore
                     )
                         .tabItem { Label("Stadions", systemImage: "map") }
 
@@ -37,7 +38,8 @@ struct ContentView: View {
                         clubs: appState.clubs,
                         fixtures: appState.fixtures,
                         visitedStore: appState.visitedStore,
-                        notesStore: appState.notesStore
+                        notesStore: appState.notesStore,
+                        reviewsStore: appState.reviewsStore
                     )
                         .tabItem { Label("Kampe", systemImage: "sportscourt") }
 
@@ -49,6 +51,7 @@ struct ContentView: View {
                         clubs: appState.clubs,
                         visitedStore: appState.visitedStore,
                         notesStore: appState.notesStore,
+                        reviewsStore: appState.reviewsStore,
                         authSession: appState.authSession,
                         authClient: appState.authClient,
                         bootstrapCoordinator: appState.visitedBootstrapCoordinator,
@@ -81,6 +84,7 @@ struct StadiumsView: View {
     let fixtures: [Fixture]
     @ObservedObject var visitedStore: VisitedStore
     @ObservedObject var notesStore: AppNotesStore
+    @ObservedObject var reviewsStore: AppReviewsStore
 
     @EnvironmentObject private var locationStore: LocationStore
 
@@ -131,7 +135,7 @@ struct StadiumsView: View {
     }
 
     private func isReviewed(_ clubId: String) -> Bool {
-        visitedStore.review(for: clubId)?.hasMeaningfulContent == true
+        reviewsStore.hasMeaningfulReview(for: clubId)
     }
 
     private var filteredAndSortedClubs: [Club] {
@@ -314,6 +318,7 @@ struct StadiumsView: View {
                                 club: club,
                                 visitedStore: visitedStore,
                                 notesStore: notesStore,
+                                reviewsStore: reviewsStore,
                                 clubById: clubByIdMap,
                                 fixtures: fixtures
                             )
@@ -447,6 +452,7 @@ struct StadiumsView: View {
                     club: club,
                     visitedStore: visitedStore,
                     notesStore: notesStore,
+                    reviewsStore: reviewsStore,
                     clubById: clubByIdMap,
                     fixtures: fixtures
                 )
