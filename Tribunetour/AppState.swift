@@ -12,6 +12,7 @@ final class AppState: ObservableObject {
     @Published private(set) var fixturesVersion: String?
     @Published private(set) var fixturesRemoteURL: URL?
     @Published private(set) var fixturesFallbackReason: String?
+    @Published private(set) var notesSyncIssue: String?
 
     let visitedStore: VisitedStore
     let notesStore: AppNotesStore
@@ -41,7 +42,11 @@ final class AppState: ObservableObject {
             syncBackend: visitedSyncConfiguration.backend,
             mergePolicy: visitedSyncConfiguration.mergePolicy
         )
-        self.notesStore = AppNotesStore(visitedStore: self.visitedStore)
+        self.notesStore = AppNotesStore(
+            visitedStore: self.visitedStore,
+            syncBackend: AppNotesSyncFactory.makeSharedBackend(authSession: authSession, authClient: authClient),
+            authSession: self.authSession
+        )
 
         visitedStore.$records
             .dropFirst()
@@ -52,6 +57,13 @@ final class AppState: ObservableObject {
             }
             .store(in: &cancellables)
 
+        notesStore.$lastSyncIssue
+            .removeDuplicates()
+            .sink { [weak self] issue in
+                self?.notesSyncIssue = issue
+            }
+            .store(in: &cancellables)
+
         authSession.$snapshot
             .removeDuplicates()
             .sink { [weak self] snapshot in
@@ -59,10 +71,12 @@ final class AppState: ObservableObject {
                 if snapshot.isAuthenticated {
                     Task {
                         await self.visitedStore.refreshFromRemote()
+                        await self.notesStore.refreshFromRemote()
                         await self.reconcileSharedSyncModeAfterSessionRestore(snapshot: snapshot)
                     }
                 } else {
                     self.syncRuntimeInfoMessage = nil
+                    self.notesSyncIssue = nil
                 }
             }
             .store(in: &cancellables)
@@ -134,6 +148,7 @@ final class AppState: ObservableObject {
         guard authSession.snapshot.isAuthenticated else { return }
         Task {
             await visitedStore.refreshFromRemote()
+            await notesStore.refreshFromRemote()
             await reconcileSharedSyncModeAfterSessionRestore(snapshot: authSession.snapshot)
         }
     }

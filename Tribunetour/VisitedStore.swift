@@ -308,6 +308,14 @@ final class VisitedStore: ObservableObject {
         persist()
     }
 
+    func applySharedNote(_ note: String, for clubId: String, updatedAt: Date) {
+        var record = records[clubId] ?? Record(visited: false)
+        record.notes = note
+        record.updatedAt = max(record.updatedAt, updatedAt)
+        records[clubId] = record
+        persist()
+    }
+
     func review(for clubId: String) -> StadiumReview? {
         records[clubId]?.review
     }
