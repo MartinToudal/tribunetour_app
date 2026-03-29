@@ -243,7 +243,7 @@ Denne matrix låser den aktuelle produktretning for brugerdata, så app og web i
 | `visited` | Shared nu | Shared backend efter bootstrap | Læs/skriv | Læs/skriv | Fælles kerneområde |
 | `visitedDate` | Shared nu | Shared backend efter bootstrap | Skrives sammen med `visited` | Del af `VisitedStore` + shared sync | Behandles som del af samme model |
 | `notes` | Shared | Shared notes-backend + lokal app-seam | Delt mellem app og web | Første version bygget | Verificeret begge veje, men ikke realtime |
-| `review` | App-only | `VisitedStore` / lokal + CloudKit legacy | Ikke delt | Fuldt understøttet | Rig datamodel med scores og kategori-noter |
+| `review` | App-only lige nu, shared næste | `VisitedStore.StadiumReview` / lokal + CloudKit legacy | Første shared spor planlagt | Fuldt understøttet | Samme reviewmodel skal bruges i app og web |
 | `photos` | App-only | Lokal filstorage + CloudKit legacy | Ikke delt | Fuldt understøttet | Højere kompleksitet og konfliktflade |
 | `weekend plan` | App-only | `WeekendPlanStore` / lokal + CloudKit | Ikke delt | Fuldt understøttet | Separat brugerdata-spor |
 | `achievements/progression UI` | App-only | Lokal app-state | Ikke delt | Understøttet | Kan vises afledt, men er ikke delt datalag |
@@ -260,7 +260,6 @@ Disse data må behandles som fælles tværplatformsdata og er grundlaget for:
 - visited-status på stadioner og kampe
 
 #### App-only
-- `notes`
 - `review`
 - `photos`
 - `weekend plan`
@@ -269,44 +268,43 @@ Disse data må behandles som fælles tværplatformsdata og er grundlaget for:
 Disse data må ikke implicit loves som tværplatformsdata i produktcopy eller UI.
 
 #### Shared senere
-Følgende områder er kandidater til senere fælles model, men er ikke besluttet som næste implementering:
-1. `notes`
-2. `review`
-3. `weekend plan`
-4. `photos`
+Følgende områder er kandidater til senere fælles model, men er ikke alle lige langt:
+1. `review`
+2. `weekend plan`
+3. `photos`
 
 Den anbefalede rækkefølge afspejler implementeringsrisiko:
-- `notes` er lettest at dele efter `visited`
-- `review` kræver kontrakt for rig struktur
+- `review` kræver kontrakt for rig struktur, men følger samme model som appen
 - `weekend plan` kræver beslutning om web-scope
 - `photos` er mest komplekst pga. storage, metadata og konfliktregler
 
 ## Næste shared dataområde
 
 Den næste fælles datamodel efter `visited` er nu besluttet til at være:
-- `notes`
+- `review`
 
 Første kontraktniveau for dette spor ligger i:
-- `NOTES_SHARED_MODEL.md`
+- `REVIEWS_SHARED_MODEL.md`
 
-### Hvorfor `notes`
-`notes` er det mest naturlige næste skridt, fordi:
-- det ligger tæt på den eksisterende `visited`-model
-- det giver reel brugeroplevelsesværdi på tværs af app og web
-- konfliktfladen er mindre end for fotos og reviews
-- det kræver ikke, at web først får hele plan-flowet eller review-UI’et
+### Hvorfor `review`
+`review` er det mest naturlige næste skridt nu, fordi:
+- `visited` og `notes` allerede er delt og virker i praksis
+- review giver høj produktværdi på tværs af app og web
+- det bygger videre på samme stadion-/brugerrelation som de andre delte modeller
+- det er stadig mere overskueligt end at tage fotos eller weekend-plan først
 
 ### Hvad denne beslutning betyder
-Det betyder ikke, at `notes` skal implementeres med det samme i alle flader.
-
 Det betyder:
-- næste shared dataarbejde skal tage udgangspunkt i `notes`
-- `review`, `photos` og `weekend plan` tages ikke som parallelle dataspot nu
+- næste shared dataarbejde skal tage udgangspunkt i `review`
+- samme reviewmodel skal bruges i app og web
+- `photos` og `weekend plan` tages ikke som parallelle dataspot nu
 - hvis et nyt integrationsspor kræver endnu et shared dataområde, skal det vurderes op mod denne prioritet
 
+Det betyder ikke:
+- at fotos automatisk bliver del af reviewkontrakten
+- at hele reviewoplevelsen skal åbnes alle steder i UI på samme tid
+
 ### Hvad der bevidst ikke tages nu
-- `review`
-  - rigere struktur og større UI-konsekvens
 - `photos`
   - høj storage- og sync-kompleksitet
 - `weekend plan`

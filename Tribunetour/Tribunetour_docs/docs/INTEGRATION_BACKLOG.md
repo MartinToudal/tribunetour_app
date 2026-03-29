@@ -883,8 +883,8 @@ Dette er den næste konkrete arbejdspakke, hvor Tribunetour går fra delt `notes
 
 Målet med Sprint 4 er:
 - at gøre `reviews` til den næste bevidste shared datamodel
-- at holde scope smalt, så vi ikke forsøger at dele hele review- og fotooplevelsen på én gang
-- at bevise én lille, værdifuld review-model før bred paritet
+- at bruge samme reviewmodel i app og web
+- at holde fotos udenfor, så vi ikke forsøger at dele hele review- og fotooplevelsen på én gang
 
 ### Sprint 4 scope
 
@@ -894,22 +894,23 @@ Bygger på:
 
 Leverance:
 - skrevet kontrakt for `reviews`
-- beslutning om hvilke felter der er med i v1
+- låst at shared `review` følger appens eksisterende `StadiumReview`
 - tydelig konfliktretning og relation til `clubId`
 
 Hvorfor nu:
 - reviews er mere komplekse end `notes`, så vi skal være endnu skarpere på modellen før implementering
+- en separat webmodel vil skabe unødig mapping og ekstra fejlflader
 
 #### S4-02 Lav en app-boundary for reviews
 Bygger på:
 - `INT-42`
 
 Leverance:
-- én tydelig seam mellem lokal review-model og kommende shared review-model
+- én tydelig seam mellem lokal review-lagring og shared review-sync
 - mindre direkte kobling mellem UI og `VisitedStore`
 
 Hvorfor nu:
-- appens review-model er allerede rig, og vi skal kunne skære en mindre shared version ud uden at mudre resten
+- appens review-model er allerede rig, og vi skal beskytte sync-laget uden at opfinde en anden model
 
 #### S4-03 Etabler første shared backend-retning for reviews
 Bygger på:
@@ -930,6 +931,7 @@ Bygger på:
 Leverance:
 - ét enkelt review-entrypoint på web
 - ét tilsvarende review-entrypoint i appen
+- samme reviewfelter bag begge flows
 - ingen bred paritet endnu
 
 Hvorfor nu:
