@@ -34,7 +34,7 @@ Men løsningen er stadig i en overgangsfase, fordi:
 ### Kort sagt
 Status lige nu er:
 
-`App og web hænger nu sammen på login, delt visited i praksis og et første shared notes-flow på web, men endnu ikke på én fuld fælles datamodel og én fælles reference-data-pipeline.`
+`App og web hænger nu sammen på login, delt visited i praksis og delt notes i praksis, men endnu ikke på én fuld fælles datamodel og én fælles reference-data-pipeline.`
 
 ---
 
@@ -191,23 +191,25 @@ Konsekvens:
 - appen er stadig den egentlige primære produktflade
 - web er endnu ikke feature-paritet, selv om retningen er fælles
 
-### 4. Første shared notes-flow
-`notes` er nu taget ud af ren planlægningsfase og ind i første reel produktintegration.
+### 4. Shared notes virker nu i praksis
+`notes` er nu taget ud af ren planlægningsfase og ind i reel tværflade-integration.
 
 #### Det der virker
 - shared notes-model og backend-kontrakt er skrevet
 - Supabase SQL for `notes`-tabellen, grants og RLS er beskrevet
 - web har ét konkret note-entrypoint på stadiondetaljen
 - notes kan nu gemmes og persists på web for loggede brugere
+- appen kan nu læse og skrive mod samme shared notes-backend
+- notes er verificeret manuelt begge veje mellem app og web
 
 #### Det der ikke er helt færdigt
-- appen er endnu ikke koblet på shared notes-backend
-- notes er endnu ikke verificeret tværflade mellem app og web
-- notes-sync er derfor ikke på samme modenhedsniveau som `visited`
+- sync er stadig fokus-/aktiveringsbaseret og ikke realtime
+- notes bruger stadig en forsigtig merge-retning for at beskytte eksisterende app-noter
+- richer brugerdata som reviews, fotos og plan er stadig ikke delte
 
 Konsekvens:
-- `notes` er nu startet som delt datamodel
-- men kun webflowet er i drift i første version
+- `notes` er nu en delt datamodel i praksis
+- men den er stadig smallere og mindre moden end `visited`
 
 ---
 
@@ -262,9 +264,9 @@ Det gælder især:
 | Bootstrap fra app til shared | Bygget | Første login har særskilt bootstrap-retning |
 | Web visited-model | Bygget | Web læser og skriver shared `visited` som produktmodel |
 | Visited steady-state | Bygget | Shared backend er autoritativ efter bootstrap og verificeret i praksis |
-| Shared notes-model | Bygget | Kontrakt, SQL-runbook og første webflow er på plads |
+| Shared notes-model | Bygget | Kontrakt, SQL-runbook og shared backend er på plads |
 | Notes på web | Bygget | Loggede brugere kan gemme noter på stadiondetaljen |
-| Notes app/web sync | Delvist | Webflow virker, men appen er endnu ikke koblet på shared notes-backend |
+| Notes app/web sync | Bygget | Verificeret manuelt begge veje med kendt begrænsning: ikke realtime |
 | Reference-data-kontrakt | Bygget | IDs og regler er dokumenteret |
 | Fælles reference-data-pipeline | Mangler | App og web læser ikke samme tekniske pipeline endnu |
 | Kampprogram i indhold | Bygget | Web og app er i sync lige nu |

@@ -242,7 +242,7 @@ Denne matrix låser den aktuelle produktretning for brugerdata, så app og web i
 | --- | --- | --- | --- | --- | --- |
 | `visited` | Shared nu | Shared backend efter bootstrap | Læs/skriv | Læs/skriv | Fælles kerneområde |
 | `visitedDate` | Shared nu | Shared backend efter bootstrap | Skrives sammen med `visited` | Del af `VisitedStore` + shared sync | Behandles som del af samme model |
-| `notes` | App-only | `VisitedStore` / lokal + CloudKit legacy | Ikke delt | Fuldt understøttet | Deles ikke endnu |
+| `notes` | Shared | Shared notes-backend + lokal app-seam | Delt mellem app og web | Første version bygget | Verificeret begge veje, men ikke realtime |
 | `review` | App-only | `VisitedStore` / lokal + CloudKit legacy | Ikke delt | Fuldt understøttet | Rig datamodel med scores og kategori-noter |
 | `photos` | App-only | Lokal filstorage + CloudKit legacy | Ikke delt | Fuldt understøttet | Højere kompleksitet og konfliktflade |
 | `weekend plan` | App-only | `WeekendPlanStore` / lokal + CloudKit | Ikke delt | Fuldt understøttet | Separat brugerdata-spor |

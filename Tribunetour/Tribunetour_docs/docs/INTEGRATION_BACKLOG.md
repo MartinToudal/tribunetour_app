@@ -459,7 +459,7 @@ Appen har noter, reviews, billeder og planer, men alt bør ikke gøres shared p�
 - en realistisk konvergensplan i stedet for en stor omskrivning
 
 ### INT-41 Noter
-**Status:** Næste
+**Status:** Bygget i første version
 
 **Arbejdet**
 - beslut om noter skal være shared
@@ -467,7 +467,8 @@ Appen har noter, reviews, billeder og planer, men alt bør ikke gøres shared p�
 
 **Aktuel beslutning**
 - `notes` er valgt som næste shared datamodel efter `visited`
-- næste arbejde er derfor ikke at vælge område igen, men at definere kontrakt og scope
+- første delte version er nu bygget og verificeret begge veje
+- næste arbejde er derfor ikke at vælge område igen, men at modne notes yderligere eller vælge næste datamodel
 
 ### INT-42 Reviews
 **Status:** Senere
@@ -858,8 +859,9 @@ Sprint 3 er færdig når:
 - reviews, fotos og plan stadig bevidst er ude af scope
 
 Aktuel status:
-- `S3-01` til `S3-05` er lukket i første version
-- næste naturlige spor efter Sprint 3 er reel notes-sync-implementering mod shared backend
+- `S3-01` til `S3-05` er lukket
+- notes virker nu begge veje mellem app og web
+- næste naturlige spor efter Sprint 3 er enten modning af notes eller valg af næste shared datamodel
 
 ### Sprint 3 anbefalet rækkefølge
 

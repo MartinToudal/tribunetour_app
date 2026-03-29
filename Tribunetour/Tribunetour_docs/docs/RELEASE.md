@@ -138,7 +138,7 @@ Resultatet skal læses sådan:
 - kendte begrænsninger skal beskrives eksplicit, men må ikke blandes sammen med reelle blockers
 
 ### Notes sanity-rutine
-Denne rutine er den hurtigste måde at bekræfte, at det første delte notes-flow stadig holder.
+Denne rutine er den hurtigste måde at bekræfte, at den delte notes-model stadig holder.
 
 Kør den i denne rækkefølge:
 1. log ind med samme bruger i app og på web
@@ -149,9 +149,14 @@ Kør den i denne rækkefølge:
 6. slet noteindholdet ét sted og bekræft at tom note-tilstand står stabilt det andet sted
 
 Resultatet skal læses sådan:
-- hvis flowet holder i begge retninger, er notes-sporet grønt i første version
+- hvis flowet holder i begge retninger, er notes-sporet grønt i praksis
 - hvis noget fejler, skal fejlen placeres som `notes auth`, `notes read`, `notes write` eller `notes merge`
 - manglende realtime er ikke i sig selv en blocker, hvis fokus- og aktiveringsflowet virker som forventet
+
+Aktuel status:
+- verificeret manuelt som fungerende begge veje mellem app og web
+- notes bruger shared backend som fælles model
+- kendt begrænsning: sync er fokus-/aktiveringsbaseret, ikke realtime
 
 ### 1. Build og validering
 - web build er grøn med `npm run build`
