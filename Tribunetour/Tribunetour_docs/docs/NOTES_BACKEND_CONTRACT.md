@@ -171,3 +171,5 @@ Det er bevidst parallelt til `visited`, så notes kan bygges med samme repositor
 1. etablere første repository-lag for notes
 2. koble appens nye notes-boundary på samme kontraktretning
 3. vise ét første note-flow i app og web
+
+Se `NOTES_SUPABASE_SQL.md` for konkret tabel-, grant- og policy-setup i Supabase.
