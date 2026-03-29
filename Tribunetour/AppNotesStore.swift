@@ -141,6 +141,10 @@ final class AppNotesStore: ObservableObject {
 
     private func pushPendingRemoteNotes() async {
         guard authSession.snapshot.isAuthenticated else { return }
+        guard let userId = authSession.snapshot.userId else {
+            lastSyncIssue = "Shared notes sync mangler bruger-id."
+            return
+        }
         let clubIds = pendingRemotePushClubIds.sorted()
         pendingRemotePushClubIds.removeAll()
 
@@ -148,7 +152,7 @@ final class AppNotesStore: ObservableObject {
             let note = visitedStore.records[clubId]?.notes ?? ""
             let updatedAt = noteUpdatedAtByClubId[clubId] ?? Date()
             do {
-                try await syncBackend.upsert(clubId: clubId, note: note, updatedAt: updatedAt)
+                try await syncBackend.upsert(userId: userId, clubId: clubId, note: note, updatedAt: updatedAt)
                 lastSyncIssue = nil
             } catch {
                 pendingRemotePushClubIds.insert(clubId)
@@ -160,10 +164,15 @@ final class AppNotesStore: ObservableObject {
 
     private func pushLocalPreferredWrites(_ writes: [(clubId: String, note: String, updatedAt: Date)]) async {
         guard authSession.snapshot.isAuthenticated else { return }
+        guard let userId = authSession.snapshot.userId else {
+            lastSyncIssue = "Shared notes sync mangler bruger-id."
+            return
+        }
 
         for write in writes {
             do {
                 try await syncBackend.upsert(
+                    userId: userId,
                     clubId: write.clubId,
                     note: write.note,
                     updatedAt: write.updatedAt

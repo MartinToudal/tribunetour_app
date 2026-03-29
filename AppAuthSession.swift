@@ -6,6 +6,36 @@ struct AppSessionSnapshot: Equatable {
     let userEmail: String?
     let bearerToken: String?
     let refreshToken: String?
+
+    var userId: String? {
+        Self.jwtSubject(from: bearerToken)
+    }
+
+    private static func jwtSubject(from token: String?) -> String? {
+        guard let token else { return nil }
+        let segments = token.split(separator: ".")
+        guard segments.count >= 2 else { return nil }
+
+        var payload = String(segments[1])
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+
+        let remainder = payload.count % 4
+        if remainder != 0 {
+            payload.append(String(repeating: "=", count: 4 - remainder))
+        }
+
+        guard
+            let data = Data(base64Encoded: payload),
+            let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let sub = object["sub"] as? String,
+            !sub.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        else {
+            return nil
+        }
+
+        return sub
+    }
 }
 
 @MainActor

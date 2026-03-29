@@ -56,12 +56,14 @@ struct SharedNoteRecordDTO: Codable {
 }
 
 struct SharedNoteWriteRow: Codable {
+    let userId: String
     let clubId: String
     let note: String
     let updatedAt: Date
     let source: String
 
     enum CodingKeys: String, CodingKey {
+        case userId = "user_id"
         case clubId = "club_id"
         case note
         case updatedAt = "updated_at"
@@ -91,8 +93,9 @@ final class SharedNotesSyncBackend {
         return Dictionary(uniqueKeysWithValues: records.map { ($0.clubId, $0) })
     }
 
-    func upsert(clubId: String, note: String, updatedAt: Date) async throws {
+    func upsert(userId: String, clubId: String, note: String, updatedAt: Date) async throws {
         let payload = SharedNoteWriteRow(
+            userId: userId,
             clubId: clubId,
             note: note,
             updatedAt: updatedAt,
