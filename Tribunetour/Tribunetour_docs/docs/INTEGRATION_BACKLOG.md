@@ -54,6 +54,17 @@ Denne sektion er den operative læserækkefølge.
 
 ### Nu
 
+#### NOW-00 Luk de sidste dataspot før integreret release
+**Status:** Nu
+
+**Mål**
+- gøre Tribunetour til ét produkt hele vejen rundt før næste release
+
+**Leverance**
+- beslutning og implementering for `photos`
+- beslutning og implementering for `weekend plan`
+- beslutning om progression/achievements på web
+
 #### NOW-01 Lås reference-data som ét flow
 **Status:** Nu
 
@@ -131,9 +142,9 @@ Denne sektion er den operative læserækkefølge.
 **Leverance**
 - klar opdeling for:
   - noter
-  - reviews
   - billeder
   - plan/weekend-plan
+  - progression/achievements på web
 
 #### NEXT-03 Lav tværflade test- og releasecheck
 **Status:** Lukket
@@ -1188,6 +1199,63 @@ Den er tænkt som broen mellem strategi og faktisk implementering.
 **Lukket med**
 - `Integration Release Checklist` skrevet ind i `RELEASE.md`
 - `INTEGRATION_STATUS.md` opdateret til at pege på checklisten som aktuel go/no-go
+
+---
+
+## Sprint 5: Release Completion
+
+Dette sprint er den næste konkrete arbejdspakke, hvis målet er en release hvor Tribunetour opleves som ét produkt hele vejen rundt og ikke kun på kernebrugerdata.
+
+Fokus er:
+- `photos`
+- `weekend plan`
+- progression/achievements på web
+
+#### S5-01 Beslut foto-scope for release
+**Status:** Låst
+
+**Mål**
+- gøre billeder til del af web-release
+
+**Leverance**
+- shared photos-kontrakt
+- første webflow for billeder
+- app/web sync for billeder
+- sanity-test for billeder på tværs
+
+#### S5-02 Beslut weekend-plan-scope for release
+**Status:** Låst
+
+**Mål**
+- gøre weekend-plan til del af web-release
+
+**Leverance**
+- shared plan-model
+- første webflow for plan/weekend-plan
+- app/web sync for plan
+- sanity-test for plan på tværs
+
+#### S5-03 Beslut webens progression/achievements
+**Status:** Låst
+
+**Mål**
+- gøre progression/achievements til del af web-release
+
+**Leverance**
+- fælles produktregel for progression
+- webvisning af progression/achievements
+- afklaring af hvilke dele der er afledte, og hvilke der er eksplicit shared data
+
+#### S5-04 Opdatér release-check og produktcopy
+**Status:** Planlagt
+
+**Mål**
+- få release-checken til at matche den endelige produktafgrænsning
+
+**Leverance**
+- opdateret `RELEASE.md`
+- opdateret `INTEGRATION_STATUS.md`
+- produktcopy uden skjulte integrationsforbehold
 
 ---
 

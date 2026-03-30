@@ -242,8 +242,8 @@ Denne matrix låser den aktuelle produktretning for brugerdata, så app og web i
 | --- | --- | --- | --- | --- | --- |
 | `visited` | Shared nu | Shared backend efter bootstrap | Læs/skriv | Læs/skriv | Fælles kerneområde |
 | `visitedDate` | Shared nu | Shared backend efter bootstrap | Skrives sammen med `visited` | Del af `VisitedStore` + shared sync | Behandles som del af samme model |
-| `notes` | Shared | Shared notes-backend + lokal app-seam | Delt mellem app og web | Første version bygget | Verificeret begge veje, men ikke realtime |
-| `review` | App-only lige nu, shared næste | `VisitedStore.StadiumReview` / lokal + CloudKit legacy | Første shared spor planlagt | Fuldt understøttet | Samme reviewmodel skal bruges i app og web |
+| `notes` | Shared | Shared notes-backend + lokal app-seam | Delt mellem app og web | Bygget og verificeret | Verificeret begge veje, men ikke realtime |
+| `review` | Shared | Shared reviews-backend + lokal app-seam | Delt mellem app og web | Bygget og verificeret | Samme reviewmodel bruges nu i app og web |
 | `photos` | App-only | Lokal filstorage + CloudKit legacy | Ikke delt | Fuldt understøttet | Højere kompleksitet og konfliktflade |
 | `weekend plan` | App-only | `WeekendPlanStore` / lokal + CloudKit | Ikke delt | Fuldt understøttet | Separat brugerdata-spor |
 | `achievements/progression UI` | App-only | Lokal app-state | Ikke delt | Understøttet | Kan vises afledt, men er ikke delt datalag |
@@ -253,6 +253,8 @@ Denne matrix låser den aktuelle produktretning for brugerdata, så app og web i
 #### Shared nu
 - `visited`
 - `visitedDate`
+- `notes`
+- `review`
 
 Disse data må behandles som fælles tværplatformsdata og er grundlaget for:
 - `Min tur`
@@ -260,7 +262,6 @@ Disse data må behandles som fælles tværplatformsdata og er grundlaget for:
 - visited-status på stadioner og kampe
 
 #### App-only
-- `review`
 - `photos`
 - `weekend plan`
 - achievements og lokal progressionstilstand
@@ -269,46 +270,30 @@ Disse data må ikke implicit loves som tværplatformsdata i produktcopy eller UI
 
 #### Shared senere
 Følgende områder er kandidater til senere fælles model, men er ikke alle lige langt:
-1. `review`
-2. `weekend plan`
-3. `photos`
+1. `weekend plan`
+2. `photos`
 
 Den anbefalede rækkefølge afspejler implementeringsrisiko:
-- `review` kræver kontrakt for rig struktur, men følger samme model som appen
 - `weekend plan` kræver beslutning om web-scope
 - `photos` er mest komplekst pga. storage, metadata og konfliktregler
 
 ## Næste shared dataområde
 
-Den næste fælles datamodel efter `visited` er nu besluttet til at være:
-- `review`
-
-Første kontraktniveau for dette spor ligger i:
-- `REVIEWS_SHARED_MODEL.md`
-
-### Hvorfor `review`
-`review` er det mest naturlige næste skridt nu, fordi:
-- `visited` og `notes` allerede er delt og virker i praksis
-- review giver høj produktværdi på tværs af app og web
-- det bygger videre på samme stadion-/brugerrelation som de andre delte modeller
-- det er stadig mere overskueligt end at tage fotos eller weekend-plan først
+De næste områder, der nu er låst til denne release, er:
+- `photos`
+- `weekend plan`
+- progression/achievements på web
 
 ### Hvad denne beslutning betyder
-Det betyder:
-- næste shared dataarbejde skal tage udgangspunkt i `review`
-- samme reviewmodel skal bruges i app og web
-- `photos` og `weekend plan` tages ikke som parallelle dataspot nu
-- hvis et nyt integrationsspor kræver endnu et shared dataområde, skal det vurderes op mod denne prioritet
+- `photos` skal ikke længere behandles som et rent senere-spor
+- `weekend plan` skal ikke længere behandles som et rent senere-spor
+- progression/achievements skal have en web-retning før release
+- release-scope er nu bredere, men også mere entydigt
 
-Det betyder ikke:
-- at fotos automatisk bliver del af reviewkontrakten
-- at hele reviewoplevelsen skal åbnes alle steder i UI på samme tid
-
-### Hvad der bevidst ikke tages nu
-- `photos`
-  - høj storage- og sync-kompleksitet
-- `weekend plan`
-  - kræver først tydeligere beslutning om web-scope og personlig planmodel
+### Kendte konsekvenser
+- `photos` er stadig det mest komplekse spor pga. storage, metadata og konfliktregler
+- `weekend plan` kræver stadig tydelig model og web-scope
+- progression/achievements bør i første omgang så vidt muligt afledes af shared data i stedet for at åbne unødigt mange nye backend-tabeller
 
 #### Ikke planlagt nu
 Der er ikke taget beslutning om at gøre achievements til shared backend-data.

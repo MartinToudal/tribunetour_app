@@ -145,16 +145,21 @@ Krav:
 ### Produktmatrix for brugerdata
 For at Tribunetour kan opleves som ét produkt uden at love for meget, gælder denne opdeling lige nu:
 
-- `Shared nu`: `visited`, `visitedDate`
-- `App-only`: noter, reviews, billeder, weekend-plan, achievements
-- `Shared senere`: noter, reviews, weekend-plan og evt. billeder, hvis scope og backend-kontrakt besluttes
+- `Shared nu`: `visited`, `visitedDate`, `notes`, `reviews`
+- `App-only`: billeder, weekend-plan, achievements
+- `Shared senere`: weekend-plan og evt. billeder, hvis scope og backend-kontrakt besluttes
 
-Den næste valgte shared datamodel er:
-- `notes`
+De næste releasebeslutninger er nu låst sådan:
+- billeder skal med på web i denne release
+- weekend-plan skal med på web i denne release
+- progression/achievements skal med på web i denne release
 
 Det betyder i praksis:
-- web og app skal føles ens omkring besøgsstatus
-- web må gerne være enklere på richer brugerdata, så længe det er bevidst
+- web og app skal føles ens omkring besøgsstatus, noter og anmeldelser
+- web må gerne være enklere i første version af richer brugerdata, så længe de tre områder faktisk findes:
+  - billeder
+  - weekend-plan
+  - progression/achievements
 - appen må gerne være dybere, men ikke kommunikere som om alle data allerede deles på tværs
 
 ## Auth-retning
