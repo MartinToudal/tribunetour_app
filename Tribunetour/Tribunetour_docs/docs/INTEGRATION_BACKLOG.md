@@ -1223,6 +1223,21 @@ Fokus er:
 - app/web sync for billeder
 - sanity-test for billeder på tværs
 
+**Konkrete trin**
+1. Skriv shared foto-kontrakten og storage-reglerne.
+2. Lav app-boundary for foto-sync, så UI ikke skriver direkte til lokal legacy-model.
+3. Definér backend/storage-retningen, inkl. metadata og filreferencer.
+4. Åbn ét første webflow for upload, visning og sletning.
+5. Kobl app/web sync på og verificér med en lille foto sanity-test.
+
+**Primære områder**
+- `Tribunetour/VisitedStore.swift`
+- `Tribunetour/StadiumDetailView.swift`
+- evt. ny `Tribunetour/AppPhotosStore.swift`
+- `Website repo/app/stadiums/[id]/StadiumDetailClient.tsx`
+- ny web repository/hook for fotos
+- ny docs-kontrakt for photos/backend
+
 #### S5-02 Beslut weekend-plan-scope for release
 **Status:** Låst
 
@@ -1235,6 +1250,20 @@ Fokus er:
 - app/web sync for plan
 - sanity-test for plan på tværs
 
+**Konkrete trin**
+1. Lås den delte planmodel og beslut hvilke felter der er v1.
+2. Lav en tydelig app-boundary omkring plan-data.
+3. Definér backend/repository-retningen for plan.
+4. Åbn ét første webflow i `Min tur` eller stadium/match-kontekst.
+5. Verificér app/web sync med en lille plan sanity-test.
+
+**Primære områder**
+- `Tribunetour/WeekendPlanStore.swift`
+- `Tribunetour/WeekendPlannerView.swift`
+- evt. ny `Tribunetour/AppWeekendPlanStore.swift`
+- web `Min tur`-fladen
+- ny docs-kontrakt for plan/backend
+
 #### S5-03 Beslut webens progression/achievements
 **Status:** Låst
 
@@ -1246,6 +1275,19 @@ Fokus er:
 - webvisning af progression/achievements
 - afklaring af hvilke dele der er afledte, og hvilke der er eksplicit shared data
 
+**Konkrete trin**
+1. Kortlæg hvilke dele af achievements der kan afledes af shared data.
+2. Beslut hvilke progressionselementer der skal vises på web i v1.
+3. Lav et lille web-overblik, der matcher appens progressionstone.
+4. Hold eventuelle nye backendfelter på et minimum.
+5. Tilføj en lille sanity-test for progression på tværs af app og web.
+
+**Primære områder**
+- achievements/progression i appen
+- web `Min tur`
+- `ONE_PRODUCT.md`
+- `AUTH_AND_DATA_OWNERSHIP.md`
+
 #### S5-04 Opdatér release-check og produktcopy
 **Status:** Planlagt
 
@@ -1256,6 +1298,27 @@ Fokus er:
 - opdateret `RELEASE.md`
 - opdateret `INTEGRATION_STATUS.md`
 - produktcopy uden skjulte integrationsforbehold
+
+**Konkrete trin**
+1. Opdatér release-checken med billeder, plan og progression.
+2. Markér de nye spor som verificeret eller kendt begrænset.
+3. Ryd produktcopy, så web og app lover det samme.
+4. Kør den afsluttende sanity-rutine før release.
+
+### Sprint 5 DoD
+
+Sprint 5 er færdig når:
+- billeder findes på web som reel produktfunktion
+- weekend-plan findes på web som reel produktfunktion
+- progression/achievements er afklaret og synlige på web
+- release-checken matcher den faktiske produktflade
+
+### Sprint 5 anbefalet rækkefølge
+
+1. `S5-01` photos
+2. `S5-02` weekend plan
+3. `S5-03` progression / achievements
+4. `S5-04` release-oprydning
 
 ---
 
