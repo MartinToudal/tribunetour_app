@@ -46,7 +46,9 @@ final class AppState: ObservableObject {
             mergePolicy: visitedSyncConfiguration.mergePolicy
         )
         self.photosStore = AppPhotosStore(
-            visitedStore: self.visitedStore
+            visitedStore: self.visitedStore,
+            syncBackend: AppPhotosSyncFactory.makeSharedBackend(authSession: authSession, authClient: authClient),
+            authSession: self.authSession
         )
         self.notesStore = AppNotesStore(
             visitedStore: self.visitedStore,
@@ -89,6 +91,7 @@ final class AppState: ObservableObject {
                 if snapshot.isAuthenticated {
                     Task {
                         await self.visitedStore.refreshFromRemote()
+                        await self.photosStore.refreshFromRemote()
                         await self.notesStore.refreshFromRemote()
                         await self.reviewsStore.refreshFromRemote()
                         await self.reconcileSharedSyncModeAfterSessionRestore(snapshot: snapshot)
@@ -168,6 +171,7 @@ final class AppState: ObservableObject {
         guard authSession.snapshot.isAuthenticated else { return }
         Task {
             await visitedStore.refreshFromRemote()
+            await photosStore.refreshFromRemote()
             await notesStore.refreshFromRemote()
             await reviewsStore.refreshFromRemote()
             await reconcileSharedSyncModeAfterSessionRestore(snapshot: authSession.snapshot)

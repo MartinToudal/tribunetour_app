@@ -431,6 +431,39 @@ final class VisitedStore: ObservableObject {
         scheduleCloudPush()
     }
 
+    func applySharedPhoto(
+        _ imageData: Data,
+        for clubId: String,
+        fileName: String,
+        meta: Record.PhotoMeta
+    ) throws {
+        guard !imageData.isEmpty else { throw PhotoError.invalidImageData }
+
+        let url = photoURL(fileName: fileName)
+        do {
+            try imageData.write(to: url, options: .atomic)
+        } catch {
+            throw PhotoError.writeFailed
+        }
+
+        var record = records[clubId] ?? Record(visited: false)
+        if !record.photoFileNames.contains(fileName) {
+            record.photoFileNames.append(fileName)
+        }
+        record.photoMetadata[fileName] = meta
+        record.updatedAt = max(record.updatedAt, meta.updatedAt)
+        if !record.visited {
+            record.visited = true
+        }
+        if let existingVisitedDate = record.visitedDate {
+            record.visitedDate = min(existingVisitedDate, meta.createdAt)
+        } else {
+            record.visitedDate = meta.createdAt
+        }
+        records[clubId] = record
+        persist()
+    }
+
     // MARK: - Backup / Restore
 
     func exportJSON(pretty: Bool = true) -> String {
