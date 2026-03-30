@@ -13,6 +13,7 @@ final class AppState: ObservableObject {
     @Published private(set) var fixturesRemoteURL: URL?
     @Published private(set) var fixturesFallbackReason: String?
     @Published private(set) var notesSyncIssue: String?
+    @Published private(set) var reviewsSyncIssue: String?
 
     let visitedStore: VisitedStore
     let notesStore: AppNotesStore
@@ -49,7 +50,9 @@ final class AppState: ObservableObject {
             authSession: self.authSession
         )
         self.reviewsStore = AppReviewsStore(
-            visitedStore: self.visitedStore
+            visitedStore: self.visitedStore,
+            syncBackend: AppReviewsSyncFactory.makeSharedBackend(authSession: authSession, authClient: authClient),
+            authSession: self.authSession
         )
 
         visitedStore.$records
@@ -68,6 +71,13 @@ final class AppState: ObservableObject {
             }
             .store(in: &cancellables)
 
+        reviewsStore.$lastSyncIssue
+            .removeDuplicates()
+            .sink { [weak self] issue in
+                self?.reviewsSyncIssue = issue
+            }
+            .store(in: &cancellables)
+
         authSession.$snapshot
             .removeDuplicates()
             .sink { [weak self] snapshot in
@@ -76,11 +86,13 @@ final class AppState: ObservableObject {
                     Task {
                         await self.visitedStore.refreshFromRemote()
                         await self.notesStore.refreshFromRemote()
+                        await self.reviewsStore.refreshFromRemote()
                         await self.reconcileSharedSyncModeAfterSessionRestore(snapshot: snapshot)
                     }
                 } else {
                     self.syncRuntimeInfoMessage = nil
                     self.notesSyncIssue = nil
+                    self.reviewsSyncIssue = nil
                 }
             }
             .store(in: &cancellables)
@@ -153,6 +165,7 @@ final class AppState: ObservableObject {
         Task {
             await visitedStore.refreshFromRemote()
             await notesStore.refreshFromRemote()
+            await reviewsStore.refreshFromRemote()
             await reconcileSharedSyncModeAfterSessionRestore(snapshot: authSession.snapshot)
         }
     }

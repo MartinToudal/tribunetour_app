@@ -316,6 +316,20 @@ final class VisitedStore: ObservableObject {
         persist()
     }
 
+    func applySharedReview(_ review: StadiumReview?, for clubId: String, updatedAt: Date) {
+        var record = records[clubId] ?? Record(visited: false)
+        record.review = review
+        record.updatedAt = max(record.updatedAt, updatedAt)
+        if let review, review.hasMeaningfulContent {
+            record.visited = true
+            if record.visitedDate == nil {
+                record.visitedDate = Date()
+            }
+        }
+        records[clubId] = record
+        persist()
+    }
+
     func review(for clubId: String) -> StadiumReview? {
         records[clubId]?.review
     }
