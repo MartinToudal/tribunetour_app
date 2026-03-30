@@ -12,8 +12,9 @@ final class AppReviewsStore: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private var reviewUpdatedAtByClubId: [String: Date]
     private var pendingRemotePushClubIds = Set<String>()
-    private var remotePushTask: Task<Void, Never>?
+    private var reviewPushDebounceTask: Task<Void, Never>?
     private var isApplyingRemote = false
+    private var isPushingRemote = false
 
     private let syncMetadataKey = "tribunetour.reviews.syncMetadata.v1"
 
@@ -178,9 +179,8 @@ final class AppReviewsStore: ObservableObject {
         for write in localPreferredWrites {
             pendingRemotePushClubIds.insert(write.clubId)
         }
-        remotePushTask?.cancel()
-        remotePushTask = Task { [weak self] in
-            await self?.pushLocalPreferredWrites(localPreferredWrites)
+        Task { [weak self] in
+            await self?.flushPendingRemoteReviews()
         }
     }
 
@@ -189,57 +189,43 @@ final class AppReviewsStore: ObservableObject {
         guard !isApplyingRemote else { return }
 
         pendingRemotePushClubIds.insert(clubId)
-        remotePushTask?.cancel()
-        remotePushTask = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 700_000_000)
-            await self?.pushPendingRemoteReviews()
-        }
-    }
-
-    private func pushPendingRemoteReviews() async {
-        guard authSession.snapshot.isAuthenticated else { return }
-        guard let userId = authSession.snapshot.userId else {
-            lastSyncIssue = "Shared reviews sync mangler bruger-id."
-            return
-        }
-
-        let clubIds = pendingRemotePushClubIds.sorted()
-        pendingRemotePushClubIds.removeAll()
-
-        for clubId in clubIds {
-            let updatedAt = reviewUpdatedAtByClubId[clubId] ?? Date()
-            let review = visitedStore.records[clubId]?.review ?? VisitedStore.StadiumReview(updatedAt: updatedAt)
+        reviewPushDebounceTask?.cancel()
+        reviewPushDebounceTask = Task { [weak self] in
             do {
-                try await syncBackend.upsert(userId: userId, clubId: clubId, review: review, updatedAt: updatedAt)
-                lastSyncIssue = nil
+                try await Task.sleep(nanoseconds: 700_000_000)
             } catch {
-                pendingRemotePushClubIds.insert(clubId)
-                lastSyncIssue = error.localizedDescription
-                dlog("Shared reviews push error for \(clubId): \(error.localizedDescription)")
+                return
             }
+            await self?.flushPendingRemoteReviews()
         }
     }
 
-    private func pushLocalPreferredWrites(_ writes: [(clubId: String, review: VisitedStore.StadiumReview, updatedAt: Date)]) async {
+    private func flushPendingRemoteReviews() async {
         guard authSession.snapshot.isAuthenticated else { return }
+        guard !isPushingRemote else { return }
         guard let userId = authSession.snapshot.userId else {
             lastSyncIssue = "Shared reviews sync mangler bruger-id."
             return
         }
 
-        for write in writes {
-            do {
-                try await syncBackend.upsert(
-                    userId: userId,
-                    clubId: write.clubId,
-                    review: write.review,
-                    updatedAt: write.updatedAt
-                )
-                lastSyncIssue = nil
-            } catch {
-                pendingRemotePushClubIds.insert(write.clubId)
-                lastSyncIssue = error.localizedDescription
-                dlog("Shared reviews preferred push error for \(write.clubId): \(error.localizedDescription)")
+        isPushingRemote = true
+        defer { isPushingRemote = false }
+
+        while !pendingRemotePushClubIds.isEmpty {
+            let clubIds = pendingRemotePushClubIds.sorted()
+            pendingRemotePushClubIds.removeAll()
+
+            for clubId in clubIds {
+                let updatedAt = reviewUpdatedAtByClubId[clubId] ?? Date()
+                let review = visitedStore.records[clubId]?.review ?? VisitedStore.StadiumReview(updatedAt: updatedAt)
+                do {
+                    try await syncBackend.upsert(userId: userId, clubId: clubId, review: review, updatedAt: updatedAt)
+                    lastSyncIssue = nil
+                } catch {
+                    pendingRemotePushClubIds.insert(clubId)
+                    lastSyncIssue = error.localizedDescription
+                    dlog("Shared reviews push error for \(clubId): \(error.localizedDescription)")
+                }
             }
         }
     }
