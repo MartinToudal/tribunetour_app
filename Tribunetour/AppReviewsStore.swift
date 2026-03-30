@@ -13,6 +13,7 @@ final class AppReviewsStore: ObservableObject {
     private var reviewUpdatedAtByClubId: [String: Date]
     private var pendingRemotePushClubIds = Set<String>()
     private var reviewPushDebounceTask: Task<Void, Never>?
+    private var reviewPushWorkerTask: Task<Void, Never>?
     private var isApplyingRemote = false
     private var isPushingRemote = false
 
@@ -196,7 +197,23 @@ final class AppReviewsStore: ObservableObject {
             } catch {
                 return
             }
+            guard !Task.isCancelled else { return }
+            self?.startRemotePushWorker()
+        }
+    }
+
+    private func startRemotePushWorker() {
+        guard authSession.snapshot.isAuthenticated else { return }
+        guard reviewPushWorkerTask == nil || reviewPushWorkerTask?.isCancelled == true else { return }
+
+        reviewPushWorkerTask = Task { [weak self] in
             await self?.flushPendingRemoteReviews()
+            await MainActor.run {
+                self?.reviewPushWorkerTask = nil
+                if self?.pendingRemotePushClubIds.isEmpty == false {
+                    self?.startRemotePushWorker()
+                }
+            }
         }
     }
 
@@ -221,6 +238,9 @@ final class AppReviewsStore: ObservableObject {
                 do {
                     try await syncBackend.upsert(userId: userId, clubId: clubId, review: review, updatedAt: updatedAt)
                     lastSyncIssue = nil
+                } catch is CancellationError {
+                    pendingRemotePushClubIds.insert(clubId)
+                    return
                 } catch {
                     pendingRemotePushClubIds.insert(clubId)
                     lastSyncIssue = error.localizedDescription
