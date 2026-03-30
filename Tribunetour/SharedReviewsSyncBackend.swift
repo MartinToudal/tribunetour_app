@@ -88,27 +88,39 @@ struct SharedReviewRecordDTO: Codable {
     }
 
     private static func decodeScores(from container: KeyedDecodingContainer<CodingKeys>) -> [VisitedStore.ReviewCategory: Int] {
-        guard let rawScores = try? container.decodeIfPresent([String: Double].self, forKey: .scores) else {
-            return [:]
+        if let rawScores = try? container.decodeIfPresent([String: Double].self, forKey: .scores) {
+            return rawScores.reduce(into: [:]) { partialResult, entry in
+                guard let category = VisitedStore.ReviewCategory(rawValue: entry.key) else { return }
+                partialResult[category] = Int(entry.value.rounded())
+            }
         }
 
-        return rawScores.reduce(into: [:]) { partialResult, entry in
-            guard let category = VisitedStore.ReviewCategory(rawValue: entry.key) else { return }
-            partialResult[category] = Int(entry.value.rounded())
+        // Backward-compatibility for malformed payloads written as flat arrays:
+        // ["facilities", 7, "atmosphereSound", 8]
+        if let rawPairs = try? container.decodeIfPresent([JSONValue].self, forKey: .scores) {
+            return decodeScorePairs(rawPairs)
         }
+
+        return [:]
     }
 
     private static func decodeCategoryNotes(from container: KeyedDecodingContainer<CodingKeys>) -> [VisitedStore.ReviewCategory: String] {
-        guard let rawNotes = try? container.decodeIfPresent([String: String].self, forKey: .categoryNotes) else {
-            return [:]
+        if let rawNotes = try? container.decodeIfPresent([String: String].self, forKey: .categoryNotes) {
+            return rawNotes.reduce(into: [:]) { partialResult, entry in
+                guard let category = VisitedStore.ReviewCategory(rawValue: entry.key) else { return }
+                let trimmed = entry.value.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !trimmed.isEmpty else { return }
+                partialResult[category] = entry.value
+            }
         }
 
-        return rawNotes.reduce(into: [:]) { partialResult, entry in
-            guard let category = VisitedStore.ReviewCategory(rawValue: entry.key) else { return }
-            let trimmed = entry.value.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !trimmed.isEmpty else { return }
-            partialResult[category] = entry.value
+        // Backward-compatibility for malformed payloads written as flat arrays:
+        // ["facilities", "ok", "valueForMoney", "fair"]
+        if let rawPairs = try? container.decodeIfPresent([JSONValue].self, forKey: .categoryNotes) {
+            return decodeCategoryNotePairs(rawPairs)
         }
+
+        return [:]
     }
 
     private static func decodeDate(
@@ -159,14 +171,59 @@ struct SharedReviewRecordDTO: Codable {
         formatter.formatOptions = [.withInternetDateTime]
         return formatter
     }()
+
+    private static func decodeScorePairs(_ values: [JSONValue]) -> [VisitedStore.ReviewCategory: Int] {
+        var result: [VisitedStore.ReviewCategory: Int] = [:]
+        var index = 0
+
+        while index + 1 < values.count {
+            guard
+                case .string(let rawCategory) = values[index],
+                let category = VisitedStore.ReviewCategory(rawValue: rawCategory),
+                let score = values[index + 1].numberValue
+            else {
+                index += 2
+                continue
+            }
+
+            result[category] = Int(score.rounded())
+            index += 2
+        }
+
+        return result
+    }
+
+    private static func decodeCategoryNotePairs(_ values: [JSONValue]) -> [VisitedStore.ReviewCategory: String] {
+        var result: [VisitedStore.ReviewCategory: String] = [:]
+        var index = 0
+
+        while index + 1 < values.count {
+            guard
+                case .string(let rawCategory) = values[index],
+                let category = VisitedStore.ReviewCategory(rawValue: rawCategory),
+                case .string(let note) = values[index + 1]
+            else {
+                index += 2
+                continue
+            }
+
+            let trimmed = note.trimmingCharacters(in: .whitespacesAndNewlines)
+            if !trimmed.isEmpty {
+                result[category] = note
+            }
+            index += 2
+        }
+
+        return result
+    }
 }
 
 struct SharedReviewWriteRow: Codable {
     let userId: String
     let clubId: String
     let matchLabel: String
-    let scores: [VisitedStore.ReviewCategory: Int]
-    let categoryNotes: [VisitedStore.ReviewCategory: String]
+    let scores: [String: Int]
+    let categoryNotes: [String: String]
     let summary: String
     let tags: String
     let updatedAt: Date
@@ -182,6 +239,38 @@ struct SharedReviewWriteRow: Codable {
         case tags
         case updatedAt = "updated_at"
         case source
+    }
+}
+
+private enum JSONValue: Decodable {
+    case string(String)
+    case number(Double)
+    case bool(Bool)
+    case null
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        if container.decodeNil() {
+            self = .null
+        } else if let string = try? container.decode(String.self) {
+            self = .string(string)
+        } else if let number = try? container.decode(Double.self) {
+            self = .number(number)
+        } else if let bool = try? container.decode(Bool.self) {
+            self = .bool(bool)
+        } else {
+            throw DecodingError.typeMismatch(
+                JSONValue.self,
+                .init(codingPath: decoder.codingPath, debugDescription: "Unsupported JSONValue")
+            )
+        }
+    }
+
+    var numberValue: Double? {
+        if case .number(let number) = self {
+            return number
+        }
+        return nil
     }
 }
 
@@ -212,8 +301,8 @@ final class SharedReviewsSyncBackend {
             userId: userId,
             clubId: clubId,
             matchLabel: review.matchLabel,
-            scores: review.scores,
-            categoryNotes: review.categoryNotes,
+            scores: Dictionary(uniqueKeysWithValues: review.scores.map { ($0.key.rawValue, $0.value) }),
+            categoryNotes: Dictionary(uniqueKeysWithValues: review.categoryNotes.map { ($0.key.rawValue, $0.value) }),
             summary: review.summary,
             tags: review.tags,
             updatedAt: updatedAt,
