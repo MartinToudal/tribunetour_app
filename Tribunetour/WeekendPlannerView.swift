@@ -4,8 +4,7 @@ struct WeekendPlannerView: View {
     let clubs: [Club]
     let fixtures: [Fixture]
     @ObservedObject var visitedStore: VisitedStore
-
-    @StateObject private var planStore = WeekendPlanStore()
+    @ObservedObject var planStore: AppWeekendPlanStore
     private let matchTimeZone = TimeZone(identifier: "Europe/Copenhagen") ?? .current
     private var matchCalendar: Calendar {
         var cal = Calendar(identifier: .gregorian)

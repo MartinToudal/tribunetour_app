@@ -21,6 +21,7 @@ Appen har nu desuden eksplicitte boundary-lag for de shared felter, der er løft
 - `AppNotesStore`
 - `AppReviewsStore`
 - `AppPhotosStore`
+- `AppWeekendPlanStore`
 
 Centrale filer:
 - `VisitedStore.swift`
@@ -30,6 +31,7 @@ Centrale filer:
 Weekend plan er et separat brugerdata-spor:
 - local-first i appen
 - synk via privat CloudKit
+- viewlaget går nu via `AppWeekendPlanStore` i stedet for direkte mod den rå plan-store
 
 Central fil:
 - `CloudPlanSync.swift`

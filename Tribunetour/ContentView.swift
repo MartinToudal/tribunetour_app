@@ -45,8 +45,12 @@ struct ContentView: View {
                     )
                         .tabItem { Label("Kampe", systemImage: "sportscourt") }
 
-                    // ✅ Plan-fanen (WeekendPlannerView har SIN EGEN planStore internt)
-                    WeekendPlannerView(clubs: appState.clubs, fixtures: appState.fixtures, visitedStore: appState.visitedStore)
+                    WeekendPlannerView(
+                        clubs: appState.clubs,
+                        fixtures: appState.fixtures,
+                        visitedStore: appState.visitedStore,
+                        planStore: appState.weekendPlanStore
+                    )
                         .tabItem { Label("Plan", systemImage: "calendar") }
 
                     StatsView(
