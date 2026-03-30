@@ -15,6 +15,9 @@ struct StadiumDetailView: View {
     @State private var selectedPhotoFileName: String?
     @State private var pendingDeletePhotoFileName: String?
     @State private var photoImportError: String?
+    @State private var reviewDraft = VisitedStore.StadiumReview()
+    @State private var reviewDraftSyncTask: Task<Void, Never>?
+    @FocusState private var focusedReviewNoteCategory: VisitedStore.ReviewCategory?
     private let matchTimeZone = TimeZone(identifier: "Europe/Copenhagen") ?? .current
     private var matchCalendar: Calendar {
         var calendar = Calendar(identifier: .gregorian)
@@ -219,9 +222,33 @@ struct StadiumDetailView: View {
                                 }
                             }
 
-                            TextField("Valgfri note", text: reviewCategoryNoteBinding(for: category), axis: .vertical)
-                                .lineLimit(1...3)
-                                .font(.caption)
+                            VStack(alignment: .leading, spacing: 6) {
+                                if reviewCategoryNoteText(for: category).trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                    Button {
+                                        if !expandedReviewCategories.contains(category) {
+                                            expandedReviewCategories.insert(category)
+                                        }
+                                        focusedReviewNoteCategory = category
+                                    } label: {
+                                        Label("Tilføj kommentar", systemImage: "text.bubble")
+                                            .font(.caption.weight(.semibold))
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .padding(.vertical, 10)
+                                            .padding(.horizontal, 12)
+                                            .background(Color(.secondarySystemBackground))
+                                            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                    }
+                                    .buttonStyle(.plain)
+                                }
+
+                                TextEditor(text: reviewCategoryNoteBinding(for: category))
+                                    .frame(minHeight: 88)
+                                    .padding(8)
+                                    .background(Color(.secondarySystemBackground))
+                                    .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                                    .font(.body)
+                                    .focused($focusedReviewNoteCategory, equals: category)
+                            }
                         }
                         .padding(.vertical, 4)
                     } label: {
@@ -249,11 +276,13 @@ struct StadiumDetailView: View {
                 TextField("Tags (kommasepareret)", text: reviewTagsBinding)
 
                 Button(role: .destructive) {
+                    reviewDraftSyncTask?.cancel()
+                    reviewDraft = VisitedStore.StadiumReview()
                     reviewsStore.clearReview(for: club.id)
                 } label: {
                     Label("Ryd anmeldelse", systemImage: "trash")
                 }
-                .disabled(!reviewsStore.hasMeaningfulReview(for: club.id))
+                .disabled(!reviewDraft.hasMeaningfulContent)
             } header: {
                 Text("Stadion-anmeldelse")
             } footer: {
@@ -280,6 +309,12 @@ struct StadiumDetailView: View {
         }
         .navigationTitle("Stadion")
         .navigationBarTitleDisplayMode(.inline)
+        .onAppear {
+            syncReviewDraftFromStore()
+        }
+        .onChange(of: reviewsStore.review(for: club.id)) { _, _ in
+            syncReviewDraftFromStore()
+        }
         .onChange(of: selectedPhotoItems) { _, newItems in
             guard !newItems.isEmpty else { return }
             Task { await importSelectedPhotos(newItems) }
@@ -361,31 +396,40 @@ struct StadiumDetailView: View {
 
     private var reviewMatchBinding: Binding<String> {
         Binding(
-            get: { reviewsStore.review(for: club.id)?.matchLabel ?? "" },
-            set: { newValue in reviewsStore.setMatchLabel(newValue, for: club.id) }
+            get: { reviewDraft.matchLabel },
+            set: { newValue in
+                reviewDraft.matchLabel = newValue
+                scheduleReviewDraftCommit()
+            }
         )
     }
 
     private var reviewSummaryBinding: Binding<String> {
         Binding(
-            get: { reviewsStore.review(for: club.id)?.summary ?? "" },
-            set: { newValue in reviewsStore.setSummary(newValue, for: club.id) }
+            get: { reviewDraft.summary },
+            set: { newValue in
+                reviewDraft.summary = newValue
+                scheduleReviewDraftCommit()
+            }
         )
     }
 
     private var reviewTagsBinding: Binding<String> {
         Binding(
-            get: { reviewsStore.review(for: club.id)?.tags ?? "" },
-            set: { newValue in reviewsStore.setTags(newValue, for: club.id) }
+            get: { reviewDraft.tags },
+            set: { newValue in
+                reviewDraft.tags = newValue
+                scheduleReviewDraftCommit()
+            }
         )
     }
 
     private var scoredCategoryCount: Int {
-        reviewsStore.review(for: club.id)?.scores.count ?? 0
+        reviewDraft.scores.count
     }
 
     private func reviewScoreValue(for category: VisitedStore.ReviewCategory) -> Int? {
-        reviewsStore.review(for: club.id)?.score(for: category)
+        reviewDraft.score(for: category)
     }
 
     private func reviewScoreLabel(for category: VisitedStore.ReviewCategory) -> String {
@@ -394,12 +438,17 @@ struct StadiumDetailView: View {
     }
 
     private func reviewNotePreview(for category: VisitedStore.ReviewCategory) -> String? {
-        let note = reviewsStore.review(for: club.id)?.note(for: category).trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        let note = reviewDraft.note(for: category).trimmingCharacters(in: .whitespacesAndNewlines)
         return note.isEmpty ? nil : note
     }
 
     private func setReviewScore(for category: VisitedStore.ReviewCategory, to score: Int?) {
-        reviewsStore.setScore(score, for: category, clubId: club.id)
+        if let score {
+            reviewDraft.scores[category] = min(10, max(1, score))
+        } else {
+            reviewDraft.scores[category] = nil
+        }
+        scheduleReviewDraftCommit()
     }
 
     private func incrementScore(for category: VisitedStore.ReviewCategory) {
@@ -427,14 +476,53 @@ struct StadiumDetailView: View {
 
     private func reviewCategoryNoteBinding(for category: VisitedStore.ReviewCategory) -> Binding<String> {
         Binding(
-            get: { reviewsStore.review(for: club.id)?.note(for: category) ?? "" },
-            set: { newValue in reviewsStore.setCategoryNote(newValue, for: category, clubId: club.id) }
+            get: { reviewCategoryNoteText(for: category) },
+            set: { newValue in
+                let trimmed = newValue.trimmingCharacters(in: .whitespacesAndNewlines)
+                if trimmed.isEmpty {
+                    reviewDraft.categoryNotes[category] = nil
+                } else {
+                    reviewDraft.categoryNotes[category] = newValue
+                }
+                scheduleReviewDraftCommit()
+            }
         )
     }
 
     private var reviewAverageText: String? {
-        guard let avg = reviewsStore.review(for: club.id)?.averageScore else { return nil }
+        guard let avg = reviewDraft.averageScore else { return nil }
         return String(format: "%.1f", avg)
+    }
+
+    private func reviewCategoryNoteText(for category: VisitedStore.ReviewCategory) -> String {
+        reviewDraft.note(for: category)
+    }
+
+    private func syncReviewDraftFromStore() {
+        let storeReview = reviewsStore.review(for: club.id) ?? VisitedStore.StadiumReview()
+        guard storeReview != reviewDraft else { return }
+        reviewDraft = storeReview
+    }
+
+    private func scheduleReviewDraftCommit() {
+        reviewDraft.updatedAt = Date()
+        reviewDraftSyncTask?.cancel()
+        reviewDraftSyncTask = Task { @MainActor in
+            do {
+                try await Task.sleep(nanoseconds: 350_000_000)
+            } catch {
+                return
+            }
+            commitReviewDraft()
+        }
+    }
+
+    private func commitReviewDraft() {
+        if reviewDraft.hasMeaningfulContent {
+            reviewsStore.setReviewDraft(reviewDraft, for: club.id)
+        } else {
+            reviewsStore.clearReview(for: club.id)
+        }
     }
 
     private var upcomingFixtures: [Fixture] {

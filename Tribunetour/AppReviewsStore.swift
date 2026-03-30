@@ -57,6 +57,13 @@ final class AppReviewsStore: ObservableObject {
         scheduleRemotePush(for: clubId)
     }
 
+    func setReviewDraft(_ review: VisitedStore.StadiumReview, for clubId: String) {
+        visitedStore.setReview(clubId, review)
+        reviewUpdatedAtByClubId[clubId] = review.updatedAt
+        persistSyncMetadata()
+        scheduleRemotePush(for: clubId)
+    }
+
     func setMatchLabel(_ matchLabel: String, for clubId: String) {
         updateReview(for: clubId) { review in
             review.matchLabel = matchLabel
