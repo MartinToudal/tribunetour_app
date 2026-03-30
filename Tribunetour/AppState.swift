@@ -61,7 +61,10 @@ final class AppState: ObservableObject {
             syncBackend: AppReviewsSyncFactory.makeSharedBackend(authSession: authSession, authClient: authClient),
             authSession: self.authSession
         )
-        self.weekendPlanStore = AppWeekendPlanStore()
+        self.weekendPlanStore = AppWeekendPlanStore(
+            syncBackend: AppWeekendPlanSyncFactory.makeSharedBackend(authSession: authSession, authClient: authClient),
+            authSession: self.authSession
+        )
 
         visitedStore.$records
             .dropFirst()
@@ -96,6 +99,7 @@ final class AppState: ObservableObject {
                         await self.photosStore.refreshFromRemote()
                         await self.notesStore.refreshFromRemote()
                         await self.reviewsStore.refreshFromRemote()
+                        await self.weekendPlanStore.refreshFromRemote()
                         await self.reconcileSharedSyncModeAfterSessionRestore(snapshot: snapshot)
                     }
                 } else {
@@ -176,6 +180,7 @@ final class AppState: ObservableObject {
             await photosStore.refreshFromRemote()
             await notesStore.refreshFromRemote()
             await reviewsStore.refreshFromRemote()
+            await weekendPlanStore.refreshFromRemote()
             await reconcileSharedSyncModeAfterSessionRestore(snapshot: authSession.snapshot)
         }
     }

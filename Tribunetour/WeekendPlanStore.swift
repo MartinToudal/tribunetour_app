@@ -85,6 +85,13 @@ final class WeekendPlanStore: ObservableObject {
         Task { await pushLocalToCloud() }
     }
 
+    func applySharedPayload(_ sharedPayload: PlanPayload) {
+        isApplyingRemote = true
+        defer { isApplyingRemote = false }
+        payload = sharedPayload
+        persist()
+    }
+
     // MARK: - Persistence
 
     private func persist() { saveToLocal(payload) }
