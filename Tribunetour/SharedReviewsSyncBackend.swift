@@ -66,12 +66,12 @@ struct SharedReviewRecordDTO: Codable {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         self.clubId = try c.decode(String.self, forKey: .clubId)
         self.matchLabel = try c.decodeIfPresent(String.self, forKey: .matchLabel) ?? ""
-        self.scores = try c.decodeIfPresent([VisitedStore.ReviewCategory: Int].self, forKey: .scores) ?? [:]
-        self.categoryNotes = try c.decodeIfPresent([VisitedStore.ReviewCategory: String].self, forKey: .categoryNotes) ?? [:]
+        self.scores = Self.decodeScores(from: c)
+        self.categoryNotes = Self.decodeCategoryNotes(from: c)
         self.summary = try c.decodeIfPresent(String.self, forKey: .summary) ?? ""
         self.tags = try c.decodeIfPresent(String.self, forKey: .tags) ?? ""
-        self.updatedAt = try c.decode(Date.self, forKey: .updatedAt)
-        self.createdAt = try c.decodeIfPresent(Date.self, forKey: .createdAt)
+        self.updatedAt = try Self.decodeDate(from: c, forKey: .updatedAt)
+        self.createdAt = try Self.decodeDateIfPresent(from: c, forKey: .createdAt)
         self.source = try c.decodeIfPresent(String.self, forKey: .source)
     }
 
@@ -86,6 +86,79 @@ struct SharedReviewRecordDTO: Codable {
         )
         return review.hasMeaningfulContent ? review : nil
     }
+
+    private static func decodeScores(from container: KeyedDecodingContainer<CodingKeys>) -> [VisitedStore.ReviewCategory: Int] {
+        guard let rawScores = try? container.decodeIfPresent([String: Double].self, forKey: .scores) else {
+            return [:]
+        }
+
+        return rawScores.reduce(into: [:]) { partialResult, entry in
+            guard let category = VisitedStore.ReviewCategory(rawValue: entry.key) else { return }
+            partialResult[category] = Int(entry.value.rounded())
+        }
+    }
+
+    private static func decodeCategoryNotes(from container: KeyedDecodingContainer<CodingKeys>) -> [VisitedStore.ReviewCategory: String] {
+        guard let rawNotes = try? container.decodeIfPresent([String: String].self, forKey: .categoryNotes) else {
+            return [:]
+        }
+
+        return rawNotes.reduce(into: [:]) { partialResult, entry in
+            guard let category = VisitedStore.ReviewCategory(rawValue: entry.key) else { return }
+            let trimmed = entry.value.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !trimmed.isEmpty else { return }
+            partialResult[category] = entry.value
+        }
+    }
+
+    private static func decodeDate(
+        from container: KeyedDecodingContainer<CodingKeys>,
+        forKey key: CodingKeys
+    ) throws -> Date {
+        if let date = try? container.decode(Date.self, forKey: key) {
+            return date
+        }
+
+        let rawValue = try container.decode(String.self, forKey: key)
+        if let parsed = parseDate(rawValue) {
+            return parsed
+        }
+
+        throw DecodingError.dataCorruptedError(
+            forKey: key,
+            in: container,
+            debugDescription: "Ugyldigt datoformat: \(rawValue)"
+        )
+    }
+
+    private static func decodeDateIfPresent(
+        from container: KeyedDecodingContainer<CodingKeys>,
+        forKey key: CodingKeys
+    ) throws -> Date? {
+        guard let rawValue = try container.decodeIfPresent(String.self, forKey: key) else {
+            return nil
+        }
+        return parseDate(rawValue)
+    }
+
+    private static func parseDate(_ rawValue: String) -> Date? {
+        if let date = iso8601WithFractionalFormatter.date(from: rawValue) {
+            return date
+        }
+        return iso8601Formatter.date(from: rawValue)
+    }
+
+    private static let iso8601WithFractionalFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
+    private static let iso8601Formatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter
+    }()
 }
 
 struct SharedReviewWriteRow: Codable {
