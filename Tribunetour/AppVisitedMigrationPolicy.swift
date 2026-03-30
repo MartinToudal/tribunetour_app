@@ -11,6 +11,10 @@ struct AppVisitedMergePolicy {
     static let appPrimaryDuringMigration = AppVisitedMergePolicy(authority: .appPrimaryDuringMigration)
     static let sharedPrimarySteadyState = AppVisitedMergePolicy(authority: .sharedPrimarySteadyState)
 
+    var isSharedPrimarySteadyState: Bool {
+        authority == .sharedPrimarySteadyState
+    }
+
     func merge(local: VisitedStore.Record, remote: VisitedStore.Record) -> VisitedStore.Record {
         switch authority {
         case .appPrimaryDuringMigration:

@@ -215,6 +215,7 @@ final class VisitedStore: ObservableObject {
     // MARK: - Storage
 
     private let localKey = "tribunetour.visited.local.v1"
+    private let sharedRemoteClubIdsKey = "tribunetour.visited.shared.remote-club-ids.v1"
     private let photoDirectoryName = "VisitedPhotos"
     private let maxPhotoPixelDimension: CGFloat = 2200
     private let photoJPEGQuality: CGFloat = 0.82
@@ -234,6 +235,7 @@ final class VisitedStore: ObservableObject {
     private var pendingCloudPush = false
     private var cloudPhotoQueriesAvailable = true
     private var loggedPhotoQueryWarning = false
+    private var knownSharedRemoteClubIds = Set<String>()
 
     // MARK: - Init
 
@@ -241,6 +243,7 @@ final class VisitedStore: ObservableObject {
         self.syncBackend = syncBackend
         self.mergePolicy = mergePolicy
         self.records = loadFromLocal() ?? [:]
+        self.knownSharedRemoteClubIds = loadKnownSharedRemoteClubIds()
 
         // Debug: se om iCloud konto er tilgængelig
         Task { await syncBackend.debugAccountStatus() }
@@ -412,6 +415,25 @@ final class VisitedStore: ObservableObject {
         }
     }
 
+    func removeSharedPhotoLocally(fileName: String, for clubId: String) {
+        var record = records[clubId] ?? Record(visited: false)
+        record.photoFileNames.removeAll { $0 == fileName }
+        record.photoMetadata[fileName] = nil
+
+        let trimmedNotes = record.notes.trimmingCharacters(in: .whitespacesAndNewlines)
+        let hasReview = record.review?.hasMeaningfulContent ?? false
+        if !record.visited && trimmedNotes.isEmpty && !hasReview && record.photoFileNames.isEmpty {
+            records.removeValue(forKey: clubId)
+        } else {
+            records[clubId] = record
+        }
+
+        persist()
+
+        let url = photoURL(fileName: fileName)
+        try? FileManager.default.removeItem(at: url)
+    }
+
     func photoCaption(for clubId: String, fileName: String) -> String {
         records[clubId]?.photoMetadata[fileName]?.caption ?? ""
     }
@@ -551,6 +573,16 @@ final class VisitedStore: ObservableObject {
         return try? decoder.decode([String: Record].self, from: raw)
     }
 
+    private func saveKnownSharedRemoteClubIds() {
+        let ids = Array(knownSharedRemoteClubIds).sorted()
+        UserDefaults.standard.set(ids, forKey: sharedRemoteClubIdsKey)
+    }
+
+    private func loadKnownSharedRemoteClubIds() -> Set<String> {
+        let ids = UserDefaults.standard.stringArray(forKey: sharedRemoteClubIdsKey) ?? []
+        return Set(ids)
+    }
+
     private func photosDirectoryURL() -> URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -646,6 +678,19 @@ final class VisitedStore: ObservableObject {
             } else {
                 merged[clubId] = remoteRec
             }
+        }
+
+        if mergePolicy.isSharedPrimarySteadyState {
+            let remoteClubIds = Set(remote.keys)
+            let removedClubIds = knownSharedRemoteClubIds.subtracting(remoteClubIds)
+            for clubId in removedClubIds {
+                guard let localRecord = merged.removeValue(forKey: clubId) else { continue }
+                for fileName in localRecord.photoFileNames {
+                    try? FileManager.default.removeItem(at: photoURL(fileName: fileName))
+                }
+            }
+            knownSharedRemoteClubIds = remoteClubIds
+            saveKnownSharedRemoteClubIds()
         }
 
         records = merged

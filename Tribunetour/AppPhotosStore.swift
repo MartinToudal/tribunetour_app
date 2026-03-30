@@ -9,12 +9,14 @@ final class AppPhotosStore: ObservableObject {
     private let visitedStore: VisitedStore
     private let syncBackend: SharedPhotosSyncBackend
     private let authSession: AppAuthSession
+    private let knownRemotePhotoKeysStorageKey = "tribunetour.photos.shared.remote-keys.v1"
     private var cancellables = Set<AnyCancellable>()
     private var remoteSyncDebounceTask: Task<Void, Never>?
     private var remoteSyncWorkerTask: Task<Void, Never>?
     private var needsRemoteSync = false
     private var isApplyingRemote = false
     private var isSyncingRemote = false
+    private var knownRemotePhotoKeys = Set<String>()
 
     init(
         visitedStore: VisitedStore,
@@ -24,6 +26,7 @@ final class AppPhotosStore: ObservableObject {
         self.visitedStore = visitedStore
         self.syncBackend = syncBackend
         self.authSession = authSession
+        self.knownRemotePhotoKeys = Self.loadKnownRemotePhotoKeys(storageKey: knownRemotePhotoKeysStorageKey)
         self.photoFileNamesByClubId = Self.extractPhotoFileNames(from: visitedStore.records)
 
         visitedStore.$records
@@ -144,13 +147,21 @@ final class AppPhotosStore: ObservableObject {
 
     private func reconcileRemotePhotos(_ remotePhotos: [SharedPhotoRecordDTO], userId: String) async throws {
         let remoteByKey = Dictionary(uniqueKeysWithValues: remotePhotos.map { (Self.photoKey(clubId: $0.clubId, fileName: $0.fileName), $0) })
-        let localByKey = Self.extractLocalPhotoRecords(from: visitedStore.records)
+        var localByKey = Self.extractLocalPhotoRecords(from: visitedStore.records)
         let allKeys = Set(remoteByKey.keys).union(localByKey.keys)
 
         isApplyingRemote = true
         defer { isApplyingRemote = false }
 
+        let removedRemoteKeys = knownRemotePhotoKeys.subtracting(remoteByKey.keys)
+        for key in removedRemoteKeys.sorted() {
+            guard let localPhoto = localByKey[key] else { continue }
+            visitedStore.removeSharedPhotoLocally(fileName: localPhoto.fileName, for: localPhoto.clubId)
+            localByKey.removeValue(forKey: key)
+        }
+
         for key in allKeys.sorted() {
+            if removedRemoteKeys.contains(key) { continue }
             let local = localByKey[key]
             let remote = remoteByKey[key]
 
@@ -186,6 +197,9 @@ final class AppPhotosStore: ObservableObject {
                 continue
             }
         }
+
+        knownRemotePhotoKeys = Set(remoteByKey.keys)
+        Self.saveKnownRemotePhotoKeys(knownRemotePhotoKeys, storageKey: knownRemotePhotoKeysStorageKey)
     }
 
     private enum PhotoMergeResolution {
@@ -291,5 +305,14 @@ final class AppPhotosStore: ObservableObject {
             guard !fileNames.isEmpty else { return }
             partialResult[entry.key] = fileNames
         }
+    }
+
+    private static func saveKnownRemotePhotoKeys(_ keys: Set<String>, storageKey: String) {
+        UserDefaults.standard.set(Array(keys).sorted(), forKey: storageKey)
+    }
+
+    private static func loadKnownRemotePhotoKeys(storageKey: String) -> Set<String> {
+        let keys = UserDefaults.standard.stringArray(forKey: storageKey) ?? []
+        return Set(keys)
     }
 }
