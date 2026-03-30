@@ -5,6 +5,7 @@ import MessageUI
 struct StatsView: View {
     let clubs: [Club]
     @ObservedObject var visitedStore: VisitedStore
+    @ObservedObject var photosStore: AppPhotosStore
     @ObservedObject var notesStore: AppNotesStore
     @ObservedObject var reviewsStore: AppReviewsStore
     @ObservedObject var authSession: AppAuthSession
@@ -568,6 +569,7 @@ struct StatsView: View {
                                 StadiumDetailView(
                                     club: item.club,
                                     visitedStore: visitedStore,
+                                    photosStore: photosStore,
                                     notesStore: notesStore,
                                     reviewsStore: reviewsStore,
                                     clubById: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
@@ -605,6 +607,7 @@ struct StatsView: View {
                                 StadiumDetailView(
                                     club: club,
                                     visitedStore: visitedStore,
+                                    photosStore: photosStore,
                                     notesStore: notesStore,
                                     reviewsStore: reviewsStore,
                                     clubById: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })

@@ -8,6 +8,7 @@ struct StadiumDetailView: View {
     let clubById: [String: Club]
     let fixtures: [Fixture]
     @ObservedObject var visitedStore: VisitedStore
+    @ObservedObject var photosStore: AppPhotosStore
     @ObservedObject var notesStore: AppNotesStore
     @ObservedObject var reviewsStore: AppReviewsStore
     @State private var expandedReviewCategories: Set<VisitedStore.ReviewCategory> = []
@@ -28,6 +29,7 @@ struct StadiumDetailView: View {
     init(
         club: Club,
         visitedStore: VisitedStore,
+        photosStore: AppPhotosStore,
         notesStore: AppNotesStore,
         reviewsStore: AppReviewsStore,
         clubById: [String: Club] = [:],
@@ -35,6 +37,7 @@ struct StadiumDetailView: View {
     ) {
         self.club = club
         self.visitedStore = visitedStore
+        self.photosStore = photosStore
         self.notesStore = notesStore
         self.reviewsStore = reviewsStore
         self.clubById = clubById.isEmpty ? [club.id: club] : clubById
@@ -122,7 +125,7 @@ struct StadiumDetailView: View {
                         .foregroundStyle(.red)
                 }
 
-                let photoNames = visitedStore.photoFileNames(for: club.id)
+                let photoNames = photosStore.photoFileNames(for: club.id)
                 if photoNames.isEmpty {
                     Text("Ingen billeder endnu.")
                         .foregroundStyle(.secondary)
@@ -136,7 +139,7 @@ struct StadiumDetailView: View {
                                             selectedPhotoFileName = fileName
                                         } label: {
                                             LocalPhotoImage(
-                                                fileURL: visitedStore.photoURL(fileName: fileName),
+                                                fileURL: photosStore.photoURL(fileName: fileName),
                                                 contentMode: .fill,
                                                 cornerRadius: 10
                                             )
@@ -157,7 +160,7 @@ struct StadiumDetailView: View {
                                         .accessibilityLabel("Fjern billede")
                                     }
 
-                                    let caption = visitedStore.photoCaption(for: club.id, fileName: fileName)
+                                    let caption = photosStore.photoCaption(for: club.id, fileName: fileName)
                                     if !caption.isEmpty {
                                         Text(caption)
                                             .font(.caption2)
@@ -326,18 +329,18 @@ struct StadiumDetailView: View {
             )
         ) {
             if let selectedPhotoFileName {
-                let photoNames = visitedStore.photoFileNames(for: club.id)
+                let photoNames = photosStore.photoFileNames(for: club.id)
                 PhotoFullscreenView(
                     photoFileNames: photoNames,
                     initialSelectedFileName: selectedPhotoFileName,
                     imageURLForFileName: { fileName in
-                        visitedStore.photoURL(fileName: fileName)
+                        photosStore.photoURL(fileName: fileName)
                     },
                     captionForFileName: { fileName in
-                        visitedStore.photoCaption(for: club.id, fileName: fileName)
+                        photosStore.photoCaption(for: club.id, fileName: fileName)
                     },
                     onSaveCaption: { fileName, caption in
-                        visitedStore.setPhotoCaption(caption, for: club.id, fileName: fileName)
+                        photosStore.setPhotoCaption(caption, for: club.id, fileName: fileName)
                     },
                     onClose: { self.selectedPhotoFileName = nil }
                 )
@@ -353,7 +356,7 @@ struct StadiumDetailView: View {
         ) {
             Button("Slet billede", role: .destructive) {
                 if let fileName = pendingDeletePhotoFileName {
-                    visitedStore.removePhoto(fileName: fileName, for: club.id)
+                    photosStore.removePhoto(fileName: fileName, for: club.id)
                 }
                 pendingDeletePhotoFileName = nil
             }
@@ -553,7 +556,7 @@ struct StadiumDetailView: View {
         for item in items {
             do {
                 guard let data = try await item.loadTransferable(type: Data.self) else { continue }
-                try visitedStore.addPhotoData(data, for: club.id)
+                try photosStore.addPhotoData(data, for: club.id)
             } catch {
                 photoImportError = error.localizedDescription
             }

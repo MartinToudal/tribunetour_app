@@ -6,6 +6,7 @@ struct MatchesView: View {
     let clubById: [String: Club]
     let fixtures: [Fixture]
     @ObservedObject var visitedStore: VisitedStore
+    @ObservedObject var photosStore: AppPhotosStore
     @ObservedObject var notesStore: AppNotesStore
     @ObservedObject var reviewsStore: AppReviewsStore
 
@@ -14,6 +15,7 @@ struct MatchesView: View {
         clubById: [String: Club]? = nil,
         fixtures: [Fixture],
         visitedStore: VisitedStore,
+        photosStore: AppPhotosStore,
         notesStore: AppNotesStore,
         reviewsStore: AppReviewsStore
     ) {
@@ -21,6 +23,7 @@ struct MatchesView: View {
         self.clubById = clubById ?? Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
         self.fixtures = fixtures
         self.visitedStore = visitedStore
+        self.photosStore = photosStore
         self.notesStore = notesStore
         self.reviewsStore = reviewsStore
     }
@@ -261,6 +264,7 @@ struct MatchesView: View {
                                     fixture: f,
                                     clubById: clubById,
                                     visitedStore: visitedStore,
+                                    photosStore: photosStore,
                                     notesStore: notesStore,
                                     reviewsStore: reviewsStore,
                                     fixtures: fixtures

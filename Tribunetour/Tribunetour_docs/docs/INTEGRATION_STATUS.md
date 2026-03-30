@@ -6,7 +6,7 @@ Dette dokument giver et samlet overblik over, hvordan Tribunetour hænger sammen
 - web
 - auth
 - reference-data
-- brugerdata (`visited`, `notes`)
+- brugerdata (`visited`, `notes`, `reviews`)
 
 Målet er at gøre det tydeligt:
 - hvad der allerede er bygget sammen
@@ -22,19 +22,19 @@ Tribunetour er ikke længere to helt adskilte spor.
 
 App og web deler nu:
 - samme auth-retning
-- en fælles retning for `visited`
+- fælles modeller for `visited`, `notes` og `reviews`
 - samme produktbegreber
-- i praksis samme kampprogram-indhold
+- samme reference-data i praksis
 
 Men løsningen er stadig i en overgangsfase, fordi:
-- reference-data ikke kommer fra én fælles pipeline endnu
 - appens gamle lokale/CloudKit-model stadig lever for app-only spor
 - ikke alle brugerdatafelter er fælles endnu
+- fotos, weekend-plan og achievements endnu ikke er besluttet som fuld tværfladeoplevelse
 
 ### Kort sagt
 Status lige nu er:
 
-`App og web hænger nu sammen på login, delt visited i praksis og delt notes i praksis, men endnu ikke på én fuld fælles datamodel og én fælles reference-data-pipeline.`
+`App og web hænger nu sammen på login, reference-data, delt visited, delt notes og delte reviews i praksis, men endnu ikke på alle richer app-only dataspot.`
 
 ---
 
@@ -47,8 +47,8 @@ flowchart TD
     A --> D[RemoteFixturesProvider]
 
     W[Web] --> E[Supabase Auth]
-    W --> F[Visited repository / shared visited model]
-    W --> G[Lokale stadiums/fixtures JSON-filer]
+    W --> F[Visited/Notes/Reviews repositories]
+    W --> G[Generated reference-data]
 
     B --> E
     C --> H[SharedVisitedSyncBackend]
@@ -70,8 +70,8 @@ flowchart TD
 ### Sådan skal grafikken læses
 - Appen har allerede et fælles auth-spor mod Supabase.
 - Appen har også et shared visited-sync-spor mod backend.
-- Web bruger shared visited-model.
-- App og web er endnu ikke koblet på samme reference-data-loader.
+- Web bruger shared visited-, notes- og reviewmodeller.
+- App og web er nu koblet på samme reference-data-kontrakt i drift.
 - CloudKit lever stadig i appen for app-only data, men er ikke længere fælles sandhed for `visited`.
 
 ---
@@ -124,39 +124,36 @@ I stedet er retningen:
 
 Det er vigtigt, fordi appen har været det mest modne produktspor.
 
-### 4. Kampprogrammet er bragt på linje i indhold
-Appens kampprogram og webens kampprogram er nu opdateret til samme dataindhold.
+### 4. Reference-data er bragt i drift på tværs
+Appens kampprogram og webens kampprogram er nu koblet sammen via det fælles reference-data-flow.
 
 Det betyder:
 - mismatch i faktiske kampe er løst
 - web viser nu samme fixtures som appen
+- appen bruger nu remote fixtures-feed fra websitet som normal vej
 
-Men:
-- det er stadig ikke én fælles teknisk pipeline
-- web bruger stadig sin egen reference-datafil
+### 5. Shared notes virker nu i praksis
+`notes` er nu en reel tværflade-model.
+
+Det betyder:
+- notes kan læses og skrives fra både app og web
+- notes er verificeret manuelt begge veje
+- den kendte begrænsning er sync ved fokus/aktivering, ikke realtime
+
+### 6. Shared reviews virker nu i praksis
+`reviews` er nu også en reel tværflade-model.
+
+Det betyder:
+- samme reviewmodel bruges i app og web
+- reviews kan læses og skrives fra både app og web
+- reviews er verificeret manuelt begge veje
+- den kendte begrænsning er sync ved fokus/aktivering, ikke realtime
 
 ---
 
 ## Hvad der kun delvist er bygget sammen
 
-### 1. Reference-data
-Reference-data er kun delvist samlet.
-
-#### Det der virker
-- appen kan bruge remote fixtures med lokal fallback
-- web kan vise de samme fixtures som appen, når filerne holdes synkroniserede
-- kontrakten for stabile IDs er dokumenteret
-
-#### Det der ikke er helt færdigt
-- app og web bruger ikke samme loader-lag
-- web læser stadig lokale JSON-filer
-- app bruger `RemoteFixturesProvider`
-- der findes ikke én sand pipeline for opdatering af reference-data
-
-Konsekvens:
-- nye mismatch kan opstå igen, hvis data kun opdateres ét sted
-
-### 2. Visited-sync i appen
+### 1. Visited-sync i appen
 Visited-sync fungerer nu i praksis på tværs af app og web, men arkitekturen bærer stadig præg af migration omkring app-only data.
 
 #### Det der virker
@@ -185,71 +182,56 @@ Appen har allerede:
 - achievements
 - planer/weekend-plan
 
-Web har endnu ikke samme bredde.
+Web har nu delt `notes` og `reviews`, men endnu ikke samme bredde på resten.
 
 Konsekvens:
 - appen er stadig den egentlige primære produktflade
-- web er endnu ikke feature-paritet, selv om retningen er fælles
-
-### 4. Shared notes virker nu i praksis
-`notes` er nu taget ud af ren planlægningsfase og ind i reel tværflade-integration.
-
-#### Det der virker
-- shared notes-model og backend-kontrakt er skrevet
-- Supabase SQL for `notes`-tabellen, grants og RLS er beskrevet
-- web har ét konkret note-entrypoint på stadiondetaljen
-- notes kan nu gemmes og persists på web for loggede brugere
-- appen kan nu læse og skrive mod samme shared notes-backend
-- notes er verificeret manuelt begge veje mellem app og web
-
-#### Det der ikke er helt færdigt
-- sync er stadig fokus-/aktiveringsbaseret og ikke realtime
-- notes bruger stadig en forsigtig merge-retning for at beskytte eksisterende app-noter
-- richer brugerdata som reviews, fotos og plan er stadig ikke delte
-
-Konsekvens:
-- `notes` er nu en delt datamodel i praksis
-- men den er stadig smallere og mindre moden end `visited`
+- web er endnu ikke feature-paritet, selv om kernebrugerdata nu er fælles
+- fotos, weekend-plan og progression er de tydeligste resterende huller
 
 ---
 
 ## Hvad der mangler
 
-### 1. Én fælles reference-data-pipeline
-Dette er det vigtigste manglende stykke.
+### 1. Shared photos eller tydelig app-only beslutning
+Hvis produktet skal føles helt rundt før release, er billeder det største resterende hul.
 
-Det ønskede slutbillede er:
-- ét fælles reference-dataformat
-- én fælles opdateringspipeline
-- app og web læser samme kilde eller samme genererede kontrakt
+Det ønskede slutbillede er enten:
+- shared foto-model mellem app og web
 
-Når dette er på plads:
-- kampprogrammet kan ikke så let drive fra hinanden igen
-- app og web bliver mere forudsigelige at vedligeholde
+eller:
+- helt tydelig produktbeslutning om at billeder er app-only i denne release
 
-### 2. Beslutning om endelig source of truth for visited
-Lige nu er den låste retning:
-- appen er kun primær i bootstrap-øjeblikket
-- shared backend er autoritativ efter bootstrap
+### 2. Weekend-plan som delt flow eller bevidst app-only scope
+Plan/weekend-plan er stadig et separat app-spor.
 
-Det manglende slutskridt er at beslutte:
-- hvornår CloudKit ikke længere er det primære visited-lag
+Det ønskede slutbillede er enten:
+- en lille shared plan-model
 
-### 3. Oprydning i migrationslag
+eller:
+- at web ikke lover planfunktionalitet i denne release
+
+### 3. Afledt eller delt progression/achievements
+Achievements er stadig app-only.
+
+Før en hel-integreret release bør vi beslutte:
+- om web kun viser afledt progression fra shared data
+- eller om achievements slet ikke er del af det fælles produktløfte endnu
+
+### 4. Oprydning i migrationslag
 Når den endelige retning er besluttet, bør disse ting strammes op:
 - runtime-flags
 - hybrid-/prepared modes
 - midlertidige brugerbeskeder om overgang
 - rå fejlmeddelelser i sync-flow
 
-### 4. Tydelig afgrænsning mellem app-only og shared data
+### 5. Tydelig afgrænsning mellem app-only og shared data
 Den overordnede produktbeslutning er nu skrevet ned, men mangler senere implementering for de næste datatyper.
 
 Det gælder især:
 - billeder
-- reviews
-- noter
 - plan/weekend-plan
+- achievements/progression
 
 ---
 
@@ -267,10 +249,13 @@ Det gælder især:
 | Shared notes-model | Bygget | Kontrakt, SQL-runbook og shared backend er på plads |
 | Notes på web | Bygget | Loggede brugere kan gemme noter på stadiondetaljen |
 | Notes app/web sync | Bygget | Verificeret manuelt begge veje med kendt begrænsning: ikke realtime |
+| Shared reviews-model | Bygget | Samme reviewmodel bruges i app og web |
+| Reviews på web | Bygget | Loggede brugere kan gemme reviews på stadiondetaljen |
+| Reviews app/web sync | Bygget | Verificeret manuelt begge veje med kendt begrænsning: ikke realtime |
 | Reference-data-kontrakt | Bygget | IDs og regler er dokumenteret |
-| Fælles reference-data-pipeline | Mangler | App og web læser ikke samme tekniske pipeline endnu |
-| Kampprogram i indhold | Bygget | Web og app er i sync lige nu |
-| Kampprogram i pipeline | Mangler | Sync er stadig manuelt/duplikeret |
+| Fælles reference-data-pipeline | Bygget | App og web er koblet på samme reference-dataflow i praksis |
+| Kampprogram i indhold | Bygget | Web og app er i sync |
+| Kampprogram i pipeline | Bygget | Remote fixtures-feed leveres fra webens genererede artefakt |
 | App/web feature-paritet | Mangler | Appen har stadig væsentligt mere funktionalitet |
 | Shared vs app-only data matrix | Bygget | Produktgrænser er nu dokumenteret |
 
@@ -288,44 +273,40 @@ Det er den liste, der bør bruges før næste integrationsrelease eller intern t
 Hvis målet er at “gøre integrationen færdig”, er den mest realistiske rækkefølge:
 
 ### Fase 1
-Færdiggør reference-data-sporet.
+Luk de resterende richer brugerdata-spor.
 
 Mål:
-- web og app skal ikke længere kunne ende med forskellige fixtures
+- vælge og bygge de sidste dataområder, der er nødvendige for at produktet føles helt rundt
 
 ### Fase 2
-Lås visited-source-of-truth efter bootstrap.
+Beslut og implementér billeder.
 
 Mål:
-- shared backend bliver den normale fælles model
-- CloudKit reduceres til overgangs- eller legacy-lag
+- enten shared foto-model eller bevidst app-only release-scope
 
 ### Fase 3
-Ryd migrationslag og fejlkommunikation op.
+Beslut og implementér weekend-plan/progression-scope.
+
+Mål:
+- web og app skal love det samme om `Min tur`, plan og progression
+
+### Fase 4
+Ryd migrationslag og release-copy op.
 
 Mål:
 - produktet skal føles færdigt, ikke “forberedt”
-
-### Fase 4
-Beslut hvad web faktisk skal kunne på sigt.
-
-Mål:
-- undgå at web bliver et halvt spejl uden tydelig produktrolle
 
 ---
 
 ## Praktisk konklusion
 
 Tribunetour er nået til et vigtigt punkt:
-- Appen er det modne produkt.
-- Web er ikke længere kun et sideprojekt.
-- Auth og `visited` er begyndt at hænge sammen på tværs.
+- auth, reference-data, `visited`, `notes` og `reviews` hænger nu sammen på tværs
+- app og web opfører sig som ét produkt på kernebrugerdata
 
-Det der mangler nu, er primært ikke flere app-features.
+Det der mangler nu, hvis release-målet er “helt rundt”, er primært:
+- billeder
+- weekend-plan
+- beslutning om progression/achievements på web
 
-Det der mangler er:
-- konsolidering
-- fælles reference-data
-- endelig beslutning om shared source of truth
-
-Når de tre ting er lukket, vil app og web i praksis kunne betragtes som ét produkt med to flader.
+Når de tre ting er lukket eller bevidst afgrænset, kan app og web i praksis betragtes som ét produkt hele vejen rundt.

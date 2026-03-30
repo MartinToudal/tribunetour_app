@@ -7,6 +7,7 @@ struct MatchDetailView: View {
     let clubById: [String: Club]
     let fixtures: [Fixture]
     @ObservedObject var visitedStore: VisitedStore
+    @ObservedObject var photosStore: AppPhotosStore
     @ObservedObject var notesStore: AppNotesStore
     @ObservedObject var reviewsStore: AppReviewsStore
 
@@ -14,6 +15,7 @@ struct MatchDetailView: View {
         fixture: Fixture,
         clubById: [String: Club],
         visitedStore: VisitedStore,
+        photosStore: AppPhotosStore,
         notesStore: AppNotesStore,
         reviewsStore: AppReviewsStore,
         fixtures: [Fixture] = []
@@ -21,6 +23,7 @@ struct MatchDetailView: View {
         self.fixture = fixture
         self.clubById = clubById
         self.visitedStore = visitedStore
+        self.photosStore = photosStore
         self.notesStore = notesStore
         self.reviewsStore = reviewsStore
         self.fixtures = fixtures
@@ -98,6 +101,7 @@ struct MatchDetailView: View {
                         StadiumDetailView(
                             club: venueClub,
                             visitedStore: visitedStore,
+                            photosStore: photosStore,
                             notesStore: notesStore,
                             reviewsStore: reviewsStore,
                             clubById: clubById,

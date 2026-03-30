@@ -29,6 +29,7 @@ struct ContentView: View {
                         clubs: appState.clubs,
                         fixtures: appState.fixtures,
                         visitedStore: appState.visitedStore,
+                        photosStore: appState.photosStore,
                         notesStore: appState.notesStore,
                         reviewsStore: appState.reviewsStore
                     )
@@ -38,6 +39,7 @@ struct ContentView: View {
                         clubs: appState.clubs,
                         fixtures: appState.fixtures,
                         visitedStore: appState.visitedStore,
+                        photosStore: appState.photosStore,
                         notesStore: appState.notesStore,
                         reviewsStore: appState.reviewsStore
                     )
@@ -50,6 +52,7 @@ struct ContentView: View {
                     StatsView(
                         clubs: appState.clubs,
                         visitedStore: appState.visitedStore,
+                        photosStore: appState.photosStore,
                         notesStore: appState.notesStore,
                         reviewsStore: appState.reviewsStore,
                         authSession: appState.authSession,
@@ -83,6 +86,7 @@ struct StadiumsView: View {
     let clubs: [Club]
     let fixtures: [Fixture]
     @ObservedObject var visitedStore: VisitedStore
+    @ObservedObject var photosStore: AppPhotosStore
     @ObservedObject var notesStore: AppNotesStore
     @ObservedObject var reviewsStore: AppReviewsStore
 
@@ -317,6 +321,7 @@ struct StadiumsView: View {
                             StadiumDetailView(
                                 club: club,
                                 visitedStore: visitedStore,
+                                photosStore: photosStore,
                                 notesStore: notesStore,
                                 reviewsStore: reviewsStore,
                                 clubById: clubByIdMap,
@@ -451,6 +456,7 @@ struct StadiumsView: View {
                 StadiumDetailView(
                     club: club,
                     visitedStore: visitedStore,
+                    photosStore: photosStore,
                     notesStore: notesStore,
                     reviewsStore: reviewsStore,
                     clubById: clubByIdMap,

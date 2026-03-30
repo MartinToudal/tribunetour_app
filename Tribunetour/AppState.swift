@@ -16,6 +16,7 @@ final class AppState: ObservableObject {
     @Published private(set) var reviewsSyncIssue: String?
 
     let visitedStore: VisitedStore
+    let photosStore: AppPhotosStore
     let notesStore: AppNotesStore
     let reviewsStore: AppReviewsStore
     let authSession = AppAuthSession()
@@ -43,6 +44,9 @@ final class AppState: ObservableObject {
         self.visitedStore = VisitedStore(
             syncBackend: visitedSyncConfiguration.backend,
             mergePolicy: visitedSyncConfiguration.mergePolicy
+        )
+        self.photosStore = AppPhotosStore(
+            visitedStore: self.visitedStore
         )
         self.notesStore = AppNotesStore(
             visitedStore: self.visitedStore,

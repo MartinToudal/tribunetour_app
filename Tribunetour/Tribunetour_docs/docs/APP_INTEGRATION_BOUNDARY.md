@@ -17,6 +17,11 @@ Appens visited-spor er i dag:
 - persistet i `UserDefaults`
 - synket via brugerens private CloudKit-database
 
+Appen har nu desuden eksplicitte boundary-lag for de shared felter, der er løftet ud af direkte view-kobling:
+- `AppNotesStore`
+- `AppReviewsStore`
+- `AppPhotosStore`
+
 Centrale filer:
 - `VisitedStore.swift`
 - `CloudSync.swift`
@@ -129,6 +134,7 @@ Status:
 - shared backend-seamet har request/response-mapping, auth-token seam og soft-delete via `visited = false`
 - appen har et separat `AppAuthSession` seam, så token ikke senere skal hentes direkte fra views eller globals
 - appen har også en `HybridVisitedSyncBackend`, der kan lade appen forblive primær og senere spejle writes til shared backend
+- appen har nu også særskilte boundaries for `notes`, `reviews` og `photos`, så disse ikke længere skal kobles på shared backend direkte fra viewlaget
 - ingen af de shared-baserede backends er aktive i runtime endnu
 - de bruges kun som forberedte seams til næste hybridfase
 
