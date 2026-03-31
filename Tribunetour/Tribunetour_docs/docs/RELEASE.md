@@ -1,24 +1,26 @@
-# Release Notes – Sprint 5.x
+# Release Notes – Integration Release
 
-Version: 0.1.0 (7) planned submission
+Version: pending next release candidate
 
 ## Formål
-Lukke stabilitet, performance og UX-polish med fokus på daglig drift i TestFlight.
+Lukke integrationen mellem app og web, så Tribunetour kan releases som ét sammenhængende produkt.
 
-## Release scope (Sprint 5.x)
-- Fotos v1 med CloudKit-sync (upload, sletning, captions, restore)
-- Review v1 (scores, valgfri kategori-noter, summary/tags)
-- Achievements v1 (unlock/progress + toast UX)
+## Release scope
+- Shared `visited`
+- Shared `notes`
+- Shared `reviews`
+- Shared `photos`
+- Shared `weekend plan`
+- Webvisning af afledt `progression / achievements`
 - Løbende stabiliseringsfixes i sync-flow
 
 ## Go / No-Go kriterier
 - **Build:** Grøn build uden compile-fejl
-- **Tests:** Regressionstest grøn (merge + notifier-vinduer + timezone)
-- **Data:** `stadiums.csv` + `fixtures.csv` loader stabilt
-- **Photo sync:** 10-15 billeder pr. stadion overlever reinstall
-- **Review:** Reviewdata persisterer efter relaunch/reinstall
-- **Achievements:** Unlock + reset + multi-unlock-toast virker
-- **CloudKit:** Ingen kritiske schema-/argument-fejl i normal brugerflow
+- **Regression:** Tværflade sanity-rutinen er grøn for `visited`, `notes`, `reviews`, `photos`, `weekend plan` og `progression`
+- **Data:** Reference-data loader stabilt på både app og web
+- **Sync:** Ingen reproducerbar datatabscase i normal app/web-brug
+- **UX:** `Min tur` og stadiondetaljer opleves konsistente mellem app og web
+- **Deploy:** Seneste webdeploy og seneste app-build matcher de verificerede commits
 
 ## Kendte ikke-blokerende logs
 Følgende log-typer kan forekomme i debug uden at være release-blockers:
@@ -28,8 +30,8 @@ Følgende log-typer kan forekomme i debug uden at være release-blockers:
 - `Potential Structural Swift Concurrency Issue: unsafeForcedSync ...`
 
 ## Release beslutning
-- **Klar til TestFlight:** når alle Go/No-Go kriterier er opfyldt
-- **Skal holdes tilbage:** hvis photo/review restore fejler eller CloudKit giver kritiske fejl
+- **Klar til release candidate:** når alle Go/No-Go kriterier er opfyldt
+- **Skal holdes tilbage:** hvis et delt dataflow kan reproduceres som ustabilt eller inkonsistent mellem app og web
 
 ## App Store Launch Checklist (v1)
 Mål: sende første App Store-version uden at blokere næste platformfase.
@@ -91,28 +93,21 @@ Mål: sende første App Store-version uden at blokere næste platformfase.
 - Platform-arbejde (`Supabase + web + shared backend`) kører som separat spor
 - Første platformmål er shared read-data, ikke fuld migration af alle app-data
 
-## Integrationsstatus efter App Store-spor
+## Integrationsstatus
 
 Den aktuelle integrationsretning er nu:
 - web og app deler auth-retning
-- web og app deler `visited`-retning
-- shared backend er besluttet som steady-state for `visited` efter bootstrap
-- reference-data er samlet på kontrakt- og valideringsniveau, men endnu ikke på én fuld pipeline
+- web og app deler `visited`, `notes`, `reviews`, `photos` og `weekend plan`
+- web viser `progression/achievements` afledt af de samme shared data som appen
+- reference-data er samlet på kontrakt- og driftsniveau
 
 Det betyder for release-arbejde:
-- App Store-sporet kan stadig vurderes som app-first releasehistorik
-- men videre produktarbejde skal beskrives som integration mod ét samlet produkt
+- appen er stadig den mest modne flade
+- web er nu reel produktflade, ikke sideprojekt
+- den personlige kerneoplevelse er nu sammenhængende på tværs af app og web
 
-### Hvad der ikke længere bør stå i releasebeskrivelser uden præcisering
-- at appen generelt er den permanente sandhed for `visited`
-- at web er et rent separat sideprojekt
-- at login/backend kun er et fremtidsspor
-
-### Hvad der bør stå i stedet
-- appen er den mest modne flade
-- web er den næste produktflade
-- `visited` er i overgang, men steady-state er låst
-- reference-data er under konsolidering mod én pipeline
+### Kendt begrænsning
+- sync er fokus-/aktiveringsbaseret, ikke realtime
 
 ## Integration Release Checklist
 
@@ -124,39 +119,28 @@ Denne rutine er den hurtigste måde at bekræfte, at integrationskernen stadig h
 Kør den i denne rækkefølge:
 1. byg web og app grønt
 2. åbn appen som gæst og bekræft at centrale flader loader
-3. log ind i appen og bekræft at session genoptages korrekt
-4. gennemfør bootstrap med en bruger uden shared `visited`, hvis det er den type release der testes
-5. markér et stadion som besøgt i appen og bekræft ændringen på web
-6. markér et stadion som besøgt på web og bekræft ændringen i appen efter normal aktivering/fokus
-7. markér et stadion som ubesøgt den ene vej og bekræft at det forbliver stabilt den anden vej
-8. bekræft at app-only data stadig kun opfører sig som app-only data
+3. log ind i appen og på web med samme bruger
+4. markér et stadion som besøgt i appen og bekræft ændringen på web
+5. markér et stadion som besøgt på web og bekræft ændringen i appen efter normal aktivering/fokus
+6. skriv eller redigér en note begge veje
+7. skriv eller redigér et review begge veje
+8. upload og slet et foto begge veje
+9. tilføj og fjern en kamp i weekend-plan begge veje
+10. åbn `Min tur` på web og bekræft at progression/achievements afspejler de ændrede data
 
 Resultatet skal læses sådan:
 - hvis alt ovenfor er grønt, er integrationsfundamentet grønt
-- hvis noget fejler, skal fejlen placeres som enten `auth`, `bootstrap`, `visited`, `reference-data` eller `app-only data`
+- hvis noget fejler, skal fejlen placeres som enten `auth`, `visited`, `notes`, `reviews`, `photos`, `weekend plan`, `progression` eller `reference-data`
 - manglende realtime er ikke i sig selv en blocker, hvis fokus- og aktiveringsflowet virker som forventet
 - kendte begrænsninger skal beskrives eksplicit, men må ikke blandes sammen med reelle blockers
 
-### Notes sanity-rutine
-Denne rutine er den hurtigste måde at bekræfte, at den delte notes-model stadig holder.
+### Regressionstest-status
+Der findes pt. ikke en dækkende automatiseret regression-suite for de nye tværfladeflows.
 
-Kør den i denne rækkefølge:
-1. log ind med samme bruger i app og på web
-2. åbn et stadion med note-felt i appen og skriv en tydelig testnote
-3. åbn samme stadion på web og bekræft at noten vises efter normal fokus/opdatering
-4. redigér noten på web og gem
-5. gå tilbage til appen og bekræft at den opdaterede note vises efter normal aktivering
-6. slet noteindholdet ét sted og bekræft at tom note-tilstand står stabilt det andet sted
-
-Resultatet skal læses sådan:
-- hvis flowet holder i begge retninger, er notes-sporet grønt i praksis
-- hvis noget fejler, skal fejlen placeres som `notes auth`, `notes read`, `notes write` eller `notes merge`
-- manglende realtime er ikke i sig selv en blocker, hvis fokus- og aktiveringsflowet virker som forventet
-
-Aktuel status:
-- verificeret manuelt som fungerende begge veje mellem app og web
-- notes bruger shared backend som fælles model
-- kendt begrænsning: sync er fokus-/aktiveringsbaseret, ikke realtime
+Det betyder:
+- builds er automatiserede og skal være grønne
+- den vigtigste regressionstest før release er stadig den manuelle sanity-rutine ovenfor
+- næste oplagte forbedring efter release er at automatisere webflow for auth og de vigtigste shared dataflows
 
 ### 1. Build og validering
 - web build er grøn med `npm run build`
@@ -176,13 +160,7 @@ Aktuel status:
 - appen kan genoptage en eksisterende session
 - udløbet session giver en forståelig fejl eller ny loginvej, ikke tavs fejltilstand
 
-### 4. Bootstrap for `visited`
-- en bruger uden shared `visited` kan gennemføre bootstrap fra appen
-- bootstrap-copy forklarer tydeligt, at appens eksisterende visited-status opretter den fælles model første gang
-- bootstrap afsluttes uden tab af lokal visited-status
-- appen skifter bagefter korrekt til shared `visited`-retning
-
-### 5. Tværflade-test af `visited`
+### 4. Tværflade-test af `visited`
 - markér et stadion som besøgt i appen, og se ændringen på web
 - markér et stadion som ikke besøgt i appen, og se ændringen på web
 - markér et stadion som besøgt på web, og se korrekt status i appen efter normal sync
@@ -194,29 +172,43 @@ Aktuel status:
 - steady-state er nu shared backend for `visited`
 - sync er stabil ved app-aktivering og browserfokus, men er ikke bygget som realtime-subscription
 
-### 6. App-only data opfører sig ærligt
-- noter, reviews, fotos og weekend-plan er stadig synlige og stabile i appen
-- web lover ikke, at disse data deles på tværs endnu
-- produktcopy modsiger ikke den besluttede datamatrix
+### 5. Tværflade-test af `notes`, `reviews`, `photos` og `weekend plan`
+- `notes` kan læses, redigeres og tømmes begge veje
+- `reviews` kan læses, redigeres og opdatere score-/kommentardetaljer begge veje
+- `photos` kan uploades, vises og slettes begge veje
+- `weekend plan` kan ændres begge veje og forbliver stabil efter refresh/aktivering
+
+Aktuel status:
+- alle fire spor er verificeret manuelt som fungerende begge veje
+- kendt begrænsning: sync er fokus-/aktiveringsbaseret, ikke realtime
+
+### 6. Tværflade-test af `progression`
+- `Min tur` på web viser konsistente totals for besøg, noter, anmeldelser og billeder
+- achievements på web reagerer korrekt på shared data
+- progressionen må gerne være afledt, men må ikke afvige fra appens grundlogik
+
+Aktuel status:
+- webens progression er bygget som afledt view oven på shared data
+- retningen er verificeret teknisk via web-build og funktionelt via de delte dataflows
 
 ### 7. Go / No-Go
 Go:
 - alle build- og datatjek er grønne
-- auth, bootstrap og delt `visited` virker i praksis på tværs af app og web
+- auth og alle delte produktspor virker i praksis på tværs af app og web
 - reference-data opleves konsistente i de centrale produktflader
-- app-only data forbliver stabile og bliver ikke fejlagtigt præsenteret som shared
+- `Min tur` opleves konsistent på tværs af fladerne
 
 Aktuel vurdering:
-- integrationen er nu `Go med kendt begrænsning` for den delte `visited`-model
+- integrationen er nu `Go med kendt begrænsning` for den samlede delte model
 - kendt begrænsning: tværflade-sync er fokus/aktiveringsbaseret, ikke realtime
 - den begrænsning er acceptabel, så længe sanity-rutinen fortsat er grøn
 
 No-Go:
-- app og web viser forskellig visited-status uden forklaring
-- bootstrap overskriver eller taber brugerens forventede visited-data
+- app og web viser forskellige shared data uden forklaring
+- et delt flow taber eller genopretter data forkert
 - reference-data divergerer mellem fladerne
 - nye integrationsændringer introducerer compile-fejl eller reel regressionswarning
-- produktcopy lover deling af data, som stadig er app-only
+- produktcopy lover noget andet end det produktet faktisk leverer
 
 ## AS2 Submission Readiness Status
 

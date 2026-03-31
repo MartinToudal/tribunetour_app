@@ -6,7 +6,7 @@ Dette dokument giver et samlet overblik over, hvordan Tribunetour hænger sammen
 - web
 - auth
 - reference-data
-- brugerdata (`visited`, `notes`, `reviews`)
+- brugerdata (`visited`, `notes`, `reviews`, `photos`, `weekend plan`)
 
 Målet er at gøre det tydeligt:
 - hvad der allerede er bygget sammen
@@ -27,14 +27,14 @@ App og web deler nu:
 - samme reference-data i praksis
 
 Men løsningen er stadig i en overgangsfase, fordi:
-- appens gamle lokale/CloudKit-model stadig lever for app-only spor
-- ikke alle brugerdatafelter er fælles endnu
-- fotos, weekend-plan og achievements endnu ikke er besluttet som fuld tværfladeoplevelse
+- appens gamle lokale/CloudKit-model stadig lever som legacy-lag for nogle app-flows
+- sync er fokus-/aktiveringsbaseret og ikke realtime
+- release-oprydning og en stram regression-rutine stadig mangler før endelig release
 
 ### Kort sagt
 Status lige nu er:
 
-`App og web hænger nu sammen på login, reference-data, delt visited, delt notes og delte reviews i praksis, men endnu ikke på alle richer app-only dataspot.`
+`App og web hænger nu sammen på login, reference-data, visited, notes, reviews, fotos, weekend-plan og afledt progression i praksis.`
 
 ---
 
@@ -72,7 +72,7 @@ flowchart TD
 - Appen har også et shared visited-sync-spor mod backend.
 - Web bruger shared visited-, notes- og reviewmodeller.
 - App og web er nu koblet på samme reference-data-kontrakt i drift.
-- CloudKit lever stadig i appen for app-only data, men er ikke længere fælles sandhed for `visited`.
+- CloudKit/legacy-lag lever stadig i appen for dele af den historiske datamodel, men er ikke længere fælles sandhed for de delte produktspor.
 
 ---
 
@@ -149,12 +149,37 @@ Det betyder:
 - reviews er verificeret manuelt begge veje
 - den kendte begrænsning er sync ved fokus/aktivering, ikke realtime
 
+### 7. Shared photos virker nu i praksis
+`photos` er nu en reel tværflade-model.
+
+Det betyder:
+- fotos kan uploades, læses, opdateres og slettes fra både app og web
+- eksisterende app-fotos kan backfilles til shared backend
+- delete-flow er verificeret begge veje
+- kendt begrænsning er stadig fokus/aktiveringsbaseret sync, ikke realtime
+
+### 8. Weekend-plan virker nu i praksis
+`weekend plan` er nu også delt mellem app og web.
+
+Det betyder:
+- planen kan oprettes og redigeres på web
+- appen kan hente og pushe shared weekend-plan
+- sync er verificeret manuelt begge veje
+
+### 9. Progression/achievements er nu synlige på web
+Achievements er stadig ikke en selvstændig shared tabel, men web viser nu progression afledt af de samme shared data som appen.
+
+Det betyder:
+- `Min tur` på web viser progression og achievements
+- web bruger shared `visited`, `notes`, `reviews` og `photos` som grundlag
+- produktløftet er nu ens mellem app og web uden at åbne en unødvendig ny backend-model
+
 ---
 
 ## Hvad der kun delvist er bygget sammen
 
-### 1. Visited-sync i appen
-Visited-sync fungerer nu i praksis på tværs af app og web, men arkitekturen bærer stadig præg af migration omkring app-only data.
+### 1. Shared data i appen bærer stadig præg af migration
+De delte spor fungerer nu i praksis på tværs af app og web, men arkitekturen bærer stadig præg af migration omkring ældre app-lag.
 
 #### Det der virker
 - appen kan logge ind
@@ -162,76 +187,35 @@ Visited-sync fungerer nu i praksis på tværs af app og web, men arkitekturen b�
 - appen kan bootstrap’e shared visited-state
 - token-refresh fungerer nu
 - app og web kan ændre `visited`, og ændringen forbliver stabil på tværs
+- fotos og weekend-plan fungerer nu også stabilt på tværs
 
 #### Det der stadig er overgang
 - runtime-modes er reduceret, men `CloudKit (legacy)` lever stadig som fallback/internt spor
 - CloudKit er stadig en del af appens model for app-only data
-- foto/review/plan er endnu ikke flyttet til fælles model
+- noget legacy- og fallback-logik findes stadig i appen for at håndtere historiske data
 
 Konsekvens:
-- `visited` er nu fælles i praksis, men resten af appens datamodel er ikke fuldt konsolideret
-
-### 3. Brugerdata ud over `visited`
-Appen har langt mere funktionalitet end web.
-
-Appen har allerede:
-- noter
-- reviews
-- billeder
-- stats
-- achievements
-- planer/weekend-plan
-
-Web har nu delt `notes` og `reviews`, men endnu ikke samme bredde på resten.
-
-Konsekvens:
-- appen er stadig den egentlige primære produktflade
-- web er endnu ikke feature-paritet, selv om kernebrugerdata nu er fælles
-- fotos, weekend-plan og progression er de tydeligste resterende huller
+- den delte model virker, men app-koden bør senere strammes op når migrationsstøvet har lagt sig
+- release-risikoen er nu primært regressions- og polish-relateret, ikke model-relateret
 
 ---
 
 ## Hvad der mangler
 
-### 1. Shared photos eller tydelig app-only beslutning
-Hvis produktet skal føles helt rundt før release, er billeder det største resterende hul.
-
-Det ønskede slutbillede er enten:
-- shared foto-model mellem app og web
-
-eller:
-- helt tydelig produktbeslutning om at billeder er app-only i denne release
-
-### 2. Weekend-plan som delt flow eller bevidst app-only scope
-Plan/weekend-plan er stadig et separat app-spor.
-
-Det ønskede slutbillede er enten:
-- en lille shared plan-model
-
-eller:
-- at web ikke lover planfunktionalitet i denne release
-
-### 3. Afledt eller delt progression/achievements
-Achievements er stadig app-only.
-
-Før en hel-integreret release bør vi beslutte:
-- om web kun viser afledt progression fra shared data
-- eller om achievements slet ikke er del af det fælles produktløfte endnu
-
-### 4. Oprydning i migrationslag
+### 1. Oprydning i migrationslag
 Når den endelige retning er besluttet, bør disse ting strammes op:
 - runtime-flags
 - hybrid-/prepared modes
 - midlertidige brugerbeskeder om overgang
 - rå fejlmeddelelser i sync-flow
 
-### 5. Tydelig afgrænsning mellem app-only og shared data
-Den overordnede produktbeslutning er nu skrevet ned, men mangler senere implementering for de næste datatyper.
+### 2. Release-regression og submission-oprydning
+Det største resterende arbejde før release er nu ikke nye datamodeller, men at sikre at helheden holder.
 
 Det gælder især:
-- billeder
-- plan/weekend-plan
-- achievements/progression
+- kort tværflade-regression på de delte flows
+- opdateret release-copy og statusdokumenter
+- bevidst go/no-go beslutning på den samlede integration
 
 ---
 
@@ -252,11 +236,16 @@ Det gælder især:
 | Shared reviews-model | Bygget | Samme reviewmodel bruges i app og web |
 | Reviews på web | Bygget | Loggede brugere kan gemme reviews på stadiondetaljen |
 | Reviews app/web sync | Bygget | Verificeret manuelt begge veje med kendt begrænsning: ikke realtime |
+| Shared photos-model | Bygget | Metadata + storage-bucket bruges som fælles foto-model |
+| Photos app/web sync | Bygget | Verificeret manuelt begge veje inkl. delete-flow |
+| Shared weekend-plan | Bygget | App og web bruger samme `weekend_plans`-retning |
+| Weekend-plan app/web sync | Bygget | Verificeret manuelt begge veje |
+| Progression på web | Bygget | Web viser afledt progression/achievements fra shared data |
 | Reference-data-kontrakt | Bygget | IDs og regler er dokumenteret |
 | Fælles reference-data-pipeline | Bygget | App og web er koblet på samme reference-dataflow i praksis |
 | Kampprogram i indhold | Bygget | Web og app er i sync |
 | Kampprogram i pipeline | Bygget | Remote fixtures-feed leveres fra webens genererede artefakt |
-| App/web feature-paritet | Mangler | Appen har stadig væsentligt mere funktionalitet |
+| App/web feature-paritet | Næsten klar | Kerneproduktet er nu sammenhængende; resterende arbejde er polish/release-hardening |
 | Shared vs app-only data matrix | Bygget | Produktgrænser er nu dokumenteret |
 
 ---
