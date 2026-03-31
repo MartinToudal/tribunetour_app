@@ -33,6 +33,69 @@ Følgende log-typer kan forekomme i debug uden at være release-blockers:
 - **Klar til release candidate:** når alle Go/No-Go kriterier er opfyldt
 - **Skal holdes tilbage:** hvis et delt dataflow kan reproduceres som ustabilt eller inkonsistent mellem app og web
 
+## Final Pre-Release Checklist
+
+Brug denne checkliste som den sidste gate før release candidate.
+
+### A. Build og deploy
+- [ ] Web build er grøn med `npm run build`
+- [ ] Web regressionstest er grøn med `npm run test:e2e`
+- [ ] iOS-build er grøn i den aktuelle releasekandidat
+- [ ] Seneste webdeploy matcher committen der blev verificeret
+- [ ] Seneste app-build matcher committen der blev verificeret
+
+### B. Tværflade sanity
+- [ ] `visited` virker app -> web
+- [ ] `visited` virker web -> app
+- [ ] `notes` virker app -> web
+- [ ] `notes` virker web -> app
+- [ ] `reviews` virker app -> web
+- [ ] `reviews` virker web -> app
+- [ ] `photos` virker app -> web
+- [ ] `photos` virker web -> app
+- [ ] `photos` delete virker begge veje
+- [ ] `weekend plan` virker app -> web
+- [ ] `weekend plan` virker web -> app
+- [ ] `Min tur` på web afspejler de seneste shared ændringer korrekt
+
+### C. Produktflader
+- [ ] `/` loader korrekt som gæst
+- [ ] `/matches` loader korrekt som gæst
+- [ ] `/my` loader korrekt som gæst
+- [ ] stadiondetalje viser note/review/photo-flader korrekt som logget ind bruger
+- [ ] appens centrale flader loader korrekt: `Stadions`, `Kampe`, `Plan`, `Min tur`
+
+### D. Data og reference
+- [ ] Reference-data er opdateret og konsistent mellem app og web
+- [ ] Fixtures/kickoff-tider ser korrekte ud i Europe/Copenhagen
+- [ ] Ingen reproducerbar datatabscase findes i shared flows
+
+### E. Auth og konti
+- [ ] Login virker på web med almindelig bruger
+- [ ] Login virker i app
+- [ ] Session genoptages korrekt på web
+- [ ] Session genoptages korrekt i app
+- [ ] Fejl ved login/oprettelse er forståelige og ikke rå backend-fejl
+
+### F. Release-materiale
+- [ ] Support-side er live og korrekt
+- [ ] Privacy-side er live og korrekt
+- [ ] Screenshots er klar
+- [ ] App Store metadata er gennemgået
+- [ ] Versionsnummer og buildnummer er besluttet og konsekvente
+
+### G. Go / No-Go
+Go:
+- alle punkter i A er grønne
+- alle delte flows i B er grønne
+- ingen blokkerende fejl i C-F
+
+No-Go:
+- auth er ustabil
+- shared data divergerer mellem app og web
+- regressionstesten er rød
+- release-materiale eller compliance mangler
+
 ## App Store Launch Checklist (v1)
 Mål: sende første App Store-version uden at blokere næste platformfase.
 
@@ -135,12 +198,13 @@ Resultatet skal læses sådan:
 - kendte begrænsninger skal beskrives eksplicit, men må ikke blandes sammen med reelle blockers
 
 ### Regressionstest-status
-Der findes pt. ikke en dækkende automatiseret regression-suite for de nye tværfladeflows.
+Der findes nu en automatiseret web-regressionstest for de vigtigste shared flows.
 
 Det betyder:
-- builds er automatiserede og skal være grønne
-- den vigtigste regressionstest før release er stadig den manuelle sanity-rutine ovenfor
-- næste oplagte forbedring efter release er at automatisere webflow for auth og de vigtigste shared dataflows
+- web har en Playwright-suite som dækker guest smoke, login, `visited`, `weekend plan` og note-flow
+- suiten er verificeret grønt som `6 passed`
+- den manuelle sanity-rutine er stadig nødvendig for app-siden samt for `reviews` og `photos`
+- næste oplagte forbedring efter release er at udvide den automatiske suite med `reviews`, `photos` og evt. app-verifikation
 
 ### 1. Build og validering
 - web build er grøn med `npm run build`
