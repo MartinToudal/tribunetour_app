@@ -342,6 +342,17 @@ Mål: få første offentlige release ud, før større platformmigrering.
 7. **C20:** Små UX-polish-opgaver (haptics, swipe-actions, tom-tilstande)
 8. **N6:** Notification center i appen (seneste sendte påmindelser)
 
+### Post-release driftsløft
+1. **Ops-NightlyRegression (Høj)**
+   - Daglig automatisk regression uden manuel start fra Codex eller udviklermaskine
+   - Web-suite på schedule i CI
+   - App-suite på macOS runner i CI
+   - Dedikeret testkonto og stabil seed-data
+   - Artifact-upload og fejlnotifikationer ved rød kørsel
+   - Mål:
+   - Release-gaten kan senere baseres på faste automatiske natlige kørsler
+   - Regression opdages proaktivt i drift, ikke først ved næste release
+
 ---
 
 ## Push-notifikationer (status)
