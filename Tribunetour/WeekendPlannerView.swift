@@ -163,6 +163,7 @@ struct WeekendPlannerView: View {
                     } label: {
                         Label("Sæt til weekend (fre–søn)", systemImage: "calendar.badge.clock")
                     }
+                    .accessibilityIdentifier("weekend-set-range")
                     .accessibilityHint("Sætter intervallet til fredag til søndag")
 
                     Button(role: .destructive) {
@@ -217,7 +218,9 @@ struct WeekendPlannerView: View {
                                     .contentShape(Rectangle())
                                 }
                                 .buttonStyle(.plain)
+                                .accessibilityIdentifier("weekend-fixture-\(f.id)")
                                 .accessibilityLabel("\(clubName(f.homeTeamId)) mod \(clubName(f.awayTeamId)), \(timeString(f.kickoff))")
+                                .accessibilityValue(planStore.contains(f.id) ? "valgt" : "ikke valgt")
                                 .accessibilityHint(planStore.contains(f.id) ? "Fjern kampen fra planen" : "Tilføj kampen til planen")
                             }
                         }
@@ -251,6 +254,7 @@ struct WeekendPlannerView: View {
                                 }
                                 .buttonStyle(.borderless)
                                 .foregroundStyle(.secondary)
+                                .accessibilityIdentifier("weekend-remove-\(f.id)")
                                 .accessibilityLabel("Fjern kamp fra plan")
                                 .accessibilityHint("Fjerner den valgte kamp")
                             }

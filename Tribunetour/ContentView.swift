@@ -374,12 +374,14 @@ struct StadiumsView: View {
                                     set: { visitedStore.setVisited(club.id, $0) }
                                 ))
                                 .labelsHidden()
+                                .accessibilityIdentifier("stadium-toggle-\(club.id)")
                                 .accessibilityLabel("Markér \(club.name) som besøgt")
                                 .accessibilityHint("Skifter besøgt-status for stadionet")
                             }
                             .accessibilityElement(children: .combine)
                             .padding(.vertical, 4)
                         }
+                        .accessibilityIdentifier("stadium-row-\(club.id)")
                     }
                 }
             }

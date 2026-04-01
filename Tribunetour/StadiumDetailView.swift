@@ -68,6 +68,7 @@ struct StadiumDetailView: View {
 
             Section("Status") {
                 Toggle("Besøgt", isOn: visitedBinding)
+                    .accessibilityIdentifier("stadium-detail-visited-toggle")
 
                 DatePicker(
                     "Besøgsdato",
