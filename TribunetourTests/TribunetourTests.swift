@@ -98,7 +98,7 @@ struct TribunetourTests {
     @Test func mergeRecordVisitedUsesOrRule() {
         let local = VisitedStore.Record(visited: false, updatedAt: Date(timeIntervalSince1970: 10))
         let remote = VisitedStore.Record(visited: true, updatedAt: Date(timeIntervalSince1970: 20))
-        let merged = VisitedStore.mergeRecord(local: local, remote: remote)
+        let merged = AppVisitedMergePolicy.appPrimaryDuringMigration.merge(local: local, remote: remote)
         #expect(merged.visited == true)
     }
 
@@ -108,7 +108,7 @@ struct TribunetourTests {
         let remoteDate = Date(timeIntervalSince1970: 100)
         let local = VisitedStore.Record(visited: true, visitedDate: localDate, updatedAt: Date(timeIntervalSince1970: 10))
         let remote = VisitedStore.Record(visited: true, visitedDate: remoteDate, updatedAt: Date(timeIntervalSince1970: 20))
-        let merged = VisitedStore.mergeRecord(local: local, remote: remote)
+        let merged = AppVisitedMergePolicy.appPrimaryDuringMigration.merge(local: local, remote: remote)
         #expect(merged.visitedDate == remoteDate)
     }
 
@@ -116,7 +116,7 @@ struct TribunetourTests {
     @Test func mergeRecordNotesUsesNewestRecordTimestamp() {
         let local = VisitedStore.Record(visited: true, notes: "local note", updatedAt: Date(timeIntervalSince1970: 10))
         let remote = VisitedStore.Record(visited: true, notes: "remote note", updatedAt: Date(timeIntervalSince1970: 20))
-        let merged = VisitedStore.mergeRecord(local: local, remote: remote)
+        let merged = AppVisitedMergePolicy.appPrimaryDuringMigration.merge(local: local, remote: remote)
         #expect(merged.notes == "remote note")
     }
 
@@ -126,7 +126,7 @@ struct TribunetourTests {
         let newReview = VisitedStore.StadiumReview(summary: "new", updatedAt: Date(timeIntervalSince1970: 100))
         let local = VisitedStore.Record(visited: true, review: oldReview, updatedAt: Date(timeIntervalSince1970: 10))
         let remote = VisitedStore.Record(visited: true, review: newReview, updatedAt: Date(timeIntervalSince1970: 20))
-        let merged = VisitedStore.mergeRecord(local: local, remote: remote)
+        let merged = AppVisitedMergePolicy.appPrimaryDuringMigration.merge(local: local, remote: remote)
         #expect(merged.review?.summary == "new")
     }
 
@@ -148,7 +148,7 @@ struct TribunetourTests {
             updatedAt: Date(timeIntervalSince1970: 20)
         )
 
-        let merged = VisitedStore.mergeRecord(local: local, remote: remote)
+        let merged = AppVisitedMergePolicy.appPrimaryDuringMigration.merge(local: local, remote: remote)
         #expect(Set(merged.photoFileNames) == Set(["a.jpg", "b.jpg"]))
         #expect(merged.photoMetadata["a.jpg"]?.caption == "new caption")
         #expect(merged.photoMetadata["b.jpg"] != nil)
