@@ -108,6 +108,7 @@ struct StadiumDetailView: View {
             Section("Noter") {
                 TextField("Skriv en note…", text: notesBinding, axis: .vertical)
                     .lineLimit(3...8)
+                    .accessibilityIdentifier("stadium-note-field")
                     .accessibilityHint("Gemmer noter for dette stadion")
             }
 
@@ -119,6 +120,7 @@ struct StadiumDetailView: View {
                 ) {
                     Label("Tilføj billeder", systemImage: "photo.badge.plus")
                 }
+                .accessibilityIdentifier("stadium-add-photos")
 
                 if let photoImportError {
                     Text(photoImportError)
@@ -148,6 +150,7 @@ struct StadiumDetailView: View {
                                             .clipped()
                                         }
                                         .buttonStyle(.plain)
+                                        .accessibilityIdentifier("photo-thumb-\(fileName)")
 
                                         Button {
                                             pendingDeletePhotoFileName = fileName
@@ -158,6 +161,7 @@ struct StadiumDetailView: View {
                                                 .padding(4)
                                         }
                                         .buttonStyle(.plain)
+                                        .accessibilityIdentifier("photo-delete-\(fileName)")
                                         .accessibilityLabel("Fjern billede")
                                     }
 
@@ -180,6 +184,7 @@ struct StadiumDetailView: View {
 
             Section {
                 TextField("Kamp (fx FCK - Brøndby)", text: reviewMatchBinding)
+                    .accessibilityIdentifier("review-match-field")
 
                 if let avg = reviewAverageText {
                     LabeledContent("Samlet score") {
@@ -203,10 +208,12 @@ struct StadiumDetailView: View {
                                         .font(.title3)
                                 }
                                 .buttonStyle(.plain)
+                                .accessibilityIdentifier("review-score-minus-\(category.rawValue)")
 
                                 Text(reviewScoreLabel(for: category))
                                     .font(.subheadline.weight(.semibold))
                                     .frame(minWidth: 70, alignment: .leading)
+                                    .accessibilityIdentifier("review-score-\(category.rawValue)")
 
                                 Button {
                                     incrementScore(for: category)
@@ -215,6 +222,7 @@ struct StadiumDetailView: View {
                                         .font(.title3)
                                 }
                                 .buttonStyle(.plain)
+                                .accessibilityIdentifier("review-score-plus-\(category.rawValue)")
 
                                 Spacer()
 
@@ -223,6 +231,7 @@ struct StadiumDetailView: View {
                                         setReviewScore(for: category, to: nil)
                                     }
                                     .font(.caption)
+                                    .accessibilityIdentifier("review-score-reset-\(category.rawValue)")
                                 }
                             }
 
@@ -243,6 +252,7 @@ struct StadiumDetailView: View {
                                             .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                                     }
                                     .buttonStyle(.plain)
+                                    .accessibilityIdentifier("review-add-note-\(category.rawValue)")
                                 }
 
                                 TextEditor(text: reviewCategoryNoteBinding(for: category))
@@ -252,6 +262,7 @@ struct StadiumDetailView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                                     .font(.body)
                                     .focused($focusedReviewNoteCategory, equals: category)
+                                    .accessibilityIdentifier("review-note-\(category.rawValue)")
                             }
                         }
                         .padding(.vertical, 4)
@@ -272,12 +283,15 @@ struct StadiumDetailView: View {
                                 .foregroundStyle(.secondary)
                         }
                     }
+                    .accessibilityIdentifier("review-category-\(category.rawValue)")
                 }
 
                 TextField("Kort opsummering", text: reviewSummaryBinding, axis: .vertical)
                     .lineLimit(2...5)
+                    .accessibilityIdentifier("review-summary-field")
 
                 TextField("Tags (kommasepareret)", text: reviewTagsBinding)
+                    .accessibilityIdentifier("review-tags-field")
 
                 Button(role: .destructive) {
                     reviewDraftSyncTask?.cancel()
@@ -287,6 +301,7 @@ struct StadiumDetailView: View {
                     Label("Ryd anmeldelse", systemImage: "trash")
                 }
                 .disabled(!reviewDraft.hasMeaningfulContent)
+                .accessibilityIdentifier("review-clear-button")
             } header: {
                 Text("Stadion-anmeldelse")
             } footer: {
@@ -656,16 +671,19 @@ private struct PhotoFullscreenView: View {
                 TextField("Billedtekst (valgfri)", text: $caption)
                     .textFieldStyle(.roundedBorder)
                     .padding(.horizontal)
+                    .accessibilityIdentifier("photo-caption-field")
 
                 Button("Gem billedtekst") {
                     onSaveCaption(selectedFileName, caption)
                 }
                 .buttonStyle(.borderedProminent)
                 .padding(.bottom, 12)
+                .accessibilityIdentifier("photo-caption-save")
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Luk") { onClose() }
+                        .accessibilityIdentifier("photo-fullscreen-close")
                 }
             }
             .onAppear {

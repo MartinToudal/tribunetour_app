@@ -1,5 +1,6 @@
 import Foundation
 import Combine
+import UIKit
 
 @MainActor
 final class AppState: ObservableObject {
@@ -115,6 +116,8 @@ final class AppState: ObservableObject {
                 await reconcileSharedSyncModeAfterSessionRestore(snapshot: authSession.snapshot)
             }
         }
+
+        applyUITestingStateIfNeeded()
     }
 
     func loadData() {
@@ -224,5 +227,62 @@ final class AppState: ObservableObject {
         } catch {
             dlog("Kunne ikke afstemme shared sync mode ved session-gendannelse: \(error.localizedDescription)")
         }
+    }
+
+    private func applyUITestingStateIfNeeded() {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard arguments.contains("--uitesting") else { return }
+
+        if arguments.contains("--uitesting-seed-photo-agf") {
+            seedUITestPhotoIfNeeded(clubId: "agf")
+        }
+
+        if arguments.contains("--uitesting-reset-review-agf") {
+            visitedStore.setReview("agf", nil)
+        }
+    }
+
+    private func seedUITestPhotoIfNeeded(clubId: String) {
+        let fileName = "uitest_\(clubId)_photo.jpg"
+        guard !visitedStore.photoFileNames(for: clubId).contains(fileName) else { return }
+        guard let imageData = Self.makeUITestPhotoJPEGData() else { return }
+
+        do {
+            try visitedStore.applySharedPhoto(
+                imageData,
+                for: clubId,
+                fileName: fileName,
+                meta: VisitedStore.Record.PhotoMeta(
+                    caption: "",
+                    createdAt: Date(timeIntervalSince1970: 1_700_000_000),
+                    updatedAt: Date(timeIntervalSince1970: 1_700_000_000)
+                )
+            )
+        } catch {
+            dlog("Kunne ikke seed'e UI test-foto: \(error.localizedDescription)")
+        }
+    }
+
+    private static func makeUITestPhotoJPEGData() -> Data? {
+        let size = CGSize(width: 200, height: 200)
+        let renderer = UIGraphicsImageRenderer(size: size)
+        let image = renderer.image { context in
+            UIColor.systemBlue.setFill()
+            context.fill(CGRect(origin: .zero, size: size))
+
+            let title = "TT"
+            let attributes: [NSAttributedString.Key: Any] = [
+                .font: UIFont.boldSystemFont(ofSize: 72),
+                .foregroundColor: UIColor.white
+            ]
+            let titleSize = title.size(withAttributes: attributes)
+            let origin = CGPoint(
+                x: (size.width - titleSize.width) / 2,
+                y: (size.height - titleSize.height) / 2
+            )
+            title.draw(at: origin, withAttributes: attributes)
+        }
+
+        return image.jpegData(compressionQuality: 0.85)
     }
 }
