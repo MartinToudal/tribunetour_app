@@ -45,7 +45,15 @@ final class AppState: ObservableObject {
         self.visitedBootstrapCoordinator = AppVisitedBootstrapCoordinator(sharedBackend: sharedVisitedBackend)
         self.visitedStore = VisitedStore(
             syncBackend: visitedSyncConfiguration.backend,
-            mergePolicy: visitedSyncConfiguration.mergePolicy
+            mergePolicy: visitedSyncConfiguration.mergePolicy,
+            shouldAttemptRemoteSync: { [authSession, resolvedVisitedSyncMode] in
+                switch resolvedVisitedSyncMode {
+                case .cloudKitPrimary:
+                    return true
+                case .hybridPrepared:
+                    return authSession.snapshot.isAuthenticated
+                }
+            }
         )
         self.photosStore = AppPhotosStore(
             visitedStore: self.visitedStore,
@@ -95,6 +103,10 @@ final class AppState: ObservableObject {
             .sink { [weak self] snapshot in
                 guard let self else { return }
                 if snapshot.isAuthenticated {
+                    self.visitedStore.clearSyncIssue()
+                    self.notesSyncIssue = nil
+                    self.reviewsSyncIssue = nil
+                    self.syncRuntimeInfoMessage = nil
                     Task {
                         await self.visitedStore.refreshFromRemote()
                         await self.photosStore.refreshFromRemote()

@@ -88,6 +88,10 @@ struct SharedPhotoWriteRow: Codable {
     }
 }
 
+private struct SharedPhotoDeleteRequest: Codable {
+    let prefixes: [String]
+}
+
 final class SharedPhotosSyncBackend {
     private let configuration: SharedPhotosSyncConfiguration
     private let decoder: JSONDecoder
@@ -155,6 +159,28 @@ final class SharedPhotosSyncBackend {
         _ = try await performWithoutDecoding(request)
     }
 
+    func deletePhoto(userId: String, clubId: String, fileName: String) async throws {
+        let encodedClubId = percentEncodedPathComponent(clubId)
+        let encodedFileName = percentEncodedPathComponent(fileName)
+        var metadataRequest = try await authorizedRequest(
+            path: "rest/v1/photos?club_id=eq.\(encodedClubId)&file_name=eq.\(encodedFileName)",
+            method: "DELETE"
+        )
+        metadataRequest.setValue("return=minimal", forHTTPHeaderField: "Prefer")
+        _ = try await performWithoutDecoding(metadataRequest)
+
+        let storagePath = "\(userId)/\(clubId)/\(fileName)"
+        var storageRequest = try await authorizedRequest(
+            path: "storage/v1/object/remove/\(configuration.bucketName)",
+            method: "POST"
+        )
+        storageRequest.httpBody = try encoder.encode(
+            SharedPhotoDeleteRequest(prefixes: [storagePath])
+        )
+        storageRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        _ = try await performWithoutDecoding(storageRequest)
+    }
+
     private func authorizedRequest(path: String, method: String) async throws -> URLRequest {
         guard let baseURL = configuration.baseURL else {
             throw SharedPhotosSyncBackendError.notConfigured
@@ -195,6 +221,10 @@ final class SharedPhotosSyncBackend {
         components.path = "\(basePath)/\(relativePath)"
         components.percentEncodedQuery = parts.count > 1 ? String(parts[1]) : nil
         return components.url
+    }
+
+    private func percentEncodedPathComponent(_ value: String) -> String {
+        value.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? value
     }
 
     private func perform<T: Decodable>(_ request: URLRequest, decodeAs type: T.Type) async throws -> T {

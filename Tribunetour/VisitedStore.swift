@@ -229,6 +229,7 @@ final class VisitedStore: ObservableObject {
 
     private let syncBackend: any VisitedSyncBackend
     private let mergePolicy: AppVisitedMergePolicy
+    private let shouldAttemptRemoteSync: @MainActor () -> Bool
     private var cancellables = Set<AnyCancellable>()
     private var isApplyingRemote = false
     private var isPushingToCloud = false
@@ -239,14 +240,22 @@ final class VisitedStore: ObservableObject {
 
     // MARK: - Init
 
-    init(syncBackend: any VisitedSyncBackend, mergePolicy: AppVisitedMergePolicy) {
+    init(
+        syncBackend: any VisitedSyncBackend,
+        mergePolicy: AppVisitedMergePolicy,
+        shouldAttemptRemoteSync: @escaping @MainActor () -> Bool = { true }
+    ) {
         self.syncBackend = syncBackend
         self.mergePolicy = mergePolicy
+        self.shouldAttemptRemoteSync = shouldAttemptRemoteSync
         self.records = loadFromLocal() ?? [:]
         self.knownSharedRemoteClubIds = loadKnownSharedRemoteClubIds()
 
         // Debug: se om iCloud konto er tilgængelig
-        Task { await syncBackend.debugAccountStatus() }
+        Task {
+            guard shouldAttemptRemoteSync() else { return }
+            await syncBackend.debugAccountStatus()
+        }
 
         // Push lokale ændringer til iCloud (debounced)
         $records
@@ -395,30 +404,19 @@ final class VisitedStore: ObservableObject {
     }
 
     func removePhoto(fileName: String, for clubId: String) {
+        removePhotoLocally(fileName: fileName, for: clubId, scheduleRemotePush: true)
+        deletePhotoFromVisitedSync(fileName: fileName)
+    }
+
+    func removeSharedPhotoLocally(fileName: String, for clubId: String) {
+        removePhotoLocally(fileName: fileName, for: clubId, scheduleRemotePush: false)
+    }
+
+    func removePhotoLocally(fileName: String, for clubId: String, scheduleRemotePush: Bool) {
         var record = records[clubId] ?? Record(visited: false)
         record.photoFileNames.removeAll { $0 == fileName }
         record.photoMetadata[fileName] = nil
         record.updatedAt = Date()
-        records[clubId] = record
-        persist()
-        scheduleCloudPush()
-
-        let url = photoURL(fileName: fileName)
-        try? FileManager.default.removeItem(at: url)
-
-        Task {
-            do {
-                try await syncBackend.deletePhoto(fileName: fileName)
-            } catch {
-                dlog("☁️ Photo delete error for \(fileName): \(error)")
-            }
-        }
-    }
-
-    func removeSharedPhotoLocally(fileName: String, for clubId: String) {
-        var record = records[clubId] ?? Record(visited: false)
-        record.photoFileNames.removeAll { $0 == fileName }
-        record.photoMetadata[fileName] = nil
 
         let trimmedNotes = record.notes.trimmingCharacters(in: .whitespacesAndNewlines)
         let hasReview = record.review?.hasMeaningfulContent ?? false
@@ -430,8 +428,23 @@ final class VisitedStore: ObservableObject {
 
         persist()
 
+        if scheduleRemotePush {
+            scheduleCloudPush()
+        }
+
         let url = photoURL(fileName: fileName)
         try? FileManager.default.removeItem(at: url)
+    }
+
+    func deletePhotoFromVisitedSync(fileName: String) {
+        Task {
+            guard shouldAttemptRemoteSync() else { return }
+            do {
+                try await syncBackend.deletePhoto(fileName: fileName)
+            } catch {
+                dlog("☁️ Photo delete error for \(fileName): \(error)")
+            }
+        }
     }
 
     func photoCaption(for clubId: String, fileName: String) -> String {
@@ -525,7 +538,16 @@ final class VisitedStore: ObservableObject {
         scheduleCloudPush()
     }
 
+    func clearSyncIssue() {
+        lastSyncIssue = nil
+    }
+
     func refreshFromRemote() async {
+        guard shouldAttemptRemoteSync() else {
+            lastSyncIssue = nil
+            return
+        }
+
         do {
             let remote = try await syncBackend.fetchAll()
             mergeRemoteIntoLocal(remote)
@@ -617,6 +639,8 @@ final class VisitedStore: ObservableObject {
     // MARK: - Cloud Sync (local-first)
 
     private func initialCloudSync() async {
+        guard shouldAttemptRemoteSync() else { return }
+
         do {
             let remote = try await syncBackend.fetchAll()
             mergeRemoteIntoLocal(remote)
@@ -640,6 +664,11 @@ final class VisitedStore: ObservableObject {
     }
 
     private func scheduleCloudPush() {
+        guard shouldAttemptRemoteSync() else {
+            lastSyncIssue = nil
+            return
+        }
+
         pendingCloudPush = true
         guard !isPushingToCloud else { return }
 

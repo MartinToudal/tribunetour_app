@@ -17,6 +17,7 @@ final class AppPhotosStore: ObservableObject {
     private var isApplyingRemote = false
     private var isSyncingRemote = false
     private var knownRemotePhotoKeys = Set<String>()
+    private var pendingRemoteDeletePhotoKeys = Set<String>()
 
     init(
         visitedStore: VisitedStore,
@@ -76,7 +77,33 @@ final class AppPhotosStore: ObservableObject {
     }
 
     func removePhoto(fileName: String, for clubId: String) {
-        visitedStore.removePhoto(fileName: fileName, for: clubId)
+        let key = Self.photoKey(clubId: clubId, fileName: fileName)
+        pendingRemoteDeletePhotoKeys.insert(key)
+        visitedStore.removePhotoLocally(fileName: fileName, for: clubId, scheduleRemotePush: true)
+
+        guard authSession.snapshot.isAuthenticated, let userId = authSession.snapshot.userId else {
+            pendingRemoteDeletePhotoKeys.remove(key)
+            return
+        }
+
+        Task { [weak self] in
+            do {
+                try await self?.syncBackend.deletePhoto(userId: userId, clubId: clubId, fileName: fileName)
+                await MainActor.run {
+                    guard let self else { return }
+                    self.pendingRemoteDeletePhotoKeys.remove(key)
+                    self.knownRemotePhotoKeys.remove(key)
+                    Self.saveKnownRemotePhotoKeys(self.knownRemotePhotoKeys, storageKey: self.knownRemotePhotoKeysStorageKey)
+                }
+            } catch {
+                await MainActor.run {
+                    guard let self else { return }
+                    self.pendingRemoteDeletePhotoKeys.remove(key)
+                    self.lastSyncIssue = error.localizedDescription
+                    dlog("Shared photo delete error for \(clubId)/\(fileName): \(error.localizedDescription)")
+                }
+            }
+        }
     }
 
     func photoCaption(for clubId: String, fileName: String) -> String {
@@ -149,6 +176,7 @@ final class AppPhotosStore: ObservableObject {
         let remoteByKey = Dictionary(uniqueKeysWithValues: remotePhotos.map { (Self.photoKey(clubId: $0.clubId, fileName: $0.fileName), $0) })
         var localByKey = Self.extractLocalPhotoRecords(from: visitedStore.records)
         let allKeys = Set(remoteByKey.keys).union(localByKey.keys)
+        var resolvedRemoteKeys = Set(remoteByKey.keys)
 
         isApplyingRemote = true
         defer { isApplyingRemote = false }
@@ -156,14 +184,36 @@ final class AppPhotosStore: ObservableObject {
         let removedRemoteKeys = knownRemotePhotoKeys.subtracting(remoteByKey.keys)
         for key in removedRemoteKeys.sorted() {
             guard let localPhoto = localByKey[key] else { continue }
-            visitedStore.removeSharedPhotoLocally(fileName: localPhoto.fileName, for: localPhoto.clubId)
+            visitedStore.removePhotoLocally(fileName: localPhoto.fileName, for: localPhoto.clubId, scheduleRemotePush: true)
+            visitedStore.deletePhotoFromVisitedSync(fileName: localPhoto.fileName)
             localByKey.removeValue(forKey: key)
+            resolvedRemoteKeys.remove(key)
         }
 
         for key in allKeys.sorted() {
             if removedRemoteKeys.contains(key) { continue }
             let local = localByKey[key]
             let remote = remoteByKey[key]
+
+            if pendingRemoteDeletePhotoKeys.contains(key) {
+                if let localPhoto = local {
+                    visitedStore.removePhotoLocally(fileName: localPhoto.fileName, for: localPhoto.clubId, scheduleRemotePush: true)
+                }
+
+                if let remotePhoto = remote {
+                    try await syncBackend.deletePhoto(
+                        userId: userId,
+                        clubId: remotePhoto.clubId,
+                        fileName: remotePhoto.fileName
+                    )
+                    resolvedRemoteKeys.remove(key)
+                    continue
+                }
+
+                pendingRemoteDeletePhotoKeys.remove(key)
+                resolvedRemoteKeys.remove(key)
+                continue
+            }
 
             switch resolveMerge(local: local, remote: remote) {
             case .downloadRemote(let remotePhoto):
@@ -193,12 +243,16 @@ final class AppPhotosStore: ObservableObject {
                     fileName: localPhoto.fileName,
                     meta: localPhoto.meta
                 )
+                resolvedRemoteKeys.insert(key)
             case .noChange:
+                if remote != nil {
+                    resolvedRemoteKeys.insert(key)
+                }
                 continue
             }
         }
 
-        knownRemotePhotoKeys = Set(remoteByKey.keys)
+        knownRemotePhotoKeys = resolvedRemoteKeys
         Self.saveKnownRemotePhotoKeys(knownRemotePhotoKeys, storageKey: knownRemotePhotoKeysStorageKey)
     }
 

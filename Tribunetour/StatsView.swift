@@ -3,6 +3,11 @@ import UIKit
 import MessageUI
 
 struct StatsView: View {
+    private enum AuthField: Hashable {
+        case email
+        case password
+    }
+
     let clubs: [Club]
     @ObservedObject var visitedStore: VisitedStore
     @ObservedObject var photosStore: AppPhotosStore
@@ -41,6 +46,8 @@ struct StatsView: View {
     @State private var loginLoading: Bool = false
     @State private var pendingBootstrapStatus: AppVisitedBootstrapStatus?
     @State private var showBootstrapAlert: Bool = false
+    @State private var showAuthSheet: Bool = false
+    @FocusState private var focusedAuthField: AuthField?
 
     // MARK: - Derived stats
 
@@ -436,68 +443,17 @@ struct StatsView: View {
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
 
-                                TextField("din@email.dk", text: $loginEmail)
-                                    .keyboardType(.emailAddress)
-                                    .textInputAutocapitalization(.never)
-                                    .autocorrectionDisabled()
-
-                                SecureField("Adgangskode", text: $loginPassword)
-                                    .textInputAutocapitalization(.never)
-                                    .autocorrectionDisabled()
-
-                                HStack(spacing: 10) {
-                                    Button {
-                                        Task {
-                                            await signIn()
-                                        }
-                                    } label: {
-                                        if loginLoading {
-                                            ProgressView()
-                                                .frame(maxWidth: .infinity)
-                                        } else {
-                                            Text("Log ind")
-                                                .frame(maxWidth: .infinity)
-                                        }
-                                    }
-                                    .buttonStyle(.borderedProminent)
-                                    .disabled(loginLoading)
-
-                                    Button {
-                                        Task {
-                                            await signUp()
-                                        }
-                                    } label: {
-                                        Text("Opret konto")
-                                            .frame(maxWidth: .infinity)
-                                    }
+                                Button {
+                                    showAuthSheet = true
+                                } label: {
+                                    Text("Log ind eller opret konto")
+                                        .frame(maxWidth: .infinity)
                                 }
                                 .buttonStyle(.borderedProminent)
-                                .disabled(loginLoading)
 
                                 Text("Supabase URL: \(configuration.redactedSupabaseURL)")
                                     .font(.caption2)
                                     .foregroundStyle(.secondary)
-
-                                Text("Adgangskoden skal være mindst 8 tegn.")
-                                    .font(.caption2)
-                                    .foregroundStyle(.secondary)
-
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text("Har du tidligere brugt magic link på web?")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-
-                                    Button {
-                                        Task {
-                                            await sendPasswordReset()
-                                        }
-                                    } label: {
-                                        Text("Send link til at sætte eller nulstille adgangskode")
-                                            .font(.caption)
-                                    }
-                                    .buttonStyle(.borderless)
-                                    .disabled(loginLoading)
-                                }
 
                                 if let loginInfoMessage {
                                     Text(loginInfoMessage)
@@ -531,6 +487,7 @@ struct StatsView: View {
                         }
                     }
                 }
+                .id(authSession.snapshot.isAuthenticated ? "account-authenticated" : "account-unauthenticated")
 
                 // MARK: By division
                 Section("Fordelt på liga") {
@@ -668,6 +625,113 @@ struct StatsView: View {
                     body: defaultFeedbackBody()
                 )
             }
+            .sheet(isPresented: $showAuthSheet) {
+                NavigationStack {
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text("Brug samme konto som på web. Du kan logge ind, oprette en konto eller sende dig selv et link til at sætte eller nulstille adgangskoden.")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+
+                            TextField("din@email.dk", text: $loginEmail)
+                                .keyboardType(.emailAddress)
+                                .textInputAutocapitalization(.never)
+                                .autocorrectionDisabled()
+                                .textContentType(.username)
+                                .submitLabel(.next)
+                                .focused($focusedAuthField, equals: .email)
+                                .onSubmit {
+                                    focusedAuthField = .password
+                                }
+
+                            SecureField("Adgangskode", text: $loginPassword)
+                                .textInputAutocapitalization(.never)
+                                .autocorrectionDisabled()
+                                .textContentType(.password)
+                                .submitLabel(.go)
+                                .focused($focusedAuthField, equals: .password)
+                                .onSubmit {
+                                    Task {
+                                        await signIn()
+                                    }
+                                }
+
+                            HStack(spacing: 10) {
+                                Button {
+                                    Task {
+                                        await signIn()
+                                    }
+                                } label: {
+                                    if loginLoading {
+                                        ProgressView()
+                                            .frame(maxWidth: .infinity)
+                                    } else {
+                                        Text("Log ind")
+                                            .frame(maxWidth: .infinity)
+                                    }
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .disabled(loginLoading)
+
+                                Button {
+                                    Task {
+                                        await signUp()
+                                    }
+                                } label: {
+                                    Text("Opret konto")
+                                        .frame(maxWidth: .infinity)
+                                }
+                                .buttonStyle(.borderedProminent)
+                                .disabled(loginLoading)
+                            }
+
+                            Text("Adgangskoden skal være mindst 8 tegn.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Har du tidligere brugt magic link på web?")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+
+                                Button {
+                                    Task {
+                                        await sendPasswordReset()
+                                    }
+                                } label: {
+                                    Text("Send link til at sætte eller nulstille adgangskode")
+                                        .font(.caption)
+                                }
+                                .buttonStyle(.borderless)
+                                .disabled(loginLoading)
+                            }
+
+                            if let loginInfoMessage {
+                                Text(loginInfoMessage)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            if let loginErrorMessage {
+                                Text(loginErrorMessage)
+                                    .font(.caption)
+                                    .foregroundStyle(.red)
+                            }
+                        }
+                        .padding()
+                    }
+                    .navigationTitle("Log ind")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button("Luk") {
+                                dismissAuthKeyboard()
+                                showAuthSheet = false
+                            }
+                        }
+                    }
+                }
+            }
             .alert("Mail er ikke sat op", isPresented: $mailUnavailableAlert) {
                 Button("OK") {}
             } message: {
@@ -685,6 +749,14 @@ struct StatsView: View {
             }
             .onAppear {
                 syncSeenUnlockedIds()
+            }
+            .onChange(of: authSession.snapshot.isAuthenticated) { _, isAuthenticated in
+                if isAuthenticated {
+                    dismissAuthKeyboard()
+                    showAuthSheet = false
+                    loginEmail = ""
+                    loginPassword = ""
+                }
             }
             .onChange(of: visitedStore.records) { _, _ in
                 syncSeenUnlockedIds()
@@ -745,6 +817,7 @@ struct StatsView: View {
 
     @MainActor
     private func signIn() async {
+        dismissAuthKeyboard()
         loginLoading = true
         loginErrorMessage = nil
         loginInfoMessage = nil
@@ -755,6 +828,7 @@ struct StatsView: View {
                 bearerToken: session.accessToken,
                 refreshToken: session.refreshToken
             )
+            dismissAuthKeyboard()
             await refreshBootstrapStatusAfterLogin()
         } catch {
             loginErrorMessage = error.localizedDescription
@@ -764,6 +838,7 @@ struct StatsView: View {
 
     @MainActor
     private func signUp() async {
+        dismissAuthKeyboard()
         loginLoading = true
         loginErrorMessage = nil
         loginInfoMessage = nil
@@ -774,6 +849,7 @@ struct StatsView: View {
                 bearerToken: session.accessToken,
                 refreshToken: session.refreshToken
             )
+            dismissAuthKeyboard()
             await refreshBootstrapStatusAfterLogin(isNewAccount: true)
         } catch {
             loginErrorMessage = error.localizedDescription
@@ -783,6 +859,7 @@ struct StatsView: View {
 
     @MainActor
     private func sendPasswordReset() async {
+        dismissAuthKeyboard()
         loginLoading = true
         loginErrorMessage = nil
         loginInfoMessage = nil
@@ -861,6 +938,32 @@ struct StatsView: View {
             return "Bootstrap kunne ikke gennemfoeres lige nu paa grund af en serverfejl. Proev igen om lidt."
         default:
             return "Bootstrap kunne ikke gennemfoeres lige nu. Proev igen om lidt."
+        }
+    }
+
+    @MainActor
+    private func dismissAuthKeyboard() {
+        focusedAuthField = nil
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        let windows = UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .flatMap(\.windows)
+        windows.first(where: \.isKeyWindow)?.endEditing(true)
+
+        DispatchQueue.main.async {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            let windows = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .flatMap(\.windows)
+            windows.first(where: \.isKeyWindow)?.endEditing(true)
+        }
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            let windows = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .flatMap(\.windows)
+            windows.first(where: \.isKeyWindow)?.endEditing(true)
         }
     }
 }
