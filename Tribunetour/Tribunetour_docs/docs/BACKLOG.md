@@ -43,6 +43,31 @@ Opdateres løbende sammen med sprint-arbejdet.
 
 ---
 
+## Post-release kandidater
+
+1. **Ops-NightlyRegression (Høj)**
+   - Daglig automatisk regression for web og app via CI/macOS runner
+   - Formål:
+   - gøre regressionskørsel uafhængig af manuel start
+   - få faste signaler på auth, sync og kerneflows
+
+2. **P-MultiLeagueExperiment (Medium/Høj)**
+   - Byg multi-league support som et kontrolleret udvidelseslag
+   - Første testpack:
+   - England (`Premier League`, `Championship`, `League One`, `League Two`)
+   - Formål:
+   - validere om ekstra ligaer skaber reel produktværdi
+   - holde Danmark som kerneprodukt
+   - kunne aktivere/deaktivere funktionen uden stor refaktorering
+   - Web-krav:
+   - funktionen skal være login-bundet
+   - ikke-loggede brugere ser kun Danmark
+   - loggede brugere får adgang via brugerflag/entitlement
+   - Se:
+   - `MULTI_LEAGUE_EXPERIMENT.md`
+
+---
+
 ## Release Checklist (Sprint 5.x)
 
 Mål: Lukke sprintet med en testbar, release-klar baseline.
