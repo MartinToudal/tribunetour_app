@@ -66,6 +66,20 @@ Opdateres løbende sammen med sprint-arbejdet.
    - Se:
    - `MULTI_LEAGUE_EXPERIMENT.md`
 
+3. **P-ClubIdMigration (Høj)**
+   - Lås en canonical club id-policy før første ekstra league pack
+   - Formål:
+   - undgå id-kollisioner på tværs af lande
+   - flytte korte forkortelser ud af den primære nøgle
+   - gøre Tyskland sikkert at importere som næste pack
+   - Første arbejde:
+   - audit af danske ids
+   - mapping fra nuværende ids til nye canonical ids
+   - plan for fixture- og brugerdata-migration
+   - Se:
+   - `CLUB_ID_POLICY.md`
+   - `DANISH_CLUB_ID_AUDIT.md`
+
 ---
 
 ## Release Checklist (Sprint 5.x)
