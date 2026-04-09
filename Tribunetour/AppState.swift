@@ -151,7 +151,9 @@ final class AppState: ObservableObject {
                 dlogFixturesLoad(source: fixturesResult.source, version: fixturesResult.version)
 
                 self.clubs = clubs
-                self.clubById = Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
+                self.clubById = ClubIdentityResolver.aliasMap(
+                    from: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
+                )
                 self.fixtures = fixtures
                 self.fixturesLoadSource = fixturesResult.source
                 self.fixturesVersion = fixturesResult.version

@@ -43,7 +43,12 @@ final class AppReviewsStore: ObservableObject {
     }
 
     func review(for clubId: String) -> VisitedStore.StadiumReview? {
-        reviewsByClubId[clubId]
+        for candidate in ClubIdentityResolver.allKnownIds(for: clubId) {
+            if let review = reviewsByClubId[candidate] {
+                return review
+            }
+        }
+        return nil
     }
 
     func hasMeaningfulReview(for clubId: String) -> Bool {
@@ -51,17 +56,19 @@ final class AppReviewsStore: ObservableObject {
     }
 
     func clearReview(for clubId: String) {
-        visitedStore.setReview(clubId, nil)
-        reviewUpdatedAtByClubId[clubId] = Date()
+        let storageClubId = visitedStore.resolvedStorageClubId(for: clubId)
+        visitedStore.setReview(storageClubId, nil)
+        reviewUpdatedAtByClubId[storageClubId] = Date()
         persistSyncMetadata()
-        scheduleRemotePush(for: clubId)
+        scheduleRemotePush(for: storageClubId)
     }
 
     func setReviewDraft(_ review: VisitedStore.StadiumReview, for clubId: String) {
-        visitedStore.setReview(clubId, review)
-        reviewUpdatedAtByClubId[clubId] = review.updatedAt
+        let storageClubId = visitedStore.resolvedStorageClubId(for: clubId)
+        visitedStore.setReview(storageClubId, review)
+        reviewUpdatedAtByClubId[storageClubId] = review.updatedAt
         persistSyncMetadata()
-        scheduleRemotePush(for: clubId)
+        scheduleRemotePush(for: storageClubId)
     }
 
     func setMatchLabel(_ matchLabel: String, for clubId: String) {
@@ -110,10 +117,11 @@ final class AppReviewsStore: ObservableObject {
         var review = review(for: clubId) ?? VisitedStore.StadiumReview()
         mutate(&review)
         review.updatedAt = Date()
-        visitedStore.setReview(clubId, review)
-        reviewUpdatedAtByClubId[clubId] = review.updatedAt
+        let storageClubId = visitedStore.resolvedStorageClubId(for: clubId)
+        visitedStore.setReview(storageClubId, review)
+        reviewUpdatedAtByClubId[storageClubId] = review.updatedAt
         persistSyncMetadata()
-        scheduleRemotePush(for: clubId)
+        scheduleRemotePush(for: storageClubId)
     }
 
     private static func extractReviews(from records: [String: VisitedStore.Record]) -> [String: VisitedStore.StadiumReview] {
@@ -137,22 +145,24 @@ final class AppReviewsStore: ObservableObject {
     }
 
     private func mergeRemoteReviewsIntoLocal(_ remoteRecords: [String: SharedReviewRecordDTO]) {
+        let remoteRecordsByCanonicalId = normalizeRemoteRecords(remoteRecords)
         let localClubIds = Set(
             visitedStore.records.compactMap { clubId, record in
                 let hasLocalTimestamp = reviewUpdatedAtByClubId[clubId] != nil
                 let hasReviewContent = record.review?.hasMeaningfulContent == true
-                return (hasLocalTimestamp || hasReviewContent) ? clubId : nil
+                return (hasLocalTimestamp || hasReviewContent) ? ClubIdentityResolver.canonicalId(for: clubId) : nil
             }
         )
-        let allClubIds = localClubIds.union(remoteRecords.keys)
+        let allClubIds = localClubIds.union(remoteRecordsByCanonicalId.keys)
 
         var localPreferredWrites: [(clubId: String, review: VisitedStore.StadiumReview, updatedAt: Date)] = []
         isApplyingRemote = true
 
-        for clubId in allClubIds {
-            let localReview = visitedStore.records[clubId]?.review
-            let localUpdatedAt = reviewUpdatedAtByClubId[clubId]
-            let remote = remoteRecords[clubId]
+        for clubId in allClubIds.sorted() {
+            let storageClubId = visitedStore.resolvedStorageClubId(for: clubId)
+            let localReview = visitedStore.record(for: storageClubId)?.review
+            let localUpdatedAt = reviewUpdatedAt(for: storageClubId)
+            let remote = remoteRecordsByCanonicalId[clubId]
 
             switch resolveMerge(
                 localReview: localReview,
@@ -170,11 +180,11 @@ final class AppReviewsStore: ObservableObject {
 
                 let shouldPush = reviewToPush.hasMeaningfulContent || remote != nil
                 if shouldPush {
-                    localPreferredWrites.append((clubId, reviewToPush, updatedAt))
+                    localPreferredWrites.append((storageClubId, reviewToPush, updatedAt))
                 }
             case .applyRemote(let remoteRecord):
-                visitedStore.applySharedReview(remoteRecord.review, for: clubId, updatedAt: remoteRecord.updatedAt)
-                reviewUpdatedAtByClubId[clubId] = remoteRecord.updatedAt
+                visitedStore.applySharedReview(remoteRecord.review, for: storageClubId, updatedAt: remoteRecord.updatedAt)
+                reviewUpdatedAtByClubId[storageClubId] = remoteRecord.updatedAt
             case .noChange:
                 continue
             }
@@ -240,18 +250,19 @@ final class AppReviewsStore: ObservableObject {
             pendingRemotePushClubIds.removeAll()
 
             for clubId in clubIds {
-                let updatedAt = reviewUpdatedAtByClubId[clubId] ?? Date()
-                let review = visitedStore.records[clubId]?.review ?? VisitedStore.StadiumReview(updatedAt: updatedAt)
+                let storageClubId = visitedStore.resolvedStorageClubId(for: clubId)
+                let updatedAt = reviewUpdatedAtByClubId[storageClubId] ?? Date()
+                let review = visitedStore.record(for: storageClubId)?.review ?? VisitedStore.StadiumReview(updatedAt: updatedAt)
                 do {
-                    try await syncBackend.upsert(userId: userId, clubId: clubId, review: review, updatedAt: updatedAt)
+                    try await syncBackend.upsert(userId: userId, clubId: storageClubId, review: review, updatedAt: updatedAt)
                     lastSyncIssue = nil
                 } catch is CancellationError {
-                    pendingRemotePushClubIds.insert(clubId)
+                    pendingRemotePushClubIds.insert(storageClubId)
                     return
                 } catch {
-                    pendingRemotePushClubIds.insert(clubId)
+                    pendingRemotePushClubIds.insert(storageClubId)
                     lastSyncIssue = error.localizedDescription
-                    dlog("Shared reviews push error for \(clubId): \(error.localizedDescription)")
+                    dlog("Shared reviews push error for \(storageClubId): \(error.localizedDescription)")
                 }
             }
         }
@@ -283,6 +294,25 @@ final class AppReviewsStore: ObservableObject {
         return fallbackRecords.reduce(into: [:]) { partialResult, entry in
             guard let review = entry.value.review, review.hasMeaningfulContent else { return }
             partialResult[entry.key] = review.updatedAt
+        }
+    }
+
+    private func reviewUpdatedAt(for clubId: String) -> Date? {
+        for candidate in ClubIdentityResolver.allKnownIds(for: clubId) {
+            if let updatedAt = reviewUpdatedAtByClubId[candidate] {
+                return updatedAt
+            }
+        }
+        return nil
+    }
+
+    private func normalizeRemoteRecords(_ remoteRecords: [String: SharedReviewRecordDTO]) -> [String: SharedReviewRecordDTO] {
+        remoteRecords.reduce(into: [:]) { partialResult, entry in
+            let canonicalId = ClubIdentityResolver.canonicalId(for: entry.key)
+            if let existing = partialResult[canonicalId], existing.updatedAt >= entry.value.updatedAt {
+                return
+            }
+            partialResult[canonicalId] = entry.value
         }
     }
 

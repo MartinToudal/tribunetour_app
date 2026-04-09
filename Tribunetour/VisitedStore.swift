@@ -275,11 +275,12 @@ final class VisitedStore: ObservableObject {
     // MARK: - Public API
 
     func isVisited(_ clubId: String) -> Bool {
-        records[clubId]?.visited ?? false
+        record(for: clubId)?.visited ?? false
     }
 
     func setVisited(_ clubId: String, _ visited: Bool) {
-        var r = records[clubId] ?? Record(visited: false)
+        let storageClubId = resolvedStorageClubId(for: clubId)
+        var r = records[storageClubId] ?? Record(visited: false)
         r.visited = visited
         r.updatedAt = Date()
 
@@ -288,7 +289,7 @@ final class VisitedStore: ObservableObject {
             r.visitedDate = Date()
         }
 
-        records[clubId] = r
+        records[storageClubId] = r
         persist()
     }
 
@@ -297,39 +298,43 @@ final class VisitedStore: ObservableObject {
     }
 
     func visitedDate(for clubId: String) -> Date? {
-        records[clubId]?.visitedDate
+        record(for: clubId)?.visitedDate
     }
 
     func setVisitedDate(_ clubId: String, _ date: Date?) {
-        var r = records[clubId] ?? Record(visited: false)
+        let storageClubId = resolvedStorageClubId(for: clubId)
+        var r = records[storageClubId] ?? Record(visited: false)
         r.visitedDate = date
         r.updatedAt = Date()
-        records[clubId] = r
+        records[storageClubId] = r
         persist()
     }
 
     func notes(for clubId: String) -> String {
-        records[clubId]?.notes ?? ""
+        record(for: clubId)?.notes ?? ""
     }
 
     func setNotes(_ clubId: String, _ notes: String) {
-        var r = records[clubId] ?? Record(visited: false)
+        let storageClubId = resolvedStorageClubId(for: clubId)
+        var r = records[storageClubId] ?? Record(visited: false)
         r.notes = notes
         r.updatedAt = Date()
-        records[clubId] = r
+        records[storageClubId] = r
         persist()
     }
 
     func applySharedNote(_ note: String, for clubId: String, updatedAt: Date) {
-        var record = records[clubId] ?? Record(visited: false)
+        let storageClubId = resolvedStorageClubId(for: clubId)
+        var record = records[storageClubId] ?? Record(visited: false)
         record.notes = note
         record.updatedAt = max(record.updatedAt, updatedAt)
-        records[clubId] = record
+        records[storageClubId] = record
         persist()
     }
 
     func applySharedReview(_ review: StadiumReview?, for clubId: String, updatedAt: Date) {
-        var record = records[clubId] ?? Record(visited: false)
+        let storageClubId = resolvedStorageClubId(for: clubId)
+        var record = records[storageClubId] ?? Record(visited: false)
         record.review = review
         record.updatedAt = max(record.updatedAt, updatedAt)
         if let review, review.hasMeaningfulContent {
@@ -338,16 +343,17 @@ final class VisitedStore: ObservableObject {
                 record.visitedDate = Date()
             }
         }
-        records[clubId] = record
+        records[storageClubId] = record
         persist()
     }
 
     func review(for clubId: String) -> StadiumReview? {
-        records[clubId]?.review
+        record(for: clubId)?.review
     }
 
     func setReview(_ clubId: String, _ review: StadiumReview?) {
-        var r = records[clubId] ?? Record(visited: false)
+        let storageClubId = resolvedStorageClubId(for: clubId)
+        var r = records[storageClubId] ?? Record(visited: false)
         r.review = review
         r.updatedAt = Date()
         if let review, review.hasMeaningfulContent {
@@ -356,12 +362,12 @@ final class VisitedStore: ObservableObject {
                 r.visitedDate = Date()
             }
         }
-        records[clubId] = r
+        records[storageClubId] = r
         persist()
     }
 
     func photoFileNames(for clubId: String) -> [String] {
-        guard let record = records[clubId] else { return [] }
+        guard let record = record(for: clubId) else { return [] }
         return record.photoFileNames.sorted { a, b in
             let da = record.photoMetadata[a]?.createdAt ?? .distantPast
             let db = record.photoMetadata[b]?.createdAt ?? .distantPast
@@ -378,7 +384,8 @@ final class VisitedStore: ObservableObject {
         guard !imageData.isEmpty else { throw PhotoError.invalidImageData }
         guard let normalizedData = normalizedJPEGData(from: imageData) else { throw PhotoError.invalidImageData }
 
-        let fileName = "\(clubId)_\(UUID().uuidString).jpg"
+        let storageClubId = resolvedStorageClubId(for: clubId)
+        let fileName = "\(storageClubId)_\(UUID().uuidString).jpg"
         let url = photoURL(fileName: fileName)
 
         do {
@@ -387,7 +394,7 @@ final class VisitedStore: ObservableObject {
             throw PhotoError.writeFailed
         }
 
-        var record = records[clubId] ?? Record(visited: false)
+        var record = records[storageClubId] ?? Record(visited: false)
         record.photoFileNames.append(fileName)
         let now = Date()
         record.photoMetadata[fileName] = Record.PhotoMeta(createdAt: now, updatedAt: now)
@@ -398,7 +405,7 @@ final class VisitedStore: ObservableObject {
                 record.visitedDate = Date()
             }
         }
-        records[clubId] = record
+        records[storageClubId] = record
         persist()
         scheduleCloudPush()
     }
@@ -448,11 +455,12 @@ final class VisitedStore: ObservableObject {
     }
 
     func photoCaption(for clubId: String, fileName: String) -> String {
-        records[clubId]?.photoMetadata[fileName]?.caption ?? ""
+        record(for: clubId)?.photoMetadata[fileName]?.caption ?? ""
     }
 
     func setPhotoCaption(_ caption: String, for clubId: String, fileName: String) {
-        var record = records[clubId] ?? Record(visited: false)
+        let storageClubId = resolvedStorageClubId(for: clubId)
+        var record = records[storageClubId] ?? Record(visited: false)
         let existing = record.photoMetadata[fileName] ?? Record.PhotoMeta(createdAt: Date(), updatedAt: Date())
         let now = Date()
         record.photoMetadata[fileName] = Record.PhotoMeta(
@@ -461,7 +469,7 @@ final class VisitedStore: ObservableObject {
             updatedAt: now
         )
         record.updatedAt = now
-        records[clubId] = record
+        records[storageClubId] = record
         persist()
         scheduleCloudPush()
     }
@@ -481,7 +489,8 @@ final class VisitedStore: ObservableObject {
             throw PhotoError.writeFailed
         }
 
-        var record = records[clubId] ?? Record(visited: false)
+        let storageClubId = resolvedStorageClubId(for: clubId)
+        var record = records[storageClubId] ?? Record(visited: false)
         if !record.photoFileNames.contains(fileName) {
             record.photoFileNames.append(fileName)
         }
@@ -495,8 +504,22 @@ final class VisitedStore: ObservableObject {
         } else {
             record.visitedDate = meta.createdAt
         }
-        records[clubId] = record
+        records[storageClubId] = record
         persist()
+    }
+
+    func record(for clubId: String) -> Record? {
+        let storageClubId = resolvedStorageClubId(for: clubId)
+        return records[storageClubId]
+    }
+
+    func resolvedStorageClubId(for clubId: String) -> String {
+        for candidate in ClubIdentityResolver.allKnownIds(for: clubId) {
+            if records[candidate] != nil {
+                return candidate
+            }
+        }
+        return clubId
     }
 
     // MARK: - Backup / Restore

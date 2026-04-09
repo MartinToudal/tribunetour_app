@@ -79,6 +79,8 @@ Opdateres løbende sammen med sprint-arbejdet.
    - Se:
    - `CLUB_ID_POLICY.md`
    - `DANISH_CLUB_ID_AUDIT.md`
+   - `DANISH_CLUB_ID_MAPPING_DRAFT.md`
+   - `CLUB_ID_MIGRATION_PLAN.md`
 
 ---
 

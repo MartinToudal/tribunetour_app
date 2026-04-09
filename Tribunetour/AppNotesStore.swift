@@ -41,14 +41,20 @@ final class AppNotesStore: ObservableObject {
     }
 
     func note(for clubId: String) -> String {
-        notesByClubId[clubId] ?? ""
+        for candidate in ClubIdentityResolver.allKnownIds(for: clubId) {
+            if let note = notesByClubId[candidate] {
+                return note
+            }
+        }
+        return ""
     }
 
     func setNote(_ note: String, for clubId: String) {
-        visitedStore.setNotes(clubId, note)
-        noteUpdatedAtByClubId[clubId] = Date()
+        let storageClubId = visitedStore.resolvedStorageClubId(for: clubId)
+        visitedStore.setNotes(storageClubId, note)
+        noteUpdatedAtByClubId[storageClubId] = Date()
         persistSyncMetadata()
-        scheduleRemotePush(for: clubId)
+        scheduleRemotePush(for: storageClubId)
     }
 
     func refreshFromRemote() async {
@@ -73,22 +79,24 @@ final class AppNotesStore: ObservableObject {
     }
 
     private func mergeRemoteNotesIntoLocal(_ remoteRecords: [String: SharedNoteRecordDTO]) {
+        let remoteRecordsByCanonicalId = normalizeRemoteRecords(remoteRecords)
         let localClubIds = Set(
             visitedStore.records.compactMap { clubId, record in
                 let hasLocalTimestamp = noteUpdatedAtByClubId[clubId] != nil
                 let hasNoteContent = !record.notes.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                return (hasLocalTimestamp || hasNoteContent) ? clubId : nil
+                return (hasLocalTimestamp || hasNoteContent) ? ClubIdentityResolver.canonicalId(for: clubId) : nil
             }
         )
-        let allClubIds = localClubIds.union(remoteRecords.keys)
+        let allClubIds = localClubIds.union(remoteRecordsByCanonicalId.keys)
 
         var localPreferredWrites: [(clubId: String, note: String, updatedAt: Date)] = []
         isApplyingRemote = true
 
-        for clubId in allClubIds {
-            let localNote = visitedStore.records[clubId]?.notes ?? ""
-            let localUpdatedAt = noteUpdatedAtByClubId[clubId]
-            let remote = remoteRecords[clubId]
+        for clubId in allClubIds.sorted() {
+            let storageClubId = visitedStore.resolvedStorageClubId(for: clubId)
+            let localNote = visitedStore.record(for: storageClubId)?.notes ?? ""
+            let localUpdatedAt = noteUpdatedAt(for: storageClubId)
+            let remote = remoteRecordsByCanonicalId[clubId]
 
             switch resolveMerge(
                 localNote: localNote,
@@ -104,11 +112,11 @@ final class AppNotesStore: ObservableObject {
                 let shouldPush = !localNote.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
                     || remote != nil
                 if shouldPush {
-                    localPreferredWrites.append((clubId, localNote, updatedAt))
+                    localPreferredWrites.append((storageClubId, localNote, updatedAt))
                 }
             case .applyRemote(let remoteRecord):
-                visitedStore.applySharedNote(remoteRecord.note, for: clubId, updatedAt: remoteRecord.updatedAt)
-                noteUpdatedAtByClubId[clubId] = remoteRecord.updatedAt
+                visitedStore.applySharedNote(remoteRecord.note, for: storageClubId, updatedAt: remoteRecord.updatedAt)
+                noteUpdatedAtByClubId[storageClubId] = remoteRecord.updatedAt
             case .noChange:
                 continue
             }
@@ -149,15 +157,16 @@ final class AppNotesStore: ObservableObject {
         pendingRemotePushClubIds.removeAll()
 
         for clubId in clubIds {
-            let note = visitedStore.records[clubId]?.notes ?? ""
-            let updatedAt = noteUpdatedAtByClubId[clubId] ?? Date()
+            let storageClubId = visitedStore.resolvedStorageClubId(for: clubId)
+            let note = visitedStore.record(for: storageClubId)?.notes ?? ""
+            let updatedAt = noteUpdatedAtByClubId[storageClubId] ?? Date()
             do {
-                try await syncBackend.upsert(userId: userId, clubId: clubId, note: note, updatedAt: updatedAt)
+                try await syncBackend.upsert(userId: userId, clubId: storageClubId, note: note, updatedAt: updatedAt)
                 lastSyncIssue = nil
             } catch {
-                pendingRemotePushClubIds.insert(clubId)
+                pendingRemotePushClubIds.insert(storageClubId)
                 lastSyncIssue = error.localizedDescription
-                dlog("Shared notes push error for \(clubId): \(error.localizedDescription)")
+                dlog("Shared notes push error for \(storageClubId): \(error.localizedDescription)")
             }
         }
     }
@@ -173,7 +182,7 @@ final class AppNotesStore: ObservableObject {
             do {
                 try await syncBackend.upsert(
                     userId: userId,
-                    clubId: write.clubId,
+                    clubId: visitedStore.resolvedStorageClubId(for: write.clubId),
                     note: write.note,
                     updatedAt: write.updatedAt
                 )
@@ -213,6 +222,25 @@ final class AppNotesStore: ObservableObject {
             let trimmed = entry.value.notes.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmed.isEmpty else { return }
             partialResult[entry.key] = entry.value.updatedAt
+        }
+    }
+
+    private func noteUpdatedAt(for clubId: String) -> Date? {
+        for candidate in ClubIdentityResolver.allKnownIds(for: clubId) {
+            if let updatedAt = noteUpdatedAtByClubId[candidate] {
+                return updatedAt
+            }
+        }
+        return nil
+    }
+
+    private func normalizeRemoteRecords(_ remoteRecords: [String: SharedNoteRecordDTO]) -> [String: SharedNoteRecordDTO] {
+        remoteRecords.reduce(into: [:]) { partialResult, entry in
+            let canonicalId = ClubIdentityResolver.canonicalId(for: entry.key)
+            if let existing = partialResult[canonicalId], existing.updatedAt >= entry.value.updatedAt {
+                return
+            }
+            partialResult[canonicalId] = entry.value
         }
     }
 

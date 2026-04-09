@@ -65,7 +65,12 @@ final class AppPhotosStore: ObservableObject {
     }
 
     func photoFileNames(for clubId: String) -> [String] {
-        photoFileNamesByClubId[clubId] ?? []
+        for candidate in ClubIdentityResolver.allKnownIds(for: clubId) {
+            if let fileNames = photoFileNamesByClubId[candidate] {
+                return fileNames
+            }
+        }
+        return []
     }
 
     func photoURL(fileName: String) -> URL {
@@ -77,9 +82,10 @@ final class AppPhotosStore: ObservableObject {
     }
 
     func removePhoto(fileName: String, for clubId: String) {
-        let key = Self.photoKey(clubId: clubId, fileName: fileName)
+        let storageClubId = visitedStore.resolvedStorageClubId(for: clubId)
+        let key = Self.photoKey(clubId: storageClubId, fileName: fileName)
         pendingRemoteDeletePhotoKeys.insert(key)
-        visitedStore.removePhotoLocally(fileName: fileName, for: clubId, scheduleRemotePush: true)
+        visitedStore.removePhotoLocally(fileName: fileName, for: storageClubId, scheduleRemotePush: true)
 
         guard authSession.snapshot.isAuthenticated, let userId = authSession.snapshot.userId else {
             pendingRemoteDeletePhotoKeys.remove(key)
@@ -88,7 +94,7 @@ final class AppPhotosStore: ObservableObject {
 
         Task { [weak self] in
             do {
-                try await self?.syncBackend.deletePhoto(userId: userId, clubId: clubId, fileName: fileName)
+                try await self?.syncBackend.deletePhoto(userId: userId, clubId: storageClubId, fileName: fileName)
                 await MainActor.run {
                     guard let self else { return }
                     self.pendingRemoteDeletePhotoKeys.remove(key)
@@ -100,18 +106,18 @@ final class AppPhotosStore: ObservableObject {
                     guard let self else { return }
                     self.pendingRemoteDeletePhotoKeys.remove(key)
                     self.lastSyncIssue = error.localizedDescription
-                    dlog("Shared photo delete error for \(clubId)/\(fileName): \(error.localizedDescription)")
+                    dlog("Shared photo delete error for \(storageClubId)/\(fileName): \(error.localizedDescription)")
                 }
             }
         }
     }
 
     func photoCaption(for clubId: String, fileName: String) -> String {
-        visitedStore.photoCaption(for: clubId, fileName: fileName)
+        visitedStore.photoCaption(for: visitedStore.resolvedStorageClubId(for: clubId), fileName: fileName)
     }
 
     func setPhotoCaption(_ caption: String, for clubId: String, fileName: String) {
-        visitedStore.setPhotoCaption(caption, for: clubId, fileName: fileName)
+        visitedStore.setPhotoCaption(caption, for: visitedStore.resolvedStorageClubId(for: clubId), fileName: fileName)
     }
 
     private func scheduleRemoteSync() {
@@ -173,7 +179,13 @@ final class AppPhotosStore: ObservableObject {
     }
 
     private func reconcileRemotePhotos(_ remotePhotos: [SharedPhotoRecordDTO], userId: String) async throws {
-        let remoteByKey = Dictionary(uniqueKeysWithValues: remotePhotos.map { (Self.photoKey(clubId: $0.clubId, fileName: $0.fileName), $0) })
+        let remoteByKey = remotePhotos.reduce(into: [String: SharedPhotoRecordDTO]()) { partialResult, remotePhoto in
+            let key = Self.photoKey(clubId: remotePhoto.clubId, fileName: remotePhoto.fileName)
+            if let existing = partialResult[key], existing.photoMeta.updatedAt >= remotePhoto.photoMeta.updatedAt {
+                return
+            }
+            partialResult[key] = remotePhoto
+        }
         var localByKey = Self.extractLocalPhotoRecords(from: visitedStore.records)
         let allKeys = Set(remoteByKey.keys).union(localByKey.keys)
         var resolvedRemoteKeys = Set(remoteByKey.keys)
@@ -319,7 +331,7 @@ final class AppPhotosStore: ObservableObject {
     }
 
     private static func photoKey(clubId: String, fileName: String) -> String {
-        "\(clubId)::\(fileName)"
+        "\(ClubIdentityResolver.canonicalId(for: clubId))::\(fileName)"
     }
 
     private static func contentType(for fileName: String) -> String {
