@@ -20,7 +20,9 @@ struct MatchesView: View {
         reviewsStore: AppReviewsStore
     ) {
         self.clubs = clubs
-        self.clubById = clubById ?? Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
+        self.clubById = clubById ?? ClubIdentityResolver.aliasMap(
+            from: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
+        )
         self.fixtures = fixtures
         self.visitedStore = visitedStore
         self.photosStore = photosStore

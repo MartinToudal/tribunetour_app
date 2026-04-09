@@ -139,7 +139,9 @@ struct StadiumsView: View {
     }
 
     private var clubByIdMap: [String: Club] {
-        Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
+        ClubIdentityResolver.aliasMap(
+            from: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
+        )
     }
 
     private func isReviewed(_ clubId: String) -> Bool {

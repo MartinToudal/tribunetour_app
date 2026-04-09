@@ -28,7 +28,9 @@ struct WeekendPlannerView: View {
     @State private var pickerMode: PickerMode = .start
 
     private var clubById: [String: Club] {
-        Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
+        ClubIdentityResolver.aliasMap(
+            from: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
+        )
     }
 
     enum PickerMode {
