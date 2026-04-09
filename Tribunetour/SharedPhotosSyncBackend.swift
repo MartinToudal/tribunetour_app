@@ -131,10 +131,23 @@ final class SharedPhotosSyncBackend {
     }
 
     func downloadPhoto(userId: String, clubId: String, fileName: String) async throws -> Data {
+        let candidateClubIds = ClubIdentityResolver.allKnownIds(for: clubId)
+
+        for candidateClubId in candidateClubIds {
+            let path = "storage/v1/object/authenticated/\(configuration.bucketName)/\(userId)/\(candidateClubId)/\(fileName)"
+            let request = try await authorizedRequest(path: path, method: "GET")
+
+            do {
+                return try await performWithoutDecoding(request)
+            } catch SharedPhotosSyncBackendError.invalidHTTPStatus(let code, _) where code == 400 || code == 404 {
+                continue
+            }
+        }
+
         let canonicalClubId = ClubIdentityResolver.canonicalId(for: clubId)
-        let path = "storage/v1/object/authenticated/\(configuration.bucketName)/\(userId)/\(canonicalClubId)/\(fileName)"
-        let request = try await authorizedRequest(path: path, method: "GET")
-        return try await performWithoutDecoding(request)
+        let fallbackPath = "storage/v1/object/authenticated/\(configuration.bucketName)/\(userId)/\(canonicalClubId)/\(fileName)"
+        let fallbackRequest = try await authorizedRequest(path: fallbackPath, method: "GET")
+        return try await performWithoutDecoding(fallbackRequest)
     }
 
     func uploadPhoto(
@@ -189,13 +202,15 @@ final class SharedPhotosSyncBackend {
         metadataRequest.setValue("return=minimal", forHTTPHeaderField: "Prefer")
         _ = try await performWithoutDecoding(metadataRequest)
 
-        let storagePath = "\(userId)/\(canonicalClubId)/\(fileName)"
+        let storagePaths = Array(Set(
+            ClubIdentityResolver.allKnownIds(for: clubId).map { "\(userId)/\($0)/\(fileName)" }
+        )).sorted()
         var storageRequest = try await authorizedRequest(
             path: "storage/v1/object/remove/\(configuration.bucketName)",
             method: "POST"
         )
         storageRequest.httpBody = try encoder.encode(
-            SharedPhotoDeleteRequest(prefixes: [storagePath])
+            SharedPhotoDeleteRequest(prefixes: storagePaths)
         )
         storageRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
         _ = try await performWithoutDecoding(storageRequest)
