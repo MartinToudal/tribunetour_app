@@ -76,11 +76,14 @@ Opdateres løbende sammen med sprint-arbejdet.
    - audit af danske ids
    - mapping fra nuværende ids til nye canonical ids
    - plan for fixture- og brugerdata-migration
+   - Næste trin:
+   - kør Supabase backfill af `visited`, `notes`, `reviews` og `photos`
    - Se:
    - `CLUB_ID_POLICY.md`
    - `DANISH_CLUB_ID_AUDIT.md`
    - `DANISH_CLUB_ID_MAPPING_DRAFT.md`
    - `CLUB_ID_MIGRATION_PLAN.md`
+   - `CLUB_ID_SUPABASE_BACKFILL.md`
 
 ---
 
