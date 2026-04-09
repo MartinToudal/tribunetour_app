@@ -53,8 +53,11 @@ Opdateres løbende sammen med sprint-arbejdet.
 
 2. **P-MultiLeagueExperiment (Medium/Høj)**
    - Byg multi-league support som et kontrolleret udvidelseslag
-   - Første testpack:
-   - England (`Premier League`, `Championship`, `League One`, `League Two`)
+   - Første konkrete næste pack:
+   - Tyskland (`Bundesliga`, `2. Bundesliga`, `3. Liga`)
+   - Næste trin:
+   - lås første tyske klub-id-draft
+   - lav første reference-data-draft for tyske stadioner/koordinater
    - Formål:
    - validere om ekstra ligaer skaber reel produktværdi
    - holde Danmark som kerneprodukt
@@ -65,6 +68,8 @@ Opdateres løbende sammen med sprint-arbejdet.
    - loggede brugere får adgang via brugerflag/entitlement
    - Se:
    - `MULTI_LEAGUE_EXPERIMENT.md`
+   - `GERMANY_LEAGUE_PACK.md`
+   - `GERMAN_CLUB_ID_MAPPING_DRAFT.md`
 
 3. **P-ClubIdMigration (Høj)**
    - Lås en canonical club id-policy før første ekstra league pack
