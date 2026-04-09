@@ -53,6 +53,14 @@ struct SharedNoteRecordDTO: Codable {
         case createdAt = "created_at"
         case source
     }
+
+    init(clubId: String, note: String, updatedAt: Date, createdAt: Date?, source: String?) {
+        self.clubId = clubId
+        self.note = note
+        self.updatedAt = updatedAt
+        self.createdAt = createdAt
+        self.source = source
+    }
 }
 
 struct SharedNoteWriteRow: Codable {
@@ -90,13 +98,15 @@ final class SharedNotesSyncBackend {
             method: "GET"
         )
         let records: [SharedNoteRecordDTO] = try await perform(request, decodeAs: [SharedNoteRecordDTO].self)
-        return Dictionary(uniqueKeysWithValues: records.map { ($0.clubId, $0) })
+        return Dictionary(
+            uniqueKeysWithValues: normalizedRecords(records).map { ($0.clubId, $0) }
+        )
     }
 
     func upsert(userId: String, clubId: String, note: String, updatedAt: Date) async throws {
         let payload = SharedNoteWriteRow(
             userId: userId,
-            clubId: clubId,
+            clubId: ClubIdentityResolver.canonicalId(for: clubId),
             note: note,
             updatedAt: updatedAt,
             source: configuration.source
@@ -179,5 +189,28 @@ final class SharedNotesSyncBackend {
                 String(data: data, encoding: .utf8)
             )
         }
+    }
+
+    private func normalizedRecords(_ records: [SharedNoteRecordDTO]) -> [SharedNoteRecordDTO] {
+        var result: [String: SharedNoteRecordDTO] = [:]
+
+        for record in records {
+            let canonicalId = ClubIdentityResolver.canonicalId(for: record.clubId)
+            let normalized = SharedNoteRecordDTO(
+                clubId: canonicalId,
+                note: record.note,
+                updatedAt: record.updatedAt,
+                createdAt: record.createdAt,
+                source: record.source
+            )
+
+            if let existing = result[canonicalId], existing.updatedAt >= normalized.updatedAt {
+                continue
+            }
+
+            result[canonicalId] = normalized
+        }
+
+        return Array(result.values)
     }
 }

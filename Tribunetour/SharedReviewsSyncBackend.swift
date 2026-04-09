@@ -62,6 +62,28 @@ struct SharedReviewRecordDTO: Codable {
         case source
     }
 
+    init(
+        clubId: String,
+        matchLabel: String,
+        scores: [VisitedStore.ReviewCategory: Int],
+        categoryNotes: [VisitedStore.ReviewCategory: String],
+        summary: String,
+        tags: String,
+        updatedAt: Date,
+        createdAt: Date?,
+        source: String?
+    ) {
+        self.clubId = clubId
+        self.matchLabel = matchLabel
+        self.scores = scores
+        self.categoryNotes = categoryNotes
+        self.summary = summary
+        self.tags = tags
+        self.updatedAt = updatedAt
+        self.createdAt = createdAt
+        self.source = source
+    }
+
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         self.clubId = try c.decode(String.self, forKey: .clubId)
@@ -293,13 +315,15 @@ final class SharedReviewsSyncBackend {
             method: "GET"
         )
         let records: [SharedReviewRecordDTO] = try await perform(request, decodeAs: [SharedReviewRecordDTO].self)
-        return Dictionary(uniqueKeysWithValues: records.map { ($0.clubId, $0) })
+        return Dictionary(
+            uniqueKeysWithValues: normalizedRecords(records).map { ($0.clubId, $0) }
+        )
     }
 
     func upsert(userId: String, clubId: String, review: VisitedStore.StadiumReview, updatedAt: Date) async throws {
         let payload = SharedReviewWriteRow(
             userId: userId,
-            clubId: clubId,
+            clubId: ClubIdentityResolver.canonicalId(for: clubId),
             matchLabel: review.matchLabel,
             scores: Dictionary(uniqueKeysWithValues: review.scores.map { ($0.key.rawValue, $0.value) }),
             categoryNotes: Dictionary(uniqueKeysWithValues: review.categoryNotes.map { ($0.key.rawValue, $0.value) }),
@@ -386,5 +410,32 @@ final class SharedReviewsSyncBackend {
                 String(data: data, encoding: .utf8)
             )
         }
+    }
+
+    private func normalizedRecords(_ records: [SharedReviewRecordDTO]) -> [SharedReviewRecordDTO] {
+        var result: [String: SharedReviewRecordDTO] = [:]
+
+        for record in records {
+            let canonicalId = ClubIdentityResolver.canonicalId(for: record.clubId)
+            let normalized = SharedReviewRecordDTO(
+                clubId: canonicalId,
+                matchLabel: record.matchLabel,
+                scores: record.scores,
+                categoryNotes: record.categoryNotes,
+                summary: record.summary,
+                tags: record.tags,
+                updatedAt: record.updatedAt,
+                createdAt: record.createdAt,
+                source: record.source
+            )
+
+            if let existing = result[canonicalId], existing.updatedAt >= normalized.updatedAt {
+                continue
+            }
+
+            result[canonicalId] = normalized
+        }
+
+        return Array(result.values)
     }
 }

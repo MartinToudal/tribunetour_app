@@ -58,6 +58,22 @@ struct SharedPhotoRecordDTO: Codable {
         case source
     }
 
+    init(
+        clubId: String,
+        fileName: String,
+        caption: String,
+        createdAt: Date?,
+        updatedAt: Date,
+        source: String?
+    ) {
+        self.clubId = clubId
+        self.fileName = fileName
+        self.caption = caption
+        self.createdAt = createdAt
+        self.updatedAt = updatedAt
+        self.source = source
+    }
+
     var photoMeta: VisitedStore.Record.PhotoMeta {
         let resolvedCreatedAt = createdAt ?? updatedAt
         return VisitedStore.Record.PhotoMeta(
@@ -110,11 +126,13 @@ final class SharedPhotosSyncBackend {
             path: "rest/v1/photos?select=club_id,file_name,caption,created_at,updated_at,source",
             method: "GET"
         )
-        return try await perform(request, decodeAs: [SharedPhotoRecordDTO].self)
+        let records = try await perform(request, decodeAs: [SharedPhotoRecordDTO].self)
+        return normalizedRecords(records)
     }
 
     func downloadPhoto(userId: String, clubId: String, fileName: String) async throws -> Data {
-        let path = "storage/v1/object/authenticated/\(configuration.bucketName)/\(userId)/\(clubId)/\(fileName)"
+        let canonicalClubId = ClubIdentityResolver.canonicalId(for: clubId)
+        let path = "storage/v1/object/authenticated/\(configuration.bucketName)/\(userId)/\(canonicalClubId)/\(fileName)"
         let request = try await authorizedRequest(path: path, method: "GET")
         return try await performWithoutDecoding(request)
     }
@@ -126,7 +144,8 @@ final class SharedPhotosSyncBackend {
         imageData: Data,
         contentType: String
     ) async throws {
-        let path = "storage/v1/object/\(configuration.bucketName)/\(userId)/\(clubId)/\(fileName)"
+        let canonicalClubId = ClubIdentityResolver.canonicalId(for: clubId)
+        let path = "storage/v1/object/\(configuration.bucketName)/\(userId)/\(canonicalClubId)/\(fileName)"
         var request = try await authorizedRequest(path: path, method: "POST")
         request.httpBody = imageData
         request.setValue(contentType, forHTTPHeaderField: "Content-Type")
@@ -142,7 +161,7 @@ final class SharedPhotosSyncBackend {
     ) async throws {
         let payload = SharedPhotoWriteRow(
             userId: userId,
-            clubId: clubId,
+            clubId: ClubIdentityResolver.canonicalId(for: clubId),
             fileName: fileName,
             caption: meta.caption,
             createdAt: meta.createdAt,
@@ -160,7 +179,8 @@ final class SharedPhotosSyncBackend {
     }
 
     func deletePhoto(userId: String, clubId: String, fileName: String) async throws {
-        let encodedClubId = percentEncodedPathComponent(clubId)
+        let canonicalClubId = ClubIdentityResolver.canonicalId(for: clubId)
+        let encodedClubId = percentEncodedPathComponent(canonicalClubId)
         let encodedFileName = percentEncodedPathComponent(fileName)
         var metadataRequest = try await authorizedRequest(
             path: "rest/v1/photos?club_id=eq.\(encodedClubId)&file_name=eq.\(encodedFileName)",
@@ -169,7 +189,7 @@ final class SharedPhotosSyncBackend {
         metadataRequest.setValue("return=minimal", forHTTPHeaderField: "Prefer")
         _ = try await performWithoutDecoding(metadataRequest)
 
-        let storagePath = "\(userId)/\(clubId)/\(fileName)"
+        let storagePath = "\(userId)/\(canonicalClubId)/\(fileName)"
         var storageRequest = try await authorizedRequest(
             path: "storage/v1/object/remove/\(configuration.bucketName)",
             method: "POST"
@@ -253,5 +273,30 @@ final class SharedPhotosSyncBackend {
                 String(data: data, encoding: .utf8)
             )
         }
+    }
+
+    private func normalizedRecords(_ records: [SharedPhotoRecordDTO]) -> [SharedPhotoRecordDTO] {
+        var result: [String: SharedPhotoRecordDTO] = [:]
+
+        for record in records {
+            let canonicalClubId = ClubIdentityResolver.canonicalId(for: record.clubId)
+            let normalized = SharedPhotoRecordDTO(
+                clubId: canonicalClubId,
+                fileName: record.fileName,
+                caption: record.caption,
+                createdAt: record.createdAt,
+                updatedAt: record.updatedAt,
+                source: record.source
+            )
+            let key = "\(canonicalClubId)::\(record.fileName)"
+
+            if let existing = result[key], existing.updatedAt >= normalized.updatedAt {
+                continue
+            }
+
+            result[key] = normalized
+        }
+
+        return Array(result.values)
     }
 }

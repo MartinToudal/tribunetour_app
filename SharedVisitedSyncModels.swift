@@ -37,7 +37,7 @@ struct SharedVisitedRecordDTO: Codable {
 
     static func fromRecord(clubId: String, record: VisitedStore.Record, source: String) -> SharedVisitedRecordDTO {
         SharedVisitedRecordDTO(
-            clubId: clubId,
+            clubId: ClubIdentityResolver.canonicalId(for: clubId),
             visited: record.visited,
             visitedDate: record.visitedDate,
             updatedAt: record.updatedAt,
@@ -81,7 +81,7 @@ struct SharedVisitedWriteRow: Codable {
 
     static func fromRecord(clubId: String, record: VisitedStore.Record, source: String) -> SharedVisitedWriteRow {
         SharedVisitedWriteRow(
-            clubId: clubId,
+            clubId: ClubIdentityResolver.canonicalId(for: clubId),
             visited: record.visited,
             visitedDate: record.visitedDate,
             source: source
@@ -110,7 +110,7 @@ struct SharedVisitedBootstrapRequest: Codable {
         let items = records
             .map { clubId, record in
                 Item(
-                    clubId: clubId,
+                    clubId: ClubIdentityResolver.canonicalId(for: clubId),
                     visited: record.visited,
                     visitedDate: record.visitedDate
                 )

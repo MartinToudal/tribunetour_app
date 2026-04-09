@@ -78,7 +78,12 @@ final class SharedVisitedSyncBackend: VisitedSyncBackend {
         let records: [SharedVisitedRecordDTO] = try await perform(request, decodeAs: [SharedVisitedRecordDTO].self)
         var mapped: [String: VisitedStore.Record] = [:]
         for record in records {
-            mapped[record.clubId] = record.toRecord()
+            let canonicalId = ClubIdentityResolver.canonicalId(for: record.clubId)
+            let normalizedUpdatedAt = record.updatedAt ?? .distantPast
+            if let existing = mapped[canonicalId], existing.updatedAt >= normalizedUpdatedAt {
+                continue
+            }
+            mapped[canonicalId] = record.toRecord()
         }
         return mapped
     }
@@ -118,7 +123,7 @@ final class SharedVisitedSyncBackend: VisitedSyncBackend {
 
     func delete(clubId: String) async throws {
         let payload = SharedVisitedWriteRow(
-            clubId: clubId,
+            clubId: ClubIdentityResolver.canonicalId(for: clubId),
             visited: false,
             visitedDate: nil,
             source: configuration.source
