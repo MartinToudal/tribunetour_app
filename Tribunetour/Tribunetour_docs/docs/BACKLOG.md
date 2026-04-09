@@ -90,6 +90,20 @@ Opdateres løbende sammen med sprint-arbejdet.
    - `CLUB_ID_MIGRATION_PLAN.md`
    - `CLUB_ID_SUPABASE_BACKFILL.md`
 
+4. **Ops-PostMigrationCleanup (Høj)**
+   - Luk oprydningsspor efter første canonical `club_id`-migration
+   - Formål:
+   - gøre migrationen stabil for både live app, ny app-build og web
+   - reducere midlertidige compatibility-lag når det er sikkert
+   - Konkrete delspor:
+   - migrér foto-storage-paths i `stadium-photos` fra legacy mapper til canonical mapper
+   - fjern behovet for legacy photo path fallback, når storage-migration er verificeret
+   - gennemgå `visited`-sync mod live App Store-build og beskyt mod forkert backfill/overskrivning
+   - dokumentér hvilke shared feeds der skal forblive bagudkompatible, indtil ny appversion er bredt ude
+   - Verifikation:
+   - app, web og live release-build skal vise samme `visited`, `reviews` og `photos`
+   - filtre og counts må ikke drive fra hinanden efter sync
+
 ---
 
 ## Release Checklist (Sprint 5.x)

@@ -164,6 +164,21 @@ Anbefaling:
 - lad metadata-migration komme først
 - vurder storage-path-migration som separat step hvis nødvendigt
 
+Erfaring fra den første canonical migration:
+- metadata-backfill alene var ikke nok
+- eksisterende fotoobjekter i `stadium-photos` lå fortsat på legacy paths som `.../vff/...` og `.../lys/...`
+- app og web måtte derfor have et midlertidigt fallback-lag, som prøver både canonical og legacy storage-paths ved læsning og sletning
+
+Praktisk konsekvens:
+- photo-storage-path migration bør behandles som et separat oprydningsspor
+- den må ikke køres samtidig med metadata-backfill uden ekstra verifikation
+- indtil den er kørt, skal compatibility-laget blive stående
+
+Erfaring fra den første Supabase backfill:
+- den daværende live App Store-build kunne efter backfill skrive `visited`-state forkert tilbage remote
+- remote feeds og shared sync skal derfor holdes bagudkompatible med den live appversion, indtil en ny release er bredt ude
+- efter reference-data- og `club_id`-migrationer bør vi altid køre en tværflade sanity-runde på både live app, ny app-build og web før vi kalder migrationen stabil
+
 ### 5. Routes og lookup
 Web og app bør i en overgang kunne:
 - forstå gammel id i eksisterende links/data
