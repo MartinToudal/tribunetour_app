@@ -18,6 +18,7 @@ struct InternalToolsView: View {
     @AppStorage(AppAuthConfiguration.redirectSchemeKey) private var redirectScheme: String = AppAuthConfiguration.default.redirectScheme
     @AppStorage(AppAuthConfiguration.redirectHostKey) private var redirectHost: String = AppAuthConfiguration.default.redirectHost
     @AppStorage(RemoteFixturesProvider.remoteURLKey) private var fixturesRemoteURLOverride: String = ""
+    @AppStorage(AppLeaguePackSettings.germanyTop3EnabledKey) private var germanyTop3Enabled: Bool = false
 
     @State private var showExportToast = false
     @State private var showImportSheet = false
@@ -191,6 +192,15 @@ struct InternalToolsView: View {
             }
 
             Section("Reference-data") {
+                Toggle("Tyskland top 3 (eksperimentel)", isOn: $germanyTop3Enabled)
+                    .onChange(of: germanyTop3Enabled) { _, _ in
+                        appState.loadData()
+                    }
+
+                Text("Slår Bundesliga, 2. Bundesliga og 3. Liga til i stadionlisten på denne enhed. Sync-data bruger stadig klub-id'er med landeprefix, fx de-bayern-munchen.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Fixtures feed override (valgfri)")
                         .font(.caption)

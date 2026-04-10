@@ -138,7 +138,7 @@ final class AppState: ObservableObject {
                 let clubs = try await withCheckedThrowingContinuation { (cont: CheckedContinuation<[Club], Error>) in
                     DispatchQueue.global(qos: .userInitiated).async {
                         do {
-                            let result = try CSVClubImporter.loadClubsFromBundle(csvFileName: "stadiums")
+                            let result = try CSVClubImporter.loadEnabledClubsFromBundle(csvFileName: "stadiums")
                             cont.resume(returning: result)
                         } catch {
                             cont.resume(throwing: error)
