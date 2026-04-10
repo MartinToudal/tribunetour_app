@@ -100,6 +100,10 @@ final class AppAuthSession: ObservableObject {
             )
             return refreshedSession.accessToken
         } catch {
+            if hasExpiredToken {
+                clearSession()
+                return nil
+            }
             return hasExpiredToken ? nil : currentToken
         }
     }

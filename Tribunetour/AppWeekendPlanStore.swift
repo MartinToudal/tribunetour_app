@@ -133,6 +133,10 @@ final class AppWeekendPlanStore: ObservableObject {
                 let remote = try await syncBackend.fetch()
                 try await reconcile(remote: remote, userId: userId)
                 lastSyncIssue = nil
+            } catch SharedWeekendPlanSyncBackendError.missingAuthToken {
+                pendingRemotePush = false
+                lastSyncIssue = nil
+                return
             } catch {
                 pendingRemotePush = true
                 lastSyncIssue = error.localizedDescription
