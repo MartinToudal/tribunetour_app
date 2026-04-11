@@ -1,5 +1,135 @@
 import Foundation
 
+enum AppLeaguePackId: String, CaseIterable {
+    case coreDenmark = "core_denmark"
+    case germanyTop3 = "germany_top_3"
+}
+
+enum AppLeaguePackSettings {
+    static let germanyTop3EnabledKey = "leaguePacks.germanyTop3.enabled"
+    static let remoteEnabledLeaguePacksKey = "leaguePacks.remote.enabled"
+
+    static var debugEnabledLeaguePacks: Set<String> {
+        var ids = Set<String>()
+        if UserDefaults.standard.bool(forKey: germanyTop3EnabledKey) {
+            ids.insert(AppLeaguePackId.germanyTop3.rawValue)
+        }
+        return ids
+    }
+
+    static var remoteEnabledLeaguePacks: Set<String> {
+        let values = UserDefaults.standard.array(forKey: remoteEnabledLeaguePacksKey) as? [String] ?? []
+        return Set(values)
+    }
+
+    static var effectiveEnabledLeaguePacks: Set<String> {
+        var ids: Set<String> = [AppLeaguePackId.coreDenmark.rawValue]
+        ids.formUnion(debugEnabledLeaguePacks)
+        ids.formUnion(remoteEnabledLeaguePacks)
+        return ids
+    }
+
+    static var germanyTop3Enabled: Bool {
+        effectiveEnabledLeaguePacks.contains(AppLeaguePackId.germanyTop3.rawValue)
+    }
+
+    static func setRemoteEnabledLeaguePacks(_ ids: Set<String>) {
+        UserDefaults.standard.set(Array(ids).sorted(), forKey: remoteEnabledLeaguePacksKey)
+    }
+
+    static func clearRemoteEnabledLeaguePacks() {
+        UserDefaults.standard.removeObject(forKey: remoteEnabledLeaguePacksKey)
+    }
+}
+
+struct SharedLeaguePackAccessConfiguration {
+    let baseURL: URL?
+    let apiKey: String?
+    let authTokenProvider: @Sendable () async -> String?
+    let urlSession: URLSession
+}
+
+enum SharedLeaguePackAccessError: LocalizedError {
+    case notConfigured
+    case missingAuthToken
+    case invalidPayload
+    case invalidHTTPStatus(Int, String)
+
+    var errorDescription: String? {
+        switch self {
+        case .notConfigured:
+            return "League pack access er ikke konfigureret."
+        case .missingAuthToken:
+            return "League pack access mangler auth-token."
+        case .invalidPayload:
+            return "League pack access-svaret kunne ikke læses."
+        case .invalidHTTPStatus(let code, let body):
+            return body.isEmpty ? "League pack access fejlede med status \(code)." : body
+        }
+    }
+}
+
+private struct SharedLeaguePackAccessRow: Decodable {
+    let packKey: String
+    let enabled: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case packKey = "pack_key"
+        case enabled
+    }
+}
+
+final class SharedLeaguePackAccessBackend {
+    private let configuration: SharedLeaguePackAccessConfiguration
+
+    init(configuration: SharedLeaguePackAccessConfiguration) {
+        self.configuration = configuration
+    }
+
+    func fetchEnabledLeaguePacks() async throws -> Set<String> {
+        guard
+            let baseURL = configuration.baseURL,
+            let apiKey = configuration.apiKey?.trimmingCharacters(in: .whitespacesAndNewlines),
+            !apiKey.isEmpty
+        else {
+            throw SharedLeaguePackAccessError.notConfigured
+        }
+
+        guard let token = await configuration.authTokenProvider() else {
+            throw SharedLeaguePackAccessError.missingAuthToken
+        }
+
+        var components = URLComponents(url: baseURL.appendingPathComponent("rest/v1/user_league_pack_access"), resolvingAgainstBaseURL: false)
+        components?.queryItems = [
+            URLQueryItem(name: "select", value: "pack_key,enabled"),
+            URLQueryItem(name: "enabled", value: "eq.true")
+        ]
+
+        guard let url = components?.url else {
+            throw SharedLeaguePackAccessError.invalidPayload
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+
+        let (data, response) = try await configuration.urlSession.data(for: request)
+        guard let http = response as? HTTPURLResponse else {
+            throw SharedLeaguePackAccessError.invalidPayload
+        }
+
+        guard (200...299).contains(http.statusCode) else {
+            let body = String(data: data, encoding: .utf8) ?? ""
+            throw SharedLeaguePackAccessError.invalidHTTPStatus(http.statusCode, body)
+        }
+
+        let rows = try JSONDecoder().decode([SharedLeaguePackAccessRow].self, from: data)
+        return Set(rows.filter(\.enabled).map(\.packKey))
+    }
+}
+
 // MARK: - Models
 
 struct Stadium: Hashable {
@@ -38,14 +168,6 @@ struct Club: Identifiable, Hashable {
         self.leagueCode = leagueCode
         self.leaguePack = leaguePack
         self.shortCode = shortCode
-    }
-}
-
-enum AppLeaguePackSettings {
-    static let germanyTop3EnabledKey = "leaguePacks.germanyTop3.enabled"
-
-    static var germanyTop3Enabled: Bool {
-        UserDefaults.standard.bool(forKey: germanyTop3EnabledKey)
     }
 }
 
@@ -94,9 +216,19 @@ struct CSVClubImporter {
     }
 
     static func loadEnabledClubsFromBundle(csvFileName: String) throws -> [Club] {
+        try loadEnabledClubsFromBundle(
+            csvFileName: csvFileName,
+            enabledLeaguePacks: AppLeaguePackSettings.effectiveEnabledLeaguePacks
+        )
+    }
+
+    static func loadEnabledClubsFromBundle(
+        csvFileName: String,
+        enabledLeaguePacks: Set<String>
+    ) throws -> [Club] {
         var clubs = try loadClubsFromBundle(csvFileName: csvFileName)
 
-        if AppLeaguePackSettings.germanyTop3Enabled {
+        if enabledLeaguePacks.contains(AppLeaguePackId.germanyTop3.rawValue) {
             clubs.append(contentsOf: try loadClubs(fromCSVText: germanyTop3CSV, defaultCountryCode: "de", defaultLeaguePack: "germany_top_3"))
         }
 

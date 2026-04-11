@@ -27,6 +27,7 @@ final class AppState: ObservableObject {
     let visitedBootstrapCoordinator: AppVisitedBootstrapCoordinator
     let locationStore = LocationStore()
     private var cancellables = Set<AnyCancellable>()
+    private let leaguePackAccessBackend: SharedLeaguePackAccessBackend
 
     init() {
         let sharedVisitedBackend = AppVisitedSyncFactory.makeSharedBackend(
@@ -74,6 +75,17 @@ final class AppState: ObservableObject {
             syncBackend: AppWeekendPlanSyncFactory.makeSharedBackend(authSession: authSession, authClient: authClient),
             authSession: self.authSession
         )
+        let authConfiguration = AppAuthConfiguration.load()
+        self.leaguePackAccessBackend = SharedLeaguePackAccessBackend(
+            configuration: SharedLeaguePackAccessConfiguration(
+                baseURL: authConfiguration.supabaseURL,
+                apiKey: authConfiguration.supabaseAnonKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    ? nil
+                    : authConfiguration.supabaseAnonKey,
+                authTokenProvider: authSession.authTokenProvider(using: authClient),
+                urlSession: .shared
+            )
+        )
 
         visitedStore.$records
             .dropFirst()
@@ -103,6 +115,9 @@ final class AppState: ObservableObject {
             .sink { [weak self] snapshot in
                 guard let self else { return }
                 if snapshot.isAuthenticated {
+                    Task {
+                        await self.refreshLeaguePackAccess()
+                    }
                     self.visitedStore.clearSyncIssue()
                     self.notesSyncIssue = nil
                     self.reviewsSyncIssue = nil
@@ -116,6 +131,8 @@ final class AppState: ObservableObject {
                         await self.reconcileSharedSyncModeAfterSessionRestore(snapshot: snapshot)
                     }
                 } else {
+                    AppLeaguePackSettings.clearRemoteEnabledLeaguePacks()
+                    self.loadData()
                     self.syncRuntimeInfoMessage = nil
                     self.notesSyncIssue = nil
                     self.reviewsSyncIssue = nil
@@ -135,10 +152,14 @@ final class AppState: ObservableObject {
     func loadData() {
         Task { // still on MainActor because AppState is @MainActor
             do {
+                let enabledLeaguePacks = AppLeaguePackSettings.effectiveEnabledLeaguePacks
                 let clubs = try await withCheckedThrowingContinuation { (cont: CheckedContinuation<[Club], Error>) in
                     DispatchQueue.global(qos: .userInitiated).async {
                         do {
-                            let result = try CSVClubImporter.loadEnabledClubsFromBundle(csvFileName: "stadiums")
+                            let result = try CSVClubImporter.loadEnabledClubsFromBundle(
+                                csvFileName: "stadiums",
+                                enabledLeaguePacks: enabledLeaguePacks
+                            )
                             cont.resume(returning: result)
                         } catch {
                             cont.resume(throwing: error)
@@ -176,6 +197,24 @@ final class AppState: ObservableObject {
                 self.fixturesFallbackReason = nil
                 self.loadError = error.localizedDescription
             }
+        }
+    }
+
+    func refreshLeaguePackAccess() async {
+        guard authSession.snapshot.isAuthenticated else {
+            AppLeaguePackSettings.clearRemoteEnabledLeaguePacks()
+            return
+        }
+
+        do {
+            let enabledPacks = try await leaguePackAccessBackend.fetchEnabledLeaguePacks()
+            let current = AppLeaguePackSettings.remoteEnabledLeaguePacks
+            if current != enabledPacks {
+                AppLeaguePackSettings.setRemoteEnabledLeaguePacks(enabledPacks)
+                loadData()
+            }
+        } catch {
+            dlog("League pack access kunne ikke hentes: \(error.localizedDescription)")
         }
     }
 
