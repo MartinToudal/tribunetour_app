@@ -147,11 +147,13 @@ final class AppState: ObservableObject {
                 }
 
                 let fixturesResult = try await RemoteFixturesProvider().loadFixtures()
-                let enabledClubIds = Set(clubs.map(\.id))
+                let enabledClubLookup = ClubIdentityResolver.aliasMap(
+                    from: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
+                )
                 let fixtures = fixturesResult.fixtures.filter { fixture in
-                    enabledClubIds.contains(fixture.homeTeamId) &&
-                    enabledClubIds.contains(fixture.awayTeamId) &&
-                    enabledClubIds.contains(fixture.venueClubId)
+                    enabledClubLookup[fixture.homeTeamId] != nil &&
+                    enabledClubLookup[fixture.awayTeamId] != nil &&
+                    enabledClubLookup[fixture.venueClubId] != nil
                 }
                 dlogFixturesLoad(source: fixturesResult.source, version: fixturesResult.version)
 
