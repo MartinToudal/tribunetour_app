@@ -26,6 +26,7 @@ struct WeekendPlannerView: View {
 
     @State private var showPicker = false
     @State private var pickerMode: PickerMode = .start
+    @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
 
     private var clubById: [String: Club] {
         ClubIdentityResolver.aliasMap(
@@ -51,6 +52,7 @@ struct WeekendPlannerView: View {
     private var fixturesInRange: [Fixture] {
         fixtures
             .filter { $0.kickoff >= range.start && $0.kickoff < range.endExclusive }
+            .filter { fixtureMatchesSelectedCountry($0) }
             .sorted { $0.kickoff < $1.kickoff }
     }
 
@@ -58,7 +60,13 @@ struct WeekendPlannerView: View {
         let ids = planStore.selectedFixtureIds
         return fixtures
             .filter { ids.contains($0.id) }
+            .filter { fixtureMatchesSelectedCountry($0) }
             .sorted { $0.kickoff < $1.kickoff }
+    }
+
+    private func fixtureMatchesSelectedCountry(_ fixture: Fixture) -> Bool {
+        guard countryFilterRawValue != "all" else { return true }
+        return clubById[fixture.venueClubId]?.countryCode == countryFilterRawValue
     }
 
     private func clubName(_ id: String) -> String {
