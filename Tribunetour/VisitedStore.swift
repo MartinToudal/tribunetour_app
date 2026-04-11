@@ -216,6 +216,7 @@ final class VisitedStore: ObservableObject {
 
     private let localKey = "tribunetour.visited.local.v1"
     private let sharedRemoteClubIdsKey = "tribunetour.visited.shared.remote-club-ids.v1"
+    private let remoteWriteSnapshotsKey = "tribunetour.visited.remote-write-snapshots.v1"
     private let photoDirectoryName = "VisitedPhotos"
     private let maxPhotoPixelDimension: CGFloat = 2200
     private let photoJPEGQuality: CGFloat = 0.82
@@ -237,6 +238,7 @@ final class VisitedStore: ObservableObject {
     private var cloudPhotoQueriesAvailable = true
     private var loggedPhotoQueryWarning = false
     private var knownSharedRemoteClubIds = Set<String>()
+    private var remoteWriteSnapshotByClubId: [String: String] = [:]
 
     // MARK: - Init
 
@@ -250,6 +252,7 @@ final class VisitedStore: ObservableObject {
         self.shouldAttemptRemoteSync = shouldAttemptRemoteSync
         self.records = loadFromLocal() ?? [:]
         self.knownSharedRemoteClubIds = loadKnownSharedRemoteClubIds()
+        self.remoteWriteSnapshotByClubId = loadRemoteWriteSnapshots()
 
         // Debug: se om iCloud konto er tilgængelig
         Task {
@@ -628,6 +631,24 @@ final class VisitedStore: ObservableObject {
         return Set(ids)
     }
 
+    private func saveRemoteWriteSnapshots() {
+        UserDefaults.standard.set(remoteWriteSnapshotByClubId, forKey: remoteWriteSnapshotsKey)
+    }
+
+    private func loadRemoteWriteSnapshots() -> [String: String] {
+        UserDefaults.standard.dictionary(forKey: remoteWriteSnapshotsKey) as? [String: String] ?? [:]
+    }
+
+    private static func remoteWriteSnapshot(for record: Record) -> String {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        encoder.outputFormatting = [.sortedKeys]
+        guard let data = try? encoder.encode(record) else {
+            return "\(record.visited)|\(record.visitedDate?.timeIntervalSince1970 ?? 0)|\(record.updatedAt.timeIntervalSince1970)"
+        }
+        return data.base64EncodedString()
+    }
+
     private func photosDirectoryURL() -> URL {
         let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
             ?? FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
@@ -746,6 +767,12 @@ final class VisitedStore: ObservableObject {
         }
 
         records = merged
+        for clubId in remote.keys {
+            if let mergedRecord = merged[clubId] {
+                remoteWriteSnapshotByClubId[clubId] = Self.remoteWriteSnapshot(for: mergedRecord)
+            }
+        }
+        saveRemoteWriteSnapshots()
     }
 
     private func mergeRemotePhotosIntoLocal(_ remotePhotos: [VisitedRemotePhotoPayload]) {
@@ -798,17 +825,24 @@ final class VisitedStore: ObservableObject {
         var latestSyncIssue: String?
 
         for (clubId, rec) in snapshot {
-            do {
-                if rec.isEmptyMeaningfulState {
-                    try await syncBackend.delete(clubId: clubId)
-                } else {
-                    try await syncBackend.upsert(clubId: clubId, record: rec)
+            let remoteWriteSnapshot = Self.remoteWriteSnapshot(for: rec)
+            let shouldWriteVisitedRecord = remoteWriteSnapshotByClubId[clubId] != remoteWriteSnapshot
+
+            if shouldWriteVisitedRecord {
+                do {
+                    if rec.isEmptyMeaningfulState {
+                        try await syncBackend.delete(clubId: clubId)
+                    } else {
+                        try await syncBackend.upsert(clubId: clubId, record: rec)
+                    }
+                    remoteWriteSnapshotByClubId[clubId] = remoteWriteSnapshot
+                } catch {
+                    dlog("☁️ Visited push error for \(clubId): \(error)")
+                    latestSyncIssue = syncIssueMessage(for: error)
                 }
-            } catch {
-                dlog("☁️ Visited push error for \(clubId): \(error)")
-                latestSyncIssue = syncIssueMessage(for: error)
             }
 
+            guard !rec.photoFileNames.isEmpty else { continue }
             do {
                 try await syncPhotosForClub(clubId: clubId, record: rec)
             } catch {
@@ -821,6 +855,7 @@ final class VisitedStore: ObservableObject {
             }
         }
 
+        saveRemoteWriteSnapshots()
         lastSyncIssue = latestSyncIssue
     }
 

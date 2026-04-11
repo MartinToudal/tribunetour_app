@@ -122,6 +122,7 @@ struct StadiumsView: View {
 
     @AppStorage("stadiums.visitedFilter") private var filterRawValue: String = VisitedFilter.all.rawValue
     @AppStorage("stadiums.sortOption") private var sortRawValue: String = SortOption.leagueThenTeam.rawValue
+    @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
     @State private var searchText: String = ""
 
     private var filter: VisitedFilter {
@@ -135,7 +136,25 @@ struct StadiumsView: View {
     }
 
     private var visitedCount: Int {
-        clubs.filter { visitedStore.isVisited($0.id) }.count
+        countryFilteredClubs.filter { visitedStore.isVisited($0.id) }.count
+    }
+
+    private var countryOptions: [String] {
+        Array(Set(clubs.map(\.countryCode))).sorted { left, right in
+            if countryRank(left) != countryRank(right) {
+                return countryRank(left) < countryRank(right)
+            }
+            return countryLabel(left).localizedCaseInsensitiveCompare(countryLabel(right)) == .orderedAscending
+        }
+    }
+
+    private var shouldShowCountryFilter: Bool {
+        countryOptions.count > 1
+    }
+
+    private var countryFilteredClubs: [Club] {
+        guard countryFilterRawValue != "all" else { return clubs }
+        return clubs.filter { $0.countryCode == countryFilterRawValue }
     }
 
     private var clubByIdMap: [String: Club] {
@@ -153,11 +172,11 @@ struct StadiumsView: View {
         let base: [Club] = {
             switch filter {
             case .all:
-                return clubs
+                return countryFilteredClubs
             case .visited:
-                return clubs.filter { visitedStore.isVisited($0.id) }
+                return countryFilteredClubs.filter { visitedStore.isVisited($0.id) }
             case .notVisited:
-                return clubs.filter { !visitedStore.isVisited($0.id) }
+                return countryFilteredClubs.filter { !visitedStore.isVisited($0.id) }
             }
         }()
 
@@ -195,11 +214,30 @@ struct StadiumsView: View {
         let d = division.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
 
         if d.contains("superliga") { return 0 }
+        if d == "bundesliga" { return 10 }
+        if d == "2. bundesliga" { return 11 }
+        if d == "3. liga" { return 12 }
         if d.contains("1.") || d.contains("1 division") || d.contains("1. division") { return 1 }
         if d.contains("2.") || d.contains("2 division") || d.contains("2. division") { return 2 }
         if d.contains("3.") || d.contains("3 division") || d.contains("3. division") { return 3 }
 
         return 99
+    }
+
+    private func countryRank(_ countryCode: String) -> Int {
+        switch countryCode {
+        case "dk": return 0
+        case "de": return 1
+        default: return 99
+        }
+    }
+
+    private func countryLabel(_ countryCode: String) -> String {
+        switch countryCode {
+        case "dk": return "Danmark"
+        case "de": return "Tyskland"
+        default: return countryCode.uppercased()
+        }
     }
 
     private func sortComparator(_ a: Club, _ b: Club) -> Bool {
@@ -208,6 +246,10 @@ struct StadiumsView: View {
 
         switch sort {
         case .leagueThenTeam:
+            let ca = countryRank(a.countryCode)
+            let cb = countryRank(b.countryCode)
+            if ca != cb { return ca < cb }
+
             let ra = divisionRank(a.division)
             let rb = divisionRank(b.division)
             if ra != rb { return ra < rb }
@@ -362,6 +404,12 @@ struct StadiumsView: View {
                                         .foregroundStyle(.secondary)
                                         .lineLimit(2)
 
+                                    if shouldShowCountryFilter {
+                                        Text(countryLabel(club.countryCode))
+                                            .font(.caption2.weight(.semibold))
+                                            .foregroundStyle(.secondary)
+                                    }
+
                                     if sort == .nearest, let dist = distanceText(for: club) {
                                         Text("Afstand: \(dist)")
                                             .font(.caption.weight(.semibold))
@@ -395,7 +443,7 @@ struct StadiumsView: View {
             )
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Text("Besøgt \(visitedCount) / \(clubs.count)")
+                    Text("Besøgt \(visitedCount) / \(countryFilteredClubs.count)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         #if DEBUG
@@ -412,6 +460,17 @@ struct StadiumsView: View {
 
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     Menu {
+                        if shouldShowCountryFilter {
+                            Picker("Land", selection: $countryFilterRawValue) {
+                                Text("Alle lande").tag("all")
+                                ForEach(countryOptions, id: \.self) { countryCode in
+                                    Text(countryLabel(countryCode)).tag(countryCode)
+                                }
+                            }
+
+                            Divider()
+                        }
+
                         Picker("Sortér", selection: Binding(get: { sort }, set: { sort = $0 })) {
                             ForEach(SortOption.allCases) { s in
                                 Text(s.rawValue).tag(s)

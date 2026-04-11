@@ -16,9 +16,9 @@ enum AppAuthClientError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .notConfigured:
-            return "Login er ikke konfigureret endnu."
+            return "Login mangler standardkonfiguration i appen."
         case .missingAnonKey:
-            return "Supabase publishable/anon key mangler i Interne værktøjer."
+            return "Supabase publishable/anon key mangler i appens standardkonfiguration."
         case .invalidEmail:
             return "Indtast en gyldig e-mailadresse."
         case .invalidPassword:

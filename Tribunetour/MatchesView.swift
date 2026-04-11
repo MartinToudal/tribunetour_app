@@ -47,6 +47,7 @@ struct MatchesView: View {
 
     @AppStorage("matches.timeFilter") private var timeFilterRawValue: String = TimeFilter.week.rawValue
     @AppStorage("matches.onlyUnvisitedVenues") private var onlyUnvisitedVenues: Bool = true
+    @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
     @State private var searchText = ""
 
     // Distance sorting
@@ -85,6 +86,19 @@ struct MatchesView: View {
 
     private var locationHintText: String { locationAuthorizationHint(locationStore.authorization) }
 
+    private var countryOptions: [String] {
+        Array(Set(clubs.map(\.countryCode))).sorted { left, right in
+            if countryRank(left) != countryRank(right) {
+                return countryRank(left) < countryRank(right)
+            }
+            return countryLabel(left).localizedCaseInsensitiveCompare(countryLabel(right)) == .orderedAscending
+        }
+    }
+
+    private var shouldShowCountryFilter: Bool {
+        countryOptions.count > 1
+    }
+
     private var filteredFixtures: [Fixture] {
         let cal = matchCalendar
         let todayStart = cal.startOfDay(for: Date())
@@ -107,6 +121,12 @@ struct MatchesView: View {
         }()
 
         base = base.filter { $0.kickoff < endExclusive }
+
+        if countryFilterRawValue != "all" {
+            base = base.filter { fixture in
+                clubById[fixture.venueClubId]?.countryCode == countryFilterRawValue
+            }
+        }
 
         // ✅ Toggle: kun ikke-besøgte stadions
         if onlyUnvisitedVenues {
@@ -191,6 +211,16 @@ struct MatchesView: View {
                             }
                             .buttonStyle(.plain)
                         }
+                    }
+
+                    if shouldShowCountryFilter {
+                        Picker("Land", selection: $countryFilterRawValue) {
+                            Text("Alle").tag("all")
+                            ForEach(countryOptions, id: \.self) { countryCode in
+                                Text(countryLabel(countryCode)).tag(countryCode)
+                            }
+                        }
+                        .pickerStyle(.segmented)
                     }
 
                     // Location hint when distance sort is selected
@@ -299,6 +329,27 @@ struct MatchesView: View {
                 locationStore.requestPermission()
                 locationStore.start()
             }
+        }
+        .onAppear {
+            if countryFilterRawValue != "all" && !countryOptions.contains(countryFilterRawValue) {
+                countryFilterRawValue = "all"
+            }
+        }
+    }
+
+    private func countryRank(_ countryCode: String) -> Int {
+        switch countryCode {
+        case "dk": return 0
+        case "de": return 1
+        default: return 99
+        }
+    }
+
+    private func countryLabel(_ countryCode: String) -> String {
+        switch countryCode {
+        case "dk": return "Danmark"
+        case "de": return "Tyskland"
+        default: return countryCode.uppercased()
         }
     }
 }

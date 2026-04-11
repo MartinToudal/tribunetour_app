@@ -169,6 +169,10 @@ final class AppPhotosStore: ObservableObject {
                 let remotePhotos = try await syncBackend.fetchAll()
                 try await reconcileRemotePhotos(remotePhotos, userId: userId)
                 lastSyncIssue = nil
+            } catch SharedPhotosSyncBackendError.missingAuthToken {
+                needsRemoteSync = false
+                lastSyncIssue = nil
+                return
             } catch {
                 needsRemoteSync = true
                 lastSyncIssue = error.localizedDescription
