@@ -87,20 +87,75 @@ struct StadiumDetailView: View {
                 }
             }
 
+            if let nextFixture {
+                Section("Næste kamp") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        if let round = nextFixture.round, !round.isEmpty {
+                            Text(round)
+                                .font(.caption.weight(.semibold))
+                                .foregroundStyle(.secondary)
+                        }
+
+                        Text("\(teamName(for: nextFixture.homeTeamId)) – \(teamName(for: nextFixture.awayTeamId))")
+                            .font(.headline)
+
+                        Text(kickoffText(for: nextFixture.kickoff))
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+
+                        Text("Brug kampen som næste ankerpunkt i din tur, eller hop videre til kampdetaljen for flere oplysninger.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 4)
+
+                    NavigationLink {
+                        MatchDetailView(
+                            fixture: nextFixture,
+                            clubById: clubById,
+                            visitedStore: visitedStore,
+                            photosStore: photosStore,
+                            notesStore: notesStore,
+                            reviewsStore: reviewsStore,
+                            fixtures: fixtures
+                        )
+                    } label: {
+                        Label("Åbn kampdetaljer", systemImage: "sportscourt")
+                    }
+                }
+            }
+
             Section("Kommende kampe her") {
                 if upcomingFixtures.isEmpty {
                     Text("Ingen kommende kampe fundet.")
                         .foregroundStyle(.secondary)
                 } else {
                     ForEach(upcomingFixtures) { fixture in
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("\(teamName(for: fixture.homeTeamId)) – \(teamName(for: fixture.awayTeamId))")
-                                .font(.subheadline.weight(.semibold))
-                            Text(kickoffText(for: fixture.kickoff))
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                        NavigationLink {
+                            MatchDetailView(
+                                fixture: fixture,
+                                clubById: clubById,
+                                visitedStore: visitedStore,
+                                photosStore: photosStore,
+                                notesStore: notesStore,
+                                reviewsStore: reviewsStore,
+                                fixtures: fixtures
+                            )
+                        } label: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                if let round = fixture.round, !round.isEmpty {
+                                    Text(round)
+                                        .font(.caption2.weight(.semibold))
+                                        .foregroundStyle(.secondary)
+                                }
+                                Text("\(teamName(for: fixture.homeTeamId)) – \(teamName(for: fixture.awayTeamId))")
+                                    .font(.subheadline.weight(.semibold))
+                                Text(kickoffText(for: fixture.kickoff))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.vertical, 2)
                         }
-                        .padding(.vertical, 2)
                     }
                 }
             }
@@ -546,13 +601,18 @@ struct StadiumDetailView: View {
 
     private var upcomingFixtures: [Fixture] {
         let now = Date()
+        let knownVenueIds = Set(ClubIdentityResolver.allKnownIds(for: club.id))
         return fixtures
-            .filter { $0.venueClubId == club.id }
+            .filter { knownVenueIds.contains($0.venueClubId) }
             .filter { $0.kickoff >= now }
             .filter { $0.status != .cancelled && $0.status != .finished }
             .sorted { $0.kickoff < $1.kickoff }
             .prefix(5)
             .map { $0 }
+    }
+
+    private var nextFixture: Fixture? {
+        upcomingFixtures.first
     }
 
     private func teamName(for teamId: String) -> String {

@@ -471,7 +471,7 @@ struct StatsView: View {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text("Login klargøres")
                                     .font(.headline)
-                                Text("Supabase auth er ikke konfigureret i appen endnu. Når URL og anon key er sat i Interne værktøjer, kan du logge ind her.")
+                                Text("Appen mangler stadig sin standard auth-konfiguration. Når Supabase URL og publishable key er indbygget i appen, kan du logge ind her uden Interne værktøjer.")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                                 if let validationMessage = configuration.supabaseURLValidationMessage {

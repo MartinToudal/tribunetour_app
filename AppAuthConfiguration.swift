@@ -12,13 +12,20 @@ struct AppAuthConfiguration: Equatable {
     static let appBridgeURLKey = "auth.app.bridgeUrl"
     static let redirectSchemeKey = "auth.redirect.scheme"
     static let redirectHostKey = "auth.redirect.host"
+    static let bundleSupabaseURLKey = "TRIBUNETOUR_SUPABASE_URL"
+    static let bundleSupabaseAnonKeyKey = "TRIBUNETOUR_SUPABASE_ANON_KEY"
+    static let bundleAppBridgeURLKey = "TRIBUNETOUR_APP_BRIDGE_URL"
+    static let bundleRedirectSchemeKey = "TRIBUNETOUR_REDIRECT_SCHEME"
+    static let bundleRedirectHostKey = "TRIBUNETOUR_REDIRECT_HOST"
+    static let fallbackSupabaseURLString = "https://yftbkxjutdbygwmeazau.supabase.co"
+    static let fallbackSupabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlmdGJreGp1dGRieWd3bWVhemF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc1OTE4ODcsImV4cCI6MjA3MzE2Nzg4N30.w1We52dSdkN3GWKq9oMXAa5r6AmPvz-OvlcM8Txmbds"
 
     static let `default` = AppAuthConfiguration(
-        supabaseURLString: "",
-        supabaseAnonKey: "",
-        appBridgeURLString: "https://tribunetour.dk/auth/app-callback",
-        redirectScheme: "tribunetour",
-        redirectHost: "auth-callback"
+        supabaseURLString: bundleString(for: bundleSupabaseURLKey, fallback: fallbackSupabaseURLString),
+        supabaseAnonKey: bundleString(for: bundleSupabaseAnonKeyKey, fallback: fallbackSupabaseAnonKey),
+        appBridgeURLString: bundleString(for: bundleAppBridgeURLKey, fallback: "https://tribunetour.dk/auth/app-callback"),
+        redirectScheme: bundleString(for: bundleRedirectSchemeKey, fallback: "tribunetour"),
+        redirectHost: bundleString(for: bundleRedirectHostKey, fallback: "auth-callback")
     )
 
     var isConfigured: Bool {
@@ -90,11 +97,26 @@ struct AppAuthConfiguration: Equatable {
 
     static func load(userDefaults: UserDefaults = .standard) -> AppAuthConfiguration {
         AppAuthConfiguration(
-            supabaseURLString: userDefaults.string(forKey: supabaseURLKey) ?? Self.default.supabaseURLString,
-            supabaseAnonKey: userDefaults.string(forKey: supabaseAnonKeyKey) ?? Self.default.supabaseAnonKey,
-            appBridgeURLString: userDefaults.string(forKey: appBridgeURLKey) ?? Self.default.appBridgeURLString,
-            redirectScheme: userDefaults.string(forKey: redirectSchemeKey) ?? Self.default.redirectScheme,
-            redirectHost: userDefaults.string(forKey: redirectHostKey) ?? Self.default.redirectHost
+            supabaseURLString: resolvedValue(
+                userDefaults.string(forKey: supabaseURLKey),
+                fallback: Self.default.supabaseURLString
+            ),
+            supabaseAnonKey: resolvedValue(
+                userDefaults.string(forKey: supabaseAnonKeyKey),
+                fallback: Self.default.supabaseAnonKey
+            ),
+            appBridgeURLString: resolvedValue(
+                userDefaults.string(forKey: appBridgeURLKey),
+                fallback: Self.default.appBridgeURLString
+            ),
+            redirectScheme: resolvedValue(
+                userDefaults.string(forKey: redirectSchemeKey),
+                fallback: Self.default.redirectScheme
+            ),
+            redirectHost: resolvedValue(
+                userDefaults.string(forKey: redirectHostKey),
+                fallback: Self.default.redirectHost
+            )
         )
     }
 
@@ -115,5 +137,16 @@ struct AppAuthConfiguration: Equatable {
             return "App bridge URL bør pege på Tribunetour-websitet."
         }
         return nil
+    }
+
+    private static func bundleString(for key: String, fallback: String = "") -> String {
+        let raw = Bundle.main.object(forInfoDictionaryKey: key) as? String
+        let trimmed = raw?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return trimmed.isEmpty ? fallback : trimmed
+    }
+
+    private static func resolvedValue(_ candidate: String?, fallback: String) -> String {
+        let trimmed = candidate?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return trimmed.isEmpty ? fallback : trimmed
     }
 }

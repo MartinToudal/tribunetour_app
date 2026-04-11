@@ -12,8 +12,8 @@ struct InternalToolsView: View {
     @AppStorage(NotificationPreferenceKeys.midweekReminderEnabled) private var midweekReminderEnabled: Bool = true
     @AppStorage(NotificationPreferenceKeys.nextMissingStadiumReminderEnabled) private var nextMissingStadiumReminderEnabled: Bool = false
     @AppStorage(AppVisitedSyncRuntimeFlags.visitedSyncModeKey) private var visitedSyncModeRaw: String = AppVisitedSyncMode.cloudKitPrimary.rawValue
-    @AppStorage(AppAuthConfiguration.supabaseURLKey) private var supabaseURL: String = ""
-    @AppStorage(AppAuthConfiguration.supabaseAnonKeyKey) private var supabaseAnonKey: String = ""
+    @AppStorage(AppAuthConfiguration.supabaseURLKey) private var supabaseURL: String = AppAuthConfiguration.default.supabaseURLString
+    @AppStorage(AppAuthConfiguration.supabaseAnonKeyKey) private var supabaseAnonKey: String = AppAuthConfiguration.default.supabaseAnonKey
     @AppStorage(AppAuthConfiguration.appBridgeURLKey) private var appBridgeURL: String = AppAuthConfiguration.default.appBridgeURLString
     @AppStorage(AppAuthConfiguration.redirectSchemeKey) private var redirectScheme: String = AppAuthConfiguration.default.redirectScheme
     @AppStorage(AppAuthConfiguration.redirectHostKey) private var redirectHost: String = AppAuthConfiguration.default.redirectHost
@@ -119,7 +119,7 @@ struct InternalToolsView: View {
                     .foregroundStyle(.secondary)
             }
 
-            Section("Auth") {
+            Section("Auth override") {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Supabase URL")
                         .font(.caption)
@@ -186,7 +186,7 @@ struct InternalToolsView: View {
                         .foregroundStyle(.green)
                 }
 
-                Text("App-login sender magic link til web-bridge og hopper derefter videre til tribunetour://auth-callback.")
+                Text("Appen bruger nu standard auth-konfiguration fra bundle/build. Felterne her er kun til debug eller midlertidig override.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
