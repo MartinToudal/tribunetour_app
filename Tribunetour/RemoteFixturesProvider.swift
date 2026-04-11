@@ -80,8 +80,9 @@ struct RemoteFixturesProvider {
             let envelope = try decodeEnvelope(from: raw)
             let mapped = try envelope.fixtures.map { try $0.toFixture() }.sorted { $0.kickoff < $1.kickoff }
             guard !mapped.isEmpty else { throw RemoteFixturesProviderError.invalidPayload }
+            let merged = mergeWithLocalLeaguePackFixturesIfNeeded(remoteFixtures: mapped)
             return FixturesLoadResult(
-                fixtures: mapped,
+                fixtures: merged,
                 source: .remote,
                 version: envelope.metadata?.version,
                 remoteURL: remoteURL,
@@ -104,6 +105,23 @@ struct RemoteFixturesProvider {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return try decoder.decode(RemoteDatasetEnvelope.self, from: data)
+    }
+
+    private func mergeWithLocalLeaguePackFixturesIfNeeded(remoteFixtures: [Fixture]) -> [Fixture] {
+        guard AppLeaguePackSettings.germanyTop3Enabled else {
+            return remoteFixtures
+        }
+
+        guard let localFixtures = try? localFallback(), !localFixtures.isEmpty else {
+            return remoteFixtures
+        }
+
+        var mergedById = Dictionary(uniqueKeysWithValues: remoteFixtures.map { ($0.id, $0) })
+        for fixture in localFixtures where mergedById[fixture.id] == nil {
+            mergedById[fixture.id] = fixture
+        }
+
+        return mergedById.values.sorted { $0.kickoff < $1.kickoff }
     }
 
     private static func remoteURLFromDefaults() -> URL? {
