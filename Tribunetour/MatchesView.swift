@@ -311,6 +311,7 @@ struct MatchesView: View {
                                         : nil
                                 )
                             }
+                            .accessibilityIdentifier("match-row-\(f.id)")
                         }
                     }
                 } header: {

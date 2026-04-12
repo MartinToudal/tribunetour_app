@@ -12,17 +12,24 @@ final class CloudWeekendPlanSync {
         static let updatedAt = "updatedAt"
     }
 
-    private let container: CKContainer
-    private let db: CKDatabase
+    private let container: CKContainer?
+    private let db: CKDatabase?
 
     private init() {
-        self.container = CKContainer(identifier: containerID)
-        self.db = container.privateCloudDatabase
+        if AppTestRuntime.isRunningAutomatedTests {
+            self.container = nil
+            self.db = nil
+        } else {
+            let container = CKContainer(identifier: containerID)
+            self.container = container
+            self.db = container.privateCloudDatabase
+        }
     }
 
     private var recordID: CKRecord.ID { CKRecord.ID(recordName: "current") }
 
     func fetch() async throws -> WeekendPlanStore.PlanPayload? {
+        guard let db else { return nil }
         do {
             let rec = try await db.record(for: recordID)
 
@@ -39,6 +46,7 @@ final class CloudWeekendPlanSync {
     }
 
     func upsert(payload: WeekendPlanStore.PlanPayload) async throws {
+        guard let db else { return }
         var attempts = 0
         while true {
             attempts += 1

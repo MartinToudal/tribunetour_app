@@ -28,6 +28,9 @@ final class AppState: ObservableObject {
     let locationStore = LocationStore()
     private var cancellables = Set<AnyCancellable>()
     private let leaguePackAccessBackend: SharedLeaguePackAccessBackend
+    private var isUITesting: Bool {
+        AppTestRuntime.isRunningAutomatedTests
+    }
 
     init() {
         let sharedVisitedBackend = AppVisitedSyncFactory.makeSharedBackend(
@@ -219,6 +222,7 @@ final class AppState: ObservableObject {
     }
 
     func refreshWeekendReminder() {
+        guard !isUITesting else { return }
         let visitedVenueClubIds = Set(
             visitedStore.records
                 .filter { $0.value.visited }
@@ -293,12 +297,45 @@ final class AppState: ObservableObject {
         let arguments = ProcessInfo.processInfo.arguments
         guard arguments.contains("--uitesting") else { return }
 
+        UserDefaults.standard.set("Alle", forKey: "stadiums.visitedFilter")
+        UserDefaults.standard.set("Liga → klub", forKey: "stadiums.sortOption")
+        UserDefaults.standard.set("Uge", forKey: "matches.timeFilter")
+        UserDefaults.standard.set(false, forKey: "matches.onlyUnvisitedVenues")
+        UserDefaults.standard.set("Dato", forKey: "matches.sortMode")
+        UserDefaults.standard.set(false, forKey: "matches.reverseDistanceSort")
+        UserDefaults.standard.set(false, forKey: NotificationPreferenceKeys.weekendReminderEnabled)
+        UserDefaults.standard.set(false, forKey: NotificationPreferenceKeys.midweekReminderEnabled)
+        UserDefaults.standard.set(false, forKey: NotificationPreferenceKeys.nextMissingStadiumReminderEnabled)
+
+        if arguments.contains("--uitesting-enable-germany") {
+            AppLeaguePackSettings.setRemoteEnabledLeaguePacks([AppLeaguePackId.germanyTop3.rawValue])
+            UserDefaults.standard.set(false, forKey: AppLeaguePackSettings.germanyTop3EnabledKey)
+        }
+
+        if arguments.contains("--uitesting-disable-germany") {
+            AppLeaguePackSettings.clearRemoteEnabledLeaguePacks()
+            UserDefaults.standard.set(false, forKey: AppLeaguePackSettings.germanyTop3EnabledKey)
+        }
+
+        if arguments.contains("--uitesting-country-de") {
+            UserDefaults.standard.set("de", forKey: "stadiums.countryFilter")
+        } else if arguments.contains("--uitesting-country-dk") {
+            UserDefaults.standard.set("dk", forKey: "stadiums.countryFilter")
+        } else if arguments.contains("--uitesting-country-all") {
+            UserDefaults.standard.set("all", forKey: "stadiums.countryFilter")
+        }
+
         if arguments.contains("--uitesting-seed-photo-agf") {
             seedUITestPhotoIfNeeded(clubId: "agf")
         }
 
         if arguments.contains("--uitesting-reset-review-agf") {
             visitedStore.setReview("agf", nil)
+        }
+
+        if arguments.contains("--uitesting-reset-visited-agf") {
+            visitedStore.setVisited("agf", false)
+            visitedStore.setVisitedDate("agf", nil)
         }
     }
 

@@ -1,6 +1,9 @@
 import XCTest
 
 final class TribunetourUITests: XCTestCase {
+    private let agfClubId = "dk-agf"
+    private let agfSearchQuery = "AGF"
+
     private func elementStringValue(_ element: XCUIElement) -> String {
         if let value = element.value as? String, !value.isEmpty {
             return value
@@ -36,6 +39,70 @@ final class TribunetourUITests: XCTestCase {
         return initialValue
     }
 
+    private func waitForElementValueChange(
+        identifier: String,
+        in app: XCUIApplication,
+        from initialValue: String,
+        timeout: TimeInterval = 10
+    ) -> String {
+        let deadline = Date().addingTimeInterval(timeout)
+
+        while Date() < deadline {
+            let target = app.switches[identifier].exists
+                ? app.switches[identifier]
+                : app.descendants(matching: .any)[identifier]
+            let refreshedValue = elementStringValue(target)
+            if refreshedValue != initialValue {
+                return refreshedValue
+            }
+
+            RunLoop.current.run(until: Date().addingTimeInterval(0.25))
+        }
+
+        XCTFail("Expected element \(identifier) to change value from \(initialValue)")
+        return initialValue
+    }
+
+    private func waitForElementValueToContain(
+        _ expectedSubstring: String,
+        for element: XCUIElement,
+        timeout: TimeInterval = 10
+    ) -> String {
+        let deadline = Date().addingTimeInterval(timeout)
+
+        while Date() < deadline {
+            let refreshedValue = elementStringValue(element)
+            if refreshedValue.contains(expectedSubstring) {
+                return refreshedValue
+            }
+
+            RunLoop.current.run(until: Date().addingTimeInterval(0.25))
+        }
+
+        XCTFail("Expected element value to contain \(expectedSubstring)")
+        return elementStringValue(element)
+    }
+
+    private func waitForElementValueToExclude(
+        _ unexpectedSubstring: String,
+        for element: XCUIElement,
+        timeout: TimeInterval = 10
+    ) -> String {
+        let deadline = Date().addingTimeInterval(timeout)
+
+        while Date() < deadline {
+            let refreshedValue = elementStringValue(element)
+            if !refreshedValue.contains(unexpectedSubstring) {
+                return refreshedValue
+            }
+
+            RunLoop.current.run(until: Date().addingTimeInterval(0.25))
+        }
+
+        XCTFail("Expected element value to stop containing \(unexpectedSubstring)")
+        return elementStringValue(element)
+    }
+
     private func clearTrailingText(_ text: String, in element: XCUIElement) {
         guard !text.isEmpty else { return }
         element.tap()
@@ -53,10 +120,34 @@ final class TribunetourUITests: XCTestCase {
         }
     }
 
-    private func openStadiumDetail(for clubId: String, in app: XCUIApplication) {
+    private func findSearchField(in app: XCUIApplication, placeholder: String) -> XCUIElement {
+        let searchField = app.searchFields[placeholder]
+        if searchField.exists {
+            return searchField
+        }
+        return app.searchFields.firstMatch
+    }
+
+    private func openStadiumDetail(for clubId: String, query: String, in app: XCUIApplication) {
+        let searchField = findSearchField(in: app, placeholder: "Søg klub, stadion, by eller liga")
+        XCTAssertTrue(searchField.waitForExistence(timeout: 10))
+        searchField.tap()
+        if !app.keyboards.firstMatch.waitForExistence(timeout: 2) {
+            searchField.tap()
+        }
+        XCTAssertTrue(app.keyboards.firstMatch.waitForExistence(timeout: 5))
+        searchField.typeText(query)
+
         let row = app.descendants(matching: .any)["stadium-row-\(clubId)"]
         XCTAssertTrue(row.waitForExistence(timeout: 10))
-        row.tap()
+        revealElement(row, in: app)
+        XCTAssertTrue(row.isHittable)
+        let clubLabel = row.staticTexts[query].firstMatch
+        if clubLabel.exists {
+            clubLabel.tap()
+        } else {
+            row.coordinate(withNormalizedOffset: CGVector(dx: 0.2, dy: 0.5)).tap()
+        }
         XCTAssertTrue(app.navigationBars["Stadion"].waitForExistence(timeout: 10))
     }
 
@@ -81,34 +172,46 @@ final class TribunetourUITests: XCTestCase {
         XCTAssertTrue(planTab.exists)
         XCTAssertTrue(myTripTab.exists)
 
-        XCTAssertTrue(app.navigationBars["Stadions"].waitForExistence(timeout: 10))
+        XCTAssertTrue(findSearchField(in: app, placeholder: "Søg klub, stadion, by eller liga").waitForExistence(timeout: 10))
 
-        matchesTab.tap()
-        XCTAssertTrue(app.navigationBars["Kampe"].waitForExistence(timeout: 10))
+        matchesTab.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        XCTAssertTrue(findSearchField(in: app, placeholder: "Søg klub, stadion, by, runde...").waitForExistence(timeout: 10))
 
-        planTab.tap()
-        XCTAssertTrue(app.navigationBars["Plan"].waitForExistence(timeout: 10))
+        planTab.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        XCTAssertTrue(app.descendants(matching: .any)["weekend-set-range"].waitForExistence(timeout: 10))
 
-        myTripTab.tap()
+        app.tabBars.firstMatch.buttons["Min tur"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         XCTAssertTrue(app.navigationBars["Min tur"].waitForExistence(timeout: 10))
 
-        stadiumsTab.tap()
-        XCTAssertTrue(app.navigationBars["Stadions"].waitForExistence(timeout: 10))
+        app.tabBars.firstMatch.buttons["Stadions"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        XCTAssertTrue(findSearchField(in: app, placeholder: "Søg klub, stadion, by eller liga").waitForExistence(timeout: 10))
     }
 
     @MainActor
     func testCanToggleVisitedAndRestoreOriginalValue() throws {
-        let app = launchApp()
+        let app = launchApp(extraArguments: ["--uitesting-reset-visited-agf"])
+        openStadiumDetail(for: agfClubId, query: agfSearchQuery, in: app)
 
-        let visitedToggle = app.switches.matching(identifier: "stadium-toggle-agf").element(boundBy: 1)
+        let visitedToggle = app.switches["stadium-detail-visited-toggle"]
         XCTAssertTrue(visitedToggle.waitForExistence(timeout: 10))
+        XCTAssertTrue(visitedToggle.isHittable)
 
         let initialValue = elementStringValue(visitedToggle)
-        visitedToggle.tap()
-        let toggledValue = waitForElementValueChange(for: visitedToggle, from: initialValue)
+        visitedToggle.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5)).tap()
+        let toggledValue = waitForElementValueChange(
+            identifier: "stadium-detail-visited-toggle",
+            in: app,
+            from: initialValue
+        )
 
-        app.switches.matching(identifier: "stadium-toggle-agf").element(boundBy: 1).tap()
-        let restoredValue = waitForElementValueChange(for: visitedToggle, from: toggledValue)
+        let restoredToggle = app.switches["stadium-detail-visited-toggle"]
+        XCTAssertTrue(restoredToggle.isHittable)
+        restoredToggle.coordinate(withNormalizedOffset: CGVector(dx: 0.8, dy: 0.5)).tap()
+        let restoredValue = waitForElementValueChange(
+            identifier: "stadium-detail-visited-toggle",
+            in: app,
+            from: toggledValue
+        )
 
         XCTAssertEqual(restoredValue, initialValue)
     }
@@ -144,7 +247,7 @@ final class TribunetourUITests: XCTestCase {
     @MainActor
     func testCanEditNoteAndRestoreOriginalValue() throws {
         let app = launchApp()
-        openStadiumDetail(for: "agf", in: app)
+        openStadiumDetail(for: agfClubId, query: agfSearchQuery, in: app)
 
         let noteField = app.textFields["stadium-note-field"]
         revealElement(noteField, in: app)
@@ -153,26 +256,26 @@ final class TribunetourUITests: XCTestCase {
         let marker = " UITESTNOTE"
         noteField.tap()
         noteField.typeText(marker)
-        let updatedValue = elementStringValue(noteField)
+        let updatedValue = waitForElementValueToContain("UITESTNOTE", for: noteField)
         XCTAssertTrue(updatedValue.contains("UITESTNOTE"))
 
         clearTrailingText(marker, in: noteField)
-        let restoredValue = elementStringValue(noteField)
+        let restoredValue = waitForElementValueToExclude("UITESTNOTE", for: noteField)
         XCTAssertFalse(restoredValue.contains("UITESTNOTE"))
     }
 
     @MainActor
     func testCanEditReviewAndRestoreOriginalValue() throws {
         let app = launchApp(extraArguments: ["--uitesting-reset-review-agf"])
-        openStadiumDetail(for: "agf", in: app)
+        openStadiumDetail(for: agfClubId, query: agfSearchQuery, in: app)
 
-        let matchField = app.textFields["review-match-field"]
+        let matchField = app.descendants(matching: .any)["review-match-field"]
         revealElement(matchField, in: app)
         XCTAssertTrue(matchField.waitForExistence(timeout: 10))
         matchField.tap()
         matchField.typeText("UITEST MATCH")
 
-        let summaryField = app.textFields["review-summary-field"]
+        let summaryField = app.descendants(matching: .any)["review-summary-field"]
         revealElement(summaryField, in: app)
         XCTAssertTrue(summaryField.waitForExistence(timeout: 10))
 
@@ -182,7 +285,7 @@ final class TribunetourUITests: XCTestCase {
         let updatedSummary = elementStringValue(summaryField)
         XCTAssertTrue(updatedSummary.contains("UITESTSUMMARY"))
 
-        let tagsField = app.textFields["review-tags-field"]
+        let tagsField = app.descendants(matching: .any)["review-tags-field"]
         revealElement(tagsField, in: app)
         XCTAssertTrue(tagsField.waitForExistence(timeout: 10))
         tagsField.tap()
@@ -199,7 +302,7 @@ final class TribunetourUITests: XCTestCase {
     @MainActor
     func testCanEditPhotoCaptionAndDeleteSeededPhoto() throws {
         let app = launchApp(extraArguments: ["--uitesting-seed-photo-agf"])
-        openStadiumDetail(for: "agf", in: app)
+        openStadiumDetail(for: agfClubId, query: agfSearchQuery, in: app)
 
         let photoThumb = app.buttons["photo-thumb-uitest_agf_photo.jpg"]
         revealElement(photoThumb, in: app)

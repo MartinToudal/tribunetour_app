@@ -494,6 +494,9 @@ struct StadiumsView: View {
         }
         .onAppear {
             locationStore.start()
+            if countryFilterRawValue != "all" && !countryOptions.contains(countryFilterRawValue) {
+                countryFilterRawValue = "all"
+            }
         }
         .onChange(of: sort) { _, newValue in
             if newValue == .nearest {

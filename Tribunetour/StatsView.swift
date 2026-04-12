@@ -727,11 +727,11 @@ struct StatsView: View {
                             Button("Luk") {
                                 dismissAuthKeyboard()
                                 showAuthSheet = false
-                            }
-                        }
-                    }
                 }
             }
+        }
+    }
+}
             .alert("Mail er ikke sat op", isPresented: $mailUnavailableAlert) {
                 Button("OK") {}
             } message: {

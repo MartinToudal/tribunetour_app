@@ -27,6 +27,7 @@ struct WeekendPlannerView: View {
     @State private var showPicker = false
     @State private var pickerMode: PickerMode = .start
     @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
+    private let isUITestingWeekendDefault = ProcessInfo.processInfo.arguments.contains("--uitesting-plan-weekend")
 
     private var clubById: [String: Club] {
         ClubIdentityResolver.aliasMap(
@@ -280,6 +281,7 @@ struct WeekendPlannerView: View {
                     }
                 }
             }
+            .accessibilityIdentifier("weekend-planner-root")
             .navigationTitle("Plan")
         }
         .sheet(isPresented: $showPicker) {
@@ -351,6 +353,15 @@ struct WeekendPlannerView: View {
                         Button("Luk") { showPicker = false }
                     }
                 }
+            }
+        }
+        .onAppear {
+            let availableCountryCodes = Set(clubs.map(\.countryCode))
+            if countryFilterRawValue != "all" && !availableCountryCodes.contains(countryFilterRawValue) {
+                countryFilterRawValue = "all"
+            }
+            if isUITestingWeekendDefault {
+                setWeekendFrom(Date())
             }
         }
     }

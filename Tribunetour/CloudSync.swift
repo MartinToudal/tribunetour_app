@@ -29,17 +29,24 @@ final class CloudVisitedSync: VisitedSyncBackend {
         static let image = "image"
     }
 
-    private let container: CKContainer
-    private let db: CKDatabase
+    private let container: CKContainer?
+    private let db: CKDatabase?
 
     private init() {
-        self.container = CKContainer(identifier: containerID)
-        self.db = container.privateCloudDatabase
+        if AppTestRuntime.isRunningAutomatedTests {
+            self.container = nil
+            self.db = nil
+        } else {
+            let container = CKContainer(identifier: containerID)
+            self.container = container
+            self.db = container.privateCloudDatabase
+        }
     }
 
     // MARK: - Debug
 
     func debugAccountStatus() async {
+        guard let container else { return }
         do {
             let status = try await container.accountStatus()
             dlog("☁️ CloudKit account status: \(status.rawValue) (0=couldNotDetermine,1=available,2=restricted,3=noAccount,4=temporarilyUnavailable)")
@@ -51,6 +58,7 @@ final class CloudVisitedSync: VisitedSyncBackend {
     // MARK: - Public API
 
     func fetchAll() async throws -> [String: VisitedStore.Record] {
+        guard db != nil else { return [:] }
         var result: [String: VisitedStore.Record] = [:]
 
         let query = CKQuery(recordType: recordType, predicate: NSPredicate(value: true))
@@ -84,6 +92,7 @@ final class CloudVisitedSync: VisitedSyncBackend {
     }
 
     func upsert(clubId: String, record: VisitedStore.Record) async throws {
+        guard let db else { return }
         let recordID = CKRecord.ID(recordName: clubId)
         var attempt = 0
         while true {
@@ -111,11 +120,13 @@ final class CloudVisitedSync: VisitedSyncBackend {
     }
 
     func delete(clubId: String) async throws {
+        guard let db else { return }
         let recordID = CKRecord.ID(recordName: clubId)
         _ = try await db.deleteRecord(withID: recordID)
     }
 
     func fetchAllPhotos() async throws -> [VisitedRemotePhotoPayload] {
+        guard db != nil else { return [] }
         var result: [VisitedRemotePhotoPayload] = []
         let query = CKQuery(recordType: photoRecordType, predicate: NSPredicate(value: true))
         var cursor: CKQueryOperation.Cursor? = nil
@@ -145,6 +156,7 @@ final class CloudVisitedSync: VisitedSyncBackend {
     }
 
     func fetchPhotoMetadata(for clubId: String) async throws -> [String: VisitedStore.Record.PhotoMeta] {
+        guard db != nil else { return [:] }
         let predicate = NSPredicate(format: "clubId == %@", clubId)
         let query = CKQuery(recordType: photoRecordType, predicate: predicate)
         var cursor: CKQueryOperation.Cursor? = nil
@@ -171,6 +183,7 @@ final class CloudVisitedSync: VisitedSyncBackend {
         imageData: Data,
         meta: VisitedStore.Record.PhotoMeta
     ) async throws {
+        guard let db else { return }
         let recordID = CKRecord.ID(recordName: fileName)
         var attempt = 0
         while true {
@@ -210,6 +223,7 @@ final class CloudVisitedSync: VisitedSyncBackend {
     }
 
     func deletePhoto(fileName: String) async throws {
+        guard let db else { return }
         let recordID = CKRecord.ID(recordName: fileName)
         _ = try await db.deleteRecord(withID: recordID)
     }
@@ -217,7 +231,8 @@ final class CloudVisitedSync: VisitedSyncBackend {
     // MARK: - Internal
 
     private func performQuery(query: CKQuery, cursor: CKQueryOperation.Cursor?) async throws -> ([CKRecord], CKQueryOperation.Cursor?) {
-        try await withCheckedThrowingContinuation { cont in
+        guard let db else { return ([], nil) }
+        return try await withCheckedThrowingContinuation { cont in
             let op: CKQueryOperation
             if let cursor {
                 op = CKQueryOperation(cursor: cursor)
@@ -242,7 +257,7 @@ final class CloudVisitedSync: VisitedSyncBackend {
                 }
             }
 
-            self.db.add(op)
+            db.add(op)
         }
     }
 
