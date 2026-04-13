@@ -8,6 +8,7 @@ enum AppLeaguePackId: String, CaseIterable {
 enum AppLeaguePackSettings {
     static let germanyTop3EnabledKey = "leaguePacks.germanyTop3.enabled"
     static let remoteEnabledLeaguePacksKey = "leaguePacks.remote.enabled"
+    static let preferredHomeCountryCodeKey = "app.preferredHomeCountryCode"
 
     static var debugEnabledLeaguePacks: Set<String> {
         var ids = Set<String>()
@@ -39,6 +40,110 @@ enum AppLeaguePackSettings {
 
     static func clearRemoteEnabledLeaguePacks() {
         UserDefaults.standard.removeObject(forKey: remoteEnabledLeaguePacksKey)
+    }
+}
+
+enum LeaguePresentation {
+    static func countryRank(_ countryCode: String) -> Int {
+        switch countryCode {
+        case "dk": return 0
+        case "de": return 1
+        default: return 99
+        }
+    }
+
+    static func countryLabel(_ countryCode: String) -> String {
+        switch countryCode {
+        case "dk": return "Danmark"
+        case "de": return "Tyskland"
+        default: return countryCode.uppercased()
+        }
+    }
+
+    static func normalizedDivision(_ division: String) -> String {
+        division.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+            .replacingOccurrences(of: "bundelsliga", with: "bundesliga")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    static func divisionRank(_ division: String, countryCode: String) -> Int {
+        let normalized = normalizedDivision(division)
+
+        switch countryCode {
+        case "dk":
+            if normalized.contains("superliga") { return 0 }
+            if normalized == "1. division" || normalized == "1 division" { return 1 }
+            if normalized == "2. division" || normalized == "2 division" { return 2 }
+            if normalized == "3. division" || normalized == "3 division" { return 3 }
+        case "de":
+            if normalized == "bundesliga" { return 0 }
+            if normalized == "2. bundesliga" || normalized == "2 bundesliga" { return 1 }
+            if normalized == "3. liga" || normalized == "3 liga" { return 2 }
+        default:
+            break
+        }
+
+        if normalized.contains("superliga") { return 0 }
+        if normalized == "bundesliga" { return 10 }
+        if normalized == "2. bundesliga" || normalized == "2 bundesliga" { return 11 }
+        if normalized == "3. liga" || normalized == "3 liga" { return 12 }
+        if normalized == "1. division" || normalized == "1 division" { return 20 }
+        if normalized == "2. division" || normalized == "2 division" { return 21 }
+        if normalized == "3. division" || normalized == "3 division" { return 22 }
+
+        return 99
+    }
+
+    static func divisionDisplayName(_ division: String, countryCode: String) -> String {
+        let normalized = normalizedDivision(division)
+        let canonicalDivision: String
+
+        switch countryCode {
+        case "dk":
+            switch normalized {
+            case let value where value.contains("superliga"):
+                canonicalDivision = "Superliga"
+            case "1. division", "1 division":
+                canonicalDivision = "1. division"
+            case "2. division", "2 division":
+                canonicalDivision = "2. division"
+            case "3. division", "3 division":
+                canonicalDivision = "3. division"
+            default:
+                canonicalDivision = division
+            }
+        case "de":
+            switch normalized {
+            case "bundesliga":
+                canonicalDivision = "Bundesliga"
+            case "2. bundesliga", "2 bundesliga":
+                canonicalDivision = "2. Bundesliga"
+            case "3. liga", "3 liga":
+                canonicalDivision = "3. Liga"
+            default:
+                canonicalDivision = division
+            }
+        default:
+            canonicalDivision = division
+        }
+
+        return "\(countryLabel(countryCode)) - \(canonicalDivision)"
+    }
+
+    static func resolvedHomeCountryCode(availableCountryCodes: Set<String>) -> String {
+        let preferred = UserDefaults.standard.string(forKey: AppLeaguePackSettings.preferredHomeCountryCodeKey) ?? "dk"
+        if availableCountryCodes.contains(preferred) {
+            return preferred
+        }
+        if availableCountryCodes.contains("dk") {
+            return "dk"
+        }
+        return availableCountryCodes.sorted { lhs, rhs in
+            if countryRank(lhs) != countryRank(rhs) {
+                return countryRank(lhs) < countryRank(rhs)
+            }
+            return countryLabel(lhs).localizedCaseInsensitiveCompare(countryLabel(rhs)) == .orderedAscending
+        }.first ?? "all"
     }
 }
 

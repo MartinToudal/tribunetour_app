@@ -733,10 +733,12 @@ private struct PhotoFullscreenView: View {
                     .padding(.horizontal)
                     .accessibilityIdentifier("photo-caption-field")
 
-                Button("Gem billedtekst") {
+                Button {
                     onSaveCaption(selectedFileName, caption)
+                } label: {
+                    PhotoCaptionSaveButtonLabel()
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.plain)
                 .padding(.bottom, 12)
                 .accessibilityIdentifier("photo-caption-save")
             }
@@ -753,5 +755,19 @@ private struct PhotoFullscreenView: View {
                 caption = captionForFileName(newValue)
             }
         }
+    }
+}
+
+private struct PhotoCaptionSaveButtonLabel: View {
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        Text("Gem billedtekst")
+            .font(.headline)
+            .foregroundStyle(colorScheme == .dark ? Color.black : Color.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(colorScheme == .dark ? Color.white : Color.black)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 }

@@ -18,8 +18,10 @@ struct StatsView: View {
     let bootstrapCoordinator: AppVisitedBootstrapCoordinator
     let runtimeSyncInfoMessage: String?
     @AppStorage("achievements.seenUnlockedIds") private var seenUnlockedIdsRaw: String = ""
+    @AppStorage(AppLeaguePackSettings.preferredHomeCountryCodeKey) private var preferredHomeCountryCode: String = "dk"
+    @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
 
-    private struct Achievement: Identifiable {
+    struct Achievement: Identifiable {
         let id: String
         let title: String
         let description: String
@@ -28,11 +30,18 @@ struct StatsView: View {
         let progressText: String
     }
 
-    // Superliga skal altid ligge øverst i liga-oversigter
-    private func leagueSortKey(_ division: String) -> Int {
-        let normalized = division.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
-        if normalized.contains("superliga") { return 0 }
-        return 1
+    private struct DivisionKey: Hashable {
+        let countryCode: String
+        let division: String
+    }
+
+    private struct DivisionProgressRow: Identifiable {
+        let countryCode: String
+        let division: String
+        let visited: Int
+        let total: Int
+
+        var id: String { "\(countryCode)-\(division)" }
     }
 
     // Feedback / Mail
@@ -62,6 +71,13 @@ struct StatsView: View {
     private var visitedCount: Int { visitedClubs.count }
     private var totalCount: Int { clubs.count }
     private var unvisitedCount: Int { unvisitedClubs.count }
+    private var coreClubs: [Club] { clubs.filter { $0.leaguePack == AppLeaguePackId.coreDenmark.rawValue } }
+    private var premiumClubs: [Club] { clubs.filter { $0.leaguePack != AppLeaguePackId.coreDenmark.rawValue } }
+    private var coreVisitedCount: Int { coreClubs.filter { visitedStore.isVisited($0.id) }.count }
+    private var coreTotalCount: Int { coreClubs.count }
+    private var premiumVisitedCount: Int { premiumClubs.filter { visitedStore.isVisited($0.id) }.count }
+    private var premiumTotalCount: Int { premiumClubs.count }
+    private var hasPremiumCountries: Bool { !premiumClubs.isEmpty }
 
     private var progress: Double {
         guard totalCount > 0 else { return 0 }
@@ -73,21 +89,51 @@ struct StatsView: View {
         return "\(pct)%"
     }
 
-    private var visitedByDivision: [(division: String, visited: Int, total: Int)] {
-        let grouped = Dictionary(grouping: clubs) { $0.division }
+    private var countryOptions: [String] {
+        Array(Set(clubs.map(\.countryCode))).sorted { left, right in
+            if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
+                return LeaguePresentation.countryRank(left) < LeaguePresentation.countryRank(right)
+            }
+            return LeaguePresentation.countryLabel(left).localizedCaseInsensitiveCompare(LeaguePresentation.countryLabel(right)) == .orderedAscending
+        }
+    }
+
+    private func divisionRows(from clubs: [Club]) -> [DivisionProgressRow] {
+        let grouped = Dictionary(grouping: clubs) { DivisionKey(countryCode: $0.countryCode, division: $0.division) }
         let rows = grouped.map { division, clubsInDivision in
             let v = clubsInDivision.filter { visitedStore.isVisited($0.id) }.count
-            return (division: division, visited: v, total: clubsInDivision.count)
+            return DivisionProgressRow(
+                countryCode: division.countryCode,
+                division: division.division,
+                visited: v,
+                total: clubsInDivision.count
+            )
         }
-        // Sortér: Superliga øverst, derefter mest total, så navn
+
         return rows.sorted {
-            let la = leagueSortKey($0.division)
-            let lb = leagueSortKey($1.division)
-            if la != lb { return la < lb }
+            let countryA = LeaguePresentation.countryRank($0.countryCode)
+            let countryB = LeaguePresentation.countryRank($1.countryCode)
+            if countryA != countryB { return countryA < countryB }
+
+            let leagueA = LeaguePresentation.divisionRank($0.division, countryCode: $0.countryCode)
+            let leagueB = LeaguePresentation.divisionRank($1.division, countryCode: $1.countryCode)
+            if leagueA != leagueB { return leagueA < leagueB }
 
             if $0.total != $1.total { return $0.total > $1.total }
             return $0.division.localizedCaseInsensitiveCompare($1.division) == .orderedAscending
         }
+    }
+
+    private var visitedByDivision: [DivisionProgressRow] {
+        divisionRows(from: clubs)
+    }
+
+    private var coreVisitedByDivision: [DivisionProgressRow] {
+        divisionRows(from: coreClubs)
+    }
+
+    private var activeHomeCountryCode: String {
+        LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(clubs.map(\.countryCode)))
     }
 
     private var recentVisited: [(club: Club, date: Date)] {
@@ -143,9 +189,9 @@ struct StatsView: View {
         Set(visitedClubs.map { $0.division.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }).count
     }
 
-    private var achievements: [Achievement] {
-        let completeDivisions = visitedByDivision.filter { $0.total > 0 && $0.visited == $0.total }.count
-        let halfThreshold = max(1, Int(ceil(Double(totalCount) * 0.5)))
+    private var coreAchievements: [Achievement] {
+        let completeDivisions = coreVisitedByDivision.filter { $0.total > 0 && $0.visited == $0.total }.count
+        let halfThreshold = max(1, Int(ceil(Double(max(coreTotalCount, 1)) * 0.5)))
 
         return [
             Achievement(
@@ -175,15 +221,15 @@ struct StatsView: View {
             Achievement(
                 id: "halfway",
                 title: "Halvvejs",
-                description: "Besøg halvdelen af alle stadions.",
+                description: "Besøg halvdelen af de danske stadions i grundpakken.",
                 systemImage: "chart.bar.xaxis",
-                isUnlocked: visitedCount >= halfThreshold,
-                progressText: "\(min(visitedCount, halfThreshold))/\(halfThreshold)"
+                isUnlocked: coreVisitedCount >= halfThreshold,
+                progressText: "\(min(coreVisitedCount, halfThreshold))/\(halfThreshold)"
             ),
             Achievement(
                 id: "league_complete",
                 title: "Række-specialist",
-                description: "Fuldfør alle stadions i én liga.",
+                description: "Fuldfør alle stadions i én dansk række.",
                 systemImage: "trophy",
                 isUnlocked: completeDivisions >= 1,
                 progressText: "\(completeDivisions)/1"
@@ -255,16 +301,67 @@ struct StatsView: View {
             Achievement(
                 id: "all_stadiums",
                 title: "Tribune Tour Master",
-                description: "Besøg alle stadions.",
+                description: "Besøg alle stadions i grundpakken for Danmark.",
                 systemImage: "crown",
-                isUnlocked: totalCount > 0 && visitedCount == totalCount,
-                progressText: "\(visitedCount)/\(max(1, totalCount))"
+                isUnlocked: coreTotalCount > 0 && coreVisitedCount == coreTotalCount,
+                progressText: "\(coreVisitedCount)/\(max(1, coreTotalCount))"
             )
         ]
         .sorted { a, b in
             if a.isUnlocked != b.isUnlocked { return a.isUnlocked && !b.isUnlocked }
             return a.title.localizedCaseInsensitiveCompare(b.title) == .orderedAscending
         }
+    }
+
+    private var premiumAchievements: [Achievement] {
+        guard hasPremiumCountries else { return [] }
+
+        let premiumVisitedByDivision = divisionRows(from: premiumClubs)
+        let completePremiumDivisions = premiumVisitedByDivision.filter { $0.total > 0 && $0.visited == $0.total }.count
+        let crossBorderTarget = min(Set(clubs.map(\.countryCode)).count, 2)
+
+        return [
+            Achievement(
+                id: "premium_first_visit",
+                title: "Udebanestart",
+                description: "Besøg dit første premium-stadion.",
+                systemImage: "airplane.departure",
+                isUnlocked: premiumVisitedCount >= 1,
+                progressText: "\(min(premiumVisitedCount, 1))/1"
+            ),
+            Achievement(
+                id: "premium_explorer",
+                title: "International groundhopper",
+                description: "Besøg 5 premium-stadions.",
+                systemImage: "globe.europe.africa",
+                isUnlocked: premiumVisitedCount >= 5,
+                progressText: "\(min(premiumVisitedCount, 5))/5"
+            ),
+            Achievement(
+                id: "cross_border",
+                title: "På tværs af grænser",
+                description: "Besøg stadions i mindst 2 aktive lande.",
+                systemImage: "point.topleft.down.curvedto.point.bottomright.up",
+                isUnlocked: crossBorderTarget <= 1 || Set(visitedClubs.map(\.countryCode)).count >= crossBorderTarget,
+                progressText: "\(min(Set(visitedClubs.map(\.countryCode)).count, crossBorderTarget))/\(crossBorderTarget)"
+            ),
+            Achievement(
+                id: "premium_league_complete",
+                title: "Premium-specialist",
+                description: "Fuldfør alle stadions i én premium-række.",
+                systemImage: "flag.pattern.checkered",
+                isUnlocked: completePremiumDivisions >= 1,
+                progressText: "\(completePremiumDivisions)/1"
+            )
+        ]
+        .sorted { a, b in
+            if a.isUnlocked != b.isUnlocked { return a.isUnlocked && !b.isUnlocked }
+            return a.title.localizedCaseInsensitiveCompare(b.title) == .orderedAscending
+        }
+    }
+
+    private var achievements: [Achievement] {
+        coreAchievements + premiumAchievements
     }
 
     private var unlockedAchievementsCount: Int {
@@ -284,111 +381,244 @@ struct StatsView: View {
         )
     }
 
+    private var nextLockedAchievement: Achievement? {
+        achievements.first(where: { !$0.isUnlocked })
+    }
+
+    private var nextLeagueMilestone: (countryCode: String, division: String, remaining: Int)? {
+        visitedByDivision
+            .filter { $0.total > 0 && $0.visited < $0.total }
+            .sorted { lhs, rhs in
+                let lhsRemaining = lhs.total - lhs.visited
+                let rhsRemaining = rhs.total - rhs.visited
+                if lhsRemaining != rhsRemaining { return lhsRemaining < rhsRemaining }
+
+                let lhsCountryRank = LeaguePresentation.countryRank(lhs.countryCode)
+                let rhsCountryRank = LeaguePresentation.countryRank(rhs.countryCode)
+                if lhsCountryRank != rhsCountryRank { return lhsCountryRank < rhsCountryRank }
+
+                let lhsRank = LeaguePresentation.divisionRank(lhs.division, countryCode: lhs.countryCode)
+                let rhsRank = LeaguePresentation.divisionRank(rhs.division, countryCode: rhs.countryCode)
+                if lhsRank != rhsRank { return lhsRank < rhsRank }
+
+                return lhs.division.localizedCaseInsensitiveCompare(rhs.division) == .orderedAscending
+            }
+            .map { (countryCode: $0.countryCode, division: $0.division, remaining: $0.total - $0.visited) }
+            .first
+    }
+
+    private var suggestedNextClub: Club? {
+        if let nextLeagueMilestone {
+            let prioritized = unvisitedClubs
+                .filter { $0.division == nextLeagueMilestone.division && $0.countryCode == nextLeagueMilestone.countryCode }
+                .sorted { lhs, rhs in
+                    if lhs.countryCode != rhs.countryCode {
+                        return LeaguePresentation.countryRank(lhs.countryCode) < LeaguePresentation.countryRank(rhs.countryCode)
+                    }
+                    return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+                }
+
+            if let first = prioritized.first {
+                return first
+            }
+        }
+
+        return unvisitedClubs.sorted { lhs, rhs in
+            if lhs.countryCode != rhs.countryCode {
+                return LeaguePresentation.countryRank(lhs.countryCode) < LeaguePresentation.countryRank(rhs.countryCode)
+            }
+            return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+        }.first
+    }
+
+    private var heroSummaryText: String {
+        if totalCount == 0 {
+            return "Dit scope er tomt lige nu."
+        }
+
+        if visitedCount == 0 {
+            return "Din stadionrejse starter med det første besøg."
+        }
+
+        if visitedCount == totalCount {
+            return "Du har besøgt alle stadions i dit nuværende scope."
+        }
+
+        return "\(visitedCount) af \(totalCount) stadions er allerede krydset af."
+    }
+
+    private var nextMilestoneTitle: String {
+        if let nextLeagueMilestone {
+            if nextLeagueMilestone.remaining == 1 {
+                return "Du mangler 1 stadion for at fuldføre \(LeaguePresentation.divisionDisplayName(nextLeagueMilestone.division, countryCode: nextLeagueMilestone.countryCode))"
+            }
+
+            return "Du mangler \(nextLeagueMilestone.remaining) stadions for at fuldføre \(LeaguePresentation.divisionDisplayName(nextLeagueMilestone.division, countryCode: nextLeagueMilestone.countryCode))"
+        }
+
+        if let nextLockedAchievement {
+            return nextLockedAchievement.title
+        }
+
+        return "Fortsæt rejsen"
+    }
+
+    private var nextMilestoneDescription: String {
+        if nextLeagueMilestone != nil {
+            return "Det er den korteste vej til din næste store milepæl."
+        }
+
+        if let nextLockedAchievement {
+            return nextLockedAchievement.description
+        }
+
+        return "Hvert nyt besøg bringer dig tættere på næste kapitel."
+    }
+
+    private var suggestionDescription: String {
+        if let nextLeagueMilestone {
+            return "Et nyt besøg her vil bringe dig tættere på at fuldføre \(LeaguePresentation.divisionDisplayName(nextLeagueMilestone.division, countryCode: nextLeagueMilestone.countryCode))."
+        }
+
+        if let nextLockedAchievement {
+            return "Et godt næste stop, hvis du vil arbejde videre mod achievementen “\(nextLockedAchievement.title)”."
+        }
+
+        return "Et oplagt næste stadion at sætte på ønskelisten."
+    }
+
     var body: some View {
         NavigationStack {
             List {
-                // MARK: Overview
-                Section("Overblik") {
-                    HStack {
-                        Text("Besøgte stadions")
-                        Spacer()
-                        Text("\(visitedCount) / \(totalCount)")
-                            .foregroundStyle(.secondary)
-                    }
-
-                    HStack {
-                        Text("Ikke besøgt endnu")
-                        Spacer()
-                        Text("\(unvisitedCount)")
-                            .foregroundStyle(.secondary)
-                    }
-
-                    HStack {
-                        Text("Noter")
-                        Spacer()
-                        Text("\(notesCount)")
-                            .foregroundStyle(.secondary)
-                    }
-
-                    HStack {
-                        Text("Anmeldte stadions")
-                        Spacer()
-                        Text("\(reviewedCount)")
-                            .foregroundStyle(.secondary)
-                    }
-
-                    if let averageReviewScoreText {
-                        HStack {
-                            Text("Gns. anmeldelsesscore")
-                            Spacer()
-                            Text("\(averageReviewScoreText) / 10")
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-
-                    HStack {
-                        Text("Stadions med billeder")
-                        Spacer()
-                        Text("\(stadiumsWithPhotosCount)")
-                            .foregroundStyle(.secondary)
-                    }
-
-                    HStack {
-                        Text("Billeder i alt")
-                        Spacer()
-                        Text("\(totalPhotoCount)")
-                            .foregroundStyle(.secondary)
-                    }
-
-                    VStack(alignment: .leading, spacing: 8) {
-                        HStack {
-                            Text("Fremdrift")
-                            Spacer()
-                            Text(progressPercentText)
+                Section {
+                    VStack(alignment: .leading, spacing: 16) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Byg din stadionrejse")
+                                .font(.headline)
+                            Text(heroSummaryText)
+                                .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
 
-                        ProgressView(value: progress)
-                    }
-                    .padding(.top, 4)
-                }
+                        HStack(spacing: 10) {
+                            StatsHeroMetric(title: "Besøgte", value: "\(visitedCount)")
+                            StatsHeroMetric(title: "Mangler", value: "\(unvisitedCount)")
+                            StatsHeroMetric(title: "Fremdrift", value: progressPercentText)
+                        }
 
-                Section("Achievements") {
-                    HStack {
-                        Text("Låst op")
-                        Spacer()
-                        Text("\(unlockedAchievementsCount)/\(achievements.count)")
-                            .foregroundStyle(.secondary)
-                    }
-
-                    ForEach(achievements) { achievement in
-                        HStack(alignment: .top, spacing: 10) {
-                            Image(systemName: achievement.systemImage)
-                                .foregroundStyle(achievement.isUnlocked ? .yellow : .secondary)
-                                .font(.title3)
-                                .frame(width: 24)
-
-                            VStack(alignment: .leading, spacing: 4) {
-                                HStack {
-                                    Text(achievement.title)
-                                        .font(.headline)
-                                    Spacer()
-                                    Text(achievement.progressText)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-
-                                Text(achievement.description)
-                                    .font(.caption)
+                        VStack(alignment: .leading, spacing: 8) {
+                            HStack {
+                                Text("Fremdrift")
+                                Spacer()
+                                Text("\(visitedCount) / \(totalCount)")
                                     .foregroundStyle(.secondary)
                             }
 
-                            Image(systemName: achievement.isUnlocked ? "checkmark.circle.fill" : "circle")
-                                .foregroundStyle(achievement.isUnlocked ? .green : .secondary)
-                                .font(.body)
+                            ProgressView(value: progress)
+                                .tint(.green)
                         }
-                        .padding(.vertical, 4)
-                        .accessibilityElement(children: .combine)
+
+                        HStack(spacing: 8) {
+                            StatsContextChip(label: "Noter", value: notesCount, systemImage: "note.text")
+                            StatsContextChip(label: "Anmeldelser", value: reviewedCount, systemImage: "star.bubble")
+                            StatsContextChip(label: "Billeder", value: totalPhotoCount, systemImage: "camera")
+                        }
+                    }
+                    .padding(.vertical, 6)
+                }
+
+                Section("Næste milepæl") {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(nextMilestoneTitle)
+                            .font(.headline)
+                        Text(nextMilestoneDescription)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 4)
+                }
+
+                if let suggestedNextClub {
+                    Section("Næste oplagte stadion") {
+                        NavigationLink {
+                            StadiumDetailView(
+                                club: suggestedNextClub,
+                                visitedStore: visitedStore,
+                                photosStore: photosStore,
+                                notesStore: notesStore,
+                                reviewsStore: reviewsStore,
+                                clubById: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
+                            )
+                        } label: {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(suggestedNextClub.name)
+                                    .font(.headline)
+                                Text("\(suggestedNextClub.stadium.name) • \(suggestedNextClub.stadium.city)")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                Text(suggestionDescription)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    }
+                }
+
+                Section("Overblik") {
+                    StatsOverviewRow(label: "Besøgte stadions", value: "\(visitedCount) / \(totalCount)")
+                    StatsOverviewRow(label: "Ikke besøgt endnu", value: "\(unvisitedCount)")
+                    StatsOverviewRow(label: "Noter", value: "\(notesCount)")
+                    StatsOverviewRow(label: "Anmeldte stadions", value: "\(reviewedCount)")
+
+                    if let averageReviewScoreText {
+                        StatsOverviewRow(label: "Gns. anmeldelsesscore", value: "\(averageReviewScoreText) / 10")
+                    }
+
+                    StatsOverviewRow(label: "Stadions med billeder", value: "\(stadiumsWithPhotosCount)")
+                    StatsOverviewRow(label: "Billeder i alt", value: "\(totalPhotoCount)")
+                }
+
+                Section("Hjemland") {
+                    Picker("Hjemland", selection: $preferredHomeCountryCode) {
+                        ForEach(countryOptions, id: \.self) { countryCode in
+                            Text(LeaguePresentation.countryLabel(countryCode)).tag(countryCode)
+                        }
+                    }
+
+                    Text("Når appen åbner, vælger vi automatisk dit hjemland som aktivt scope.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Section("Grundachievements") {
+                    HStack {
+                        Text("Låst op")
+                        Spacer()
+                        Text("\(coreAchievements.filter(\.isUnlocked).count)/\(coreAchievements.count)")
+                            .foregroundStyle(.secondary)
+                    }
+
+                    ForEach(coreAchievements) { achievement in
+                        AchievementRow(achievement: achievement)
+                    }
+                }
+
+                if !premiumAchievements.isEmpty {
+                    Section("Premium achievements") {
+                        HStack(alignment: .top, spacing: 10) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Ekstra mål for aktive premium-lande")
+                                    .font(.headline)
+                                Text("Grundachievements kan stadig fuldføres uanset om du har flere lande aktive. De ekstra achievements her bliver synlige, når du har premium-indhold i dit scope.")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+
+                        ForEach(premiumAchievements) { achievement in
+                            AchievementRow(achievement: achievement)
+                        }
                     }
                 }
 
@@ -446,10 +676,12 @@ struct StatsView: View {
                                 Button {
                                     showAuthSheet = true
                                 } label: {
-                                    Text("Log ind eller opret konto")
-                                        .frame(maxWidth: .infinity)
+                                    StatsActionButtonLabel(
+                                        title: "Log ind eller opret konto",
+                                        isActive: true
+                                    )
                                 }
-                                .buttonStyle(.borderedProminent)
+                                .buttonStyle(.plain)
 
                                 Text("Supabase URL: \(configuration.redactedSupabaseURL)")
                                     .font(.caption2)
@@ -495,10 +727,10 @@ struct StatsView: View {
                         Text("Ingen data.")
                             .foregroundStyle(.secondary)
                     } else {
-                        ForEach(visitedByDivision, id: \.division) { row in
+                        ForEach(visitedByDivision) { row in
                             VStack(alignment: .leading, spacing: 6) {
                                 HStack {
-                                    Text(row.division)
+                                    Text(LeaguePresentation.divisionDisplayName(row.division, countryCode: row.countryCode))
                                         .font(.headline)
                                     Spacer()
                                     Text("\(row.visited)/\(row.total)")
@@ -666,11 +898,13 @@ struct StatsView: View {
                                         ProgressView()
                                             .frame(maxWidth: .infinity)
                                     } else {
-                                        Text("Log ind")
-                                            .frame(maxWidth: .infinity)
+                                        StatsActionButtonLabel(
+                                            title: "Log ind",
+                                            isActive: true
+                                        )
                                     }
                                 }
-                                .buttonStyle(.borderedProminent)
+                                .buttonStyle(.plain)
                                 .disabled(loginLoading)
 
                                 Button {
@@ -678,10 +912,12 @@ struct StatsView: View {
                                         await signUp()
                                     }
                                 } label: {
-                                    Text("Opret konto")
-                                        .frame(maxWidth: .infinity)
+                                    StatsActionButtonLabel(
+                                        title: "Opret konto",
+                                        isActive: false
+                                    )
                                 }
-                                .buttonStyle(.borderedProminent)
+                                .buttonStyle(.plain)
                                 .disabled(loginLoading)
                             }
 
@@ -727,11 +963,11 @@ struct StatsView: View {
                             Button("Luk") {
                                 dismissAuthKeyboard()
                                 showAuthSheet = false
+                            }
+                        }
+                    }
                 }
             }
-        }
-    }
-}
             .alert("Mail er ikke sat op", isPresented: $mailUnavailableAlert) {
                 Button("OK") {}
             } message: {
@@ -760,6 +996,18 @@ struct StatsView: View {
             }
             .onChange(of: visitedStore.records) { _, _ in
                 syncSeenUnlockedIds()
+            }
+            .onAppear {
+                if !countryOptions.isEmpty {
+                    let resolvedHomeCountry = LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(countryOptions))
+                    if preferredHomeCountryCode != resolvedHomeCountry {
+                        preferredHomeCountryCode = resolvedHomeCountry
+                    }
+                }
+            }
+            .onChange(of: preferredHomeCountryCode) { _, newValue in
+                guard countryOptions.contains(newValue) else { return }
+                countryFilterRawValue = newValue
             }
         }
     }
@@ -965,6 +1213,124 @@ struct StatsView: View {
                 .flatMap(\.windows)
             windows.first(where: \.isKeyWindow)?.endEditing(true)
         }
+    }
+}
+
+private struct StatsHeroMetric: View {
+    let title: String
+    let value: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            Text(value)
+                .font(.headline)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+}
+
+private struct StatsContextChip: View {
+    let label: String
+    let value: Int
+    let systemImage: String
+
+    var body: some View {
+        Label {
+            Text("\(label) \(value)")
+        } icon: {
+            Image(systemName: systemImage)
+        }
+        .font(.caption)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 6)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(Capsule())
+    }
+}
+
+private struct StatsOverviewRow: View {
+    let label: String
+    let value: String
+
+    var body: some View {
+        HStack {
+            Text(label)
+            Spacer()
+            Text(value)
+                .foregroundStyle(.secondary)
+        }
+    }
+}
+
+private struct AchievementRow: View {
+    let achievement: StatsView.Achievement
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: achievement.systemImage)
+                .foregroundStyle(achievement.isUnlocked ? .yellow : .secondary)
+                .font(.title3)
+                .frame(width: 24)
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(achievement.title)
+                        .font(.headline)
+                    Spacer()
+                    Text(achievement.progressText)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Text(achievement.description)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Image(systemName: achievement.isUnlocked ? "checkmark.circle.fill" : "circle")
+                .foregroundStyle(achievement.isUnlocked ? .green : .secondary)
+                .font(.body)
+        }
+        .padding(.vertical, 4)
+        .accessibilityElement(children: .combine)
+    }
+}
+
+private struct StatsActionButtonLabel: View {
+    let title: String
+    let isActive: Bool
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var backgroundColor: Color {
+        if isActive {
+            return colorScheme == .dark ? Color.white : Color.black
+        }
+
+        return Color(.secondarySystemBackground)
+    }
+
+    private var foregroundColor: Color {
+        if isActive {
+            return colorScheme == .dark ? Color.black : Color.white
+        }
+
+        return Color.primary
+    }
+
+    var body: some View {
+        Text(title)
+            .font(.headline)
+            .foregroundStyle(foregroundColor)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 14)
+            .background(backgroundColor)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 }
 

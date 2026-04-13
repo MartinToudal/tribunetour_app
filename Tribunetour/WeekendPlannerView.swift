@@ -109,6 +109,52 @@ struct WeekendPlannerView: View {
         "\(shortDate(startDate)) – \(shortDate(endDate))"
     }
 
+    private var planSummaryText: String {
+        let count = selectedFixtures.count
+        let noun = count == 1 ? "kamp" : "kampe"
+        return "\(count) \(noun) valgt i perioden \(intervalText())"
+    }
+
+    private var recommendedFixture: Fixture? {
+        fixturesInRange.sorted { lhs, rhs in
+            let lhsVisited = visitedStore.isVisited(lhs.venueClubId)
+            let rhsVisited = visitedStore.isVisited(rhs.venueClubId)
+            if lhsVisited != rhsVisited {
+                return !lhsVisited && rhsVisited
+            }
+            let lhsSelected = planStore.contains(lhs.id)
+            let rhsSelected = planStore.contains(rhs.id)
+            if lhsSelected != rhsSelected {
+                return !lhsSelected && rhsSelected
+            }
+            return lhs.kickoff < rhs.kickoff
+        }.first
+    }
+
+    private var suggestedFixtures: [Fixture] {
+        let recommendedId = recommendedFixture?.id
+        return fixturesInRange.filter { $0.id != recommendedId }.prefix(3).map { $0 }
+    }
+
+    private func recommendationReasons(for fixture: Fixture) -> [String] {
+        var reasons: [String] = []
+        if !visitedStore.isVisited(fixture.venueClubId) {
+            reasons.append("nyt stadion")
+        }
+        if matchCalendar.isDateInToday(fixture.kickoff) {
+            reasons.append("i dag")
+        } else if matchCalendar.isDate(fixture.kickoff, inSameDayAs: startDate) {
+            reasons.append("tidligt i perioden")
+        }
+        if planStore.contains(fixture.id) {
+            reasons.append("allerede i din plan")
+        }
+        if let division = clubById[fixture.venueClubId]?.division, !division.isEmpty {
+            reasons.append(division)
+        }
+        return Array(reasons.prefix(2))
+    }
+
     private func copyPlanText() {
         let df = DateFormatter()
         df.locale = Locale(identifier: "da_DK")
@@ -153,36 +199,84 @@ struct WeekendPlannerView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section(
-                    header: Text("Vælg interval"),
-                    footer: Text("Vælg startdato – så hopper vi automatisk videre til slutdato. Når du vælger slutdato, lukker vi automatisk.")
-                ) {
-                    Button {
-                        pickerMode = .start
-                        showPicker = true
-                    } label: {
-                        HStack {
-                            Label("Interval", systemImage: "calendar")
-                            Spacer()
-                            Text(intervalText())
-                                .foregroundStyle(.secondary)
+                Section {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Planlæg næste stadiontur")
+                            .font(.headline)
+                        Text(selectedFixtures.isEmpty ? "Vælg et interval og få forslag til din næste tur." : planSummaryText)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+
+                        HStack(spacing: 10) {
+                            Button {
+                                pickerMode = .start
+                                showPicker = true
+                            } label: {
+                                Label(intervalText(), systemImage: "calendar")
+                                    .font(.subheadline.weight(.semibold))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .buttonStyle(.bordered)
+
+                            Button {
+                                setWeekendFrom(startDate)
+                            } label: {
+                                Label("Weekend", systemImage: "calendar.badge.clock")
+                                    .font(.subheadline.weight(.semibold))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                            }
+                            .buttonStyle(.bordered)
                         }
                     }
+                    .padding(.vertical, 4)
+                }
 
-                    Button {
-                        setWeekendFrom(startDate)
-                    } label: {
-                        Label("Sæt til weekend (fre–søn)", systemImage: "calendar.badge.clock")
-                    }
-                    .accessibilityIdentifier("weekend-set-range")
-                    .accessibilityHint("Sætter intervallet til fredag til søndag")
+                if let recommendedFixture {
+                    Section("Bedste mulighed lige nu") {
+                        VStack(alignment: .leading, spacing: 10) {
+                            MatchRecommendationCard(
+                                fixture: recommendedFixture,
+                                title: "\(clubName(recommendedFixture.homeTeamId)) – \(clubName(recommendedFixture.awayTeamId))",
+                                subtitle: "\(dayTitle(recommendedFixture.kickoff)) • \(timeString(recommendedFixture.kickoff))",
+                                detail: stadiumLine(for: recommendedFixture),
+                                reasons: recommendationReasons(for: recommendedFixture),
+                                isSelected: planStore.contains(recommendedFixture.id)
+                            )
 
-                    Button(role: .destructive) {
-                        planStore.clear()
-                    } label: {
-                        Label("Ryd plan", systemImage: "trash")
+                            Button {
+                                planStore.toggle(recommendedFixture.id)
+                            } label: {
+                                PlanActionButtonLabel(
+                                    title: planStore.contains(recommendedFixture.id) ? "Fjern fra plan" : "Tilføj til plan",
+                                    systemImage: planStore.contains(recommendedFixture.id) ? "checkmark.circle.fill" : "plus.circle.fill",
+                                    isSelected: planStore.contains(recommendedFixture.id)
+                                )
+                            }
+                            .buttonStyle(.plain)
+                        }
                     }
-                    .accessibilityHint("Fjerner alle valgte kampe fra planen")
+                }
+
+                if !suggestedFixtures.isEmpty {
+                    Section("Gode muligheder") {
+                        ForEach(suggestedFixtures) { fixture in
+                            Button {
+                                planStore.toggle(fixture.id)
+                            } label: {
+                                MatchRecommendationCard(
+                                    fixture: fixture,
+                                    title: "\(clubName(fixture.homeTeamId)) – \(clubName(fixture.awayTeamId))",
+                                    subtitle: "\(dayTitle(fixture.kickoff)) • \(timeString(fixture.kickoff))",
+                                    detail: stadiumLine(for: fixture),
+                                    reasons: recommendationReasons(for: fixture),
+                                    isSelected: planStore.contains(fixture.id)
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .accessibilityIdentifier("weekend-fixture-\(fixture.id)")
+                            .accessibilityValue(planStore.contains(fixture.id) ? "valgt" : "ikke valgt")
+                        }
+                    }
                 }
 
                 if fixturesInRange.isEmpty {
@@ -197,6 +291,18 @@ struct WeekendPlannerView: View {
                 } else {
                     let grouped = Dictionary(grouping: fixturesInRange) { matchCalendar.startOfDay(for: $0.kickoff) }
                     let days = grouped.keys.sorted()
+
+                    Section(
+                        header: Text("Alle muligheder"),
+                        footer: Text("Vælg startdato – så hopper vi automatisk videre til slutdato. Når du vælger slutdato, lukker vi automatisk.")
+                    ) {
+                        Button(role: .destructive) {
+                            planStore.clear()
+                        } label: {
+                            Label("Ryd plan", systemImage: "trash")
+                        }
+                        .accessibilityHint("Fjerner alle valgte kampe fra planen")
+                    }
 
                     ForEach(days, id: \.self) { day in
                         Section(header: Text(dayTitle(day))) {
@@ -240,8 +346,14 @@ struct WeekendPlannerView: View {
 
                 Section(header: Text("Min tur"), footer: footerView) {
                     if selectedFixtures.isEmpty {
-                        Text("Tilføj kampe ved at trykke på dem ovenfor.")
-                            .foregroundStyle(.secondary)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Du har ikke valgt nogen kampe endnu.")
+                                .font(.subheadline.weight(.semibold))
+                            Text("Brug anbefalingen ovenfor eller tryk på en kamp i listen for at bygge din tur.")
+                                .font(.subheadline)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.vertical, 4)
                     } else {
                         ForEach(selectedFixtures) { f in
                             HStack(alignment: .top) {
@@ -357,8 +469,8 @@ struct WeekendPlannerView: View {
         }
         .onAppear {
             let availableCountryCodes = Set(clubs.map(\.countryCode))
-            if countryFilterRawValue != "all" && !availableCountryCodes.contains(countryFilterRawValue) {
-                countryFilterRawValue = "all"
+            if !availableCountryCodes.contains(countryFilterRawValue) {
+                countryFilterRawValue = LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: availableCountryCodes)
             }
             if isUITestingWeekendDefault {
                 setWeekendFrom(Date())
@@ -372,5 +484,84 @@ struct WeekendPlannerView: View {
                 Text("Tip: Kopiér planen og del den i en chat med din makker.")
             }
         }
+    }
+}
+
+private struct MatchRecommendationCard: View {
+    let fixture: Fixture
+    let title: String
+    let subtitle: String
+    let detail: String
+    let reasons: [String]
+    let isSelected: Bool
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.headline)
+                    Text(subtitle)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .foregroundStyle(isSelected ? .green : .secondary)
+                    .font(.title3)
+            }
+
+            Text(detail)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+
+            if !reasons.isEmpty {
+                HStack(spacing: 6) {
+                    ForEach(reasons, id: \.self) { reason in
+                        Text(reason)
+                            .font(.caption.weight(.semibold))
+                            .padding(.horizontal, 8)
+                            .padding(.vertical, 4)
+                            .background(Color(.secondarySystemBackground))
+                            .clipShape(Capsule())
+                    }
+                }
+            }
+        }
+        .padding(.vertical, 4)
+    }
+}
+
+private struct PlanActionButtonLabel: View {
+    let title: String
+    let systemImage: String
+    let isSelected: Bool
+
+    @Environment(\.colorScheme) private var colorScheme
+
+    private var backgroundColor: Color {
+        if isSelected {
+            return colorScheme == .dark ? Color.green.opacity(0.22) : Color.green.opacity(0.14)
+        }
+        return colorScheme == .dark ? Color.white : Color.black
+    }
+
+    private var foregroundColor: Color {
+        if isSelected {
+            return .green
+        }
+        return colorScheme == .dark ? .black : .white
+    }
+
+    var body: some View {
+        Label(title, systemImage: systemImage)
+            .font(.subheadline.weight(.semibold))
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .foregroundStyle(foregroundColor)
+            .background(backgroundColor)
+            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 }

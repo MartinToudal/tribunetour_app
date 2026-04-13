@@ -186,6 +186,7 @@ final class AppState: ObservableObject {
                     from: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
                 )
                 self.fixtures = fixtures
+                self.applyPreferredHomeCountryIfNeeded(from: clubs)
                 self.fixturesLoadSource = fixturesResult.source
                 self.fixturesVersion = fixturesResult.version
                 self.fixturesRemoteURL = fixturesResult.remoteURL
@@ -264,6 +265,14 @@ final class AppState: ObservableObject {
         } catch {
             dlog("Auth callback kunne ikke behandles: \(error.localizedDescription)")
         }
+    }
+
+    private func applyPreferredHomeCountryIfNeeded(from clubs: [Club]) {
+        let availableCountryCodes = Set(clubs.map(\.countryCode))
+        guard !availableCountryCodes.isEmpty else { return }
+        let resolvedHomeCountry = LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: availableCountryCodes)
+        UserDefaults.standard.set(resolvedHomeCountry, forKey: "stadiums.countryFilter")
+        UserDefaults.standard.set(resolvedHomeCountry, forKey: AppLeaguePackSettings.preferredHomeCountryCodeKey)
     }
 
     private func reconcileSharedSyncModeAfterSessionRestore(snapshot: AppSessionSnapshot) async {

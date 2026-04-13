@@ -141,10 +141,10 @@ struct StadiumsView: View {
 
     private var countryOptions: [String] {
         Array(Set(clubs.map(\.countryCode))).sorted { left, right in
-            if countryRank(left) != countryRank(right) {
-                return countryRank(left) < countryRank(right)
+            if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
+                return LeaguePresentation.countryRank(left) < LeaguePresentation.countryRank(right)
             }
-            return countryLabel(left).localizedCaseInsensitiveCompare(countryLabel(right)) == .orderedAscending
+            return LeaguePresentation.countryLabel(left).localizedCaseInsensitiveCompare(LeaguePresentation.countryLabel(right)) == .orderedAscending
         }
     }
 
@@ -209,49 +209,18 @@ struct StadiumsView: View {
         !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    // ✅ Sørg for Superliga øverst, derefter 1., 2., 3. division (fallback alfabetisk)
-    private func divisionRank(_ division: String) -> Int {
-        let d = division.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
-
-        if d.contains("superliga") { return 0 }
-        if d == "bundesliga" { return 10 }
-        if d == "2. bundesliga" { return 11 }
-        if d == "3. liga" { return 12 }
-        if d.contains("1.") || d.contains("1 division") || d.contains("1. division") { return 1 }
-        if d.contains("2.") || d.contains("2 division") || d.contains("2. division") { return 2 }
-        if d.contains("3.") || d.contains("3 division") || d.contains("3. division") { return 3 }
-
-        return 99
-    }
-
-    private func countryRank(_ countryCode: String) -> Int {
-        switch countryCode {
-        case "dk": return 0
-        case "de": return 1
-        default: return 99
-        }
-    }
-
-    private func countryLabel(_ countryCode: String) -> String {
-        switch countryCode {
-        case "dk": return "Danmark"
-        case "de": return "Tyskland"
-        default: return countryCode.uppercased()
-        }
-    }
-
     private func sortComparator(_ a: Club, _ b: Club) -> Bool {
         let aVisited = visitedStore.isVisited(a.id)
         let bVisited = visitedStore.isVisited(b.id)
 
         switch sort {
         case .leagueThenTeam:
-            let ca = countryRank(a.countryCode)
-            let cb = countryRank(b.countryCode)
+            let ca = LeaguePresentation.countryRank(a.countryCode)
+            let cb = LeaguePresentation.countryRank(b.countryCode)
             if ca != cb { return ca < cb }
 
-            let ra = divisionRank(a.division)
-            let rb = divisionRank(b.division)
+            let ra = LeaguePresentation.divisionRank(a.division, countryCode: a.countryCode)
+            let rb = LeaguePresentation.divisionRank(b.division, countryCode: b.countryCode)
             if ra != rb { return ra < rb }
 
             // samme "rank" → fallback alfabetisk på division + klub
@@ -276,8 +245,8 @@ struct StadiumsView: View {
 
         case .nearest:
             guard let here = locationStore.location else {
-                let ra = divisionRank(a.division)
-                let rb = divisionRank(b.division)
+                let ra = LeaguePresentation.divisionRank(a.division, countryCode: a.countryCode)
+                let rb = LeaguePresentation.divisionRank(b.division, countryCode: b.countryCode)
                 if ra != rb { return ra < rb }
                 return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
             }
@@ -405,7 +374,7 @@ struct StadiumsView: View {
                                         .lineLimit(2)
 
                                     if shouldShowCountryFilter {
-                                        Text(countryLabel(club.countryCode))
+                                        Text(LeaguePresentation.countryLabel(club.countryCode))
                                             .font(.caption2.weight(.semibold))
                                             .foregroundStyle(.secondary)
                                     }
@@ -464,7 +433,7 @@ struct StadiumsView: View {
                             Picker("Land", selection: $countryFilterRawValue) {
                                 Text("Alle lande").tag("all")
                                 ForEach(countryOptions, id: \.self) { countryCode in
-                                    Text(countryLabel(countryCode)).tag(countryCode)
+                                    Text(LeaguePresentation.countryLabel(countryCode)).tag(countryCode)
                                 }
                             }
 
@@ -494,8 +463,9 @@ struct StadiumsView: View {
         }
         .onAppear {
             locationStore.start()
-            if countryFilterRawValue != "all" && !countryOptions.contains(countryFilterRawValue) {
-                countryFilterRawValue = "all"
+            let resolvedHomeCountry = LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(countryOptions))
+            if !countryOptions.contains(countryFilterRawValue) {
+                countryFilterRawValue = resolvedHomeCountry
             }
         }
         .onChange(of: sort) { _, newValue in
@@ -637,10 +607,9 @@ struct StadiumMiniCard: View {
 
             HStack(spacing: 10) {
                 Button(action: onOpenDetails) {
-                    Label("Detaljer", systemImage: "info.circle")
-                        .frame(maxWidth: .infinity)
+                    MiniMapPrimaryButtonLabel(title: "Detaljer", systemImage: "info.circle")
                 }
-                .buttonStyle(.borderedProminent)
+                .buttonStyle(.plain)
                 .accessibilityLabel("Åbn detaljer")
                 .accessibilityHint("Vis detaljer for stadionet")
 
@@ -667,6 +636,22 @@ struct StadiumMiniCard: View {
         .background(.thinMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
         .shadow(radius: 8)
+    }
+}
+
+private struct MiniMapPrimaryButtonLabel: View {
+    let title: String
+    let systemImage: String
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        Label(title, systemImage: systemImage)
+            .font(.headline)
+            .foregroundStyle(colorScheme == .dark ? Color.black : Color.white)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(colorScheme == .dark ? Color.white : Color.black)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 }
 

@@ -49,6 +49,7 @@ struct MatchesView: View {
     @AppStorage("matches.onlyUnvisitedVenues") private var onlyUnvisitedVenues: Bool = true
     @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
     @State private var searchText = ""
+    @State private var isShowingFilters = false
 
     // Distance sorting
     @AppStorage("matches.sortMode") private var sortModeRawValue: String = SortMode.byDate.rawValue
@@ -88,15 +89,36 @@ struct MatchesView: View {
 
     private var countryOptions: [String] {
         Array(Set(clubs.map(\.countryCode))).sorted { left, right in
-            if countryRank(left) != countryRank(right) {
-                return countryRank(left) < countryRank(right)
+            if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
+                return LeaguePresentation.countryRank(left) < LeaguePresentation.countryRank(right)
             }
-            return countryLabel(left).localizedCaseInsensitiveCompare(countryLabel(right)) == .orderedAscending
+            return LeaguePresentation.countryLabel(left).localizedCaseInsensitiveCompare(LeaguePresentation.countryLabel(right)) == .orderedAscending
         }
     }
 
     private var shouldShowCountryFilter: Bool {
         countryOptions.count > 1
+    }
+
+    private var activeFilterCount: Int {
+        var count = 0
+        if onlyUnvisitedVenues { count += 1 }
+        if countryFilterRawValue != "all" { count += 1 }
+        if sortMode == .byDistance { count += 1 }
+        return count
+    }
+
+    private var scopeLabel: String {
+        countryFilterRawValue == "all" ? "Alle lande" : LeaguePresentation.countryLabel(countryFilterRawValue)
+    }
+
+    private var resultSummaryText: String {
+        let fixturesCount = filteredFixtures.count
+        let noun = fixturesCount == 1 ? "kamp" : "kampe"
+        if activeFilterCount == 0 {
+            return "\(fixturesCount) kommende \(noun) i dit nuværende tidsrum"
+        }
+        return "\(fixturesCount) kommende \(noun) med \(activeFilterCount) aktive filtre"
     }
 
     private var filteredFixtures: [Fixture] {
@@ -187,95 +209,66 @@ struct MatchesView: View {
     var body: some View {
         NavigationStack {
             List {
-                // Controls
                 Section {
-                    Toggle("Kun stadions jeg ikke har besøgt", isOn: $onlyUnvisitedVenues)
-                        .accessibilityHint("Filtrer kampe efter ikke-besøgte stadions")
-
-                    // Sort controls
-                    HStack(spacing: 10) {
-                        Picker("Sortér", selection: Binding(get: { sortMode }, set: { sortMode = $0 })) {
-                            ForEach(SortMode.allCases) { mode in
-                                Text(mode.rawValue).tag(mode)
+                    VStack(alignment: .leading, spacing: 12) {
+                        HStack(alignment: .top) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Find næste gode kamp")
+                                    .font(.headline)
+                                Text(resultSummaryText)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
                             }
-                        }
-                        .pickerStyle(.segmented)
 
-                        if sortMode == .byDistance {
-                            Button {
-                                reverseDistanceSort.toggle()
-                            } label: {
-                                Image(systemName: reverseDistanceSort ? "arrow.up.circle.fill" : "arrow.down.circle.fill")
-                                    .font(.title3)
-                                    .accessibilityLabel(reverseDistanceSort ? "Længst væk først" : "Tættest på mig først")
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
+                            Spacer()
 
-                    if shouldShowCountryFilter {
-                        Picker("Land", selection: $countryFilterRawValue) {
-                            Text("Alle").tag("all")
-                            ForEach(countryOptions, id: \.self) { countryCode in
-                                Text(countryLabel(countryCode)).tag(countryCode)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                    }
-
-                    // Location hint when distance sort is selected
-                    if sortMode == .byDistance && locationStore.location == nil {
-                        VStack(alignment: .leading, spacing: 8) {
-                            Text("Sortering efter afstand kræver lokation")
-                                .font(.headline)
-
-                            Text(locationHintText)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-
-                            HStack {
-                                Button("Tillad lokation") {
-                                    locationStore.requestPermission()
-                                    locationStore.start()
+                            VStack(alignment: .trailing, spacing: 6) {
+                                MatchesContextChip(text: scopeLabel, systemImage: "globe.europe.africa")
+                                if onlyUnvisitedVenues {
+                                    MatchesContextChip(text: "Kun ubesøgte", systemImage: "checkmark.circle")
                                 }
-                                Spacer()
-                                Button("Sortér efter dato") {
-                                    sortMode = .byDate
-                                }
-                                .foregroundStyle(.secondary)
                             }
                         }
-                        .padding(.vertical, 4)
-                    }
 
-                    // Time filter chips
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 8) {
-                            ForEach(TimeFilter.allCases) { f in
-                                Button {
-                                    timeFilter = f
-                                } label: {
-                                    Text(f.rawValue)
-                                        .font(.subheadline.weight(.semibold))
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 8)
-                                        .foregroundStyle(timeFilter == f ? .white : .primary)
-                                        // ✅ valgt chip = sort baggrund (dark mode-friendly)
-                                        .background(
-                                            Capsule()
-                                                .fill(timeFilter == f ? Color.black : Color(.secondarySystemBackground))
-                                        )
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 8) {
+                                ForEach(TimeFilter.allCases) { f in
+                                    Button {
+                                        timeFilter = f
+                                    } label: {
+                                        Text(f.rawValue)
+                                            .font(.subheadline.weight(.semibold))
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 8)
+                                            .foregroundStyle(timeFilter == f ? .white : .primary)
+                                            .background(
+                                                Capsule()
+                                                    .fill(timeFilter == f ? Color.black : Color(.secondarySystemBackground))
+                                            )
+                                    }
+                                    .buttonStyle(.plain)
+                                    .accessibilityLabel("Vis kampe: \(f.rawValue)")
+                                    .accessibilityHint("Sætter tidsfilter for kampoversigten")
                                 }
-                                .buttonStyle(.plain)
-                                .accessibilityLabel("Vis kampe: \(f.rawValue)")
-                                .accessibilityHint("Sætter tidsfilter for kampoversigten")
                             }
                         }
-                        .padding(.vertical, 4)
+                        .padding(.vertical, 2)
+
+                        if sortMode == .byDistance && locationStore.location == nil {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Afstandssortering kræver lokation")
+                                    .font(.subheadline.weight(.semibold))
+                                Text(locationHintText)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(12)
+                            .background(Color(.secondarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        }
                     }
                 }
 
-                // List
                 Section {
                     if filteredFixtures.isEmpty {
                         ContentUnavailableView(
@@ -320,6 +313,36 @@ struct MatchesView: View {
             }
             .navigationTitle("Kampe")
             .searchable(text: $searchText, prompt: "Søg klub, stadion, by, runde…")
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        isShowingFilters = true
+                    } label: {
+                        Image(systemName: activeFilterCount > 0 ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+                    }
+                    .accessibilityLabel("Åbn filtre")
+                }
+            }
+            .sheet(isPresented: $isShowingFilters) {
+                MatchesFilterSheet(
+                    sortMode: Binding(get: { sortMode }, set: { sortMode = $0 }),
+                    reverseDistanceSort: $reverseDistanceSort,
+                    onlyUnvisitedVenues: $onlyUnvisitedVenues,
+                    countryFilterRawValue: $countryFilterRawValue,
+                    shouldShowCountryFilter: shouldShowCountryFilter,
+                    countryOptions: countryOptions,
+                    countryLabel: { LeaguePresentation.countryLabel($0) },
+                    locationHintText: locationHintText,
+                    hasLocation: locationStore.location != nil,
+                    requestLocation: {
+                        locationStore.requestPermission()
+                        locationStore.start()
+                    },
+                    dismiss: {
+                        isShowingFilters = false
+                    }
+                )
+            }
         }
         .onAppear {
             // Vi starter lokation “passivt” – permission popper først når du vælger afstand
@@ -332,26 +355,95 @@ struct MatchesView: View {
             }
         }
         .onAppear {
-            if countryFilterRawValue != "all" && !countryOptions.contains(countryFilterRawValue) {
-                countryFilterRawValue = "all"
+            let resolvedHomeCountry = LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(countryOptions))
+            if !countryOptions.contains(countryFilterRawValue) {
+                countryFilterRawValue = resolvedHomeCountry
             }
         }
     }
 
-    private func countryRank(_ countryCode: String) -> Int {
-        switch countryCode {
-        case "dk": return 0
-        case "de": return 1
-        default: return 99
-        }
-    }
+}
 
-    private func countryLabel(_ countryCode: String) -> String {
-        switch countryCode {
-        case "dk": return "Danmark"
-        case "de": return "Tyskland"
-        default: return countryCode.uppercased()
+private struct MatchesContextChip: View {
+    let text: String
+    let systemImage: String
+
+    var body: some View {
+        Label(text, systemImage: systemImage)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(Color(.secondarySystemBackground))
+            .clipShape(Capsule())
+    }
+}
+
+private struct MatchesFilterSheet: View {
+    @Binding var sortMode: MatchesView.SortMode
+    @Binding var reverseDistanceSort: Bool
+    @Binding var onlyUnvisitedVenues: Bool
+    @Binding var countryFilterRawValue: String
+
+    let shouldShowCountryFilter: Bool
+    let countryOptions: [String]
+    let countryLabel: (String) -> String
+    let locationHintText: String
+    let hasLocation: Bool
+    let requestLocation: () -> Void
+    let dismiss: () -> Void
+
+    var body: some View {
+        NavigationStack {
+            List {
+                Section("Visning") {
+                    Toggle("Kun stadions jeg ikke har besøgt", isOn: $onlyUnvisitedVenues)
+
+                    Picker("Sortér", selection: $sortMode) {
+                        ForEach(MatchesView.SortMode.allCases) { mode in
+                            Text(mode.rawValue).tag(mode)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+
+                    if sortMode == .byDistance {
+                        Toggle("Længst væk først", isOn: $reverseDistanceSort)
+
+                        if !hasLocation {
+                            VStack(alignment: .leading, spacing: 8) {
+                                Text("Lokation mangler")
+                                    .font(.subheadline.weight(.semibold))
+                                Text(locationHintText)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                Button("Tillad lokation", action: requestLocation)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    }
+                }
+
+                if shouldShowCountryFilter {
+                    Section("Scope") {
+                        Picker("Land", selection: $countryFilterRawValue) {
+                            Text("Alle").tag("all")
+                            ForEach(countryOptions, id: \.self) { countryCode in
+                                Text(countryLabel(countryCode)).tag(countryCode)
+                            }
+                        }
+                        .pickerStyle(.inline)
+                    }
+                }
+            }
+            .navigationTitle("Filtre")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Færdig", action: dismiss)
+                }
+            }
         }
+        .presentationDetents([.medium, .large])
     }
 }
 
