@@ -108,7 +108,8 @@ struct RemoteFixturesProvider {
     }
 
     private func mergeWithLocalLeaguePackFixturesIfNeeded(remoteFixtures: [Fixture]) -> [Fixture] {
-        guard AppLeaguePackSettings.germanyTop3Enabled else {
+        let enabledExperimentalPacks = AppLeaguePackSettings.effectiveEnabledLeaguePacks.subtracting([AppLeaguePackId.coreDenmark.rawValue])
+        guard !enabledExperimentalPacks.isEmpty else {
             return remoteFixtures
         }
 

@@ -147,6 +147,8 @@ Auth skal forstås som adgang til brugerens egen Tribunetour, ikke som en særsk
 
 ## Vigtigste dokumenter
 
+- `docs/CURRENT_STATE.md`
+- `docs/PRODUCT_AND_CODE_WALKTHROUGH.txt`
 - `docs/INTEGRATION_STATUS.md`
 - `docs/INTEGRATION_BACKLOG.md`
 - `docs/ONE_PRODUCT.md`
@@ -156,6 +158,15 @@ Auth skal forstås som adgang til brugerens egen Tribunetour, ikke som en særsk
 - `docs/VISITED_MIGRATION_PLAN.md`
 
 ---
+
+## Læserekkefølge
+
+Hvis du vil forstå løsningen hurtigt:
+
+1. `docs/CURRENT_STATE.md`
+2. `docs/PRODUCT_AND_CODE_WALKTHROUGH.txt`
+3. `docs/INTEGRATION_STATUS.md`
+4. derefter de mere specialiserede dokumenter
 
 ## Næste vigtigste arbejde
 

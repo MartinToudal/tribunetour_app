@@ -1,0 +1,467 @@
+TRIBUNETOUR
+Samlet produkt- og kodegennemgang i almindeligt sprog
+Senest opdateret: 2026-04-14
+
+Dette dokument er skrevet til en læser, der ikke koder.
+Formålet er at forklare:
+- hvad Tribunetour er
+- hvad vi faktisk har bygget
+- hvor de vigtigste dele bor
+- hvordan app, web og backend hænger sammen
+- hvilke begrænsninger der stadig findes
+
+------------------------------------------------------------
+1. DEN KORTE VERSION
+------------------------------------------------------------
+
+Tribunetour er et produkt for fodboldfans, der vil:
+- finde stadions
+- se kommende kampe
+- planlægge stadionture
+- holde styr på deres egen rejse
+
+Produktet findes nu som:
+- en iPhone-app
+- en webversion på tribunetour.dk
+
+De to flader hænger nu sammen på de vigtigste ting:
+- login
+- visited-status
+- noter
+- reviews
+- billeder
+- weekend-plan
+- premium-adgang til ekstra landepakker
+
+Det betyder i praksis:
+en bruger kan logge ind og have én samlet Tribunetour-konto på tværs af app og web.
+
+------------------------------------------------------------
+2. PRODUKTET SOM HELHED
+------------------------------------------------------------
+
+Den bedste måde at tænke Tribunetour på er:
+
+"et personligt stadionrejse-produkt"
+
+Det består af fire kerneflader:
+
+1. Stadions
+Her opdager brugeren klubber og stadions.
+
+2. Kampe
+Her finder brugeren kommende kampe på de stadions, der er relevante.
+
+3. Plan
+Her hjælper produktet brugeren med at planlægge næste stadiontur.
+
+4. Min tur
+Her ser brugeren sin progression, sine mål og sin egen historik.
+
+Appen er stadig den mest modne version af produktet.
+Web er nu meget tættere på at være en rigtig anden produktflade og ikke bare et marketing-site.
+
+------------------------------------------------------------
+3. HVAD APPEN GØR
+------------------------------------------------------------
+
+Appen er i dag det sted, hvor Tribunetour er mest "fuldt".
+
+Appen kan blandt andet:
+- vise stadions og klubber
+- vise kampprogram
+- foreslå næste tur
+- lade brugeren markere stadions som besøgt
+- gemme noter
+- gemme anmeldelser
+- gemme billeder
+- vise progression og achievements
+- logge ind med samme konto som på web
+
+De vigtigste filer i appen er:
+
+1. Tribunetour/ContentView.swift
+Det er appens hovedskal.
+Den bestemmer fanerne nederst:
+- Stadions
+- Kampe
+- Plan
+- Min tur
+
+2. Tribunetour/AppState.swift
+Det er appens "hjerne".
+Den holder styr på:
+- hvilke data der er indlæst
+- login-session
+- reference-data
+- sync-tilstand
+- hvilke premium-pakker brugeren har adgang til
+
+Hvis du vil forstå, hvor appen samler mange tråde, så er AppState et af de vigtigste steder.
+
+3. Tribunetour/CSVClubImporter.swift
+Her ligger logikken for den lokale stadion-/klubdata-model.
+Den hjælper appen med at læse grunddata fra appens egne filer.
+Her ligger også centrale begreber som:
+- countryCode
+- leaguePack
+- logik for league packs
+- visningsregler for land/liga
+
+4. Tribunetour/MatchesView.swift
+Kampe-skærmen i appen.
+Den viser kampe og filtrerer dem efter:
+- tid
+- land
+- besøgt / ikke besøgt
+- søgning
+
+5. Tribunetour/WeekendPlannerView.swift
+Plan-skærmen.
+Her prøver produktet at være hjælpsomt:
+- bedste mulighed lige nu
+- gode alternativer
+- den konkrete plan som brugeren bygger
+
+6. Tribunetour/StatsView.swift
+Min tur-skærmen.
+Den er blevet styrket til at være mere motiverende og mindre bare statistisk.
+Her ligger nu bl.a.:
+- progression
+- næste milepæl
+- næste oplagte stadion
+- valg af hjemland
+- grundachievements og premium achievements
+
+7. Tribunetour/StadiumDetailView.swift
+Detaljesiden for et stadion.
+Her kan brugeren se stadionets oplysninger og arbejde med:
+- visited-status
+- noter
+- anmeldelser
+- billeder
+- kommende kampe på stadionet
+
+------------------------------------------------------------
+4. HVAD WEB GØR
+------------------------------------------------------------
+
+Webversionen er nu en rigtig produktflade.
+
+Web kan i dag:
+- logge brugeren ind
+- vise stadions
+- vise kampe
+- vise Min tur
+- arbejde med visited-status
+- læse og skrive delt brugerdata
+
+De vigtigste steder på websiden er:
+
+1. Website repo/README.md
+Det bedste korte overblik over webdelen.
+
+2. Website repo/app/(site)/_lib/referenceData.ts
+Det er webens reference-data-lag.
+Det samler stadion- og fixture-data og fungerer som bro mellem datafiler og UI.
+
+3. Website repo/app/(site)/_lib/visitedRepository.ts
+Det er webens lag for visited-data.
+
+4. Website repo/app/(site)/_hooks/useVisitedModel.ts
+Det er webens måde at holde visited-logik tæt på brugeroplevelsen.
+
+Kort sagt:
+web er bygget til at være samme produktidé som appen, men i browseren.
+
+------------------------------------------------------------
+5. HVAD BACKENDEN GØR
+------------------------------------------------------------
+
+Backenden består i praksis af Supabase.
+
+Supabase bruges til tre store ting:
+
+1. Login
+Brugere kan oprette konto og logge ind.
+
+2. Brugerdata
+Det gælder fx:
+- visited
+- noter
+- reviews
+- billeder
+- weekend-plan
+
+3. Adgangskontrol til premium
+Det gælder især tabellen:
+- public.user_league_pack_access
+
+Det betyder:
+vi kan bestemme centralt hvilke brugere der må se hvilke ekstra ligapakker.
+
+------------------------------------------------------------
+6. HVORDAN LOGIN OG SYNC VIRKER
+------------------------------------------------------------
+
+Det vigtigste at forstå er:
+app og web er ikke længere to adskilte konti.
+
+De bruger nu samme login-retning.
+
+Det sker sådan:
+
+1. Brugeren logger ind
+Det kan ske i appen eller på web.
+
+2. Sessionen giver adgang til Supabase
+Det betyder, at klienten kan læse og skrive brugerens egne data.
+
+3. Brugerdata bliver fælles
+Når login er på plads, kan både app og web arbejde mod de samme modeller.
+
+Det betyder ikke at alt er realtime.
+Den nuværende begrænsning er:
+sync er primært fokus-/aktiveringsbaseret.
+
+Det betyder:
+- appen opdaterer typisk når den bliver aktiv igen
+- web opdaterer typisk når siden eller browserfokus skifter
+
+Det er vigtigt at vide:
+det er en delt løsning, men ikke endnu en realtime-løsning.
+
+------------------------------------------------------------
+7. HVORDAN PREMIUM VIRKER
+------------------------------------------------------------
+
+Premium er indført som en "league pack"-model.
+
+Det betyder:
+grundproduktet er ikke tænkt som "alt eller intet".
+I stedet kan ekstra lande eller ligaer lægges ovenpå.
+
+Lige nu findes bl.a.:
+- core_denmark
+- germany_top_3
+
+Det fungerer sådan:
+
+1. Hver klub og hver kamp tilhører et league pack
+Eksempel:
+- Danmark ligger i grundpakken
+- Tyskland ligger i germany_top_3
+
+2. Brugeren får adgang via entitlements
+Det sker i databasen.
+
+3. App og web spørger: må denne bruger se denne pakke?
+
+4. Hvis ja, bliver indholdet synligt
+Hvis nej, bliver det ikke vist.
+
+Det er altså ikke kun et visuelt filter.
+Det er en bevidst adgangsmodel.
+
+------------------------------------------------------------
+8. HVAD TYSKLAND-LØSNINGEN ER I DAG
+------------------------------------------------------------
+
+Tyskland er den første rigtige premium-pakke.
+
+Den er bygget som:
+- et kontrolleret ekstra land
+- oven på den danske kerne
+
+Den indeholder i dag:
+- Bundesliga
+- 2. Bundesliga
+- 3. Liga
+
+Det vigtige ved Tyskland-løsningen er ikke kun indholdet.
+Det vigtige er, at den har tvunget os til at bygge:
+- entitlements
+- landefiltre
+- pyramide-sortering pr. land
+- mere fleksibel progression
+
+Tyskland er derfor både et feature-spor og et arkitekturspor.
+
+------------------------------------------------------------
+9. HJEMLAND OG SCOPE
+------------------------------------------------------------
+
+Appen har nu et valg af hjemland.
+
+Det betyder:
+- brugeren kan vælge hvilket land der skal føles som deres standardland
+- når appen åbner, falder den tilbage til det hjemland
+
+Hvorfor er det vigtigt?
+Fordi produktet ellers bliver forvirrende, når flere lande kommer til.
+
+Det er også første skridt mod en verden hvor:
+- nogle brugere har kun Danmark
+- nogle har Danmark + Tyskland
+- nogle senere får flere lande
+
+------------------------------------------------------------
+10. ACHIEVEMENTS
+------------------------------------------------------------
+
+Achievements er blevet tænkt lidt om.
+
+Tidligere var logikken mere "én samlet progression".
+Det bliver skævt, når man både kan have grundpakke og premium-lande.
+
+Nu er retningen:
+- grundachievements
+- premium achievements
+
+Tanken er:
+- grundpakke-mål skal stadig give mening alene
+- premium skal kunne give ekstra mål
+- produktet skal ikke føles "ødelagt", bare fordi brugeren aktiverer flere lande
+
+Det er ikke nødvendigvis den endelige model endnu.
+Men retningen er langt mere rigtig end før.
+
+------------------------------------------------------------
+11. SORTERING EFTER PYRAMIDE
+------------------------------------------------------------
+
+Når flere lande kommer på, bliver alfabetisk sortering hurtigt forkert.
+
+Eksempel:
+- i Danmark vil man forvente Superliga før 1. division, 2. division og 3. division
+- i Tyskland vil man forvente Bundesliga før 2. Bundesliga og 3. Liga
+
+Derfor er retningen nu:
+"sortér efter pyramiden for det enkelte land"
+
+Det er en vigtig produktbeslutning.
+Det betyder, at produktet i højere grad opfører sig som fodboldfolk forventer.
+
+------------------------------------------------------------
+12. HVAD DER STADIG ER MERE MIDLERTIDIGT
+------------------------------------------------------------
+
+Der er stadig ting, som ikke er den endelige målarkitektur.
+
+Eksempler:
+
+1. Reference-data
+Ikke alle lande og reference-data kommer fra backend endnu.
+Noget ligger stadig i appens bundle og i manuelle datafiler.
+
+2. Nye lande
+Det kræver stadig implementeringsarbejde at tilføje et nyt land.
+Det er ikke endnu sådan, at vi bare kan oprette et land i backend og så dukker det op.
+
+3. Appens historiske lag
+Appen bærer stadig noget overgangslogik fra ældre lokale/CloudKit-spor.
+
+Det er ikke nødvendigvis et problem her og nu.
+Men det er vigtigt at vide, at vi stadig står i en overgang fra gammel model til renere fælles model.
+
+------------------------------------------------------------
+13. DEN VIGTIGSTE ARKITEKTURELLE SANDHED
+------------------------------------------------------------
+
+Hvis jeg skulle forklare løsningen i én sætning, ville jeg sige:
+
+"Tribunetour er nu bygget som ét produkt med fælles konto og fælles brugerdata på tværs af app og web, men med reference-data og premium-indhold i en model der stadig er delvist i overgang."
+
+Det er den mest præcise sætning jeg kan give lige nu.
+
+------------------------------------------------------------
+14. HVIS DU SENERE VIL UDVIDE MED FLERE LANDE
+------------------------------------------------------------
+
+Det næste store spørgsmål bliver:
+skal nye lande kræve app-opdatering eller ikke?
+
+I dag:
+ja, i praksis kræver nye lande stadig kode/dataarbejde.
+
+Senere kunne vi bevæge os mod:
+- backend-drevet lande- og ligamodel
+- backend-drevet reference-data
+- mere generisk premium-model
+
+Men vi er ikke helt dér endnu.
+
+------------------------------------------------------------
+15. HVAD JEG VILLE KALDE DE VIGTIGSTE FILER
+------------------------------------------------------------
+
+Hvis du kun ville lære produktet at kende gennem 10 filer, ville jeg vælge:
+
+App:
+- Tribunetour/ContentView.swift
+- Tribunetour/AppState.swift
+- Tribunetour/CSVClubImporter.swift
+- Tribunetour/MatchesView.swift
+- Tribunetour/WeekendPlannerView.swift
+- Tribunetour/StatsView.swift
+- Tribunetour/StadiumDetailView.swift
+
+Web:
+- Website repo/README.md
+- Website repo/app/(site)/_lib/referenceData.ts
+- Website repo/app/(site)/_lib/visitedRepository.ts
+
+Backend:
+- Website repo/supabase/user_league_pack_access.sql
+
+------------------------------------------------------------
+16. HVAD DU SKAL KUNNE HOLDE ØJE MED SOM PRODUKTEJER
+------------------------------------------------------------
+
+Du behøver ikke kunne læse kode for at styre løsningen godt.
+
+Det vigtigste du skal kunne vurdere er:
+
+1. Er produktlogikken tydelig?
+Eksempel:
+- hvornår ser man Tyskland?
+- hvornår ser man kun Danmark?
+
+2. Er progression fair?
+Eksempel:
+- bliver achievements ved med at give mening når flere lande er aktive?
+
+3. Er data konsekvent?
+Eksempel:
+- vises samme kampe og samme stadionstatus i app og på web?
+
+4. Er premium forståeligt?
+Eksempel:
+- er det tydeligt hvad der er grundpakke og hvad der er ekstra adgang?
+
+5. Er produktet stadig ét produkt?
+Eksempel:
+- føles app og web som to versioner af samme idé?
+
+------------------------------------------------------------
+17. MIN KORTE KONKLUSION
+------------------------------------------------------------
+
+Det vi har bygget er:
+- et reelt produkt på tværs af app og web
+- med fælles login
+- med delt brugerdata
+- med første premium landepakke
+- og med en mere moden produktstruktur end tidligere
+
+Det vi ikke helt har bygget endnu er:
+- en fuldt backend-drevet multi-land model
+- en løsning hvor nye lande bare kan oprettes uden apparbejde
+- en helt færdig slutarkitektur uden overgangslag
+
+Men retningen er nu tydelig.
+
+Hvis du skal forstå løsningen som ikke-koder, så er det vigtigste at tage med:
+
+Vi har bygget en Tribunetour-konto og en Tribunetour-kerne, som nu virker på tværs af app og web.
+Det næste kapitel handler mest om at gøre reference-data og premium mere skalerbart.

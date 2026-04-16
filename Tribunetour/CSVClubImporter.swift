@@ -3,6 +3,7 @@ import Foundation
 enum AppLeaguePackId: String, CaseIterable {
     case coreDenmark = "core_denmark"
     case germanyTop3 = "germany_top_3"
+    case englandTop4 = "england_top_4"
 }
 
 enum AppLeaguePackSettings {
@@ -48,6 +49,7 @@ enum LeaguePresentation {
         switch countryCode {
         case "dk": return 0
         case "de": return 1
+        case "en": return 2
         default: return 99
         }
     }
@@ -56,6 +58,7 @@ enum LeaguePresentation {
         switch countryCode {
         case "dk": return "Danmark"
         case "de": return "Tyskland"
+        case "en": return "England"
         default: return countryCode.uppercased()
         }
     }
@@ -79,6 +82,11 @@ enum LeaguePresentation {
             if normalized == "bundesliga" { return 0 }
             if normalized == "2. bundesliga" || normalized == "2 bundesliga" { return 1 }
             if normalized == "3. liga" || normalized == "3 liga" { return 2 }
+        case "en":
+            if normalized == "premier league" { return 0 }
+            if normalized == "championship" { return 1 }
+            if normalized == "league one" { return 2 }
+            if normalized == "league two" { return 3 }
         default:
             break
         }
@@ -87,6 +95,10 @@ enum LeaguePresentation {
         if normalized == "bundesliga" { return 10 }
         if normalized == "2. bundesliga" || normalized == "2 bundesliga" { return 11 }
         if normalized == "3. liga" || normalized == "3 liga" { return 12 }
+        if normalized == "premier league" { return 30 }
+        if normalized == "championship" { return 31 }
+        if normalized == "league one" { return 32 }
+        if normalized == "league two" { return 33 }
         if normalized == "1. division" || normalized == "1 division" { return 20 }
         if normalized == "2. division" || normalized == "2 division" { return 21 }
         if normalized == "3. division" || normalized == "3 division" { return 22 }
@@ -120,6 +132,19 @@ enum LeaguePresentation {
                 canonicalDivision = "2. Bundesliga"
             case "3. liga", "3 liga":
                 canonicalDivision = "3. Liga"
+            default:
+                canonicalDivision = division
+            }
+        case "en":
+            switch normalized {
+            case "premier league":
+                canonicalDivision = "Premier League"
+            case "championship":
+                canonicalDivision = "Championship"
+            case "league one":
+                canonicalDivision = "League One"
+            case "league two":
+                canonicalDivision = "League Two"
             default:
                 canonicalDivision = division
             }
@@ -336,6 +361,9 @@ struct CSVClubImporter {
         if enabledLeaguePacks.contains(AppLeaguePackId.germanyTop3.rawValue) {
             clubs.append(contentsOf: try loadClubs(fromCSVText: germanyTop3CSV, defaultCountryCode: "de", defaultLeaguePack: "germany_top_3"))
         }
+        if enabledLeaguePacks.contains(AppLeaguePackId.englandTop4.rawValue) {
+            clubs.append(contentsOf: try loadClubs(fromCSVText: englandTop4CSV, defaultCountryCode: "en", defaultLeaguePack: "england_top_4"))
+        }
 
         return clubs
     }
@@ -421,6 +449,102 @@ struct CSVClubImporter {
 
         return clubs
     }
+
+    private static let englandTop4CSV = """
+id,name,team,league,city,lat,lon,country_code,league_code,league_pack,short_code
+en-arsenal,Emirates Stadium,Arsenal,Premier League,London,51.555,-0.108333,en,en-premier-league,england_top_4,ARS
+en-aston-villa,Villa Park,Aston Villa,Premier League,Birmingham,52.509112,-1.884783,en,en-premier-league,england_top_4,AVL
+en-afc-bournemouth,Dean Court,AFC Bournemouth,Premier League,Bournemouth,50.747,-1.8868,en,en-premier-league,england_top_4,BOU
+en-brentford,Brentford Community Stadium,Brentford,Premier League,London,51.4882,-0.3026,en,en-premier-league,england_top_4,BRE
+en-brighton-and-hove-albion,Falmer Stadium,Brighton & Hove Albion,Premier League,Falmer,50.861551,-0.083624,en,en-premier-league,england_top_4,BHA
+en-burnley,Turf Moor,Burnley,Premier League,Burnley,53.789,-2.248,en,en-premier-league,england_top_4,BUR
+en-chelsea,Stamford Bridge,Chelsea,Premier League,London,51.481667,-0.191111,en,en-premier-league,england_top_4,CHE
+en-crystal-palace,Selhurst Park,Crystal Palace,Premier League,London,51.398333,-0.085556,en,en-premier-league,england_top_4,CRY
+en-everton,Hill Dickinson Stadium,Everton,Premier League,Liverpool,53.4251,-3.0028,en,en-premier-league,england_top_4,EVE
+en-fulham,Craven Cottage,Fulham,Premier League,London,51.475,-0.221667,en,en-premier-league,england_top_4,FUL
+en-leeds-united,Elland Road,Leeds United,Premier League,Leeds,53.7778,-1.5722,en,en-premier-league,england_top_4,LEE
+en-liverpool,Anfield,Liverpool,Premier League,Liverpool,53.430845,-2.960223,en,en-premier-league,england_top_4,LIV
+en-manchester-city,City of Manchester Stadium,Manchester City,Premier League,Manchester,53.483056,-2.200278,en,en-premier-league,england_top_4,MCI
+en-manchester-united,Old Trafford,Manchester United,Premier League,Trafford,53.463056,-2.291389,en,en-premier-league,england_top_4,MUN
+en-newcastle-united,St James' Park,Newcastle United,Premier League,Newcastle upon Tyne,54.9756,-1.621667,en,en-premier-league,england_top_4,NEW
+en-nottingham-forest,City Ground,Nottingham Forest,Premier League,West Bridgford,52.9399,-1.1329,en,en-premier-league,england_top_4,NFO
+en-sunderland,Stadium of Light,Sunderland,Premier League,Sunderland,54.9146,-1.3884,en,en-premier-league,england_top_4,SUN
+en-tottenham-hotspur,Tottenham Hotspur Stadium,Tottenham Hotspur,Premier League,London,51.6044,-0.0664,en,en-premier-league,england_top_4,TOT
+en-west-ham-united,London Stadium,West Ham United,Premier League,London,51.538611,-0.016389,en,en-premier-league,england_top_4,WHU
+en-wolverhampton-wanderers,Molineux Stadium,Wolverhampton Wanderers,Premier League,Wolverhampton,52.590225,-2.130389,en,en-premier-league,england_top_4,WOL
+en-birmingham-city,St Andrew's,Birmingham City,Championship,Birmingham,52.476,-1.868,en,en-championship,england_top_4,BIR
+en-blackburn-rovers,Ewood Park,Blackburn Rovers,Championship,Blackburn,53.729,-2.49,en,en-championship,england_top_4,BLB
+en-bristol-city,Ashton Gate,Bristol City,Championship,Bristol,51.44,-2.62,en,en-championship,england_top_4,BRC
+en-charlton-athletic,The Valley,Charlton Athletic,Championship,London,51.487,0.036,en,en-championship,england_top_4,CHA
+en-coventry-city,Coventry Building Society Arena,Coventry City,Championship,Coventry,52.448,-1.495,en,en-championship,england_top_4,COV
+en-derby-county,Pride Park,Derby County,Championship,Derby,52.915,-1.448,en,en-championship,england_top_4,DER
+en-hull-city,MKM Stadium,Hull City,Championship,Kingston upon Hull,53.746,-0.368,en,en-championship,england_top_4,HUL
+en-ipswich-town,Portman Road,Ipswich Town,Championship,Ipswich,52.055,1.145,en,en-championship,england_top_4,IPS
+en-leicester-city,King Power Stadium,Leicester City,Championship,Leicester,52.62,-1.142,en,en-championship,england_top_4,LEI
+en-middlesbrough,Riverside Stadium,Middlesbrough,Championship,Middlesbrough,54.578,-1.217,en,en-championship,england_top_4,MID
+en-millwall,The Den,Millwall,Championship,London,51.487,-0.051,en,en-championship,england_top_4,MIL
+en-norwich-city,Carrow Road,Norwich City,Championship,Norwich,52.622,1.31,en,en-championship,england_top_4,NOR
+en-oxford-united,Kassam Stadium,Oxford United,Championship,Oxford,51.716,-1.208,en,en-championship,england_top_4,OXF
+en-portsmouth,Fratton Park,Portsmouth,Championship,Portsmouth,50.796,-1.064,en,en-championship,england_top_4,POR
+en-preston-north-end,Deepdale,Preston North End,Championship,Preston,53.772,-2.688,en,en-championship,england_top_4,PNE
+en-queens-park-rangers,Loftus Road,Queens Park Rangers,Championship,London,51.509,-0.232,en,en-championship,england_top_4,QPR
+en-sheffield-united,Bramall Lane,Sheffield United,Championship,Sheffield,53.37,-1.47,en,en-championship,england_top_4,SHU
+en-sheffield-wednesday,Hillsborough Stadium,Sheffield Wednesday,Championship,Sheffield,53.411,-1.5,en,en-championship,england_top_4,SHW
+en-southampton,St Mary's Stadium,Southampton,Championship,Southampton,50.906,-1.392,en,en-championship,england_top_4,SOU
+en-stoke-city,bet365 Stadium,Stoke City,Championship,Stoke-on-Trent,52.989,-2.175,en,en-championship,england_top_4,STK
+en-swansea-city,Swansea.com Stadium,Swansea City,Championship,Swansea,51.643,-3.935,en,en-championship,england_top_4,SWA
+en-watford,Vicarage Road,Watford,Championship,Watford,51.65,-0.402,en,en-championship,england_top_4,WAT
+en-west-bromwich-albion,The Hawthorns,West Bromwich Albion,Championship,West Bromwich,52.509,-1.963,en,en-championship,england_top_4,WBA
+en-wrexham,Racecourse Ground,Wrexham,Championship,Wrexham,53.052,-3.004,en,en-championship,england_top_4,WRE
+en-afc-wimbledon,Plough Lane,AFC Wimbledon,League One,London,51.422,-0.208,en,en-league-one,england_top_4,AW
+en-barnsley,Oakwell,Barnsley,League One,Barnsley,53.522222,-1.4675,en,en-league-one,england_top_4,BAR
+en-blackpool,Bloomfield Road,Blackpool,League One,Blackpool,53.8049,-3.0481,en,en-league-one,england_top_4,BLP
+en-bolton-wanderers,Toughsheet Community Stadium,Bolton Wanderers,League One,Horwich,53.580556,-2.535556,en,en-league-one,england_top_4,BOL
+en-bradford-city,Valley Parade,Bradford City,League One,Bradford,53.8036,-1.76,en,en-league-one,england_top_4,BRA
+en-burton-albion,Pirelli Stadium,Burton Albion,League One,Burton upon Trent,52.8216,-1.6273,en,en-league-one,england_top_4,BUA
+en-cardiff-city,Cardiff City Stadium,Cardiff City,League One,Cardiff,51.473,-3.203,en,en-league-one,england_top_4,CAR
+en-doncaster-rovers,Eco-Power Stadium,Doncaster Rovers,League One,Doncaster,53.5099,-1.1158,en,en-league-one,england_top_4,DON
+en-exeter-city,St. James Park,Exeter City,League One,Exeter,50.7307,-3.5211,en,en-league-one,england_top_4,EXE
+en-huddersfield-town,Kirklees Stadium,Huddersfield Town,League One,Huddersfield,53.6543,-1.7684,en,en-league-one,england_top_4,HUD
+en-leyton-orient,Brisbane Road,Leyton Orient,League One,London,51.5602,-0.0127,en,en-league-one,england_top_4,LEY
+en-lincoln-city,Sincil Bank,Lincoln City,League One,Lincoln,53.2183,-0.5408,en,en-league-one,england_top_4,LIN
+en-luton-town,Kenilworth Road,Luton Town,League One,Luton,51.8841,-0.4316,en,en-league-one,england_top_4,LUT
+en-mansfield-town,Field Mill,Mansfield Town,League One,Mansfield,53.13826,-1.20069,en,en-league-one,england_top_4,MAN
+en-northampton-town,Sixfields Stadium,Northampton Town,League One,Northampton,52.2405,-0.9027,en,en-league-one,england_top_4,NHT
+en-peterborough-united,London Road Stadium,Peterborough United,League One,Peterborough,52.5647,-0.2402,en,en-league-one,england_top_4,PET
+en-plymouth-argyle,Home Park,Plymouth Argyle,League One,Plymouth,50.388,-4.1508,en,en-league-one,england_top_4,PLY
+en-port-vale,Vale Park,Port Vale,League One,Stoke-on-Trent,53.0497,-2.1925,en,en-league-one,england_top_4,PVA
+en-reading,Madejski Stadium,Reading,League One,Reading,51.4224,-0.9826,en,en-league-one,england_top_4,REA
+en-rotherham-united,New York Stadium,Rotherham United,League One,Rotherham,53.4279,-1.362,en,en-league-one,england_top_4,ROT
+en-stevenage,Broadhall Way,Stevenage,League One,Stevenage,51.89,-0.19361,en,en-league-one,england_top_4,STE
+en-stockport-county,Edgeley Park,Stockport County,League One,Stockport,53.4083,-2.1494,en,en-league-one,england_top_4,STO
+en-wigan-athletic,Brick Community Stadium,Wigan Athletic,League One,Wigan,53.547778,-2.653889,en,en-league-one,england_top_4,WIG
+en-wycombe-wanderers,Adams Park,Wycombe Wanderers,League One,High Wycombe,51.6286,-0.7482,en,en-league-one,england_top_4,WYC
+en-accrington-stanley,Crown Ground,Accrington Stanley,League Two,Accrington,53.7652,-2.3709,en,en-league-two,england_top_4,ACC
+en-barnet,The Hive Stadium,Barnet,League Two,London,51.65309,-0.2002261,en,en-league-two,england_top_4,BNT
+en-barrow,Holker Street,Barrow,League Two,Barrow-in-Furness,54.1233,-3.2349,en,en-league-two,england_top_4,BWR
+en-bristol-rovers,Memorial Stadium,Bristol Rovers,League Two,Bristol,51.4862,-2.5831,en,en-league-two,england_top_4,BRR
+en-bromley,Hayes Lane,Bromley,League Two,London,51.3901,0.0211,en,en-league-two,england_top_4,BRM
+en-cambridge-united,Abbey Stadium,Cambridge United,League Two,Cambridge,52.2121,0.1541,en,en-league-two,england_top_4,CAM
+en-cheltenham-town,Whaddon Road,Cheltenham Town,League Two,Cheltenham,51.9062,-2.0602,en,en-league-two,england_top_4,CHT
+en-chesterfield,SMH Group Stadium,Chesterfield,League Two,Chesterfield,53.2536,-1.425,en,en-league-two,england_top_4,CHF
+en-colchester-united,Colchester Community Stadium,Colchester United,League Two,Colchester,51.9229,0.897,en,en-league-two,england_top_4,COL
+en-crawley-town,Broadfield Stadium,Crawley Town,League Two,Crawley,51.0997,-0.1947,en,en-league-two,england_top_4,CRW
+en-crewe-alexandra,Gresty Road,Crewe Alexandra,League Two,Crewe,53.087419,-2.435747,en,en-league-two,england_top_4,CRE
+en-fleetwood-town,Highbury Stadium,Fleetwood Town,League Two,Fleetwood,53.9167,-3.0248,en,en-league-two,england_top_4,FLE
+en-gillingham,Priestfield Stadium,Gillingham,League Two,Gillingham,51.3843,0.5607,en,en-league-two,england_top_4,GIL
+en-grimsby-town,Blundell Park,Grimsby Town,League Two,Cleethorpes,53.5702,-0.0464,en,en-league-two,england_top_4,GRI
+en-harrogate-town,Wetherby Road,Harrogate Town,League Two,Harrogate,53.99166,-1.51525,en,en-league-two,england_top_4,HAR
+en-milton-keynes-dons,Stadium MK,Milton Keynes Dons,League Two,Milton Keynes,52.0097,-0.7334,en,en-league-two,england_top_4,MKD
+en-newport-county,Rodney Parade,Newport County,League Two,Newport,51.5882,-2.988,en,en-league-two,england_top_4,NEWP
+en-notts-county,Meadow Lane,Notts County,League Two,Nottingham,52.9426,-1.1372,en,en-league-two,england_top_4,NOT
+en-oldham-athletic,Boundary Park,Oldham Athletic,League Two,Oldham,53.5553,-2.1286,en,en-league-two,england_top_4,OLD
+en-salford-city,Moor Lane,Salford City,League Two,Salford,53.5136,-2.2768,en,en-league-two,england_top_4,SAL
+en-shrewsbury-town,New Meadow,Shrewsbury Town,League Two,Shrewsbury,52.6886,-2.7492,en,en-league-two,england_top_4,SHR
+en-swindon-town,County Ground,Swindon Town,League Two,Swindon,51.5584,-1.781,en,en-league-two,england_top_4,SWI
+en-tranmere-rovers,Prenton Park,Tranmere Rovers,League Two,Birkenhead,53.3738,-3.0325,en,en-league-two,england_top_4,TRA
+en-walsall,Bescot Stadium,Walsall,League Two,Walsall,52.5654,-1.9907,en,en-league-two,england_top_4,WAL
+"""
 
     private static let germanyTop3CSV = """
 id,name,team,league,city,lat,lon,country_code,league_code,league_pack,short_code

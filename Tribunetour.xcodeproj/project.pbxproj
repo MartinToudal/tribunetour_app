@@ -72,17 +72,17 @@
 			path = TribunetourTests;
 			sourceTree = "<group>";
 		};
-		A10000002F555EEB000DB2A4 /* TribunetourUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = TribunetourUITests;
-			sourceTree = "<group>";
-		};
 		1EF571FB2F328CD6000D6B18 /* Tribunetour */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				1E5334802F47A7CA0028CF61 /* Exceptions for "Tribunetour" folder in "Tribunetour" target */,
 			);
 			path = Tribunetour;
+			sourceTree = "<group>";
+		};
+		A10000002F555EEB000DB2A4 /* TribunetourUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = TribunetourUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -95,18 +95,18 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A10000042F555EEB000DB2A4 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		1EF571F62F328CD6000D6B18 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				1E1A1A1A3010000000BDDABE /* AppIntents.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A10000042F555EEB000DB2A4 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -167,6 +167,28 @@
 			productReference = 1EEDF0A82F555EEB000DB2A4 /* TribunetourTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		1EF571F82F328CD6000D6B18 /* Tribunetour */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1EF572042F328CD7000D6B18 /* Build configuration list for PBXNativeTarget "Tribunetour" */;
+			buildPhases = (
+				1EF571F52F328CD6000D6B18 /* Sources */,
+				1EF571F62F328CD6000D6B18 /* Frameworks */,
+				1EF571F72F328CD6000D6B18 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				1EF571FB2F328CD6000D6B18 /* Tribunetour */,
+			);
+			name = Tribunetour;
+			packageProductDependencies = (
+			);
+			productName = Tribunetour;
+			productReference = 1EF571F92F328CD6000D6B18 /* Tribunetour.app */;
+			productType = "com.apple.product-type.application";
+		};
 		A10000032F555EEB000DB2A4 /* TribunetourUITests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = A100000A2F555EEB000DB2A4 /* Build configuration list for PBXNativeTarget "TribunetourUITests" */;
@@ -190,28 +212,6 @@
 			productReference = A10000012F555EEB000DB2A4 /* TribunetourUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
-		1EF571F82F328CD6000D6B18 /* Tribunetour */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 1EF572042F328CD7000D6B18 /* Build configuration list for PBXNativeTarget "Tribunetour" */;
-			buildPhases = (
-				1EF571F52F328CD6000D6B18 /* Sources */,
-				1EF571F62F328CD6000D6B18 /* Frameworks */,
-				1EF571F72F328CD6000D6B18 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				1EF571FB2F328CD6000D6B18 /* Tribunetour */,
-			);
-			name = Tribunetour;
-			packageProductDependencies = (
-			);
-			productName = Tribunetour;
-			productReference = 1EF571F92F328CD6000D6B18 /* Tribunetour.app */;
-			productType = "com.apple.product-type.application";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -226,12 +226,12 @@
 						CreatedOnToolsVersion = 26.3;
 						TestTargetID = 1EF571F82F328CD6000D6B18;
 					};
+					1EF571F82F328CD6000D6B18 = {
+						CreatedOnToolsVersion = 26.2;
+					};
 					A10000032F555EEB000DB2A4 = {
 						CreatedOnToolsVersion = 26.3;
 						TestTargetID = 1EF571F82F328CD6000D6B18;
-					};
-					1EF571F82F328CD6000D6B18 = {
-						CreatedOnToolsVersion = 26.2;
 					};
 				};
 			};
@@ -264,14 +264,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		A10000062F555EEB000DB2A4 /* Resources */ = {
+		1EF571F72F328CD6000D6B18 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		1EF571F72F328CD6000D6B18 /* Resources */ = {
+		A10000062F555EEB000DB2A4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -282,13 +282,6 @@
 
 /* Begin PBXSourcesBuildPhase section */
 		1EEDF0A42F555EEB000DB2A4 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A10000052F555EEB000DB2A4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -306,6 +299,13 @@
 				1EE262D62F72C27500BDDABE /* HybridVisitedSyncBackend.swift in Sources */,
 				1EE2634B2F72CCBD00BDDABE /* AppAuthConfiguration.swift in Sources */,
 				1EE262D82F72C32400BDDABE /* SharedVisitedSyncModels.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A10000052F555EEB000DB2A4 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -364,46 +364,6 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Tribunetour.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Tribunetour";
-			};
-			name = Release;
-		};
-		A100000B2F555EEB000DB2A4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9HZZ899Q57;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = everystadium.TribunetourUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Tribunetour;
-			};
-			name = Debug;
-		};
-		A100000C2F555EEB000DB2A4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 9HZZ899Q57;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = everystadium.TribunetourUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				STRING_CATALOG_GENERATE_SYMBOLS = NO;
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = Tribunetour;
 			};
 			name = Release;
 		};
@@ -536,7 +496,7 @@
 				CODE_SIGN_ENTITLEMENTS = Tribunetour/Tribunetour.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9HZZ899Q57;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -554,7 +514,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = everystadium.Tribunetour;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -576,7 +536,7 @@
 				CODE_SIGN_ENTITLEMENTS = Tribunetour/Tribunetour.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 9;
+				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 9HZZ899Q57;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -594,7 +554,7 @@
 					"@executable_path/Frameworks",
 				);
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
-				MARKETING_VERSION = 0.1.1;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = everystadium.Tribunetour;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -608,6 +568,46 @@
 			};
 			name = Release;
 		};
+		A100000B2F555EEB000DB2A4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9HZZ899Q57;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = everystadium.TribunetourUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Tribunetour;
+			};
+			name = Debug;
+		};
+		A100000C2F555EEB000DB2A4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 9HZZ899Q57;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = everystadium.TribunetourUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = Tribunetour;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -616,15 +616,6 @@
 			buildConfigurations = (
 				1EEDF0AF2F555EEB000DB2A4 /* Debug */,
 				1EEDF0B02F555EEB000DB2A4 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		A100000A2F555EEB000DB2A4 /* Build configuration list for PBXNativeTarget "TribunetourUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				A100000B2F555EEB000DB2A4 /* Debug */,
-				A100000C2F555EEB000DB2A4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -643,6 +634,15 @@
 			buildConfigurations = (
 				1EF572052F328CD7000D6B18 /* Debug */,
 				1EF572062F328CD7000D6B18 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A100000A2F555EEB000DB2A4 /* Build configuration list for PBXNativeTarget "TribunetourUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				A100000B2F555EEB000DB2A4 /* Debug */,
+				A100000C2F555EEB000DB2A4 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
