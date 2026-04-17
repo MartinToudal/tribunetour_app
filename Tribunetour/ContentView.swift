@@ -209,6 +209,19 @@ struct StadiumsView: View {
         !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
+    private var activeScopeLabel: String {
+        if countryFilterRawValue == "all" {
+            return shouldShowCountryFilter ? "Alle aktive lande" : LeaguePresentation.countryLabel(countryOptions.first ?? "dk")
+        }
+        return LeaguePresentation.countryLabel(countryFilterRawValue)
+    }
+
+    private var mapSummaryText: String {
+        let total = filteredAndSortedClubs.count
+        let unvisited = filteredAndSortedClubs.filter { !visitedStore.isVisited($0.id) }.count
+        return "\(total) stadions i scope • \(unvisited) ubesøgte"
+    }
+
     private func sortComparator(_ a: Club, _ b: Club) -> Bool {
         let aVisited = visitedStore.isVisited(a.id)
         let bVisited = visitedStore.isVisited(b.id)
@@ -308,17 +321,35 @@ struct StadiumsView: View {
                     }
                 }
 
-                StadiumMapView(
-                    clubs: filteredAndSortedClubs,
-                    visitedStore: visitedStore,
-                    onSelect: { club in
-                        selectedClub = club
+                Section {
+                    VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Udforsk stadions i dit aktuelle scope")
+                                .font(.headline)
+
+                            Text("Kortet viser de stadions der matcher dine filtre lige nu. Tryk på et stadion for at zoome ind og få næste handling i bunden.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        HStack(spacing: 8) {
+                            Badge(text: activeScopeLabel, icon: "globe.europe.africa")
+                            Badge(text: mapSummaryText, icon: "map")
+                        }
+
+                        StadiumMapView(
+                            clubs: filteredAndSortedClubs,
+                            visitedStore: visitedStore,
+                            onSelect: { club in
+                                selectedClub = club
+                            }
+                        )
+                        .frame(height: 320)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
                     }
-                )
-                .frame(height: 320)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .padding(.vertical, 8)
+                }
                 .listRowInsets(EdgeInsets())
-                .padding(.vertical, 8)
 
                 if filteredAndSortedClubs.isEmpty {
                     Section {
@@ -678,18 +709,20 @@ struct StadiumMapView: View {
                         zoomToClub(club)
                         onSelect(club)
                     } label: {
-                        VStack(spacing: 4) {
-                            Image(systemName: visitedStore.isVisited(club.id) ? "checkmark.circle.fill" : "mappin.circle.fill")
-                                .font(.title2)
-                                .foregroundStyle(visitedStore.isVisited(club.id) ? .green : .primary)
+                        ZStack {
+                            Circle()
+                                .fill(visitedStore.isVisited(club.id) ? Color.green : Color.primary)
+                                .frame(width: 18, height: 18)
 
-                            Text(club.name)
-                                .font(.caption2)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 3)
-                                .background(.thinMaterial)
-                                .clipShape(Capsule())
+                            Image(systemName: visitedStore.isVisited(club.id) ? "checkmark" : "mappin")
+                                .font(.caption.bold())
+                                .foregroundStyle(.white)
                         }
+                        .overlay(
+                            Circle()
+                                .stroke(.thinMaterial, lineWidth: 4)
+                                .frame(width: 24, height: 24)
+                        )
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("\(club.stadium.name), \(club.name)")

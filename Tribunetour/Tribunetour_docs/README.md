@@ -149,6 +149,13 @@ Auth skal forstås som adgang til brugerens egen Tribunetour, ikke som en særsk
 
 - `docs/CURRENT_STATE.md`
 - `docs/PRODUCT_AND_CODE_WALKTHROUGH.txt`
+- `docs/UI_CONTRACT.md`
+- `docs/STADIUM_DETAIL_ALIGNMENT.md`
+- `docs/STADIUM_DETAIL_IMPLEMENTATION_PLAN.md`
+- `docs/MAP_UI_REVIEW.md`
+- `docs/MAP_UI_IMPLEMENTATION_PLAN.md`
+- `docs/UI_RELEASE_ROADMAP.md`
+- `docs/UI_SPRINT_1.md`
 - `docs/INTEGRATION_STATUS.md`
 - `docs/INTEGRATION_BACKLOG.md`
 - `docs/ONE_PRODUCT.md`
@@ -165,8 +172,15 @@ Hvis du vil forstå løsningen hurtigt:
 
 1. `docs/CURRENT_STATE.md`
 2. `docs/PRODUCT_AND_CODE_WALKTHROUGH.txt`
-3. `docs/INTEGRATION_STATUS.md`
-4. derefter de mere specialiserede dokumenter
+3. `docs/UI_CONTRACT.md`
+4. `docs/STADIUM_DETAIL_ALIGNMENT.md`
+5. `docs/STADIUM_DETAIL_IMPLEMENTATION_PLAN.md`
+6. `docs/MAP_UI_REVIEW.md`
+7. `docs/MAP_UI_IMPLEMENTATION_PLAN.md`
+8. `docs/UI_RELEASE_ROADMAP.md`
+9. `docs/UI_SPRINT_1.md`
+10. `docs/INTEGRATION_STATUS.md`
+11. derefter de mere specialiserede dokumenter
 
 ## Næste vigtigste arbejde
 

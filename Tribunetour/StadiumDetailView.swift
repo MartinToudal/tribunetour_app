@@ -47,44 +47,83 @@ struct StadiumDetailView: View {
     var body: some View {
         List {
             Section {
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(club.name)
-                        .font(.title2)
-                        .bold()
+                VStack(alignment: .leading, spacing: 14) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(club.name)
+                            .font(.title2.bold())
 
-                    Text(club.division)
-                        .foregroundStyle(.secondary)
+                        Text(club.stadium.name)
+                            .font(.title3.weight(.semibold))
 
-                    Text(club.stadium.name)
-                        .font(.headline)
-                        .padding(.top, 8)
+                        Text("\(club.stadium.city) • \(leagueLocationLabel)")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
 
-                    Text(club.stadium.city)
-                        .foregroundStyle(.secondary)
+                    VStack(alignment: .leading, spacing: 10) {
+                        HStack(spacing: 8) {
+                            StadiumPillLabel(
+                                title: visitedStore.isVisited(club.id) ? "Besøgt" : "Ikke besøgt",
+                                systemImage: visitedStore.isVisited(club.id) ? "checkmark.circle.fill" : "circle",
+                                tint: visitedStore.isVisited(club.id) ? .green : .secondary
+                            )
+
+                            if let shortCode = club.shortCode, !shortCode.isEmpty {
+                                StadiumPillLabel(
+                                    title: shortCode,
+                                    systemImage: "number",
+                                    tint: .secondary
+                                )
+                            }
+                        }
+
+                        HStack(spacing: 12) {
+                            StadiumStatTile(
+                                title: "Næste kamp",
+                                value: nextFixture.map { kickoffShortText(for: $0.kickoff) } ?? "Ingen"
+                            )
+
+                            StadiumStatTile(
+                                title: "Kommende",
+                                value: "\(upcomingFixtures.count)"
+                            )
+                        }
+                    }
                 }
-                .accessibilityElement(children: .combine)
+                .padding(16)
+                .background(Color(.secondarySystemBackground))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 .padding(.vertical, 6)
             }
 
-            Section("Status") {
-                Toggle("Besøgt", isOn: visitedBinding)
-                    .accessibilityIdentifier("stadium-detail-visited-toggle")
+            Section {
+                VStack(alignment: .leading, spacing: 12) {
+                    Toggle("Besøgt", isOn: visitedBinding)
+                        .accessibilityIdentifier("stadium-detail-visited-toggle")
 
-                DatePicker(
-                    "Besøgsdato",
-                    selection: visitedDateBinding,
-                    displayedComponents: .date
-                )
-                .disabled(!visitedStore.isVisited(club.id))
-                .opacity(visitedStore.isVisited(club.id) ? 1 : 0.4)
+                    DatePicker(
+                        "Besøgsdato",
+                        selection: visitedDateBinding,
+                        displayedComponents: .date
+                    )
+                    .disabled(!visitedStore.isVisited(club.id))
+                    .opacity(visitedStore.isVisited(club.id) ? 1 : 0.4)
 
-                if visitedStore.isVisited(club.id) {
-                    Button(role: .destructive) {
-                        visitedStore.setVisitedDate(club.id, nil)
-                    } label: {
-                        Label("Ryd dato", systemImage: "trash")
+                    if visitedStore.isVisited(club.id) {
+                        Button(role: .destructive) {
+                            visitedStore.setVisitedDate(club.id, nil)
+                        } label: {
+                            Label("Ryd dato", systemImage: "trash")
+                        }
                     }
+
+                    Text("Brug dette stadion som næste ankerpunkt i din tur, og gem dine egne noter, billeder og anmeldelser her.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
+            }
+            header: {
+                Text("Status og besøg")
             }
 
             if let nextFixture {
@@ -160,14 +199,14 @@ struct StadiumDetailView: View {
                 }
             }
 
-            Section("Noter") {
+            Section("Min relation til stadion") {
                 TextField("Skriv en note…", text: notesBinding, axis: .vertical)
                     .lineLimit(3...8)
                     .accessibilityIdentifier("stadium-note-field")
                     .accessibilityHint("Gemmer noter for dette stadion")
             }
 
-            Section("Billeder") {
+            Section("Billeder og minder") {
                 PhotosPicker(
                     selection: $selectedPhotoItems,
                     maxSelectionCount: 10,
@@ -358,18 +397,45 @@ struct StadiumDetailView: View {
                 .disabled(!reviewDraft.hasMeaningfulContent)
                 .accessibilityIdentifier("review-clear-button")
             } header: {
-                Text("Stadion-anmeldelse")
+                Text("Din anmeldelse")
             } footer: {
                 Text("Brug skalaen 1-10, hvor 1 er meget dårlig og 10 er fremragende.")
             }
 
-            Section("Kort") {
-                Button {
-                    openInAppleMaps()
-                } label: {
-                    Label("Åbn i Apple Maps", systemImage: "map")
+            Section("Fakta") {
+                HStack {
+                    Text("Land")
+                    Spacer()
+                    Text(LeaguePresentation.countryLabel(club.countryCode))
+                        .foregroundStyle(.secondary)
                 }
-                .accessibilityHint("Åbner rutevejledning til stadionet")
+                .accessibilityElement(children: .combine)
+
+                HStack {
+                    Text("Liga")
+                    Spacer()
+                    Text(club.division)
+                        .foregroundStyle(.secondary)
+                }
+                .accessibilityElement(children: .combine)
+
+                HStack {
+                    Text("By")
+                    Spacer()
+                    Text(club.stadium.city)
+                        .foregroundStyle(.secondary)
+                }
+                .accessibilityElement(children: .combine)
+
+                if let shortCode = club.shortCode, !shortCode.isEmpty {
+                    HStack {
+                        Text("Kode")
+                        Spacer()
+                        Text(shortCode)
+                            .foregroundStyle(.secondary)
+                    }
+                    .accessibilityElement(children: .combine)
+                }
 
                 HStack {
                     Text("Lat/Lon")
@@ -379,6 +445,15 @@ struct StadiumDetailView: View {
                         .font(.caption)
                 }
                 .accessibilityElement(children: .combine)
+            }
+
+            Section("Kort og rute") {
+                Button {
+                    openInAppleMaps()
+                } label: {
+                    Label("Åbn i Apple Maps", systemImage: "map")
+                }
+                .accessibilityHint("Åbner rutevejledning til stadionet")
             }
         }
         .navigationTitle("Stadion")
@@ -619,11 +694,26 @@ struct StadiumDetailView: View {
         clubById[teamId]?.name ?? teamId
     }
 
+    private var leagueLocationLabel: String {
+        if club.countryCode == "dk" {
+            return club.division
+        }
+        return "\(LeaguePresentation.countryLabel(club.countryCode)) • \(club.division)"
+    }
+
     private func kickoffText(for date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "da_DK")
         formatter.timeZone = matchTimeZone
         formatter.dateFormat = "EEE d. MMM • HH:mm"
+        return formatter.string(from: date).capitalized
+    }
+
+    private func kickoffShortText(for date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "da_DK")
+        formatter.timeZone = matchTimeZone
+        formatter.dateFormat = "d. MMM"
         return formatter.string(from: date).capitalized
     }
 
@@ -649,6 +739,44 @@ struct StadiumDetailView: View {
         item.openInMaps(launchOptions: [
             MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDriving
         ])
+    }
+}
+
+private struct StadiumPillLabel: View {
+    let title: String
+    let systemImage: String
+    let tint: Color
+
+    var body: some View {
+        Label(title, systemImage: systemImage)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(tint)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 6)
+            .background(tint.opacity(0.12))
+            .clipShape(Capsule())
+    }
+}
+
+private struct StadiumStatTile: View {
+    let title: String
+    let value: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            Text(value)
+                .font(.headline)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(12)
+        .background(Color(.tertiarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 }
 
