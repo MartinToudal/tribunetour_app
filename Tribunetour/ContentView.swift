@@ -322,20 +322,12 @@ struct StadiumsView: View {
                 }
 
                 Section {
-                    VStack(alignment: .leading, spacing: 12) {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Udforsk stadions i dit aktuelle scope")
-                                .font(.headline)
-
-                            Text("Kortet viser de stadions der matcher dine filtre lige nu. Tryk på et stadion for at zoome ind og få næste handling i bunden.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-
+                    VStack(alignment: .leading, spacing: 8) {
                         HStack(spacing: 8) {
                             Badge(text: activeScopeLabel, icon: "globe.europe.africa")
                             Badge(text: mapSummaryText, icon: "map")
                         }
+                        .font(.caption2)
 
                         StadiumMapView(
                             clubs: filteredAndSortedClubs,
@@ -587,6 +579,7 @@ struct StadiumMiniCard: View {
     let onOpenDetails: () -> Void
     let onToggleVisited: () -> Void
     let onOpenInMaps: () -> Void
+    @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
         VStack(spacing: 10) {
@@ -597,14 +590,11 @@ struct StadiumMiniCard: View {
                             .font(.headline)
 
                         if visited {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundStyle(.green)
+                            StadiumMiniStatePill(title: "Besøgt", systemImage: "checkmark.circle.fill", tint: .green)
                         }
 
                         if reviewed {
-                            Label("Anmeldt", systemImage: "checkmark.circle.fill")
-                                .font(.caption2.weight(.semibold))
-                                .foregroundStyle(.green)
+                            StadiumMiniStatePill(title: "Anmeldt", systemImage: "checkmark.circle.fill", tint: .green)
                         }
                     }
 
@@ -663,10 +653,14 @@ struct StadiumMiniCard: View {
             }
             .font(.caption)
         }
-        .padding(12)
-        .background(.thinMaterial)
+        .padding(14)
+        .background(colorScheme == .dark ? Color(.secondarySystemBackground).opacity(0.96) : Color(.systemBackground).opacity(0.98))
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(Color.primary.opacity(colorScheme == .dark ? 0.10 : 0.08), lineWidth: 1)
+        )
         .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
-        .shadow(radius: 8)
+        .shadow(color: .black.opacity(colorScheme == .dark ? 0.24 : 0.08), radius: 16, y: 8)
     }
 }
 
@@ -683,6 +677,22 @@ private struct MiniMapPrimaryButtonLabel: View {
             .padding(.vertical, 12)
             .background(colorScheme == .dark ? Color.white : Color.black)
             .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+}
+
+private struct StadiumMiniStatePill: View {
+    let title: String
+    let systemImage: String
+    let tint: Color
+
+    var body: some View {
+        Label(title, systemImage: systemImage)
+            .font(.caption2.weight(.semibold))
+            .foregroundStyle(tint)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 4)
+            .background(tint.opacity(0.12))
+            .clipShape(Capsule())
     }
 }
 
@@ -709,20 +719,7 @@ struct StadiumMapView: View {
                         zoomToClub(club)
                         onSelect(club)
                     } label: {
-                        ZStack {
-                            Circle()
-                                .fill(visitedStore.isVisited(club.id) ? Color.green : Color.primary)
-                                .frame(width: 18, height: 18)
-
-                            Image(systemName: visitedStore.isVisited(club.id) ? "checkmark" : "mappin")
-                                .font(.caption.bold())
-                                .foregroundStyle(.white)
-                        }
-                        .overlay(
-                            Circle()
-                                .stroke(.thinMaterial, lineWidth: 4)
-                                .frame(width: 24, height: 24)
-                        )
+                        StadiumMapPin(isVisited: visitedStore.isVisited(club.id))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("\(club.stadium.name), \(club.name)")
@@ -773,5 +770,45 @@ struct StadiumMapView: View {
                 span: MKCoordinateSpan(latitudeDelta: latDelta, longitudeDelta: lonDelta)
             )
         )
+    }
+}
+
+private struct StadiumMapPin: View {
+    let isVisited: Bool
+    @Environment(\.colorScheme) private var colorScheme
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ZStack {
+                Circle()
+                    .fill(isVisited ? Color.green : (colorScheme == .dark ? Color.white : Color.black))
+                    .frame(width: 22, height: 22)
+
+                Image(systemName: isVisited ? "checkmark" : "sportscourt")
+                    .font(.caption2.bold())
+                    .foregroundStyle(isVisited ? Color.white : (colorScheme == .dark ? Color.black : Color.white))
+            }
+            .overlay(
+                Circle()
+                    .stroke(Color(.systemBackground), lineWidth: 2)
+            )
+
+            Triangle()
+                .fill(isVisited ? Color.green : (colorScheme == .dark ? Color.white : Color.black))
+                .frame(width: 10, height: 7)
+                .offset(y: -1)
+        }
+        .shadow(color: .black.opacity(colorScheme == .dark ? 0.28 : 0.12), radius: 6, y: 3)
+    }
+}
+
+private struct Triangle: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY))
+        path.closeSubpath()
+        return path
     }
 }
