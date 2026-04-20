@@ -10,9 +10,9 @@ enum AppPremiumAdminPack: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .germanyTop3:
-            return "Tyskland top 3"
+            return "Tyskland"
         case .englandTop4:
-            return "England top 4"
+            return "England"
         case .premiumFull:
             return "Alle premium-pakker"
         }
