@@ -1189,7 +1189,11 @@ struct StatsView: View {
                     urlSession: .shared
                 )
             )
-            try await backend.submitAccessRequest(pack: premiumRequestPack, message: premiumRequestMessage)
+            try await backend.submitAccessRequest(
+                pack: premiumRequestPack,
+                message: premiumRequestMessage,
+                notificationURL: authConfiguration.premiumAccessRequestNotificationURL
+            )
             premiumRequestInfoMessage = "Din anmodning om \(premiumRequestPack.title) er sendt."
             premiumRequestMessage = ""
         } catch {

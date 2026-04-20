@@ -156,13 +156,18 @@ final class SharedPremiumAdminBackend {
         return try await perform(request, decodeAs: [PremiumAccessAdminRow].self)
     }
 
-    func submitAccessRequest(pack: AppPremiumAdminPack, message: String?) async throws {
+    func submitAccessRequest(pack: AppPremiumAdminPack, message: String?, notificationURL: URL? = nil) async throws {
         let payload = PremiumAccessRequestPayload(
             targetPackKey: pack.rawValue,
             requestMessage: message?.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty
         )
         let request = try await rpcRequest(functionName: "submit_premium_access_request", payload: payload)
-        _ = try await perform(request, decodeAs: [PremiumAccessRequestReceipt].self)
+        let receipt = try await perform(request, decodeAs: [PremiumAccessRequestReceipt].self)
+
+        if let notificationURL,
+           let requestId = receipt.first?.requestId {
+            await sendAccessRequestNotification(requestId: requestId, notificationURL: notificationURL)
+        }
     }
 
     func approveAccessRequest(requestId: String) async throws -> [PremiumAccessAdminRow] {
@@ -215,6 +220,24 @@ final class SharedPremiumAdminBackend {
         }
     }
 
+    private func sendAccessRequestNotification(requestId: String, notificationURL: URL) async {
+        guard let token = await configuration.authTokenProvider() else {
+            return
+        }
+
+        do {
+            var request = URLRequest(url: notificationURL)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.httpBody = try JSONEncoder().encode(PremiumAccessNotificationPayload(requestId: requestId))
+            _ = try await configuration.urlSession.data(for: request)
+        } catch {
+            // Premium requests should still succeed even if the admin email notification cannot be sent.
+        }
+    }
+
     private static let fractionalDateFormatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
@@ -255,6 +278,14 @@ private struct PremiumAccessApprovalPayload: Encodable {
 
     private enum CodingKeys: String, CodingKey {
         case requestId = "target_request_id"
+    }
+}
+
+private struct PremiumAccessNotificationPayload: Encodable {
+    let requestId: String
+
+    private enum CodingKeys: String, CodingKey {
+        case requestId = "request_id"
     }
 }
 
