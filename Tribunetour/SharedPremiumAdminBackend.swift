@@ -59,6 +59,9 @@ enum SharedPremiumAdminError: LocalizedError {
             if body.contains("not_authorized") {
                 return "Den aktuelle bruger har ikke admin-adgang."
             }
+            if body.contains("auth_required") {
+                return "Du skal være logget ind for at anmode om premium-adgang."
+            }
             if body.contains("user_not_found") {
                 return "Brugeren blev ikke fundet i Supabase Auth."
             }
@@ -110,6 +113,15 @@ final class SharedPremiumAdminBackend {
         let payload = PremiumAccessMutationPayload(targetEmail: email, targetPackKey: pack.rawValue)
         let request = try await rpcRequest(functionName: "revoke_league_pack_access_by_email", payload: payload)
         return try await perform(request, decodeAs: [PremiumAccessAdminRow].self)
+    }
+
+    func submitAccessRequest(pack: AppPremiumAdminPack, message: String?) async throws {
+        let payload = PremiumAccessRequestPayload(
+            targetPackKey: pack.rawValue,
+            requestMessage: message?.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty
+        )
+        let request = try await rpcRequest(functionName: "submit_premium_access_request", payload: payload)
+        _ = try await perform(request, decodeAs: [PremiumAccessRequestReceipt].self)
     }
 
     private func rpcRequest<T: Encodable>(functionName: String, payload: T) async throws -> URLRequest {
@@ -178,5 +190,29 @@ private struct PremiumAccessMutationPayload: Encodable {
     private enum CodingKeys: String, CodingKey {
         case targetEmail = "target_email"
         case targetPackKey = "target_pack_key"
+    }
+}
+
+private struct PremiumAccessRequestPayload: Encodable {
+    let targetPackKey: String
+    let requestMessage: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case targetPackKey = "target_pack_key"
+        case requestMessage = "request_message"
+    }
+}
+
+private struct PremiumAccessRequestReceipt: Decodable {
+    let requestId: String
+
+    private enum CodingKeys: String, CodingKey {
+        case requestId = "request_id"
+    }
+}
+
+private extension String {
+    var nilIfEmpty: String? {
+        isEmpty ? nil : self
     }
 }

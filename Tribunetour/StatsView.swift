@@ -56,6 +56,11 @@ struct StatsView: View {
     @State private var pendingBootstrapStatus: AppVisitedBootstrapStatus?
     @State private var showBootstrapAlert: Bool = false
     @State private var showAuthSheet: Bool = false
+    @State private var premiumRequestPack: AppPremiumAdminPack = .premiumFull
+    @State private var premiumRequestMessage: String = ""
+    @State private var premiumRequestInfoMessage: String?
+    @State private var premiumRequestErrorMessage: String?
+    @State private var premiumRequestLoading: Bool = false
     @FocusState private var focusedAuthField: AuthField?
 
     // MARK: - Derived stats
@@ -656,11 +661,54 @@ struct StatsView: View {
                                 .foregroundStyle(.red)
                         }
 
+                        VStack(alignment: .leading, spacing: 10) {
+                            Text("Premium-adgang")
+                                .font(.headline)
+                            Text("Anmod om adgang til ligaer i andre lande. Vi behandler anmodningen manuelt og åbner for pakken på din konto.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+
+                            Picker("Pakke", selection: $premiumRequestPack) {
+                                ForEach(AppPremiumAdminPack.allCases) { pack in
+                                    Text(pack.title).tag(pack)
+                                }
+                            }
+
+                            TextField("Besked, valgfri", text: $premiumRequestMessage, axis: .vertical)
+                                .textInputAutocapitalization(.sentences)
+                                .lineLimit(2...4)
+
+                            Button {
+                                Task { await submitPremiumAccessRequest() }
+                            } label: {
+                                StatsActionButtonLabel(
+                                    title: premiumRequestLoading ? "Sender..." : "Anmod om premium-adgang",
+                                    isActive: !premiumRequestLoading
+                                )
+                            }
+                            .buttonStyle(.plain)
+                            .disabled(premiumRequestLoading)
+
+                            if let premiumRequestInfoMessage {
+                                Text(premiumRequestInfoMessage)
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+
+                            if let premiumRequestErrorMessage {
+                                Text(premiumRequestErrorMessage)
+                                    .font(.caption)
+                                    .foregroundStyle(.red)
+                            }
+                        }
+
                         Button("Log ud", role: .destructive) {
                             authSession.clearSession()
                             loginInfoMessage = nil
                             loginErrorMessage = nil
                             pendingBootstrapStatus = nil
+                            premiumRequestInfoMessage = nil
+                            premiumRequestErrorMessage = nil
                         }
                     } else {
                         let configuration = authClient.currentConfiguration()
@@ -1118,6 +1166,35 @@ struct StatsView: View {
             loginErrorMessage = error.localizedDescription
         }
         loginLoading = false
+    }
+
+    @MainActor
+    private func submitPremiumAccessRequest() async {
+        guard !premiumRequestLoading else { return }
+
+        premiumRequestLoading = true
+        premiumRequestInfoMessage = nil
+        premiumRequestErrorMessage = nil
+        defer { premiumRequestLoading = false }
+
+        do {
+            let authConfiguration = AppAuthConfiguration.load()
+            let backend = SharedPremiumAdminBackend(
+                configuration: SharedLeaguePackAccessConfiguration(
+                    baseURL: authConfiguration.supabaseURL,
+                    apiKey: authConfiguration.supabaseAnonKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        ? nil
+                        : authConfiguration.supabaseAnonKey,
+                    authTokenProvider: authSession.authTokenProvider(using: authClient),
+                    urlSession: .shared
+                )
+            )
+            try await backend.submitAccessRequest(pack: premiumRequestPack, message: premiumRequestMessage)
+            premiumRequestInfoMessage = "Din anmodning om \(premiumRequestPack.title) er sendt."
+            premiumRequestMessage = ""
+        } catch {
+            premiumRequestErrorMessage = error.localizedDescription
+        }
     }
 
     @MainActor
