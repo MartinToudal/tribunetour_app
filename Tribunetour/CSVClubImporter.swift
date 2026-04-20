@@ -4,6 +4,7 @@ enum AppLeaguePackId: String, CaseIterable {
     case coreDenmark = "core_denmark"
     case germanyTop3 = "germany_top_3"
     case englandTop4 = "england_top_4"
+    case premiumFull = "premium_full"
 }
 
 enum AppLeaguePackSettings {
@@ -28,6 +29,10 @@ enum AppLeaguePackSettings {
         var ids: Set<String> = [AppLeaguePackId.coreDenmark.rawValue]
         ids.formUnion(debugEnabledLeaguePacks)
         ids.formUnion(remoteEnabledLeaguePacks)
+        if ids.contains(AppLeaguePackId.premiumFull.rawValue) {
+            ids.insert(AppLeaguePackId.germanyTop3.rawValue)
+            ids.insert(AppLeaguePackId.englandTop4.rawValue)
+        }
         return ids
     }
 
