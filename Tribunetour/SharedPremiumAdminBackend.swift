@@ -1,0 +1,182 @@
+import Foundation
+
+enum AppPremiumAdminPack: String, CaseIterable, Identifiable {
+    case germanyTop3 = "germany_top_3"
+    case englandTop4 = "england_top_4"
+    case premiumFull = "premium_full"
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .germanyTop3:
+            return "Tyskland top 3"
+        case .englandTop4:
+            return "England top 4"
+        case .premiumFull:
+            return "Alle premium-pakker"
+        }
+    }
+}
+
+struct PremiumAccessAdminRow: Identifiable, Decodable, Equatable {
+    let email: String
+    let userId: String
+    let packKey: String
+    let enabled: Bool
+    let updatedAt: Date?
+
+    var id: String { "\(userId)-\(packKey)" }
+
+    var packTitle: String {
+        AppPremiumAdminPack(rawValue: packKey)?.title ?? packKey
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case email
+        case userId = "user_id"
+        case packKey = "pack_key"
+        case enabled
+        case updatedAt = "updated_at"
+    }
+}
+
+enum SharedPremiumAdminError: LocalizedError {
+    case notConfigured
+    case missingAuthToken
+    case invalidPayload
+    case invalidHTTPStatus(Int, String)
+
+    var errorDescription: String? {
+        switch self {
+        case .notConfigured:
+            return "Premium admin er ikke konfigureret."
+        case .missingAuthToken:
+            return "Du skal være logget ind for at bruge premium admin."
+        case .invalidPayload:
+            return "Premium admin-svaret kunne ikke læses."
+        case .invalidHTTPStatus(let code, let body):
+            if body.contains("not_authorized") {
+                return "Den aktuelle bruger har ikke admin-adgang."
+            }
+            if body.contains("user_not_found") {
+                return "Brugeren blev ikke fundet i Supabase Auth."
+            }
+            if body.contains("invalid_pack_key") {
+                return "Premium-pakken er ikke gyldig."
+            }
+            return body.isEmpty ? "Premium admin fejlede med status \(code)." : body
+        }
+    }
+}
+
+final class SharedPremiumAdminBackend {
+    private let configuration: SharedLeaguePackAccessConfiguration
+    private let decoder: JSONDecoder
+
+    init(configuration: SharedLeaguePackAccessConfiguration) {
+        self.configuration = configuration
+        self.decoder = JSONDecoder()
+        self.decoder.dateDecodingStrategy = .custom { decoder in
+            let container = try decoder.singleValueContainer()
+            let value = try container.decode(String.self)
+            if let date = Self.fractionalDateFormatter.date(from: value) {
+                return date
+            }
+            if let date = Self.dateFormatter.date(from: value) {
+                return date
+            }
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid date: \(value)")
+        }
+    }
+
+    func isCurrentUserAdmin() async throws -> Bool {
+        let request = try await rpcRequest(functionName: "is_current_user_admin", payload: EmptyPayload())
+        return try await perform(request, decodeAs: Bool.self)
+    }
+
+    func listPremiumAccess() async throws -> [PremiumAccessAdminRow] {
+        let request = try await rpcRequest(functionName: "list_premium_access", payload: EmptyPayload())
+        return try await perform(request, decodeAs: [PremiumAccessAdminRow].self)
+    }
+
+    func grant(email: String, pack: AppPremiumAdminPack) async throws -> [PremiumAccessAdminRow] {
+        let payload = PremiumAccessMutationPayload(targetEmail: email, targetPackKey: pack.rawValue)
+        let request = try await rpcRequest(functionName: "grant_league_pack_access_by_email", payload: payload)
+        return try await perform(request, decodeAs: [PremiumAccessAdminRow].self)
+    }
+
+    func revoke(email: String, pack: AppPremiumAdminPack) async throws -> [PremiumAccessAdminRow] {
+        let payload = PremiumAccessMutationPayload(targetEmail: email, targetPackKey: pack.rawValue)
+        let request = try await rpcRequest(functionName: "revoke_league_pack_access_by_email", payload: payload)
+        return try await perform(request, decodeAs: [PremiumAccessAdminRow].self)
+    }
+
+    private func rpcRequest<T: Encodable>(functionName: String, payload: T) async throws -> URLRequest {
+        guard
+            let baseURL = configuration.baseURL,
+            let apiKey = configuration.apiKey?.trimmingCharacters(in: .whitespacesAndNewlines),
+            !apiKey.isEmpty
+        else {
+            throw SharedPremiumAdminError.notConfigured
+        }
+
+        guard let token = await configuration.authTokenProvider() else {
+            throw SharedPremiumAdminError.missingAuthToken
+        }
+
+        let url = baseURL
+            .appendingPathComponent("rest/v1/rpc")
+            .appendingPathComponent(functionName)
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.httpBody = try JSONEncoder().encode(payload)
+        return request
+    }
+
+    private func perform<T: Decodable>(_ request: URLRequest, decodeAs type: T.Type) async throws -> T {
+        let (data, response) = try await configuration.urlSession.data(for: request)
+        guard let http = response as? HTTPURLResponse else {
+            throw SharedPremiumAdminError.invalidPayload
+        }
+
+        guard (200...299).contains(http.statusCode) else {
+            let body = String(data: data, encoding: .utf8) ?? ""
+            throw SharedPremiumAdminError.invalidHTTPStatus(http.statusCode, body)
+        }
+
+        do {
+            return try decoder.decode(T.self, from: data)
+        } catch {
+            throw SharedPremiumAdminError.invalidPayload
+        }
+    }
+
+    private static let fractionalDateFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
+    private static let dateFormatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter
+    }()
+}
+
+private struct EmptyPayload: Encodable {}
+
+private struct PremiumAccessMutationPayload: Encodable {
+    let targetEmail: String
+    let targetPackKey: String
+
+    private enum CodingKeys: String, CodingKey {
+        case targetEmail = "target_email"
+        case targetPackKey = "target_pack_key"
+    }
+}

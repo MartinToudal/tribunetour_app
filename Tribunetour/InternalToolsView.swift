@@ -25,6 +25,12 @@ struct InternalToolsView: View {
     @State private var importText: String = ""
     @State private var importError: String?
     @State private var showImportSuccess = false
+    @State private var premiumAdminEmail: String = ""
+    @State private var premiumAdminSelectedPack: AppPremiumAdminPack = .premiumFull
+    @State private var premiumAdminRows: [PremiumAccessAdminRow] = []
+    @State private var premiumAdminIsAdmin: Bool?
+    @State private var premiumAdminMessage: String?
+    @State private var premiumAdminIsLoading = false
 
     var body: some View {
         List {
@@ -191,6 +197,91 @@ struct InternalToolsView: View {
                     .foregroundStyle(.secondary)
             }
 
+            Section("Premium admin") {
+                if appState.authSession.snapshot.isAuthenticated {
+                    if premiumAdminIsAdmin == true {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Brugerens e-mail")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                            TextField("bruger@email.dk", text: $premiumAdminEmail)
+                                .textInputAutocapitalization(.never)
+                                .autocorrectionDisabled()
+                                .keyboardType(.emailAddress)
+                        }
+
+                        Picker("Pakke", selection: $premiumAdminSelectedPack) {
+                            ForEach(AppPremiumAdminPack.allCases) { pack in
+                                Text(pack.title).tag(pack)
+                            }
+                        }
+
+                        Button {
+                            Task { await mutatePremiumAccess(grant: true) }
+                        } label: {
+                            Label("Tildel adgang", systemImage: "checkmark.seal")
+                        }
+                        .disabled(premiumAdminIsLoading || premiumAdminEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+
+                        Button(role: .destructive) {
+                            Task { await mutatePremiumAccess(grant: false) }
+                        } label: {
+                            Label("Fjern adgang", systemImage: "xmark.seal")
+                        }
+                        .disabled(premiumAdminIsLoading || premiumAdminEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+
+                        if premiumAdminRows.isEmpty {
+                            Text("Ingen aktive premium-adgange hentet endnu.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        } else {
+                            ForEach(premiumAdminRows.filter(\.enabled)) { row in
+                                VStack(alignment: .leading, spacing: 3) {
+                                    Text(row.email)
+                                        .font(.subheadline.weight(.semibold))
+                                    Text(row.packTitle)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                        }
+                    } else if premiumAdminIsAdmin == false {
+                        Text("Den aktuelle bruger har ikke admin-adgang.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        Text("Tjekker admin-adgang...")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    Button {
+                        Task { await loadPremiumAdminState() }
+                    } label: {
+                        if premiumAdminIsLoading {
+                            Label("Henter...", systemImage: "hourglass")
+                        } else {
+                            Label("Opdater premium admin", systemImage: "arrow.clockwise")
+                        }
+                    }
+                    .disabled(premiumAdminIsLoading)
+                } else {
+                    Text("Log ind under Min tur for at bruge premium admin.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                if let premiumAdminMessage {
+                    Text(premiumAdminMessage)
+                        .font(.caption)
+                        .foregroundStyle(premiumAdminMessage.contains("Fejl") ? .red : .green)
+                }
+
+                Text("Panelet er skjult i Interne værktøjer, men Supabase tjekker stadig, at den loggede bruger er admin.")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
             Section("Reference-data") {
                 Toggle("Tyskland top 3 (eksperimentel)", isOn: $germanyTop3Enabled)
                     .onChange(of: germanyTop3Enabled) { _, _ in
@@ -258,6 +349,15 @@ struct InternalToolsView: View {
             }
         }
         .navigationTitle("Interne værktøjer")
+        .task(id: appState.authSession.snapshot.isAuthenticated) {
+            if appState.authSession.snapshot.isAuthenticated {
+                await loadPremiumAdminState()
+            } else {
+                premiumAdminIsAdmin = nil
+                premiumAdminRows = []
+                premiumAdminMessage = nil
+            }
+        }
         .overlay(alignment: .top) {
             if showExportToast {
                 Text("Backup kopieret")
@@ -367,5 +467,64 @@ struct InternalToolsView: View {
         case .localFallback:
             return "local fallback"
         }
+    }
+
+    private func loadPremiumAdminState() async {
+        guard !premiumAdminIsLoading else { return }
+        premiumAdminIsLoading = true
+        defer { premiumAdminIsLoading = false }
+
+        do {
+            let backend = makePremiumAdminBackend()
+            let isAdmin = try await backend.isCurrentUserAdmin()
+            premiumAdminIsAdmin = isAdmin
+            guard isAdmin else {
+                premiumAdminRows = []
+                premiumAdminMessage = nil
+                return
+            }
+            premiumAdminRows = try await backend.listPremiumAccess()
+            premiumAdminMessage = nil
+        } catch {
+            premiumAdminIsAdmin = false
+            premiumAdminRows = []
+            premiumAdminMessage = "Fejl: \(error.localizedDescription)"
+        }
+    }
+
+    private func mutatePremiumAccess(grant: Bool) async {
+        let trimmedEmail = premiumAdminEmail.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedEmail.isEmpty, !premiumAdminIsLoading else { return }
+
+        premiumAdminIsLoading = true
+        defer { premiumAdminIsLoading = false }
+
+        do {
+            let backend = makePremiumAdminBackend()
+            _ = grant
+                ? try await backend.grant(email: trimmedEmail, pack: premiumAdminSelectedPack)
+                : try await backend.revoke(email: trimmedEmail, pack: premiumAdminSelectedPack)
+            premiumAdminRows = try await backend.listPremiumAccess()
+            await appState.refreshLeaguePackAccess()
+            premiumAdminMessage = grant
+                ? "Adgang tildelt til \(trimmedEmail)."
+                : "Adgang fjernet fra \(trimmedEmail)."
+        } catch {
+            premiumAdminMessage = "Fejl: \(error.localizedDescription)"
+        }
+    }
+
+    private func makePremiumAdminBackend() -> SharedPremiumAdminBackend {
+        let authConfiguration = AppAuthConfiguration.load()
+        return SharedPremiumAdminBackend(
+            configuration: SharedLeaguePackAccessConfiguration(
+                baseURL: authConfiguration.supabaseURL,
+                apiKey: authConfiguration.supabaseAnonKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                    ? nil
+                    : authConfiguration.supabaseAnonKey,
+                authTokenProvider: appState.authSession.authTokenProvider(using: appState.authClient),
+                urlSession: .shared
+            )
+        )
     }
 }
