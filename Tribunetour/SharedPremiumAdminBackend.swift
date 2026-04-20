@@ -44,6 +44,36 @@ struct PremiumAccessAdminRow: Identifiable, Decodable, Equatable {
     }
 }
 
+struct PremiumAccessRequestAdminRow: Identifiable, Decodable, Equatable {
+    let requestId: String
+    let email: String
+    let userId: String
+    let packKey: String
+    let status: String
+    let message: String?
+    let createdAt: Date?
+    let updatedAt: Date?
+
+    var id: String { requestId }
+
+    var packTitle: String {
+        AppPremiumAdminPack(rawValue: packKey)?.title ?? packKey
+    }
+
+    var isOpen: Bool { status == "open" }
+
+    private enum CodingKeys: String, CodingKey {
+        case requestId = "request_id"
+        case email
+        case userId = "user_id"
+        case packKey = "pack_key"
+        case status
+        case message
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+}
+
 enum SharedPremiumAdminError: LocalizedError {
     case notConfigured
     case missingAuthToken
@@ -67,6 +97,9 @@ enum SharedPremiumAdminError: LocalizedError {
             }
             if body.contains("user_not_found") {
                 return "Brugeren blev ikke fundet i Supabase Auth."
+            }
+            if body.contains("request_not_found") {
+                return "Anmodningen blev ikke fundet."
             }
             if body.contains("invalid_pack_key") {
                 return "Premium-pakken er ikke gyldig."
@@ -106,6 +139,11 @@ final class SharedPremiumAdminBackend {
         return try await perform(request, decodeAs: [PremiumAccessAdminRow].self)
     }
 
+    func listPremiumAccessRequests() async throws -> [PremiumAccessRequestAdminRow] {
+        let request = try await rpcRequest(functionName: "list_premium_access_requests", payload: EmptyPayload())
+        return try await perform(request, decodeAs: [PremiumAccessRequestAdminRow].self)
+    }
+
     func grant(email: String, pack: AppPremiumAdminPack) async throws -> [PremiumAccessAdminRow] {
         let payload = PremiumAccessMutationPayload(targetEmail: email, targetPackKey: pack.rawValue)
         let request = try await rpcRequest(functionName: "grant_league_pack_access_by_email", payload: payload)
@@ -125,6 +163,12 @@ final class SharedPremiumAdminBackend {
         )
         let request = try await rpcRequest(functionName: "submit_premium_access_request", payload: payload)
         _ = try await perform(request, decodeAs: [PremiumAccessRequestReceipt].self)
+    }
+
+    func approveAccessRequest(requestId: String) async throws -> [PremiumAccessAdminRow] {
+        let payload = PremiumAccessApprovalPayload(requestId: requestId)
+        let request = try await rpcRequest(functionName: "approve_premium_access_request", payload: payload)
+        return try await perform(request, decodeAs: [PremiumAccessAdminRow].self)
     }
 
     private func rpcRequest<T: Encodable>(functionName: String, payload: T) async throws -> URLRequest {
@@ -203,6 +247,14 @@ private struct PremiumAccessRequestPayload: Encodable {
     private enum CodingKeys: String, CodingKey {
         case targetPackKey = "target_pack_key"
         case requestMessage = "request_message"
+    }
+}
+
+private struct PremiumAccessApprovalPayload: Encodable {
+    let requestId: String
+
+    private enum CodingKeys: String, CodingKey {
+        case requestId = "target_request_id"
     }
 }
 

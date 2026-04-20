@@ -28,9 +28,11 @@ struct InternalToolsView: View {
     @State private var premiumAdminEmail: String = ""
     @State private var premiumAdminSelectedPack: AppPremiumAdminPack = .premiumFull
     @State private var premiumAdminRows: [PremiumAccessAdminRow] = []
+    @State private var premiumAdminRequestRows: [PremiumAccessRequestAdminRow] = []
     @State private var premiumAdminIsAdmin: Bool?
     @State private var premiumAdminMessage: String?
     @State private var premiumAdminIsLoading = false
+    @State private var premiumAdminActiveRequestId: String?
 
     var body: some View {
         List {
@@ -200,6 +202,45 @@ struct InternalToolsView: View {
             Section("Premium admin") {
                 if appState.authSession.snapshot.isAuthenticated {
                     if premiumAdminIsAdmin == true {
+                        let openRequests = premiumAdminRequestRows.filter(\.isOpen)
+
+                        if openRequests.isEmpty {
+                            Text("Ingen åbne premium-anmodninger.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        } else {
+                            ForEach(openRequests) { request in
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text(request.email)
+                                        .font(.subheadline.weight(.semibold))
+                                    Text(request.packTitle)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                    if let message = request.message,
+                                       !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                        Text(message)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                    if let createdAt = request.createdAt {
+                                        Text(createdAt.formatted(date: .abbreviated, time: .shortened))
+                                            .font(.caption2)
+                                            .foregroundStyle(.tertiary)
+                                    }
+                                    Button {
+                                        Task { await approvePremiumAccessRequest(request) }
+                                    } label: {
+                                        if premiumAdminActiveRequestId == request.requestId {
+                                            Label("Godkender...", systemImage: "hourglass")
+                                        } else {
+                                            Label("Godkend anmodning", systemImage: "checkmark.circle")
+                                        }
+                                    }
+                                    .disabled(premiumAdminIsLoading || premiumAdminActiveRequestId != nil)
+                                }
+                            }
+                        }
+
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Brugerens e-mail")
                                 .font(.caption)
@@ -355,6 +396,7 @@ struct InternalToolsView: View {
             } else {
                 premiumAdminIsAdmin = nil
                 premiumAdminRows = []
+                premiumAdminRequestRows = []
                 premiumAdminMessage = nil
             }
         }
@@ -480,14 +522,17 @@ struct InternalToolsView: View {
             premiumAdminIsAdmin = isAdmin
             guard isAdmin else {
                 premiumAdminRows = []
+                premiumAdminRequestRows = []
                 premiumAdminMessage = nil
                 return
             }
             premiumAdminRows = try await backend.listPremiumAccess()
+            premiumAdminRequestRows = try await backend.listPremiumAccessRequests()
             premiumAdminMessage = nil
         } catch {
             premiumAdminIsAdmin = false
             premiumAdminRows = []
+            premiumAdminRequestRows = []
             premiumAdminMessage = "Fejl: \(error.localizedDescription)"
         }
     }
@@ -509,6 +554,28 @@ struct InternalToolsView: View {
             premiumAdminMessage = grant
                 ? "Adgang tildelt til \(trimmedEmail)."
                 : "Adgang fjernet fra \(trimmedEmail)."
+        } catch {
+            premiumAdminMessage = "Fejl: \(error.localizedDescription)"
+        }
+    }
+
+    private func approvePremiumAccessRequest(_ requestRow: PremiumAccessRequestAdminRow) async {
+        guard !premiumAdminIsLoading, premiumAdminActiveRequestId == nil else { return }
+
+        premiumAdminIsLoading = true
+        premiumAdminActiveRequestId = requestRow.requestId
+        defer {
+            premiumAdminIsLoading = false
+            premiumAdminActiveRequestId = nil
+        }
+
+        do {
+            let backend = makePremiumAdminBackend()
+            _ = try await backend.approveAccessRequest(requestId: requestRow.requestId)
+            premiumAdminRows = try await backend.listPremiumAccess()
+            premiumAdminRequestRows = try await backend.listPremiumAccessRequests()
+            await appState.refreshLeaguePackAccess()
+            premiumAdminMessage = "\(requestRow.email) har nu adgang til \(requestRow.packTitle)."
         } catch {
             premiumAdminMessage = "Fejl: \(error.localizedDescription)"
         }
