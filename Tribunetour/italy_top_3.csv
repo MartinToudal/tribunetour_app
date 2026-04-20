@@ -1,0 +1,99 @@
+id,name,team,league,city,lat,lon,country_code,league_code,league_pack,short_code
+it-ssc-napoli,Stadio Diego Armando Maradona,SSC Napoli,Serie A,Naples,40.8279,14.1931,it,it-serie-a,italy_top_3,NAP
+it-cremonese,Stadio Giovanni Zini,Cremonese,Serie A,Cremona,45.1421,10.0219,it,it-serie-a,italy_top_3,CRE
+it-parma,Stadio Ennio Tardini,Parma Calcio 1913,Serie A,Parma,44.7957,10.3387,it,it-serie-a,italy_top_3,PAR
+it-pisa,Arena Garibaldi,Pisa,Serie A,Pisa,43.7253,10.3997,it,it-serie-a,italy_top_3,PIS
+it-bologna,Stadio Renato Dall Ara,Bologna,Serie A,Bologna,44.4923,11.3097,it,it-serie-a,italy_top_3,BOL
+it-roma,Stadio Olimpico,Roma,Serie A,Rome,41.9339,12.4547,it,it-serie-a,italy_top_3,ROM
+it-verona,Stadio Marcantonio Bentegodi,Verona,Serie A,Verona,45.4354,10.9685,it,it-serie-a,italy_top_3,VER
+it-lecce,Stadio Via del Mare,Lecce,Serie A,Lecce,40.3653,18.2088,it,it-serie-a,italy_top_3,LEC
+it-fiorentina,Stadio Artemio Franchi,Fiorentina,Serie A,Florence,43.7808,11.2828,it,it-serie-a,italy_top_3,FIO
+it-sassuolo,Mapei Stadium Citta del Tricolore,Sassuolo,Serie A,Reggio Emilia,44.7146,10.6497,it,it-serie-a,italy_top_3,SAS
+it-genoa,Stadio Luigi Ferraris,Genoa,Serie A,Genoa,44.4164,8.9524,it,it-serie-a,italy_top_3,GEN
+it-como,Stadio Giuseppe Sinigaglia,Como,Serie A,Como,45.8108,9.0727,it,it-serie-a,italy_top_3,COM
+it-torino,Stadio Olimpico Grande Torino,Torino,Serie A,Turin,45.0419,7.6506,it,it-serie-a,italy_top_3,TOR
+it-inter,San Siro,Inter,Serie A,Milan,45.4781,9.124,it,it-serie-a,italy_top_3,INT
+it-ac-milan,San Siro,AC Milan,Serie A,Milan,45.4781,9.124,it,it-serie-a,italy_top_3,MIL
+it-juventus,Allianz Stadium,Juventus,Serie A,Turin,45.1096,7.6413,it,it-serie-a,italy_top_3,JUV
+it-cagliari,Unipol Domus,Cagliari,Serie A,Cagliari,39.1995,9.136,it,it-serie-a,italy_top_3,CAG
+it-atalanta,Gewiss Stadium,Atalanta,Serie A,Bergamo,45.7092,9.6808,it,it-serie-a,italy_top_3,ATA
+it-lazio,Stadio Olimpico,Lazio,Serie A,Rome,41.9339,12.4547,it,it-serie-a,italy_top_3,LAZ
+it-udinese,Bluenergy Stadium,Udinese,Serie A,Udine,46.0812,13.2,it,it-serie-a,italy_top_3,UDI
+it-monza,U-Power Stadium,Monza,Serie B,Monza,45.5841,9.2744,it,it-serie-b,italy_top_3,MON
+it-modena,Stadio Alberto Braglia,Modena,Serie B,Modena,44.6542,10.925,it,it-serie-b,italy_top_3,MOD
+it-avellino,Stadio Partenio-Adriano Lombardi,Avellino,Serie B,Avellino,40.927,14.795,it,it-serie-b,italy_top_3,AVE
+it-bari,Stadio San Nicola,Bari,Serie B,Bari,41.0843,16.8404,it,it-serie-b,italy_top_3,BAR
+it-catanzaro,Stadio Nicola Ceravolo,Catanzaro,Serie B,Catanzaro,38.9103,16.5922,it,it-serie-b,italy_top_3,CAT
+it-spezia,Stadio Alberto Picco,Spezia,Serie B,La Spezia,44.106,9.828,it,it-serie-b,italy_top_3,SPE
+it-virtus-entella,Stadio Comunale Chiavari,Virtus Entella,Serie B,Chiavari,44.3159,9.3266,it,it-serie-b,italy_top_3,ENT
+it-calcio-padova,Stadio Euganeo,Calcio Padova,Serie B,Padua,45.442,11.856,it,it-serie-b,italy_top_3,PAD
+it-frosinone,Stadio Benito Stirpe,Frosinone,Serie B,Frosinone,41.64,13.321,it,it-serie-b,italy_top_3,FRO
+it-carrarese,Stadio dei Marmi,Carrarese,Serie B,Carrara,44.075,10.099,it,it-serie-b,italy_top_3,CAR
+it-pescara,Stadio Adriatico,Pescara,Serie B,Pescara,42.455,14.229,it,it-serie-b,italy_top_3,PES
+it-juve-stabia,Stadio Romeo Menti,Juve Stabia,Serie B,Castellammare di Stabia,40.695,14.482,it,it-serie-b,italy_top_3,JST
+it-ac-reggiana,Mapei Stadium Citta del Tricolore,AC Reggiana 1919,Serie B,Reggio Emilia,44.7146,10.6497,it,it-serie-b,italy_top_3,REG
+it-palermo,Stadio Renzo Barbera,Palermo,Serie B,Palermo,38.152,13.342,it,it-serie-b,italy_top_3,PAL
+it-sudtirol,Stadio Druso,Sudtirol,Serie B,Bolzano,46.492,11.342,it,it-serie-b,italy_top_3,SUD
+it-mantova,Stadio Danilo Martelli,Mantova,Serie B,Mantua,45.149,10.799,it,it-serie-b,italy_top_3,MAN
+it-venezia,Stadio Pier Luigi Penzo,Venezia,Serie B,Venice,45.4279,12.3634,it,it-serie-b,italy_top_3,VEN
+it-empoli,Stadio Carlo Castellani,Empoli,Serie B,Empoli,43.7267,10.9476,it,it-serie-b,italy_top_3,EMP
+it-cesena,Orogel Stadium Dino Manuzzi,Cesena,Serie B,Cesena,44.136,12.26,it,it-serie-b,italy_top_3,CES
+it-sampdoria,Stadio Luigi Ferraris,Sampdoria,Serie B,Genoa,44.4164,8.9524,it,it-serie-b,italy_top_3,SAM
+it-alcione-milano,Arena Civica,Alcione Milano,Serie C - Gruppe A,Milan,45.4765,9.1799,it,it-serie-c-a,italy_top_3,ALC
+it-albinoleffe,AlbinoLeffe Stadium,AlbinoLeffe,Serie C - Gruppe A,Zanica,45.64,9.68,it,it-serie-c-a,italy_top_3,ALB
+it-arzignano,Stadio Tommaso Dal Molin,Arzignano,Serie C - Gruppe A,Arzignano,45.516,11.339,it,it-serie-c-a,italy_top_3,ARZ
+it-pro-vercelli,Stadio Silvio Piola,Pro Vercelli,Serie C - Gruppe A,Vercelli,45.327,8.421,it,it-serie-c-a,italy_top_3,PVC
+it-cittadella,Stadio Pier Cesare Tombolato,Cittadella,Serie C - Gruppe A,Cittadella,45.647,11.785,it,it-serie-c-a,italy_top_3,CIT
+it-giana-erminio,Stadio Citta di Gorgonzola,Giana Erminio,Serie C - Gruppe A,Gorgonzola,45.531,9.404,it,it-serie-c-a,italy_top_3,GIA
+it-dolomiti-bellunesi,Stadio Comunale Polisportivo Belluno,Dolomiti Bellunesi,Serie C - Gruppe A,Belluno,46.14,12.217,it,it-serie-c-a,italy_top_3,DBE
+it-trento,Stadio Briamasco,Trento,Serie C - Gruppe A,Trento,46.064,11.118,it,it-serie-c-a,italy_top_3,TRE
+it-inter-u23,U-Power Stadium,Inter U23,Serie C - Gruppe A,Monza,45.5841,9.2744,it,it-serie-c-a,italy_top_3,INU
+it-brescia,Stadio Mario Rigamonti,Brescia,Serie C - Gruppe A,Brescia,45.57,10.236,it,it-serie-c-a,italy_top_3,BRE
+it-lumezzane,Stadio Tullio Saleri,Lumezzane,Serie C - Gruppe A,Lumezzane,45.647,10.263,it,it-serie-c-a,italy_top_3,LUM
+it-virtus-verona,Stadio Gavagnin-Nocini,Virtus Verona,Serie C - Gruppe A,Verona,45.445,11.022,it,it-serie-c-a,italy_top_3,VVE
+it-ospitaletto,Stadio Gino Corioni,Ospitaletto,Serie C - Gruppe A,Ospitaletto,45.554,10.078,it,it-serie-c-a,italy_top_3,OSP
+it-novara,Stadio Silvio Piola,Novara,Serie C - Gruppe A,Novara,45.435,8.608,it,it-serie-c-a,italy_top_3,NOV
+it-pergolettese,Stadio Giuseppe Voltini,Pergolettese,Serie C - Gruppe A,Crema,45.363,9.684,it,it-serie-c-a,italy_top_3,PER
+it-lecco,Stadio Rigamonti-Ceppi,Lecco,Serie C - Gruppe A,Lecco,45.855,9.397,it,it-serie-c-a,italy_top_3,LEC2
+it-renate,Stadio Citta di Meda,Renate,Serie C - Gruppe A,Meda,45.662,9.159,it,it-serie-c-a,italy_top_3,REN
+it-pro-patria,Stadio Carlo Speroni,Pro Patria,Serie C - Gruppe A,Busto Arsizio,45.61,8.848,it,it-serie-c-a,italy_top_3,PPA
+it-triestina,Stadio Nereo Rocco,Triestina,Serie C - Gruppe A,Trieste,45.622,13.792,it,it-serie-c-a,italy_top_3,TRI
+it-lr-vicenza,Stadio Romeo Menti,L.R. Vicenza,Serie C - Gruppe A,Vicenza,45.542,11.556,it,it-serie-c-a,italy_top_3,VIC
+it-arezzo,Stadio Citta di Arezzo,Arezzo,Serie C - Gruppe B,Arezzo,43.462,11.879,it,it-serie-c-b,italy_top_3,ARE
+it-torres,Stadio Vanni Sanna,Torres,Serie C - Gruppe B,Sassari,40.733,8.554,it,it-serie-c-b,italy_top_3,TOR2
+it-campobasso,Stadio Nuovo Romagnoli,Campobasso,Serie C - Gruppe B,Campobasso,41.561,14.655,it,it-serie-c-b,italy_top_3,CAM
+it-ascoli,Stadio Cino e Lillo Del Duca,Ascoli,Serie C - Gruppe B,Ascoli Piceno,42.854,13.577,it,it-serie-c-b,italy_top_3,ASC
+it-forli,Stadio Tullo Morgagni,Forli,Serie C - Gruppe B,Forli,44.222,12.05,it,it-serie-c-b,italy_top_3,FOR
+it-perugia,Stadio Renato Curi,Perugia,Serie C - Gruppe B,Perugia,43.106,12.357,it,it-serie-c-b,italy_top_3,PGI
+it-gubbio,Stadio Pietro Barbetti,Gubbio,Serie C - Gruppe B,Gubbio,43.356,12.575,it,it-serie-c-b,italy_top_3,GUB
+it-pineto,Stadio Mariani-Pavone,Pineto,Serie C - Gruppe B,Pineto,42.612,14.066,it,it-serie-c-b,italy_top_3,PIN
+it-guidonia,Stadio Comunale Guidonia,Guidonia,Serie C - Gruppe B,Guidonia Montecelio,41.996,12.724,it,it-serie-c-b,italy_top_3,GUI
+it-carpi,Stadio Sandro Cabassi,Carpi,Serie C - Gruppe B,Carpi,44.784,10.879,it,it-serie-c-b,italy_top_3,CRP
+it-juventus-u23,Stadio Giuseppe Moccagatta,Juventus U23,Serie C - Gruppe B,Alessandria,44.913,8.616,it,it-serie-c-b,italy_top_3,JUV2
+it-bra,Stadio Attilio Bravi,Bra,Serie C - Gruppe B,Bra,44.697,7.855,it,it-serie-c-b,italy_top_3,BRA
+it-pontedera,Stadio Ettore Mannucci,Pontedera,Serie C - Gruppe B,Pontedera,43.661,10.629,it,it-serie-c-b,italy_top_3,PON
+it-livorno,Stadio Armando Picchi,Livorno,Serie C - Gruppe B,Livorno,43.526,10.316,it,it-serie-c-b,italy_top_3,LIV
+it-ternana,Stadio Libero Liberati,Ternana,Serie C - Gruppe B,Terni,42.558,12.644,it,it-serie-c-b,italy_top_3,TER
+it-pianese,Stadio Comunale Piancastagnaio,Pianese,Serie C - Gruppe B,Piancastagnaio,42.85,11.684,it,it-serie-c-b,italy_top_3,PIA
+it-vis-pesaro,Stadio Tonino Benelli,Vis Pesaro,Serie C - Gruppe B,Pesaro,43.91,12.902,it,it-serie-c-b,italy_top_3,VIS
+it-sambenedettese,Stadio Riviera delle Palme,Sambenedettese,Serie C - Gruppe B,San Benedetto del Tronto,42.936,13.889,it,it-serie-c-b,italy_top_3,SAM2
+it-altamura,Stadio Tonino D Angelo,Altamura,Serie C - Gruppe C,Altamura,40.823,16.552,it,it-serie-c-c,italy_top_3,ALT
+it-casarano,Stadio Giuseppe Capozza,Casarano,Serie C - Gruppe C,Casarano,40.013,18.159,it,it-serie-c-c,italy_top_3,CAS
+it-atalanta-u23,Stadio Comunale Caravaggio,Atalanta U23,Serie C - Gruppe C,Caravaggio,45.497,9.641,it,it-serie-c-c,italy_top_3,ATA2
+it-catania,Stadio Angelo Massimino,Catania,Serie C - Gruppe C,Catania,37.515,15.07,it,it-serie-c-c,italy_top_3,CAT2
+it-benevento,Stadio Ciro Vigorito,Benevento,Serie C - Gruppe C,Benevento,41.116,14.781,it,it-serie-c-c,italy_top_3,BEN
+it-audace-cerignola,Stadio Domenico Monterisi,Audace Cerignola,Serie C - Gruppe C,Cerignola,41.266,15.899,it,it-serie-c-c,italy_top_3,AUD
+it-casertana,Stadio Alberto Pinto,Casertana,Serie C - Gruppe C,Caserta,41.08,14.331,it,it-serie-c-c,italy_top_3,CAS2
+it-giugliano,Stadio Alberto De Cristofaro,Giugliano,Serie C - Gruppe C,Giugliano in Campania,40.927,14.201,it,it-serie-c-c,italy_top_3,GIU
+it-cavese,Stadio Simonetta Lamberti,Cavese,Serie C - Gruppe C,Cava de Tirreni,40.704,14.707,it,it-serie-c-c,italy_top_3,CAV
+it-cosenza,Stadio San Vito-Gigi Marulla,Cosenza,Serie C - Gruppe C,Cosenza,39.314,16.245,it,it-serie-c-c,italy_top_3,COS
+it-crotone,Stadio Ezio Scida,Crotone,Serie C - Gruppe C,Crotone,39.079,17.117,it,it-serie-c-c,italy_top_3,CRO
+it-latina,Stadio Domenico Francioni,Latina,Serie C - Gruppe C,Latina,41.468,12.904,it,it-serie-c-c,italy_top_3,LAT
+it-foggia,Stadio Pino Zaccheria,Foggia,Serie C - Gruppe C,Foggia,41.462,15.552,it,it-serie-c-c,italy_top_3,FOG
+it-salernitana,Stadio Arechi,Salernitana,Serie C - Gruppe C,Salerno,40.648,14.824,it,it-serie-c-c,italy_top_3,SAL
+it-picerno,Stadio Donato Curcio,Picerno,Serie C - Gruppe C,Picerno,40.641,15.643,it,it-serie-c-c,italy_top_3,PIC
+it-sorrento,Stadio Italia,Sorrento,Serie C - Gruppe C,Sorrento,40.626,14.377,it,it-serie-c-c,italy_top_3,SOR
+it-potenza,Stadio Alfredo Viviani,Potenza,Serie C - Gruppe C,Potenza,40.641,15.805,it,it-serie-c-c,italy_top_3,POT
+it-monopoli,Stadio Vito Simone Veneziani,Monopoli,Serie C - Gruppe C,Monopoli,40.954,17.301,it,it-serie-c-c,italy_top_3,MNP
+it-trapani,Stadio Provinciale,Trapani,Serie C - Gruppe C,Trapani,38.025,12.546,it,it-serie-c-c,italy_top_3,TRA
+it-siracusa,Stadio Nicola De Simone,Siracusa,Serie C - Gruppe C,Syracuse,37.082,15.286,it,it-serie-c-c,italy_top_3,SIR

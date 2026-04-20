@@ -24,6 +24,18 @@ struct LeaguePackAccessTests {
         #expect(clubs.contains(where: { $0.id == "de-heidenheim" }))
     }
 
+    @Test func loadEnabledClubsIncludesItalyWhenPackIsEnabled() throws {
+        let clubs = try CSVClubImporter.loadEnabledClubsFromBundle(
+            csvFileName: "stadiums",
+            enabledLeaguePacks: [AppLeaguePackId.coreDenmark.rawValue, AppLeaguePackId.italyTop3.rawValue]
+        )
+
+        #expect(clubs.contains(where: { $0.id == "dk-viborg-ff" }))
+        #expect(clubs.contains(where: { $0.id == "it-ssc-napoli" }))
+        #expect(clubs.contains(where: { $0.id == "it-palermo" }))
+        #expect(clubs.contains(where: { $0.id == "it-triestina" }))
+    }
+
     @MainActor
     @Test func remoteFixturesProviderDoesNotMergeLocalGermanyFixturesWhenPackIsDisabled() async throws {
         AppLeaguePackSettings.clearRemoteEnabledLeaguePacks()
