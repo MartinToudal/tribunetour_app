@@ -156,7 +156,17 @@ final class SharedPremiumAdminBackend {
         return try await perform(request, decodeAs: [PremiumAccessAdminRow].self)
     }
 
-    func submitAccessRequest(pack: AppPremiumAdminPack, message: String?, notificationURL: URL? = nil) async throws {
+    func submitAccessRequest(
+        pack: AppPremiumAdminPack,
+        message: String?,
+        submissionURL: URL? = nil,
+        notificationURL: URL? = nil
+    ) async throws {
+        if let submissionURL {
+            try await submitAccessRequestViaAPI(pack: pack, message: message, submissionURL: submissionURL)
+            return
+        }
+
         let payload = PremiumAccessRequestPayload(
             targetPackKey: pack.rawValue,
             requestMessage: message?.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty
@@ -167,6 +177,32 @@ final class SharedPremiumAdminBackend {
         if let notificationURL,
            let requestId = receipt.first?.requestId {
             await sendAccessRequestNotification(requestId: requestId, notificationURL: notificationURL)
+        }
+    }
+
+    private func submitAccessRequestViaAPI(pack: AppPremiumAdminPack, message: String?, submissionURL: URL) async throws {
+        guard let token = await configuration.authTokenProvider() else {
+            throw SharedPremiumAdminError.missingAuthToken
+        }
+
+        var request = URLRequest(url: submissionURL)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        request.httpBody = try JSONEncoder().encode(PremiumAccessRequestPayload(
+            targetPackKey: pack.rawValue,
+            requestMessage: message?.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty
+        ))
+
+        let (data, response) = try await configuration.urlSession.data(for: request)
+        guard let http = response as? HTTPURLResponse else {
+            throw SharedPremiumAdminError.invalidPayload
+        }
+
+        guard (200...299).contains(http.statusCode) else {
+            let body = String(data: data, encoding: .utf8) ?? ""
+            throw SharedPremiumAdminError.invalidHTTPStatus(http.statusCode, body)
         }
     }
 

@@ -102,6 +102,13 @@ struct AppAuthConfiguration: Equatable {
         return baseURL.appendingPathComponent("api/premium-access-request-notification")
     }
 
+    var premiumAccessRequestSubmissionURL: URL? {
+        guard let baseURL = referenceDataBaseURL else {
+            return URL(string: "https://tribunetour.dk/api/premium-access-request")
+        }
+        return baseURL.appendingPathComponent("api/premium-access-request")
+    }
+
     static func load(userDefaults: UserDefaults = .standard) -> AppAuthConfiguration {
         AppAuthConfiguration(
             supabaseURLString: resolvedValue(

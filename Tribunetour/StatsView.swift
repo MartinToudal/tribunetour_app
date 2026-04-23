@@ -1192,6 +1192,7 @@ struct StatsView: View {
             try await backend.submitAccessRequest(
                 pack: premiumRequestPack,
                 message: premiumRequestMessage,
+                submissionURL: authConfiguration.premiumAccessRequestSubmissionURL,
                 notificationURL: authConfiguration.premiumAccessRequestNotificationURL
             )
             premiumRequestInfoMessage = "Din anmodning om \(premiumRequestPack.title) er sendt."
