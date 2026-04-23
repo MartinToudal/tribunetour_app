@@ -169,7 +169,8 @@ final class SharedPremiumAdminBackend {
 
         let payload = PremiumAccessRequestPayload(
             targetPackKey: pack.rawValue,
-            requestMessage: message?.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty
+            requestMessage: message?.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty,
+            accessToken: nil
         )
         let request = try await rpcRequest(functionName: "submit_premium_access_request", payload: payload)
         let receipt = try await perform(request, decodeAs: [PremiumAccessRequestReceipt].self)
@@ -192,7 +193,8 @@ final class SharedPremiumAdminBackend {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         request.httpBody = try JSONEncoder().encode(PremiumAccessRequestPayload(
             targetPackKey: pack.rawValue,
-            requestMessage: message?.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty
+            requestMessage: message?.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty,
+            accessToken: token
         ))
 
         let (data, response) = try await configuration.urlSession.data(for: request)
@@ -302,10 +304,12 @@ private struct PremiumAccessMutationPayload: Encodable {
 private struct PremiumAccessRequestPayload: Encodable {
     let targetPackKey: String
     let requestMessage: String?
+    let accessToken: String?
 
     private enum CodingKeys: String, CodingKey {
         case targetPackKey = "target_pack_key"
         case requestMessage = "request_message"
+        case accessToken = "access_token"
     }
 }
 
