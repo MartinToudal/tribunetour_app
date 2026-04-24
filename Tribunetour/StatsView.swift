@@ -61,6 +61,8 @@ struct StatsView: View {
     @State private var premiumRequestInfoMessage: String?
     @State private var premiumRequestErrorMessage: String?
     @State private var premiumRequestLoading: Bool = false
+    @State private var premiumRequestRows: [PremiumAccessRequestUserRow] = []
+    @State private var premiumRequestRowsLoading: Bool = false
     @FocusState private var focusedAuthField: AuthField?
 
     // MARK: - Derived stats
@@ -83,6 +85,10 @@ struct StatsView: View {
     private var premiumVisitedCount: Int { premiumClubs.filter { visitedStore.isVisited($0.id) }.count }
     private var premiumTotalCount: Int { premiumClubs.count }
     private var hasPremiumCountries: Bool { !premiumClubs.isEmpty }
+    private var openPremiumRequestRows: [PremiumAccessRequestUserRow] { premiumRequestRows.filter(\.isOpen) }
+    private var selectedPackOpenRequest: PremiumAccessRequestUserRow? {
+        openPremiumRequestRows.first(where: { $0.packKey == premiumRequestPack.rawValue })
+    }
 
     private var progress: Double {
         guard totalCount > 0 else { return 0 }
@@ -668,6 +674,33 @@ struct StatsView: View {
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
 
+                            if premiumRequestRowsLoading {
+                                Text("Henter dine premium-anmodninger...")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            } else if let selectedPackOpenRequest {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Du har allerede en åben anmodning om \(selectedPackOpenRequest.packTitle).")
+                                        .font(.caption.weight(.semibold))
+                                    if let createdAt = selectedPackOpenRequest.createdAt {
+                                        Text("Sendt \(createdAt.formatted(date: .abbreviated, time: .shortened)).")
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                                .foregroundStyle(.secondary)
+                            } else if !openPremiumRequestRows.isEmpty {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("Åbne anmodninger")
+                                        .font(.caption.weight(.semibold))
+                                    ForEach(openPremiumRequestRows.prefix(3)) { request in
+                                        Text("• \(request.packTitle)")
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                }
+                            }
+
                             Picker("Pakke", selection: $premiumRequestPack) {
                                 ForEach(AppPremiumAdminPack.allCases) { pack in
                                     Text(pack.title).tag(pack)
@@ -682,12 +715,12 @@ struct StatsView: View {
                                 Task { await submitPremiumAccessRequest() }
                             } label: {
                                 StatsActionButtonLabel(
-                                    title: premiumRequestLoading ? "Sender..." : "Anmod om premium-adgang",
-                                    isActive: !premiumRequestLoading
+                                    title: premiumRequestLoading ? "Sender..." : selectedPackOpenRequest == nil ? "Anmod om premium-adgang" : "Anmodning allerede sendt",
+                                    isActive: !premiumRequestLoading && selectedPackOpenRequest == nil
                                 )
                             }
                             .buttonStyle(.plain)
-                            .disabled(premiumRequestLoading)
+                            .disabled(premiumRequestLoading || selectedPackOpenRequest != nil)
 
                             if let premiumRequestInfoMessage {
                                 Text(premiumRequestInfoMessage)
@@ -905,7 +938,7 @@ struct StatsView: View {
                     body: defaultFeedbackBody()
                 )
             }
-            .sheet(isPresented: $showAuthSheet) {
+        .sheet(isPresented: $showAuthSheet) {
                 NavigationStack {
                     ScrollView {
                         VStack(alignment: .leading, spacing: 16) {
@@ -1058,6 +1091,9 @@ struct StatsView: View {
                 countryFilterRawValue = newValue
             }
         }
+        .task(id: authSession.snapshot.isAuthenticated) {
+            await refreshPremiumRequestRows()
+        }
     }
 
     private func defaultFeedbackBody() -> String {
@@ -1197,8 +1233,38 @@ struct StatsView: View {
             )
             premiumRequestInfoMessage = "Din anmodning om \(premiumRequestPack.title) er sendt."
             premiumRequestMessage = ""
+            premiumRequestRows = try await backend.listCurrentUserAccessRequests()
         } catch {
             premiumRequestErrorMessage = error.localizedDescription
+        }
+    }
+
+    @MainActor
+    private func refreshPremiumRequestRows() async {
+        guard authSession.snapshot.isAuthenticated else {
+            premiumRequestRows = []
+            premiumRequestRowsLoading = false
+            return
+        }
+
+        premiumRequestRowsLoading = true
+        defer { premiumRequestRowsLoading = false }
+
+        do {
+            let authConfiguration = AppAuthConfiguration.load()
+            let backend = SharedPremiumAdminBackend(
+                configuration: SharedLeaguePackAccessConfiguration(
+                    baseURL: authConfiguration.supabaseURL,
+                    apiKey: authConfiguration.supabaseAnonKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        ? nil
+                        : authConfiguration.supabaseAnonKey,
+                    authTokenProvider: authSession.authTokenProvider(using: authClient),
+                    urlSession: .shared
+                )
+            )
+            premiumRequestRows = try await backend.listCurrentUserAccessRequests()
+        } catch {
+            premiumRequestRows = []
         }
     }
 

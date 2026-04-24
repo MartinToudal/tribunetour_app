@@ -74,6 +74,32 @@ struct PremiumAccessRequestAdminRow: Identifiable, Decodable, Equatable {
     }
 }
 
+struct PremiumAccessRequestUserRow: Identifiable, Decodable, Equatable {
+    let requestId: String
+    let packKey: String
+    let status: String
+    let message: String?
+    let createdAt: Date?
+    let updatedAt: Date?
+
+    var id: String { requestId }
+
+    var packTitle: String {
+        AppPremiumAdminPack(rawValue: packKey)?.title ?? packKey
+    }
+
+    var isOpen: Bool { status == "open" }
+
+    private enum CodingKeys: String, CodingKey {
+        case requestId = "id"
+        case packKey = "pack_key"
+        case status
+        case message
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+}
+
 enum SharedPremiumAdminError: LocalizedError {
     case notConfigured
     case missingAuthToken
@@ -142,6 +168,32 @@ final class SharedPremiumAdminBackend {
     func listPremiumAccessRequests() async throws -> [PremiumAccessRequestAdminRow] {
         let request = try await rpcRequest(functionName: "list_premium_access_requests", payload: EmptyPayload())
         return try await perform(request, decodeAs: [PremiumAccessRequestAdminRow].self)
+    }
+
+    func listCurrentUserAccessRequests() async throws -> [PremiumAccessRequestUserRow] {
+        guard
+            let baseURL = configuration.baseURL,
+            let apiKey = configuration.apiKey?.trimmingCharacters(in: .whitespacesAndNewlines),
+            !apiKey.isEmpty
+        else {
+            throw SharedPremiumAdminError.notConfigured
+        }
+
+        guard let token = await configuration.authTokenProvider() else {
+            throw SharedPremiumAdminError.missingAuthToken
+        }
+
+        let query = "select=id,pack_key,status,message,created_at,updated_at&order=created_at.desc"
+        guard let url = URL(string: "rest/v1/premium_access_requests?\(query)", relativeTo: baseURL) else {
+            throw SharedPremiumAdminError.invalidPayload
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        request.setValue(apiKey, forHTTPHeaderField: "apikey")
+        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        return try await perform(request, decodeAs: [PremiumAccessRequestUserRow].self)
     }
 
     func grant(email: String, pack: AppPremiumAdminPack) async throws -> [PremiumAccessAdminRow] {

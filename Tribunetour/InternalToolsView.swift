@@ -203,6 +203,15 @@ struct InternalToolsView: View {
                 if appState.authSession.snapshot.isAuthenticated {
                     if premiumAdminIsAdmin == true {
                         let openRequests = premiumAdminRequestRows.filter(\.isOpen)
+                        let handledRequests = premiumAdminRequestRows.filter { !$0.isOpen }
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Overblik")
+                                .font(.caption.weight(.semibold))
+                            Text("\(openRequests.count) åbne · \(handledRequests.count) behandlede")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
 
                         if openRequests.isEmpty {
                             Text("Ingen åbne premium-anmodninger.")
@@ -237,6 +246,27 @@ struct InternalToolsView: View {
                                         }
                                     }
                                     .disabled(premiumAdminIsLoading || premiumAdminActiveRequestId != nil)
+                                }
+                            }
+                        }
+
+                        if !handledRequests.isEmpty {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Senest behandlede")
+                                    .font(.caption.weight(.semibold))
+                                ForEach(Array(handledRequests.prefix(5))) { request in
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(request.email)
+                                            .font(.caption.weight(.semibold))
+                                        Text("\(request.packTitle) · \(request.status == "handled" ? "Godkendt" : request.status)")
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                        if let updatedAt = request.updatedAt {
+                                            Text(updatedAt.formatted(date: .abbreviated, time: .shortened))
+                                                .font(.caption2)
+                                                .foregroundStyle(.tertiary)
+                                        }
+                                    }
                                 }
                             }
                         }
