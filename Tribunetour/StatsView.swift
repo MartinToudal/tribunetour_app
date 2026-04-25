@@ -20,6 +20,7 @@ struct StatsView: View {
     @AppStorage("achievements.seenUnlockedIds") private var seenUnlockedIdsRaw: String = ""
     @AppStorage(AppLeaguePackSettings.preferredHomeCountryCodeKey) private var preferredHomeCountryCode: String = "dk"
     @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
+    @AppStorage("stats.accountPromptDismissed") private var accountPromptDismissed: Bool = false
 
     struct Achievement: Identifiable {
         let id: String
@@ -85,6 +86,28 @@ struct StatsView: View {
     private var premiumVisitedCount: Int { premiumClubs.filter { visitedStore.isVisited($0.id) }.count }
     private var premiumTotalCount: Int { premiumClubs.count }
     private var hasPremiumCountries: Bool { !premiumClubs.isEmpty }
+    private var shouldShowAccountPrompt: Bool {
+        guard !authSession.snapshot.isAuthenticated, !accountPromptDismissed else { return false }
+        return visitedCount >= 3 || notesCount > 0 || reviewedCount > 0 || totalPhotoCount > 0 || hasPremiumCountries
+    }
+
+    private var accountPromptHighlights: [String] {
+        var highlights: [String] = []
+        if visitedCount > 0 {
+            highlights.append("Synk dine \(visitedCount) markerede stadionbesøg mellem app og web")
+        }
+        if notesCount > 0 || totalPhotoCount > 0 || reviewedCount > 0 {
+            highlights.append("Gem noter, anmeldelser og billeder sikkert på din konto")
+        }
+        if hasPremiumCountries {
+            highlights.append("Få adgang til premium-funktioner og ligaer i andre lande")
+        }
+        if highlights.isEmpty {
+            highlights.append("Synk dine data mellem app og web")
+            highlights.append("Få adgang til premium-funktioner og flere ligaer")
+        }
+        return Array(highlights.prefix(3))
+    }
     private var openPremiumRequestRows: [PremiumAccessRequestUserRow] { premiumRequestRows.filter(\.isOpen) }
     private var selectedPackOpenRequest: PremiumAccessRequestUserRow? {
         openPremiumRequestRows.first(where: { $0.packKey == premiumRequestPack.rawValue })
@@ -753,6 +776,13 @@ struct StatsView: View {
                                 Text("Brug samme konto som på web. I appen logger vi nu ind direkte med e-mail og adgangskode.")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
+
+                                if shouldShowAccountPrompt {
+                                    AccountPromptCard(
+                                        highlights: accountPromptHighlights,
+                                        onDismiss: { accountPromptDismissed = true }
+                                    )
+                                }
 
                                 Button {
                                     showAuthSheet = true
@@ -1447,6 +1477,46 @@ private struct AchievementRow: View {
         }
         .padding(.vertical, 4)
         .accessibilityElement(children: .combine)
+    }
+}
+
+private struct AccountPromptCard: View {
+    let highlights: [String]
+    let onDismiss: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .top, spacing: 12) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Opret en konto og behold din fremdrift")
+                        .font(.subheadline.weight(.semibold))
+                    Text("Det gør det lettere at få adgang til premium og fortsætte på tværs af app og web.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Button("Senere", action: onDismiss)
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+            }
+
+            ForEach(highlights, id: \.self) { highlight in
+                HStack(alignment: .top, spacing: 8) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .font(.caption)
+                        .foregroundStyle(.green)
+                        .padding(.top, 2)
+                    Text(highlight)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .padding(12)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
     }
 }
 
