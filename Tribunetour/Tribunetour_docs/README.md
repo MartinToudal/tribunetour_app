@@ -156,6 +156,7 @@ Auth skal forstås som adgang til brugerens egen Tribunetour, ikke som en særsk
 - `docs/MAP_UI_IMPLEMENTATION_PLAN.md`
 - `docs/UI_RELEASE_ROADMAP.md`
 - `docs/UI_SPRINT_1.md`
+- `docs/FACEBOOK_PLAN.md`
 - `docs/INTEGRATION_STATUS.md`
 - `docs/INTEGRATION_BACKLOG.md`
 - `docs/ONE_PRODUCT.md`

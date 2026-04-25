@@ -40,18 +40,32 @@ Opdateres løbende sammen med sprint-arbejdet.
 ## In Progress (Sprint 5.x)
 - Backlog-konsolidering og prioritering frem mod næste sprint
 - App Store launch-spor afgrænset som separat leverance
+- Facebook-plan dokumenteret som fast kanalspor for post-launch synlighed
 
 ---
 
 ## Post-release kandidater
 
-1. **Ops-NightlyRegression (Høj)**
+1. **G-FacebookPlan (Medium)**
+   - Brug Facebook som personlig fortællings- og release-kanal
+   - Formål:
+   - fortælle historien bag Tribunetour
+   - skabe stabil synlighed omkring nye features, stadionture og releases
+   - sende interesserede videre til App Store og `tribunetour.dk`
+   - Første konkrete arbejde:
+   - billedbank med app screenshots og stadionbilleder
+   - 4-6 ugers enkel content-plan
+   - faste opslagstyper: historien bag, produktnyt, stadiondagbog, milepæle
+   - Se:
+   - `FACEBOOK_PLAN.md`
+
+2. **Ops-NightlyRegression (Høj)**
    - Daglig automatisk regression for web og app via CI/macOS runner
    - Formål:
    - gøre regressionskørsel uafhængig af manuel start
    - få faste signaler på auth, sync og kerneflows
 
-2. **P-MultiLeagueExperiment (Medium/Høj)**
+3. **P-MultiLeagueExperiment (Medium/Høj)**
    - Byg multi-league support som et kontrolleret udvidelseslag
    - Første konkrete næste pack:
    - Tyskland (`Bundesliga`, `2. Bundesliga`, `3. Liga`)
@@ -71,7 +85,7 @@ Opdateres løbende sammen med sprint-arbejdet.
    - `GERMANY_LEAGUE_PACK.md`
    - `GERMAN_CLUB_ID_MAPPING_DRAFT.md`
 
-3. **P-ClubIdMigration (Høj)**
+4. **P-ClubIdMigration (Høj)**
    - Lås en canonical club id-policy før første ekstra league pack
    - Formål:
    - undgå id-kollisioner på tværs af lande
@@ -90,7 +104,7 @@ Opdateres løbende sammen med sprint-arbejdet.
    - `CLUB_ID_MIGRATION_PLAN.md`
    - `CLUB_ID_SUPABASE_BACKFILL.md`
 
-4. **Ops-PostMigrationCleanup (Høj)**
+5. **Ops-PostMigrationCleanup (Høj)**
    - Luk oprydningsspor efter første canonical `club_id`-migration
    - Formål:
    - gøre migrationen stabil for både live app, ny app-build og web
