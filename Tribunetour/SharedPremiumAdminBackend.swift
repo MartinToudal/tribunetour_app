@@ -4,6 +4,7 @@ enum AppPremiumAdminPack: String, CaseIterable, Identifiable {
     case germanyTop3 = "germany_top_3"
     case englandTop4 = "england_top_4"
     case italyTop3 = "italy_top_3"
+    case spainTop4 = "spain_top_4"
     case premiumFull = "premium_full"
 
     var id: String { rawValue }
@@ -16,6 +17,8 @@ enum AppPremiumAdminPack: String, CaseIterable, Identifiable {
             return "England"
         case .italyTop3:
             return "Italien"
+        case .spainTop4:
+            return "Spanien"
         case .premiumFull:
             return "Alle premium-pakker"
         }

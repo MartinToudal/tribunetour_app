@@ -1,0 +1,83 @@
+id,name,team,league,city,lat,lon,country_code,league_code,league_pack,short_code
+es-alaves,Campo de Fútbol de Mendizorrotza,Alaves,La Liga,Vitoria-Gasteiz,42.850584,-2.66145,es,es-la-liga,spain_top_4,ALA
+es-ath-bilbao,Estadio San Mamés,Ath. Bilbao,La Liga,Bilbao,43.264204,-2.949391,es,es-la-liga,spain_top_4,ABT
+es-atl-madrid,Estadio Riyadh Air Metropolitano,Atl. Madrid,La Liga,Madrid,40.436053,-3.599715,es,es-la-liga,spain_top_4,AMT
+es-barcelona,Camp Nou,Barcelona,La Liga,Barcelona,41.380778,2.115649,es,es-la-liga,spain_top_4,BAR
+es-betis,Estadio Olímpico de la Cartuja,Betis,La Liga,Seville,37.38863,-5.99534,es,es-la-liga,spain_top_4,BET
+es-celta-vigo,Estadio ABANCA Balaídos,Celta Vigo,La Liga,Vigo,42.211766,-8.739666,es,es-la-liga,spain_top_4,CVE
+es-elche,Estadio Martínez Valero,Elche,La Liga,Elche,38.267044,-0.663305,es,es-la-liga,spain_top_4,ELC
+es-espanyol,RCDE Stadium,Espanyol,La Liga,Cornellà de Llobregat,41.347857,2.076458,es,es-la-liga,spain_top_4,ESP
+es-getafe,Estadio Coliseum,Getafe,La Liga,Getafe,40.325725,-3.714933,es,es-la-liga,spain_top_4,GET
+es-girona,Estadio Municipal de Montilivi,Girona,La Liga,Girona,41.96123,2.828996,es,es-la-liga,spain_top_4,GIR
+es-levante,Estadio Ciutat de València,Levante,La Liga,Valencia,39.494642,-0.363862,es,es-la-liga,spain_top_4,LEV
+es-mallorca,Estadi Mallorca Son Moix,Mallorca,La Liga,Palma,39.589935,2.630116,es,es-la-liga,spain_top_4,MAL
+es-osasuna,Estadio El Sadar,Osasuna,La Liga,Pamplona,42.796662,-1.637131,es,es-la-liga,spain_top_4,OSA
+es-oviedo,Estadio Carlos Tartiere,Oviedo,La Liga,Oviedo,43.360872,-5.870332,es,es-la-liga,spain_top_4,OVI
+es-real-madrid,Bernabéu Stadium,Real Madrid,La Liga,Madrid,40.453057,-3.688353,es,es-la-liga,spain_top_4,RME
+es-real-sociedad,Reale Arena,Real Sociedad,La Liga,San Sebastián,43.30139,-1.973569,es,es-la-liga,spain_top_4,RSE
+es-sevilla,Estadio Ramón Sánchez-Pizjuán,Sevilla,La Liga,Seville,37.384088,-5.970631,es,es-la-liga,spain_top_4,SEV
+es-valencia,Camp de Mestalla,Valencia,La Liga,Valencia,39.473616,-0.366972,es,es-la-liga,spain_top_4,VAL
+es-vallecano,El Campo de Fútbol de Vallecas,Vallecano,La Liga,Madrid,40.369708,-3.657734,es,es-la-liga,spain_top_4,VA2
+es-villarreal,Estadio de la Cerámica,Villarreal,La Liga,Villarreal,39.944208,-0.103405,es,es-la-liga,spain_top_4,VIL
+es-ad-merida,Estadio Romano,AD Merida,Primera Federación - Gruppe 1,Mérida,38.913981,-6.336672,es,es-primera-federacion-g1,spain_top_4,AMD
+es-arenas-getxo,Gobela,Arenas Getxo,Primera Federación - Gruppe 1,Getxo,43.333025,-3.007381,es,es-primera-federacion-g1,spain_top_4,AGR
+es-arenteiro,Espiñedo,Arenteiro,Primera Federación - Gruppe 1,O Carballiño,42.424839,-8.0857,es,es-primera-federacion-g1,spain_top_4,ARE
+es-ath-bilbao-b,Lezama,Ath. Bilbao B,Primera Federación - Gruppe 1,Bilbao,43.271555,-2.923496,es,es-primera-federacion-g1,spain_top_4,ABB
+es-barakaldo,Lasesarre,Barakaldo,Primera Federación - Gruppe 1,Barakaldo,43.300982,-2.987344,es,es-primera-federacion-g1,spain_top_4,BAR
+es-cf-talavera,El Prado,CF Talavera,Primera Federación - Gruppe 1,Talavera de la Reina,39.961341,-4.82603,es,es-primera-federacion-g1,spain_top_4,CTF
+es-cacereno,Príncipe Felipe,Cacereno,Primera Federación - Gruppe 1,Cáceres,39.487051,-6.412378,es,es-primera-federacion-g1,spain_top_4,CAC
+es-celta-vigo-b,Abanca-Balaídos,Celta Vigo B,Primera Federación - Gruppe 1,Vigo,42.211766,-8.739666,es,es-primera-federacion-g1,spain_top_4,CVB
+es-ferrol,A Malata,Ferrol,Primera Federación - Gruppe 1,Ferrol,43.494148,-8.244027,es,es-primera-federacion-g1,spain_top_4,FER
+es-guadalajara,Pedro Escartín,Guadalajara,Primera Federación - Gruppe 1,Guadalajara,40.63452,-3.182411,es,es-primera-federacion-g1,spain_top_4,GUA
+es-lugo,Anxo Carro,Lugo,Primera Federación - Gruppe 1,Lugo,43.003342,-7.570984,es,es-primera-federacion-g1,spain_top_4,LUG
+es-osasuna-b,Tajonar,Osasuna B,Primera Federación - Gruppe 1,Pamplona,42.76905,-1.61004,es,es-primera-federacion-g1,spain_top_4,OBS
+es-ourense-cf,O Couto,Ourense CF,Primera Federación - Gruppe 1,Ourense,42.384788,-7.43969,es,es-primera-federacion-g1,spain_top_4,OCU
+es-ponferradina,El Toralín,Ponferradina,Primera Federación - Gruppe 1,Ponferrada,42.555008,-6.610399,es,es-primera-federacion-g1,spain_top_4,PON
+es-pontevedra,Pasarón,Pontevedra,Primera Federación - Gruppe 1,Pontevedra,42.438593,-8.641357,es,es-primera-federacion-g1,spain_top_4,PO2
+es-real-aviles,Román Suárez Puerta,Real Aviles,Primera Federación - Gruppe 1,Avilés,43.557515,-5.930563,es,es-primera-federacion-g1,spain_top_4,RAE
+es-real-madrid-b,Alfredo di Stéfano,Real Madrid B,Primera Federación - Gruppe 1,Madrid,40.476937,-3.615061,es,es-primera-federacion-g1,spain_top_4,RMB
+es-tenerife,Heliodoro Rodríguez López,Tenerife,Primera Federación - Gruppe 1,Santa Cruz de Tenerife,28.463243,-16.260548,es,es-primera-federacion-g1,spain_top_4,TEN
+es-unionistas,Reina Sofía,Unionistas,Primera Federación - Gruppe 1,Salamanca,40.946716,-5.666097,es,es-primera-federacion-g1,spain_top_4,UNI
+es-zamora,Ruta de la Plata,Zamora,Primera Federación - Gruppe 1,Zamora,42.00915,-5.669365,es,es-primera-federacion-g1,spain_top_4,ZAM
+es-alcorcon,Santo Domingo,Alcorcon,Primera Federación - Gruppe 2,Alcorcón,40.34415,-3.825004,es,es-primera-federacion-g2,spain_top_4,ALC
+es-algeciras-cf,Nuevo Mirador,Algeciras CF,Primera Federación - Gruppe 2,Algeciras,36.163034,-5.465133,es,es-primera-federacion-g2,spain_top_4,ACL
+es-antequera,El Maulí,Antequera,Primera Federación - Gruppe 2,Antequera,37.020704,-4.571898,es,es-primera-federacion-g2,spain_top_4,ANT
+es-atl-madrid-b,Centro Deportivo Alcalá de Henares,Atl. Madrid B,Primera Federación - Gruppe 2,Alcalá de Henares,40.507504,-3.361842,es,es-primera-federacion-g2,spain_top_4,AMB
+es-betis-b,Luis del Sol,Betis B,Primera Federación - Gruppe 2,Seville,37.276686,-5.920337,es,es-primera-federacion-g2,spain_top_4,BBE
+es-ce-europa,Nou Sardenya,CE Europa,Primera Federación - Gruppe 2,Barcelona,41.411773,2.161538,es,es-primera-federacion-g2,spain_top_4,CEE
+es-cartagena,Cartagonova,Cartagena,Primera Federación - Gruppe 2,Cartagena,37.609666,-0.996037,es,es-primera-federacion-g2,spain_top_4,CAR
+es-eldense,Estadio Pepico Amat,Eldense,Primera Federación - Gruppe 2,Elda,38.469853,-0.794123,es,es-primera-federacion-g2,spain_top_4,ELD
+es-gimnastic,Nou Estadi,Gimnastic,Primera Federación - Gruppe 2,Tarragona,41.127007,1.273636,es,es-primera-federacion-g2,spain_top_4,GIM
+es-hercules,José Rico Pérez,Hercules,Primera Federación - Gruppe 2,Alicante,38.357346,-0.492597,es,es-primera-federacion-g2,spain_top_4,HER
+es-murcia,Enrique Roca,Murcia,Primera Federación - Gruppe 2,Murcia,38.042224,-1.144732,es,es-primera-federacion-g2,spain_top_4,MUR
+es-sabadell,Nova Creu Alta,Sabadell,Primera Federación - Gruppe 2,Sabadell,41.554725,2.091333,es,es-primera-federacion-g2,spain_top_4,SAB
+es-sanluqueno,El Palmar,Sanluqueno,Primera Federación - Gruppe 2,Sanlúcar de Barrameda,36.767058,-6.346737,es,es-primera-federacion-g2,spain_top_4,SAN
+es-sevilla-b,Jesús Navas,Sevilla B,Primera Federación - Gruppe 2,Seville,37.35223,-5.946097,es,es-primera-federacion-g2,spain_top_4,SBE
+es-tarazona,Municipal de Tarazona,Tarazona,Primera Federación - Gruppe 2,Tarazona,41.900841,-1.738629,es,es-primera-federacion-g2,spain_top_4,TAR
+es-teruel,Pinilla,Teruel,Primera Federación - Gruppe 2,Teruel,40.617445,-0.7781,es,es-primera-federacion-g2,spain_top_4,TER
+es-torremolinos,El Pozuelo,Torremolinos,Primera Federación - Gruppe 2,Torremolinos,36.627644,-4.519444,es,es-primera-federacion-g2,spain_top_4,TOR
+es-ud-ibiza,Can Misses,UD Ibiza,Primera Federación - Gruppe 2,Ibiza,38.914235,1.419032,es,es-primera-federacion-g2,spain_top_4,UID
+es-ud-marbella,Municipal de Marbella,UD Marbella,Primera Federación - Gruppe 2,Marbella,36.511898,-4.879401,es,es-primera-federacion-g2,spain_top_4,UMD
+es-villarreal-b,Estadio de la Cerámica,Villarreal B,Primera Federación - Gruppe 2,Villarreal,39.944208,-0.103405,es,es-primera-federacion-g2,spain_top_4,VBI
+es-albacete,Estadio Carlos Belmonte,Albacete,Segunda División,Albacete,38.981082,-1.852144,es,es-segunda-division,spain_top_4,ALB
+es-almeria,UD Almería Stadium,Almeria,Segunda División,Almería,36.868574,-2.312028,es,es-segunda-division,spain_top_4,ALM
+es-andorra,Nou Estadi Encamp,Andorra,Segunda División,Encamp,42.533508,1.574863,es,es-segunda-division,spain_top_4,AND
+es-burgos-cf,Estadio El Plantío,Burgos CF,Segunda División,Burgos,42.344363,-3.680891,es,es-segunda-division,spain_top_4,BCU
+es-cadiz,JP Financial Estadio,Cadiz,Segunda División,Cádiz,36.529744,-6.292898,es,es-segunda-division,spain_top_4,CAD
+es-castellon,Estadio SkyFi Castàlia,Castellon,Segunda División,Castellón de la Plana,39.99614,-0.038638,es,es-segunda-division,spain_top_4,CAS
+es-ceuta,Estadio Alfonso Murube,Ceuta,Segunda División,Ceuta,35.885599,-5.32804,es,es-segunda-division,spain_top_4,CEU
+es-cordoba,Estadio Bahrain Victorious Nuevo Arcángel de Córdoba,Cordoba,Segunda División,Córdoba,37.872121,-4.763516,es,es-segunda-division,spain_top_4,COR
+es-cultural-leonesa,Estadio Reino de León,Cultural Leonesa,Segunda División,León,42.587584,-5.576993,es,es-segunda-division,spain_top_4,CLU
+es-eibar,Estadio Municipal de Ipurua,Eibar,Segunda División,Eibar,43.184284,-2.473275,es,es-segunda-division,spain_top_4,EIB
+es-gijon,"Estadio El Molinón-Enrique Castro ""Quini""",Gijon,Segunda División,Gijón,43.536271,-5.637477,es,es-segunda-division,spain_top_4,GIJ
+es-granada,Estadio Nuevo Los Cármenes,Granada,Segunda División,Granada,37.152891,-3.595894,es,es-segunda-division,spain_top_4,GRA
+es-huesca,Estadio El Alcoraz,Huesca,Segunda División,Huesca,42.131841,-0.424146,es,es-segunda-division,spain_top_4,HUE
+es-la-coruna,Estadio ABANCA-RIAZOR,La Coruna,Segunda División,A Coruña,43.368716,-8.41751,es,es-segunda-division,spain_top_4,LCA
+es-las-palmas,Estadio Gran Canaria,Las Palmas,Segunda División,Las Palmas,28.100234,-15.456725,es,es-segunda-division,spain_top_4,LPA
+es-leganes,Estadio Ontime Butarque,Leganes,Segunda División,Leganés,40.340562,-3.760643,es,es-segunda-division,spain_top_4,LEG
+es-malaga,La Rosaleda Stadium,Malaga,Segunda División,Málaga,36.734943,-4.426535,es,es-segunda-division,spain_top_4,MAL
+es-mirandes,Estadio Municipal de Anduva,Mirandes,Segunda División,Miranda de Ebro,42.680813,-2.935398,es,es-segunda-division,spain_top_4,MIR
+es-racing-santander,Stadium El Sardinero,Racing Santander,Segunda División,Santander,43.476261,-3.793953,es,es-segunda-division,spain_top_4,RSA
+es-real-sociedad-b,Estadio Zubieta,Real Sociedad B,Segunda División,San Sebastián,43.322422,-1.983889,es,es-segunda-division,spain_top_4,RSB
+es-valladolid,Estadio Municipal José Zorrilla,Valladolid,Segunda División,Valladolid,41.620002,-4.725991,es,es-segunda-division,spain_top_4,VAL
+es-zaragoza,Ibercaja Stadium,Zaragoza,Segunda División,Zaragoza,41.683574,-0.895459,es,es-segunda-division,spain_top_4,ZAR
