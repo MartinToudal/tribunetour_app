@@ -9,6 +9,8 @@ import SwiftUI
 
 @main
 struct TribunetourApp: App {
+    @UIApplicationDelegateAdaptor(AppNotificationAppDelegate.self) private var appDelegate
+
     var body: some Scene {
         WindowGroup {
             ContentView()

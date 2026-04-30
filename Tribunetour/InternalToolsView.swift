@@ -6,6 +6,7 @@ struct InternalToolsView: View {
     let clubs: [Club]
     let fixtures: [Fixture]
     @EnvironmentObject private var appState: AppState
+    @EnvironmentObject private var adminNotificationsManager: AppAdminNotificationsManager
 
     @AppStorage("achievements.seenUnlockedIds") private var seenUnlockedIdsRaw: String = ""
     @AppStorage(NotificationPreferenceKeys.weekendReminderEnabled) private var weekendReminderEnabled: Bool = true
@@ -29,6 +30,7 @@ struct InternalToolsView: View {
     @State private var premiumAdminSelectedPack: AppPremiumAdminPack = .premiumFull
     @State private var premiumAdminRows: [PremiumAccessAdminRow] = []
     @State private var premiumAdminRequestRows: [PremiumAccessRequestAdminRow] = []
+    @State private var premiumAdminNotificationRows: [AdminNotificationRow] = []
     @State private var premiumAdminIsAdmin: Bool?
     @State private var premiumAdminMessage: String?
     @State private var premiumAdminIsLoading = false
@@ -204,6 +206,8 @@ struct InternalToolsView: View {
                     if premiumAdminIsAdmin == true {
                         let openRequests = premiumAdminRequestRows.filter(\.isOpen)
                         let handledRequests = premiumAdminRequestRows.filter { !$0.isOpen }
+                        let openNotifications = premiumAdminNotificationRows.filter { !$0.isActioned }
+                        let handledNotifications = premiumAdminNotificationRows.filter(\.isActioned)
 
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Overblik")
@@ -211,6 +215,32 @@ struct InternalToolsView: View {
                             Text("\(openRequests.count) åbne · \(handledRequests.count) behandlede")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
+                            if adminNotificationsManager.badgeCount > 0 {
+                                Text("Badge count: \(adminNotificationsManager.badgeCount)")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+
+                        if !openNotifications.isEmpty {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Åbne admin-notifikationer")
+                                    .font(.caption.weight(.semibold))
+                                ForEach(openNotifications.prefix(5)) { notification in
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(notification.title)
+                                            .font(.caption.weight(.semibold))
+                                        Text(notification.body)
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
+                                        if let createdAt = notification.createdAt {
+                                            Text(createdAt.formatted(date: .abbreviated, time: .shortened))
+                                                .font(.caption2)
+                                                .foregroundStyle(.tertiary)
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         if openRequests.isEmpty {
@@ -266,6 +296,22 @@ struct InternalToolsView: View {
                                                 .font(.caption2)
                                                 .foregroundStyle(.tertiary)
                                         }
+                                    }
+                                }
+                            }
+                        }
+
+                        if !handledNotifications.isEmpty {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text("Senest håndterede notifikationer")
+                                    .font(.caption.weight(.semibold))
+                                ForEach(Array(handledNotifications.prefix(3))) { notification in
+                                    VStack(alignment: .leading, spacing: 3) {
+                                        Text(notification.title)
+                                            .font(.caption.weight(.semibold))
+                                        Text(notification.body)
+                                            .font(.caption2)
+                                            .foregroundStyle(.secondary)
                                     }
                                 }
                             }
@@ -427,6 +473,7 @@ struct InternalToolsView: View {
                 premiumAdminIsAdmin = nil
                 premiumAdminRows = []
                 premiumAdminRequestRows = []
+                premiumAdminNotificationRows = []
                 premiumAdminMessage = nil
             }
         }
@@ -553,16 +600,19 @@ struct InternalToolsView: View {
             guard isAdmin else {
                 premiumAdminRows = []
                 premiumAdminRequestRows = []
+                premiumAdminNotificationRows = []
                 premiumAdminMessage = nil
                 return
             }
             premiumAdminRows = try await backend.listPremiumAccess()
             premiumAdminRequestRows = try await backend.listPremiumAccessRequests()
+            premiumAdminNotificationRows = try await backend.listAdminNotifications(includeActioned: true)
             premiumAdminMessage = nil
         } catch {
             premiumAdminIsAdmin = false
             premiumAdminRows = []
             premiumAdminRequestRows = []
+            premiumAdminNotificationRows = []
             premiumAdminMessage = "Fejl: \(error.localizedDescription)"
         }
     }
@@ -604,7 +654,9 @@ struct InternalToolsView: View {
             _ = try await backend.approveAccessRequest(requestId: requestRow.requestId)
             premiumAdminRows = try await backend.listPremiumAccess()
             premiumAdminRequestRows = try await backend.listPremiumAccessRequests()
+            premiumAdminNotificationRows = try await backend.listAdminNotifications(includeActioned: true)
             await appState.refreshLeaguePackAccess()
+            await adminNotificationsManager.markNeedsRefresh()
             premiumAdminMessage = "\(requestRow.email) har nu adgang til \(requestRow.packTitle)."
         } catch {
             premiumAdminMessage = "Fejl: \(error.localizedDescription)"

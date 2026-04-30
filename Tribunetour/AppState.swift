@@ -23,16 +23,23 @@ final class AppState: ObservableObject {
     let weekendPlanStore: AppWeekendPlanStore
     let authSession = AppAuthSession()
     let authClient = AppAuthClient()
+    let adminNotificationsManager: AppAdminNotificationsManager
     let visitedSyncMode: AppVisitedSyncMode
     let visitedBootstrapCoordinator: AppVisitedBootstrapCoordinator
     let locationStore = LocationStore()
     private var cancellables = Set<AnyCancellable>()
     private let leaguePackAccessBackend: SharedLeaguePackAccessBackend
+    private var previousAuthSnapshot: AppSessionSnapshot
     private var isUITesting: Bool {
         AppTestRuntime.isRunningAutomatedTests
     }
 
     init() {
+        self.adminNotificationsManager = AppAdminNotificationsManager(
+            authSession: authSession,
+            authClient: authClient
+        )
+        self.previousAuthSnapshot = authSession.snapshot
         let sharedVisitedBackend = AppVisitedSyncFactory.makeSharedBackend(
             authSession: authSession,
             authClient: authClient
@@ -117,9 +124,14 @@ final class AppState: ObservableObject {
             .removeDuplicates()
             .sink { [weak self] snapshot in
                 guard let self else { return }
+                let previousSnapshot = self.previousAuthSnapshot
+                self.previousAuthSnapshot = snapshot
                 if snapshot.isAuthenticated {
                     Task {
                         await self.refreshLeaguePackAccess()
+                    }
+                    Task {
+                        await self.adminNotificationsManager.refreshForCurrentSession()
                     }
                     self.visitedStore.clearSyncIssue()
                     self.notesSyncIssue = nil
@@ -134,6 +146,9 @@ final class AppState: ObservableObject {
                         await self.reconcileSharedSyncModeAfterSessionRestore(snapshot: snapshot)
                     }
                 } else {
+                    Task {
+                        await self.adminNotificationsManager.handleSignedOut(previousSnapshot: previousSnapshot)
+                    }
                     AppLeaguePackSettings.clearRemoteEnabledLeaguePacks()
                     self.loadData()
                     self.syncRuntimeInfoMessage = nil
@@ -143,9 +158,27 @@ final class AppState: ObservableObject {
             }
             .store(in: &cancellables)
 
+        NotificationCenter.default.publisher(for: .appDidRegisterRemoteNotificationToken)
+            .compactMap { $0.object as? String }
+            .sink { [weak self] token in
+                guard let self else { return }
+                Task {
+                    await self.adminNotificationsManager.handleRegisteredDeviceToken(token)
+                }
+            }
+            .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .appDidFailToRegisterRemoteNotifications)
+            .compactMap { $0.object as? Error }
+            .sink { [weak self] error in
+                self?.adminNotificationsManager.handleRegistrationFailure(error)
+            }
+            .store(in: &cancellables)
+
         if authSession.snapshot.isAuthenticated {
             Task {
                 await reconcileSharedSyncModeAfterSessionRestore(snapshot: authSession.snapshot)
+                await adminNotificationsManager.refreshForCurrentSession()
             }
         }
 
@@ -250,6 +283,7 @@ final class AppState: ObservableObject {
             await reviewsStore.refreshFromRemote()
             await weekendPlanStore.refreshFromRemote()
             await reconcileSharedSyncModeAfterSessionRestore(snapshot: authSession.snapshot)
+            await adminNotificationsManager.markNeedsRefresh()
         }
     }
 

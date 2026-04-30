@@ -65,6 +65,11 @@ struct ContentView: View {
                         runtimeSyncInfoMessage: appState.syncRuntimeInfoMessage
                     )
                         .tabItem { Label("Min tur", systemImage: "chart.bar") }
+                        .badge(
+                            appState.adminNotificationsManager.badgeCount > 0
+                                ? "\(appState.adminNotificationsManager.badgeCount)"
+                                : nil
+                        )
                 }
             }
         }
@@ -79,6 +84,7 @@ struct ContentView: View {
             appState.refreshSharedVisitedFromRemote()
         }
         .environmentObject(appState)
+        .environmentObject(appState.adminNotificationsManager)
         .environmentObject(appState.locationStore)
         .environmentObject(appState.authSession)
     }

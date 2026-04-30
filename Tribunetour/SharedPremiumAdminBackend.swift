@@ -106,6 +106,74 @@ struct PremiumAccessRequestUserRow: Identifiable, Decodable, Equatable {
     }
 }
 
+struct AdminDeviceTokenRow: Identifiable, Decodable, Equatable {
+    let tokenId: String
+    let userId: String
+    let platform: String?
+    let appBuild: String?
+    let isActive: Bool
+    let lastSeenAt: Date?
+
+    var id: String { tokenId }
+
+    private enum CodingKeys: String, CodingKey {
+        case tokenId = "token_id"
+        case userId = "user_id"
+        case platform
+        case appBuild = "app_build"
+        case isActive = "is_active"
+        case lastSeenAt = "last_seen_at"
+    }
+}
+
+struct AdminDeviceTokenDeactivationRow: Identifiable, Decodable, Equatable {
+    let tokenId: String
+    let userId: String
+    let isActive: Bool
+    let updatedAt: Date?
+
+    var id: String { tokenId }
+
+    private enum CodingKeys: String, CodingKey {
+        case tokenId = "token_id"
+        case userId = "user_id"
+        case isActive = "is_active"
+        case updatedAt = "updated_at"
+    }
+}
+
+struct AdminNotificationRow: Identifiable, Decodable, Equatable {
+    let notificationId: String
+    let userId: String
+    let type: String
+    let title: String
+    let body: String
+    let payloadJSON: [String: String]
+    let isRead: Bool
+    let isActioned: Bool
+    let createdAt: Date?
+    let updatedAt: Date?
+
+    var id: String { notificationId }
+
+    var relatedRequestId: String? {
+        payloadJSON["request_id"]?.trimmingCharacters(in: .whitespacesAndNewlines).nilIfEmpty
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case notificationId = "notification_id"
+        case userId = "user_id"
+        case type
+        case title
+        case body
+        case payloadJSON = "payload_json"
+        case isRead = "is_read"
+        case isActioned = "is_actioned"
+        case createdAt = "created_at"
+        case updatedAt = "updated_at"
+    }
+}
+
 enum SharedPremiumAdminError: LocalizedError {
     case notConfigured
     case missingAuthToken
@@ -135,6 +203,12 @@ enum SharedPremiumAdminError: LocalizedError {
             }
             if body.contains("invalid_pack_key") {
                 return "Premium-pakken er ikke gyldig."
+            }
+            if body.contains("invalid_device_token") {
+                return "Device token mangler eller er ugyldig."
+            }
+            if body.contains("invalid_platform") {
+                return "Platformen til push-notifikationer er ugyldig."
             }
             return body.isEmpty ? "Premium admin fejlede med status \(code)." : body
         }
@@ -272,6 +346,49 @@ final class SharedPremiumAdminBackend {
         return try await perform(request, decodeAs: [PremiumAccessAdminRow].self)
     }
 
+    func upsertAdminDeviceToken(deviceToken: String, platform: String = "ios", appBuild: String? = nil) async throws -> [AdminDeviceTokenRow] {
+        let payload = AdminDeviceTokenPayload(
+            targetDeviceToken: deviceToken,
+            targetPlatform: platform,
+            targetAppBuild: appBuild
+        )
+        let request = try await rpcRequest(functionName: "upsert_admin_device_token", payload: payload)
+        return try await perform(request, decodeAs: [AdminDeviceTokenRow].self)
+    }
+
+    func deactivateAdminDeviceToken(deviceToken: String) async throws -> [AdminDeviceTokenDeactivationRow] {
+        let payload = AdminDeviceTokenDeactivationPayload(targetDeviceToken: deviceToken)
+        let request = try await rpcRequest(functionName: "deactivate_admin_device_token", payload: payload)
+        return try await perform(request, decodeAs: [AdminDeviceTokenDeactivationRow].self)
+    }
+
+    func getAdminNotificationBadgeCount() async throws -> Int {
+        let request = try await rpcRequest(functionName: "get_admin_notification_badge_count", payload: EmptyPayload())
+        return try await perform(request, decodeAs: Int.self)
+    }
+
+    func listAdminNotifications(includeActioned: Bool = false) async throws -> [AdminNotificationRow] {
+        let payload = AdminNotificationListPayload(includeActioned: includeActioned)
+        let request = try await rpcRequest(functionName: "list_admin_notifications", payload: payload)
+        return try await perform(request, decodeAs: [AdminNotificationRow].self)
+    }
+
+    func markAdminNotificationRead(notificationId: String, isRead: Bool = true) async throws -> [AdminNotificationStateRow] {
+        let payload = AdminNotificationReadPayload(notificationId: notificationId, targetIsRead: isRead)
+        let request = try await rpcRequest(functionName: "mark_admin_notification_read", payload: payload)
+        return try await perform(request, decodeAs: [AdminNotificationStateRow].self)
+    }
+
+    func markAdminNotificationActioned(notificationId: String, isActioned: Bool = true, isRead: Bool = true) async throws -> [AdminNotificationStateRow] {
+        let payload = AdminNotificationActionedPayload(
+            notificationId: notificationId,
+            targetIsActioned: isActioned,
+            targetIsRead: isRead
+        )
+        let request = try await rpcRequest(functionName: "mark_admin_notification_actioned", payload: payload)
+        return try await perform(request, decodeAs: [AdminNotificationStateRow].self)
+    }
+
     private func rpcRequest<T: Encodable>(functionName: String, payload: T) async throws -> URLRequest {
         guard
             let baseURL = configuration.baseURL,
@@ -384,6 +501,70 @@ private struct PremiumAccessNotificationPayload: Encodable {
 
     private enum CodingKeys: String, CodingKey {
         case requestId = "request_id"
+    }
+}
+
+private struct AdminDeviceTokenPayload: Encodable {
+    let targetDeviceToken: String
+    let targetPlatform: String
+    let targetAppBuild: String?
+
+    private enum CodingKeys: String, CodingKey {
+        case targetDeviceToken = "target_device_token"
+        case targetPlatform = "target_platform"
+        case targetAppBuild = "target_app_build"
+    }
+}
+
+private struct AdminDeviceTokenDeactivationPayload: Encodable {
+    let targetDeviceToken: String
+
+    private enum CodingKeys: String, CodingKey {
+        case targetDeviceToken = "target_device_token"
+    }
+}
+
+private struct AdminNotificationListPayload: Encodable {
+    let includeActioned: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case includeActioned = "include_actioned"
+    }
+}
+
+private struct AdminNotificationReadPayload: Encodable {
+    let notificationId: String
+    let targetIsRead: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case notificationId = "target_notification_id"
+        case targetIsRead = "target_is_read"
+    }
+}
+
+private struct AdminNotificationActionedPayload: Encodable {
+    let notificationId: String
+    let targetIsActioned: Bool
+    let targetIsRead: Bool
+
+    private enum CodingKeys: String, CodingKey {
+        case notificationId = "target_notification_id"
+        case targetIsActioned = "target_is_actioned"
+        case targetIsRead = "target_is_read"
+    }
+}
+
+struct AdminNotificationStateRow: Decodable {
+    let notificationId: String
+    let isRead: Bool
+    let isActioned: Bool
+    let updatedAt: Date?
+
+    private enum CodingKeys: String, CodingKey {
+        case notificationId = "notification_id"
+        case isRead = "is_read"
+        case isActioned = "is_actioned"
+        case updatedAt = "updated_at"
     }
 }
 
