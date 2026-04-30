@@ -6,6 +6,7 @@ enum AppLeaguePackId: String, CaseIterable {
     case englandTop4 = "england_top_4"
     case italyTop3 = "italy_top_3"
     case spainTop4 = "spain_top_4"
+    case franceTop3 = "france_top_3"
     case premiumFull = "premium_full"
 }
 
@@ -36,6 +37,7 @@ enum AppLeaguePackSettings {
             ids.insert(AppLeaguePackId.englandTop4.rawValue)
             ids.insert(AppLeaguePackId.italyTop3.rawValue)
             ids.insert(AppLeaguePackId.spainTop4.rawValue)
+            ids.insert(AppLeaguePackId.franceTop3.rawValue)
         }
         return ids
     }
@@ -61,6 +63,7 @@ enum LeaguePresentation {
         case "en": return 2
         case "it": return 3
         case "es": return 4
+        case "fr": return 5
         default: return 99
         }
     }
@@ -72,6 +75,7 @@ enum LeaguePresentation {
         case "en": return "England"
         case "it": return "Italien"
         case "es": return "Spanien"
+        case "fr": return "Frankrig"
         default: return countryCode.uppercased()
         }
     }
@@ -111,6 +115,10 @@ enum LeaguePresentation {
             if normalized == "segunda division" || normalized == "segunda división" { return 1 }
             if normalized == "primera federacion - gruppe 1" || normalized == "primera federación - gruppe 1" { return 2 }
             if normalized == "primera federacion - gruppe 2" || normalized == "primera federación - gruppe 2" { return 3 }
+        case "fr":
+            if normalized == "ligue 1" { return 0 }
+            if normalized == "ligue 2" { return 1 }
+            if normalized == "national" { return 2 }
         default:
             break
         }
@@ -132,6 +140,9 @@ enum LeaguePresentation {
         if normalized == "segunda division" || normalized == "segunda división" { return 51 }
         if normalized == "primera federacion - gruppe 1" || normalized == "primera federación - gruppe 1" { return 52 }
         if normalized == "primera federacion - gruppe 2" || normalized == "primera federación - gruppe 2" { return 53 }
+        if normalized == "ligue 1" { return 60 }
+        if normalized == "ligue 2" { return 61 }
+        if normalized == "national" { return 62 }
         if normalized == "1. division" || normalized == "1 division" { return 20 }
         if normalized == "2. division" || normalized == "2 division" { return 21 }
         if normalized == "3. division" || normalized == "3 division" { return 22 }
@@ -206,6 +217,17 @@ enum LeaguePresentation {
                 canonicalDivision = "Primera Federación - Gruppe 1"
             case "primera federacion - gruppe 2", "primera federación - gruppe 2":
                 canonicalDivision = "Primera Federación - Gruppe 2"
+            default:
+                canonicalDivision = division
+            }
+        case "fr":
+            switch normalized {
+            case "ligue 1":
+                canonicalDivision = "Ligue 1"
+            case "ligue 2":
+                canonicalDivision = "Ligue 2"
+            case "national":
+                canonicalDivision = "National"
             default:
                 canonicalDivision = division
             }
@@ -430,6 +452,9 @@ struct CSVClubImporter {
         }
         if enabledLeaguePacks.contains(AppLeaguePackId.spainTop4.rawValue) {
             clubs.append(contentsOf: try loadClubsFromBundle(csvFileName: "spain_top_4"))
+        }
+        if enabledLeaguePacks.contains(AppLeaguePackId.franceTop3.rawValue) {
+            clubs.append(contentsOf: try loadClubsFromBundle(csvFileName: "france_top_3"))
         }
 
         return clubs

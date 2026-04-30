@@ -1,0 +1,55 @@
+id,name,team,league,city,lat,lon,country_code,league_code,league_pack,short_code
+fr-angers,Stade Raymond Kopa,Angers,Ligue 1,Angers,47.460552,-0.530695,fr,fr-ligue-1,france_top_3,ANG
+fr-auxerre,Stade Abbé Deschamps,Auxerre,Ligue 1,Auxerre,47.786785,3.588624,fr,fr-ligue-1,france_top_3,AUX
+fr-brest,Stade Francis-Le Blé,Brest,Ligue 1,Brest,48.403042,-4.46136,fr,fr-ligue-1,france_top_3,BRE
+fr-le-havre,Stade Océane,Le Havre,Ligue 1,Le Havre,49.498751,0.169464,fr,fr-ligue-1,france_top_3,LHE
+fr-lens,Stade Bollaert-Delelis,Lens,Ligue 1,Lens,50.43281,2.814988,fr,fr-ligue-1,france_top_3,LEN
+fr-lille,Stade Pierre-Mauroy,Lille,Ligue 1,Villeneuve-d'Ascq,50.611904,3.130508,fr,fr-ligue-1,france_top_3,LIL
+fr-lorient,Stade du Moustoir,Lorient,Ligue 1,Lorient,47.748802,-3.369541,fr,fr-ligue-1,france_top_3,LOR
+fr-lyon,Groupama Stadium,Lyon,Ligue 1,Décines-Charpieu,45.765362,4.982054,fr,fr-ligue-1,france_top_3,LYO
+fr-marseille,Stade Vélodrome,Marseille,Ligue 1,Marseille,43.269836,5.395912,fr,fr-ligue-1,france_top_3,MAR
+fr-metz,Stade Saint-Symphorien,Metz,Ligue 1,Longeville-lès-Metz,49.109636,6.159605,fr,fr-ligue-1,france_top_3,MET
+fr-monaco,Stade Louis II,Monaco,Ligue 1,Monaco,43.727571,7.415458,fr,fr-ligue-1,france_top_3,MON
+fr-nantes,Stade de la Beaujoire,Nantes,Ligue 1,Nantes,47.256005,-1.524755,fr,fr-ligue-1,france_top_3,NAN
+fr-nice,Allianz Riviera,Nice,Ligue 1,Nice,43.705148,7.192603,fr,fr-ligue-1,france_top_3,NIC
+fr-psg,Parc des Princes,PSG,Ligue 1,Paris,48.841363,2.253069,fr,fr-ligue-1,france_top_3,PSG
+fr-paris-fc,Stade Jean-Bouin,Paris FC,Ligue 1,Paris (Paris 16),48.843319,2.252962,fr,fr-ligue-1,france_top_3,PFA
+fr-rennes,Roazhon Park,Rennes,Ligue 1,Rennes,48.107565,-1.712654,fr,fr-ligue-1,france_top_3,REN
+fr-strasbourg,Stade de la Meinau,Strasbourg,Ligue 1,Strasbourg,48.559948,7.755122,fr,fr-ligue-1,france_top_3,STR
+fr-toulouse,Stadium de Toulouse,Toulouse,Ligue 1,Toulouse,43.583226,1.434064,fr,fr-ligue-1,france_top_3,TOU
+fr-amiens,Stade de la Licorne,Amiens,Ligue 2,Amiens,49.893992,2.263474,fr,fr-ligue-2,france_top_3,AMI
+fr-annecy-fc,Parc des Sports,Annecy FC,Ligue 2,Annecy,45.916893,6.119222,fr,fr-ligue-2,france_top_3,AFN
+fr-bastia,Stade Armand Cesari,Bastia,Ligue 2,Bastia,42.651485,9.442719,fr,fr-ligue-2,france_top_3,BAS
+fr-boulogne,Stade de la Libération,Boulogne,Ligue 2,Boulogne-sur-Mer,50.72363,1.619483,fr,fr-ligue-2,france_top_3,BOU
+fr-clermont,Stade Gabriel Montpied,Clermont,Ligue 2,Clermont-Ferrand,45.815877,3.1215,fr,fr-ligue-2,france_top_3,CLE
+fr-grenoble,Stade des Alpes,Grenoble,Ligue 2,Grenoble,45.187395,5.740243,fr,fr-ligue-2,france_top_3,GRE
+fr-guingamp,Stade de Roudourou,Guingamp,Ligue 2,Guingamp,48.566019,-3.164454,fr,fr-ligue-2,france_top_3,GUI
+fr-laval,Stade Francis Le Basser,Laval,Ligue 2,Laval,48.082227,-0.754761,fr,fr-ligue-2,france_top_3,LAV
+fr-le-mans,Stade Marie-Marvingt,Le Mans,Ligue 2,Le Mans,47.959165,0.223109,fr,fr-ligue-2,france_top_3,LME
+fr-montpellier,Stade de la Mosson,Montpellier,Ligue 2,Montpellier,43.622022,3.81209,fr,fr-ligue-2,france_top_3,MO2
+fr-nancy,Stade Marcel Picot,Nancy,Ligue 2,Nancy,48.695831,6.210416,fr,fr-ligue-2,france_top_3,NA2
+fr-pau-fc,Nouste Camp,Pau FC,Ligue 2,Pau,43.307646,-0.32518,fr,fr-ligue-2,france_top_3,PF2
+fr-red-star,Stade Bauer,Red Star,Ligue 2,Paris (Saint-Ouen),48.901176,2.329994,fr,fr-ligue-2,france_top_3,RSE
+fr-reims,Stade Auguste-Delaune,Reims,Ligue 2,Reims,49.247076,4.024787,fr,fr-ligue-2,france_top_3,REI
+fr-rodez,Stade Paul Lignon,Rodez,Ligue 2,Rodez,44.351626,2.563761,fr,fr-ligue-2,france_top_3,ROD
+fr-st-etienne,Stade Geoffroy Guichard,St. Etienne,Ligue 2,Saint-Étienne,45.460757,4.390093,fr,fr-ligue-2,france_top_3,SET
+fr-troyes,Stade de l'Aube,Troyes,Ligue 2,Troyes,48.307517,4.098517,fr,fr-ligue-2,france_top_3,TRO
+fr-usl-dunkerque,Stade Marcel Tribut,USL Dunkerque,Ligue 2,Dunkirk,51.035265,2.389846,fr,fr-ligue-2,france_top_3,UDS
+fr-ajaccio,Stade Michel Moretti,Ajaccio,National,Ajaccio,41.930831,8.776793,fr,fr-national,france_top_3,AJA
+fr-aubagne,Stade de Lattre-de-Tassigny,Aubagne,National,Aubagne,43.293751,5.562357,fr,fr-national,france_top_3,AUB
+fr-bourg-en-bresse,Stade Marcel-Verchère,Bourg en Bresse,National,Bourg-en-Bresse,46.210002,5.23715,fr,fr-national,france_top_3,BEB
+fr-caen,Stade Michel d'Ornano,Caen,National,Caen,49.179493,-0.396953,fr,fr-national,france_top_3,CAE
+fr-chateauroux,Stade Gaston-Petit,Châteauroux,National,Châteauroux,46.802024,1.721484,fr,fr-national,france_top_3,CHA
+fr-concarneau,Stade Guy-Piriou,Concarneau,National,Concarneau,47.889176,-3.913588,fr,fr-national,france_top_3,CON
+fr-dijon,Stade Gaston Gérard,Dijon,National,Dijon,47.324308,5.06834,fr,fr-national,france_top_3,DIJ
+fr-fleury-merogis,Stade Auguste Gentelet,Fleury-Merogis,National,Fleury-Mérogis,48.634018,2.362326,fr,fr-national,france_top_3,FML
+fr-le-puy,Stade Charles Massot,Le Puy,National,Le Puy-en-Velay,45.046535,3.873954,fr,fr-national,france_top_3,LPE
+fr-orleans,Stade de la Source,Orléans,National,Orléans,47.840652,1.941403,fr,fr-national,france_top_3,ORL
+fr-paris-13-atl,Stade Sébastien Charléty,Paris 13 Atl.,National,Paris,48.81805,2.346142,fr,fr-national,france_top_3,P1A
+fr-quevilly-rouen,Stade Robert Diochon,Quevilly Rouen,National,Le Petit-Quevilly,49.411084,1.070646,fr,fr-national,france_top_3,QRU
+fr-rouen,Stade Robert Diochon,Rouen,National,Rouen,49.411084,1.070646,fr,fr-national,france_top_3,ROU
+fr-sochaux,Stade Auguste-Bonal,Sochaux,National,Montbéliard,47.512408,6.811175,fr,fr-national,france_top_3,SOC
+fr-stade-briochin,Stade Fred-Aubert,Stade Briochin,National,Saint-Brieuc,48.509088,-2.744104,fr,fr-national,france_top_3,SBT
+fr-valenciennes,Stade du Hainaut,Valenciennes,National,Valenciennes,50.348427,3.531745,fr,fr-national,france_top_3,VAL
+fr-versailles,Stade Georges Lefèvre,Versailles,National,Versailles,48.80354,2.126689,fr,fr-national,france_top_3,VER
+fr-villefranche,Stade Armand Chouffet,Villefranche,National,Villefranche-sur-Saône,45.999863,4.707246,fr,fr-national,france_top_3,VIL
