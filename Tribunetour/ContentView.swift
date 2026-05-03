@@ -460,7 +460,7 @@ struct StadiumsView: View {
                     Menu {
                         if shouldShowCountryFilter {
                             Picker("Land", selection: $countryFilterRawValue) {
-                                Text("Alle lande").tag("all")
+                                Text("Alle aktive lande").tag("all")
                                 ForEach(countryOptions, id: \.self) { countryCode in
                                     Text(LeaguePresentation.countryLabel(countryCode)).tag(countryCode)
                                 }

@@ -9,3 +9,6 @@ xcuserdata/
 
 # Nested web repository is managed as its own git repo
 Website repo/
+
+# Local Apple push keys should never be committed
+AuthKey_*.p8
