@@ -45,6 +45,7 @@ struct MatchesView: View {
         var id: String { rawValue }
     }
 
+    @AppStorage(AppLeaguePackSettings.preferredHomeCountryCodeKey) private var preferredHomeCountryCode: String = "dk"
     @AppStorage("matches.timeFilter") private var timeFilterRawValue: String = TimeFilter.week.rawValue
     @AppStorage("matches.onlyUnvisitedVenues") private var onlyUnvisitedVenues: Bool = true
     @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
@@ -109,7 +110,7 @@ struct MatchesView: View {
     }
 
     private var scopeLabel: String {
-        countryFilterRawValue == "all" ? "Alle lande" : LeaguePresentation.countryLabel(countryFilterRawValue)
+        countryFilterRawValue == "all" ? "Alle aktive lande" : LeaguePresentation.countryLabel(countryFilterRawValue)
     }
 
     private var resultSummaryText: String {
@@ -226,6 +227,9 @@ struct MatchesView: View {
                                 MatchesContextChip(text: scopeLabel, systemImage: "globe.europe.africa")
                                 if onlyUnvisitedVenues {
                                     MatchesContextChip(text: "Kun ubesøgte", systemImage: "checkmark.circle")
+                                }
+                                if sortMode == .byDistance {
+                                    MatchesContextChip(text: "Sortering: afstand", systemImage: "location")
                                 }
                             }
                         }
@@ -355,8 +359,12 @@ struct MatchesView: View {
             }
         }
         .onAppear {
-            let resolvedHomeCountry = LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(countryOptions))
-            if !countryOptions.contains(countryFilterRawValue) {
+            let resolvedHomeCountry = countryOptions.contains(preferredHomeCountryCode)
+                ? preferredHomeCountryCode
+                : LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(countryOptions))
+            if countryFilterRawValue == "all" && countryOptions.contains(resolvedHomeCountry) {
+                countryFilterRawValue = resolvedHomeCountry
+            } else if !countryOptions.contains(countryFilterRawValue) {
                 countryFilterRawValue = resolvedHomeCountry
             }
         }
@@ -426,12 +434,16 @@ private struct MatchesFilterSheet: View {
                 if shouldShowCountryFilter {
                     Section("Scope") {
                         Picker("Land", selection: $countryFilterRawValue) {
-                            Text("Alle").tag("all")
+                            Text("Alle aktive lande").tag("all")
                             ForEach(countryOptions, id: \.self) { countryCode in
                                 Text(countryLabel(countryCode)).tag(countryCode)
                             }
                         }
                         .pickerStyle(.inline)
+
+                        Text("Dit hjemland bruges som standard-scope, når appen åbner.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
                     }
                 }
             }

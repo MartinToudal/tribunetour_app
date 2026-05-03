@@ -170,6 +170,10 @@ struct StatsView: View {
         LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(clubs.map(\.countryCode)))
     }
 
+    private var currentScopeLabel: String {
+        countryFilterRawValue == "all" ? "Alle aktive lande" : LeaguePresentation.countryLabel(countryFilterRawValue)
+    }
+
     private var recentVisited: [(club: Club, date: Date)] {
         // Brug visitedDate hvis sat, ellers updatedAt (kun hvis visited)
         visitedClubs.compactMap { club in
@@ -521,6 +525,185 @@ struct StatsView: View {
         return "Et oplagt næste stadion at sætte på ønskelisten."
     }
 
+    @ViewBuilder
+    private var accountAndSyncSection: some View {
+        Section("Konto og sync") {
+            if authSession.snapshot.isAuthenticated {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Logget ind")
+                        .font(.headline)
+                    Text(authSession.snapshot.userEmail ?? "Ukendt konto")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+
+                if let loginInfoMessage {
+                    Text(loginInfoMessage)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                if let runtimeSyncInfoMessage {
+                    Text(runtimeSyncInfoMessage)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                if let loginErrorMessage {
+                    Text(loginErrorMessage)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+
+                if let lastSyncIssue = visitedStore.lastSyncIssue {
+                    Text(lastSyncIssue)
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                }
+
+                VStack(alignment: .leading, spacing: 10) {
+                    Text("Premium-adgang")
+                        .font(.headline)
+                    Text("Anmod om adgang til ligaer i andre lande. Vi behandler anmodningen manuelt og åbner for pakken på din konto.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    if premiumRequestRowsLoading {
+                        Text("Henter dine premium-anmodninger...")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    } else if let selectedPackOpenRequest {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Du har allerede en åben anmodning om \(selectedPackOpenRequest.packTitle).")
+                                .font(.caption.weight(.semibold))
+                            if let createdAt = selectedPackOpenRequest.createdAt {
+                                Text("Sendt \(createdAt.formatted(date: .abbreviated, time: .shortened)).")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .foregroundStyle(.secondary)
+                    } else if !openPremiumRequestRows.isEmpty {
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Åbne anmodninger")
+                                .font(.caption.weight(.semibold))
+                            ForEach(openPremiumRequestRows.prefix(3)) { request in
+                                Text("• \(request.packTitle)")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                    }
+
+                    Picker("Pakke", selection: $premiumRequestPack) {
+                        ForEach(AppPremiumAdminPack.allCases) { pack in
+                            Text(pack.title).tag(pack)
+                        }
+                    }
+
+                    TextField("Besked, valgfri", text: $premiumRequestMessage, axis: .vertical)
+                        .textInputAutocapitalization(.sentences)
+                        .lineLimit(2...4)
+
+                    Button {
+                        Task { await submitPremiumAccessRequest() }
+                    } label: {
+                        StatsActionButtonLabel(
+                            title: premiumRequestLoading ? "Sender..." : selectedPackOpenRequest == nil ? "Anmod om premium-adgang" : "Anmodning allerede sendt",
+                            isActive: !premiumRequestLoading && selectedPackOpenRequest == nil
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(premiumRequestLoading || selectedPackOpenRequest != nil)
+
+                    if let premiumRequestInfoMessage {
+                        Text(premiumRequestInfoMessage)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+
+                    if let premiumRequestErrorMessage {
+                        Text(premiumRequestErrorMessage)
+                            .font(.caption)
+                            .foregroundStyle(.red)
+                    }
+                }
+
+                Button("Log ud", role: .destructive) {
+                    authSession.clearSession()
+                    loginInfoMessage = nil
+                    loginErrorMessage = nil
+                    pendingBootstrapStatus = nil
+                    premiumRequestInfoMessage = nil
+                    premiumRequestErrorMessage = nil
+                }
+            } else {
+                let configuration = authClient.currentConfiguration()
+
+                if configuration.isConfigured {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Log ind")
+                            .font(.headline)
+                        Text("Brug samme konto som på web. I appen logger vi nu ind direkte med e-mail og adgangskode.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+
+                        if shouldShowAccountPrompt {
+                            AccountPromptCard(
+                                highlights: accountPromptHighlights,
+                                onDismiss: { accountPromptDismissed = true }
+                            )
+                        }
+
+                        Button {
+                            showAuthSheet = true
+                        } label: {
+                            StatsActionButtonLabel(
+                                title: "Log ind eller opret konto",
+                                isActive: true
+                            )
+                        }
+                        .buttonStyle(.plain)
+
+                        Text("Supabase URL: \(configuration.redactedSupabaseURL)")
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+
+                        if let loginInfoMessage {
+                            Text(loginInfoMessage)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+
+                        if let loginErrorMessage {
+                            Text(loginErrorMessage)
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                        }
+                    }
+                } else {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Login klargøres")
+                            .font(.headline)
+                        Text("Appen mangler stadig sin standard auth-konfiguration. Når Supabase URL og publishable key er indbygget i appen, kan du logge ind her uden Interne værktøjer.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                        if let validationMessage = configuration.supabaseURLValidationMessage {
+                            Text(validationMessage)
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                        } else if !configuration.hasAnonKey {
+                            Text("Supabase anon/publishable key mangler.")
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                        }
+                    }
+                }
+            }
+        }
+        .id(authSession.snapshot.isAuthenticated ? "account-authenticated" : "account-unauthenticated")
+    }
+
     var body: some View {
         NavigationStack {
             List {
@@ -613,11 +796,18 @@ struct StatsView: View {
                     StatsOverviewRow(label: "Billeder i alt", value: "\(totalPhotoCount)")
                 }
 
-                Section("Hjemland") {
+                Section("Hjemland og scope") {
                     Picker("Hjemland", selection: $preferredHomeCountryCode) {
                         ForEach(countryOptions, id: \.self) { countryCode in
                             Text(LeaguePresentation.countryLabel(countryCode)).tag(countryCode)
                         }
+                    }
+
+                    HStack {
+                        Text("Aktivt scope")
+                        Spacer()
+                        Text(currentScopeLabel)
+                            .foregroundStyle(.secondary)
                     }
 
                     Text("Når appen åbner, vælger vi automatisk dit hjemland som aktivt scope.")
@@ -655,182 +845,6 @@ struct StatsView: View {
                         }
                     }
                 }
-
-                Section("Konto og sync") {
-                    if authSession.snapshot.isAuthenticated {
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Logget ind")
-                                .font(.headline)
-                            Text(authSession.snapshot.userEmail ?? "Ukendt konto")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-
-                        if let loginInfoMessage {
-                            Text(loginInfoMessage)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-
-                        if let runtimeSyncInfoMessage {
-                            Text(runtimeSyncInfoMessage)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-
-                        if let loginErrorMessage {
-                            Text(loginErrorMessage)
-                                .font(.caption)
-                                .foregroundStyle(.red)
-                        }
-
-                        if let lastSyncIssue = visitedStore.lastSyncIssue {
-                            Text(lastSyncIssue)
-                                .font(.caption)
-                                .foregroundStyle(.red)
-                        }
-
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text("Premium-adgang")
-                                .font(.headline)
-                            Text("Anmod om adgang til ligaer i andre lande. Vi behandler anmodningen manuelt og åbner for pakken på din konto.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-
-                            if premiumRequestRowsLoading {
-                                Text("Henter dine premium-anmodninger...")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            } else if let selectedPackOpenRequest {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("Du har allerede en åben anmodning om \(selectedPackOpenRequest.packTitle).")
-                                        .font(.caption.weight(.semibold))
-                                    if let createdAt = selectedPackOpenRequest.createdAt {
-                                        Text("Sendt \(createdAt.formatted(date: .abbreviated, time: .shortened)).")
-                                            .font(.caption2)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
-                                .foregroundStyle(.secondary)
-                            } else if !openPremiumRequestRows.isEmpty {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text("Åbne anmodninger")
-                                        .font(.caption.weight(.semibold))
-                                    ForEach(openPremiumRequestRows.prefix(3)) { request in
-                                        Text("• \(request.packTitle)")
-                                            .font(.caption2)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
-                            }
-
-                            Picker("Pakke", selection: $premiumRequestPack) {
-                                ForEach(AppPremiumAdminPack.allCases) { pack in
-                                    Text(pack.title).tag(pack)
-                                }
-                            }
-
-                            TextField("Besked, valgfri", text: $premiumRequestMessage, axis: .vertical)
-                                .textInputAutocapitalization(.sentences)
-                                .lineLimit(2...4)
-
-                            Button {
-                                Task { await submitPremiumAccessRequest() }
-                            } label: {
-                                StatsActionButtonLabel(
-                                    title: premiumRequestLoading ? "Sender..." : selectedPackOpenRequest == nil ? "Anmod om premium-adgang" : "Anmodning allerede sendt",
-                                    isActive: !premiumRequestLoading && selectedPackOpenRequest == nil
-                                )
-                            }
-                            .buttonStyle(.plain)
-                            .disabled(premiumRequestLoading || selectedPackOpenRequest != nil)
-
-                            if let premiumRequestInfoMessage {
-                                Text(premiumRequestInfoMessage)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-
-                            if let premiumRequestErrorMessage {
-                                Text(premiumRequestErrorMessage)
-                                    .font(.caption)
-                                    .foregroundStyle(.red)
-                            }
-                        }
-
-                        Button("Log ud", role: .destructive) {
-                            authSession.clearSession()
-                            loginInfoMessage = nil
-                            loginErrorMessage = nil
-                            pendingBootstrapStatus = nil
-                            premiumRequestInfoMessage = nil
-                            premiumRequestErrorMessage = nil
-                        }
-                    } else {
-                        let configuration = authClient.currentConfiguration()
-
-                        if configuration.isConfigured {
-                            VStack(alignment: .leading, spacing: 10) {
-                                Text("Log ind")
-                                    .font(.headline)
-                                Text("Brug samme konto som på web. I appen logger vi nu ind direkte med e-mail og adgangskode.")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-
-                                if shouldShowAccountPrompt {
-                                    AccountPromptCard(
-                                        highlights: accountPromptHighlights,
-                                        onDismiss: { accountPromptDismissed = true }
-                                    )
-                                }
-
-                                Button {
-                                    showAuthSheet = true
-                                } label: {
-                                    StatsActionButtonLabel(
-                                        title: "Log ind eller opret konto",
-                                        isActive: true
-                                    )
-                                }
-                                .buttonStyle(.plain)
-
-                                Text("Supabase URL: \(configuration.redactedSupabaseURL)")
-                                    .font(.caption2)
-                                    .foregroundStyle(.secondary)
-
-                                if let loginInfoMessage {
-                                    Text(loginInfoMessage)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-
-                                if let loginErrorMessage {
-                                    Text(loginErrorMessage)
-                                        .font(.caption)
-                                        .foregroundStyle(.red)
-                                }
-                            }
-                        } else {
-                            VStack(alignment: .leading, spacing: 8) {
-                                Text("Login klargøres")
-                                    .font(.headline)
-                                Text("Appen mangler stadig sin standard auth-konfiguration. Når Supabase URL og publishable key er indbygget i appen, kan du logge ind her uden Interne værktøjer.")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                                if let validationMessage = configuration.supabaseURLValidationMessage {
-                                    Text(validationMessage)
-                                        .font(.caption)
-                                        .foregroundStyle(.red)
-                                } else if !configuration.hasAnonKey {
-                                    Text("Supabase anon/publishable key mangler.")
-                                        .font(.caption)
-                                        .foregroundStyle(.red)
-                                }
-                            }
-                        }
-                    }
-                }
-                .id(authSession.snapshot.isAuthenticated ? "account-authenticated" : "account-unauthenticated")
 
                 // MARK: By division
                 Section("Fordelt på liga") {
@@ -926,6 +940,8 @@ struct StatsView: View {
                         }
                     }
                 }
+
+                accountAndSyncSection
 
                 // MARK: Feedback
                 Section("Feedback") {
