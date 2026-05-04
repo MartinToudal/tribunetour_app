@@ -33,6 +33,24 @@ struct MatchDetailView: View {
     private var homeClub: Club? { clubById[fixture.homeTeamId] }
     private var awayClub: Club? { clubById[fixture.awayTeamId] }
     private var venueClub: Club? { clubById[fixture.venueClubId] }
+    private var competitionDisplayName: String {
+        if let venueClub {
+            return CompetitionCatalog.displayName(
+                competitionId: fixture.competitionId ?? venueClub.primaryCompetitionId,
+                leagueCode: venueClub.leagueCode,
+                fallbackLeagueName: venueClub.division,
+                countryCode: venueClub.countryCode
+            )
+        }
+
+        return CompetitionCatalog.displayName(for: fixture.competitionId, fallback: fixture.round) ?? "Ukendt turnering"
+    }
+    private var secondaryCompetitionNames: [String] {
+        guard let venueClub else { return [] }
+        return venueClub.secondaryMemberships.compactMap { membership in
+            CompetitionCatalog.displayName(for: membership.competitionId)
+        }
+    }
     private var kickoffDateText: String {
         let df = DateFormatter()
         df.locale = Locale(identifier: "da_DK")
@@ -72,6 +90,11 @@ struct MatchDetailView: View {
             Section {
                 LabeledContent("Dato") { Text(kickoffDateText) }
                 LabeledContent("Tid") { Text(kickoffTimeText) }
+                LabeledContent("Turnering") { Text(competitionDisplayName) }
+
+                if let seasonId = fixture.seasonId ?? venueClub?.primarySeasonId {
+                    LabeledContent("Sæson") { Text(seasonId) }
+                }
 
                 if let round = fixture.round, !round.isEmpty {
                     LabeledContent("Række / runde") { Text(round) }
@@ -118,6 +141,24 @@ struct MatchDetailView: View {
                         Label("Åbn i Apple Maps", systemImage: "map")
                     }
                     .accessibilityHint("Åbner rutevejledning til stadionet")
+
+                    if let membershipStatusLabel = venueClub.membershipStatusLabel {
+                        LabeledContent("Klubstatus") {
+                            Text(membershipStatusLabel)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+
+                    if !secondaryCompetitionNames.isEmpty {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text("Andre aktive turneringer")
+                                .font(.subheadline.weight(.semibold))
+                            Text(secondaryCompetitionNames.joined(separator: " · "))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .padding(.top, 4)
+                    }
                 }
             } else {
                 Section("Stadion") {

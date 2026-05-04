@@ -136,4 +136,22 @@ enum CompetitionCatalog {
     static func isPrimaryDomesticCompetition(_ competitionId: String?) -> Bool {
         entry(forId: competitionId)?.isPrimaryDomestic ?? false
     }
+
+    static func displayName(for competitionId: String?, fallback: String? = nil) -> String? {
+        if let name = entry(forId: competitionId)?.name {
+            return name
+        }
+        return fallback
+    }
+
+    static func membershipStatusLabel(_ status: CompetitionMembershipStatus) -> String? {
+        switch status {
+        case .active:
+            return nil
+        case .relegated:
+            return "Nedrykket"
+        case .historical:
+            return "Historisk"
+        }
+    }
 }
