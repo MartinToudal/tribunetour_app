@@ -67,9 +67,20 @@ enum CompetitionCatalog {
 
     private static let entryById = Dictionary(uniqueKeysWithValues: entries.map { ($0.id, $0) })
     private static let entryByLeagueCode = Dictionary(uniqueKeysWithValues: entries.map { ($0.id, $0) })
-    private static let entryByNormalizedAlias = Dictionary(uniqueKeysWithValues: entries.flatMap { entry in
-        ([entry.name] + entry.aliases).map { (normalizedCompetitionName($0), entry) }
-    })
+    private static let entryByNormalizedAlias: [String: CompetitionCatalogEntry] = {
+        var mapping: [String: CompetitionCatalogEntry] = [:]
+
+        for entry in entries {
+            for alias in [entry.name] + entry.aliases {
+                let normalizedAlias = normalizedCompetitionName(alias)
+                if mapping[normalizedAlias] == nil {
+                    mapping[normalizedAlias] = entry
+                }
+            }
+        }
+
+        return mapping
+    }()
 
     static func normalizedCompetitionName(_ value: String) -> String {
         value

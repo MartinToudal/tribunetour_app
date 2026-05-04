@@ -27,6 +27,7 @@ struct ContentView: View {
                 TabView {
                     StadiumsView(
                         clubs: appState.clubs,
+                        clubById: appState.clubById,
                         fixtures: appState.fixtures,
                         visitedStore: appState.visitedStore,
                         photosStore: appState.photosStore,
@@ -37,6 +38,7 @@ struct ContentView: View {
 
                     MatchesView(
                         clubs: appState.clubs,
+                        clubById: appState.clubById,
                         fixtures: appState.fixtures,
                         visitedStore: appState.visitedStore,
                         photosStore: appState.photosStore,
@@ -94,6 +96,7 @@ struct ContentView: View {
 
 struct StadiumsView: View {
     let clubs: [Club]
+    let clubById: [String: Club]
     let fixtures: [Fixture]
     @ObservedObject var visitedStore: VisitedStore
     @ObservedObject var photosStore: AppPhotosStore
@@ -130,6 +133,7 @@ struct StadiumsView: View {
     @AppStorage("stadiums.sortOption") private var sortRawValue: String = SortOption.leagueThenTeam.rawValue
     @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
     @State private var searchText: String = ""
+    private let maxMapAnnotations = 120
 
     private var filter: VisitedFilter {
         get { VisitedFilter(rawValue: filterRawValue) ?? .all }
@@ -178,10 +182,12 @@ struct StadiumsView: View {
         return nonProgressionVisibleClubs.filter { $0.countryCode == countryFilterRawValue }
     }
 
-    private var clubByIdMap: [String: Club] {
-        ClubIdentityResolver.aliasMap(
-            from: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
-        )
+    private var mapClubs: [Club] {
+        Array(filteredAndSortedClubs.prefix(maxMapAnnotations))
+    }
+
+    private var isMapTruncated: Bool {
+        filteredAndSortedClubs.count > maxMapAnnotations
     }
 
     private func isReviewed(_ clubId: String) -> Bool {
@@ -350,8 +356,14 @@ struct StadiumsView: View {
                         }
                         .font(.caption2)
 
+                        if isMapTruncated {
+                            Text("Kortet viser de første \(maxMapAnnotations) stadions i dit nuværende filter for at holde appen hurtig.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+
                         StadiumMapView(
-                            clubs: filteredAndSortedClubs,
+                            clubs: mapClubs,
                             visitedStore: visitedStore,
                             onSelect: { club in
                                 selectedClub = club
@@ -385,7 +397,7 @@ struct StadiumsView: View {
                                 photosStore: photosStore,
                                 notesStore: notesStore,
                                 reviewsStore: reviewsStore,
-                                clubById: clubByIdMap,
+                                clubById: clubById,
                                 fixtures: fixtures
                             )
                         } label: {
@@ -467,7 +479,7 @@ struct StadiumsView: View {
                                     photosStore: photosStore,
                                     notesStore: notesStore,
                                     reviewsStore: reviewsStore,
-                                    clubById: clubByIdMap,
+                                    clubById: clubById,
                                     fixtures: fixtures
                                 )
                             } label: {
@@ -596,7 +608,7 @@ struct StadiumsView: View {
                     photosStore: photosStore,
                     notesStore: notesStore,
                     reviewsStore: reviewsStore,
-                    clubById: clubByIdMap,
+                    clubById: clubById,
                     fixtures: fixtures
                 )
             }
