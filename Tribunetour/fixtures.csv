@@ -1180,3 +1180,45 @@ nlpo-01-rkc-waalwijk-willem-ii,2026-05-05T18:45:00+02:00,Eredivisie Playoffs - K
 nlpo-02-almere-city-de-graafschap,2026-05-06T18:45:00+02:00,Eredivisie Playoffs - Kvartfinale,nl-almere-city,nl-de-graafschap,nl-almere-city,scheduled,,,nl-promotion-relegation-playoffs,2025-26
 nlpo-03-willem-ii-rkc-waalwijk,2026-05-09T16:30:00+02:00,Eredivisie Playoffs - Kvartfinale,nl-willem-ii,nl-rkc-waalwijk,nl-willem-ii,scheduled,,,nl-promotion-relegation-playoffs,2025-26
 nlpo-04-de-graafschap-almere-city,2026-05-09T20:00:00+02:00,Eredivisie Playoffs - Kvartfinale,nl-de-graafschap,nl-almere-city,nl-de-graafschap,scheduled,,,nl-promotion-relegation-playoffs,2025-26
+be1r-01-st-liege-leuven,2026-05-08T20:45:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 37,be-st-liege,be-leuven,be-st-liege,scheduled,,,be-pro-league-relegation-playoffs,2025-26
+be1r-02-raal-la-louviere-cercle-brugge,2026-05-09T16:00:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 36,be-raal-la-louviere,be-cercle-brugge,be-raal-la-louviere,scheduled,,,be-pro-league-relegation-playoffs,2025-26
+be1r-03-waregem-dender,2026-05-09T16:00:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 36,be-waregem,be-dender,be-waregem,scheduled,,,be-pro-league-relegation-playoffs,2025-26
+be1r-04-leuven-antwerp,2026-05-15T20:45:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 38,be-leuven,be-antwerp,be-leuven,scheduled,,,be-pro-league-relegation-playoffs,2025-26
+be1r-05-charleroi-westerlo,2026-05-16T16:00:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 38,be-charleroi,be-westerlo,be-charleroi,scheduled,,,be-pro-league-relegation-playoffs,2025-26
+be1r-06-st-liege-genk,2026-05-16T18:15:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 38,be-st-liege,be-genk,be-st-liege,scheduled,,,be-pro-league-relegation-playoffs,2025-26
+be1r-07-charleroi-leuven,2026-05-19T20:30:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 39,be-charleroi,be-leuven,be-charleroi,scheduled,,,be-pro-league-relegation-playoffs,2025-26
+be1r-08-genk-antwerp,2026-05-19T20:30:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 39,be-genk,be-antwerp,be-genk,scheduled,,,be-pro-league-relegation-playoffs,2025-26
+be1r-09-westerlo-st-liege,2026-05-19T20:30:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 39,be-westerlo,be-st-liege,be-westerlo,scheduled,,,be-pro-league-relegation-playoffs,2025-26
+be1r-10-antwerp-westerlo,2026-05-23T20:45:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 40,be-antwerp,be-westerlo,be-antwerp,scheduled,,,be-pro-league-relegation-playoffs,2025-26
+be1r-11-leuven-genk,2026-05-23T20:45:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 40,be-leuven,be-genk,be-leuven,scheduled,,,be-pro-league-relegation-playoffs,2025-26
+be1r-12-st-liege-charleroi,2026-05-23T20:45:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 40,be-st-liege,be-charleroi,be-st-liege,scheduled,,,be-pro-league-relegation-playoffs,2025-26
+be1c-01-club-brugge-st-truiden,2026-05-09T20:45:00+02:00,Jupiler Pro League - Mesterskabsspil - Runde 37,be-club-brugge,be-st-truiden,be-club-brugge,scheduled,,,be-pro-league-champions-playoffs,2025-26
+be1c-02-gent-anderlecht,2026-05-10T13:30:00+02:00,Jupiler Pro League - Mesterskabsspil - Runde 37,be-gent,be-anderlecht,be-gent,scheduled,,,be-pro-league-champions-playoffs,2025-26
+be1c-03-royale-union-sg-kv-mechelen,2026-05-10T18:30:00+02:00,Jupiler Pro League - Mesterskabsspil - Runde 37,be-royale-union-sg,be-kv-mechelen,be-royale-union-sg,scheduled,,,be-pro-league-champions-playoffs,2025-26
+be1c-04-st-truiden-gent,2026-05-16T20:45:00+02:00,Jupiler Pro League - Mesterskabsspil - Runde 38,be-st-truiden,be-gent,be-st-truiden,scheduled,,,be-pro-league-champions-playoffs,2025-26
+be1c-05-anderlecht-kv-mechelen,2026-05-17T13:30:00+02:00,Jupiler Pro League - Mesterskabsspil - Runde 38,be-anderlecht,be-kv-mechelen,be-anderlecht,scheduled,,,be-pro-league-champions-playoffs,2025-26
+be1c-06-club-brugge-royale-union-sg,2026-05-17T18:30:00+02:00,Jupiler Pro League - Mesterskabsspil - Runde 38,be-club-brugge,be-royale-union-sg,be-club-brugge,scheduled,,,be-pro-league-champions-playoffs,2025-26
+be1c-07-anderlecht-st-truiden,2026-05-21T20:30:00+02:00,Jupiler Pro League - Mesterskabsspil - Runde 39,be-anderlecht,be-st-truiden,be-anderlecht,scheduled,,,be-pro-league-champions-playoffs,2025-26
+be1c-08-gent-royale-union-sg,2026-05-21T20:30:00+02:00,Jupiler Pro League - Mesterskabsspil - Runde 39,be-gent,be-royale-union-sg,be-gent,scheduled,,,be-pro-league-champions-playoffs,2025-26
+be1c-09-kv-mechelen-club-brugge,2026-05-21T20:30:00+02:00,Jupiler Pro League - Mesterskabsspil - Runde 39,be-kv-mechelen,be-club-brugge,be-kv-mechelen,scheduled,,,be-pro-league-champions-playoffs,2025-26
+be1c-10-club-brugge-gent,2026-05-24T18:30:00+02:00,Jupiler Pro League - Mesterskabsspil - Runde 40,be-club-brugge,be-gent,be-club-brugge,scheduled,,,be-pro-league-champions-playoffs,2025-26
+be1c-11-royale-union-sg-anderlecht,2026-05-24T18:30:00+02:00,Jupiler Pro League - Mesterskabsspil - Runde 40,be-royale-union-sg,be-anderlecht,be-royale-union-sg,scheduled,,,be-pro-league-champions-playoffs,2025-26
+be1c-12-st-truiden-kv-mechelen,2026-05-24T18:30:00+02:00,Jupiler Pro League - Mesterskabsspil - Runde 40,be-st-truiden,be-kv-mechelen,be-st-truiden,scheduled,,,be-pro-league-champions-playoffs,2025-26
+be1e-01-antwerp-charleroi,2026-05-10T16:00:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 37,be-antwerp,be-charleroi,be-antwerp,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-02-genk-westerlo,2026-05-10T19:15:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 37,be-genk,be-westerlo,be-genk,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-03-leuven-antwerp,2026-05-15T20:45:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 38,be-leuven,be-antwerp,be-leuven,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-04-charleroi-westerlo,2026-05-16T16:00:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 38,be-charleroi,be-westerlo,be-charleroi,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-05-st-liege-genk,2026-05-16T18:15:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 38,be-st-liege,be-genk,be-st-liege,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-06-charleroi-leuven,2026-05-19T20:30:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 39,be-charleroi,be-leuven,be-charleroi,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-07-genk-antwerp,2026-05-19T20:30:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 39,be-genk,be-antwerp,be-genk,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-08-westerlo-st-liege,2026-05-19T20:30:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 39,be-westerlo,be-st-liege,be-westerlo,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-09-antwerp-westerlo,2026-05-23T20:45:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 40,be-antwerp,be-westerlo,be-antwerp,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-10-leuven-genk,2026-05-23T20:45:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 40,be-leuven,be-genk,be-leuven,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-11-st-liege-charleroi,2026-05-23T20:45:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 40,be-st-liege,be-charleroi,be-st-liege,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1p-01-beerschot-va-lommel-sk,2026-05-09T18:15:00+02:00,Belgisk promotion/relegation playoff - Semifinale,be-beerschot-va,be-lommel-sk,be-beerschot-va,scheduled,,,be-promotion-relegation-playoffs,2025-26
+be3a-01-union-namur-zebra-elites,2026-05-10T15:00:00+02:00,National Division 1 ACFF - Runde 10,be-union-namur,be-zebra-elites,be-union-namur,scheduled,,,be-national-division-1-acff,2025-26
+be3a-02-union-sg-b-stockay-warfusee,2026-05-10T15:00:00+02:00,National Division 1 ACFF - Runde 10,be-union-sg-b,be-stockay-warfusee,be-union-sg-b,scheduled,,,be-national-division-1-acff,2025-26
+be3a-03-sl16-fc-crossing-schaerbeek,2026-05-10T15:00:00+02:00,National Division 1 ACFF - Runde 10,be-sl16-fc,be-crossing-schaerbeek,be-sl16-fc,scheduled,,,be-national-division-1-acff,2025-26
+be3ap-01-renaissance-mons-meux,2026-05-10T15:00:00+02:00,National Division 1 ACFF - Oprykningsgruppe - Runde 10,be-renaissance-mons,be-meux,be-renaissance-mons,scheduled,,,be-national-division-1-acff-promotion-group,2025-26
+be3ap-02-tubize-braine-union-rochefortoise,2026-05-10T15:00:00+02:00,National Division 1 ACFF - Oprykningsgruppe - Runde 10,be-tubize-braine,be-union-rochefortoise,be-tubize-braine,scheduled,,,be-national-division-1-acff-promotion-group,2025-26
+be3ap-03-virton-habay-la-neuve,2026-05-10T15:00:00+02:00,National Division 1 ACFF - Oprykningsgruppe - Runde 10,be-virton,be-habay-la-neuve,be-virton,scheduled,,,be-national-division-1-acff-promotion-group,2025-26

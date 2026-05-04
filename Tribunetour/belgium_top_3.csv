@@ -1,0 +1,62 @@
+id,name,team,league,city,lat,lon,country_code,league_code,league_pack,short_code,competition_id,season_id,membership_status,secondary_competition_ids
+be-anderlecht,Constant Vanden Stock – Lotto Park,Anderlecht,Jupiler Pro League,Anderlecht,50.83416667,4.29833333,be,be-jupiler-pro-league,belgium_top_3,AND,be-jupiler-pro-league,2025-26,active,be-pro-league-champions-playoffs
+be-antwerp,Bosuilstadion,Antwerp,Jupiler Pro League,Antwerp,51.2325,4.47222222,be,be-jupiler-pro-league,belgium_top_3,ANT,be-jupiler-pro-league,2025-26,active,be-pro-league-europe-playoffs
+be-cercle-brugge,Jan Breydel Stadium,Cercle Brugge,Jupiler Pro League,Bruges,51.19333333,3.18055556,be,be-jupiler-pro-league,belgium_top_3,CER,be-jupiler-pro-league,2025-26,active,be-pro-league-relegation-playoffs
+be-charleroi,Stade du Pays de Charleroi,Charleroi,Jupiler Pro League,Charleroi,50.414609,4.453787,be,be-jupiler-pro-league,belgium_top_3,CHA,be-jupiler-pro-league,2025-26,active,be-pro-league-europe-playoffs
+be-club-brugge,Jan Breydel Stadium,Club Brugge,Jupiler Pro League,Bruges,51.19333333,3.18055556,be,be-jupiler-pro-league,belgium_top_3,CBR,be-jupiler-pro-league,2025-26,active,be-pro-league-champions-playoffs
+be-dender,Florent Beeckmanstadion,Dender,Jupiler Pro League,Denderleeuw,50.883683,4.071185,be,be-jupiler-pro-league,belgium_top_3,DEN,be-jupiler-pro-league,2025-26,active,be-pro-league-relegation-playoffs
+be-genk,Cegeka Arena,Genk,Jupiler Pro League,Genk,51.005,5.53333333,be,be-jupiler-pro-league,belgium_top_3,GNK,be-jupiler-pro-league,2025-26,active,be-pro-league-europe-playoffs
+be-gent,Planet Group Arena,Gent,Jupiler Pro League,Gent,51.01611111,3.73416667,be,be-jupiler-pro-league,belgium_top_3,GEN,be-jupiler-pro-league,2025-26,active,be-pro-league-champions-playoffs
+be-kv-mechelen,Achter de Kazerne,KV Mechelen,Jupiler Pro League,Mechelen,51.037184,4.486397,be,be-jupiler-pro-league,belgium_top_3,MEC,be-jupiler-pro-league,2025-26,active,be-pro-league-champions-playoffs
+be-leuven,Den Dreef,Leuven,Jupiler Pro League,Leuven,50.86833333,4.69416667,be,be-jupiler-pro-league,belgium_top_3,LEU,be-jupiler-pro-league,2025-26,active,be-pro-league-relegation-playoffs|be-pro-league-europe-playoffs
+be-raal-la-louviere,Stade du Tivoli,RAAL La Louviere,Jupiler Pro League,La Louviere,50.478278,4.201026,be,be-jupiler-pro-league,belgium_top_3,LOU,be-jupiler-pro-league,2025-26,active,be-pro-league-relegation-playoffs
+be-royale-union-sg,Joseph Marien Stadium,Royale Union SG,Jupiler Pro League,Forest,50.81777778,4.32916667,be,be-jupiler-pro-league,belgium_top_3,USG,be-jupiler-pro-league,2025-26,active,be-pro-league-champions-playoffs
+be-st-liege,Stade Maurice Dufrasne,St. Liege,Jupiler Pro League,Liege,50.61,5.54333333,be,be-jupiler-pro-league,belgium_top_3,STL,be-jupiler-pro-league,2025-26,active,be-pro-league-relegation-playoffs|be-pro-league-europe-playoffs
+be-st-truiden,Stayen,St. Truiden,Jupiler Pro League,Sint-Truiden,50.813474,5.166256,be,be-jupiler-pro-league,belgium_top_3,STR,be-jupiler-pro-league,2025-26,active,be-pro-league-champions-playoffs
+be-waregem,Regenboogstadion,Waregem,Jupiler Pro League,Waregem,50.88305556,3.42888889,be,be-jupiler-pro-league,belgium_top_3,WAR,be-jupiler-pro-league,2025-26,active,be-pro-league-relegation-playoffs
+be-westerlo,Het Kuipje,Westerlo,Jupiler Pro League,Westerlo,51.094817,4.928806,be,be-jupiler-pro-league,belgium_top_3,WES,be-jupiler-pro-league,2025-26,active,be-pro-league-europe-playoffs
+be-beerschot-va,Olympisch Stadion,Beerschot VA,Challenger Pro League,Antwerp,51.1816,4.3817,be,be-challenger-pro-league,belgium_top_3,BEE,be-challenger-pro-league,2025-26,active,be-promotion-relegation-playoffs
+be-beveren,Freethiel Stadion,Beveren,Challenger Pro League,Beveren,51.214139,4.243931,be,be-challenger-pro-league,belgium_top_3,BEV,be-challenger-pro-league,2025-26,active,
+be-club-nxt,Schiervelde Stadion,Club NXT,Challenger Pro League,Roeselare,50.952087,3.105354,be,be-challenger-pro-league,belgium_top_3,NXT,be-challenger-pro-league,2025-26,active,
+be-eupen,Kehrwegstadion,Eupen,Challenger Pro League,Eupen,50.63333333,6.03333333,be,be-challenger-pro-league,belgium_top_3,EUP,be-challenger-pro-league,2025-26,active,
+be-francs-borains,Stade Robert Urbain,Francs Borains,Challenger Pro League,Boussu,50.4326,3.7938,be,be-challenger-pro-league,belgium_top_3,FRB,be-challenger-pro-league,2025-26,active,
+be-jong-genk,Cegeka Arena,Jong Genk,Challenger Pro League,Genk,51.005,5.53333333,be,be-challenger-pro-league,belgium_top_3,JGN,be-challenger-pro-league,2025-26,active,
+be-jong-kaa-gent,Planet Group Arena,Jong KAA Gent,Challenger Pro League,Gent,51.01611111,3.73416667,be,be-challenger-pro-league,belgium_top_3,JGT,be-challenger-pro-league,2025-26,active,
+be-kortrijk,Guldensporenstadion,Kortrijk,Challenger Pro League,Kortrijk,50.830432,3.248906,be,be-challenger-pro-league,belgium_top_3,KOR,be-challenger-pro-league,2025-26,active,
+be-lierse,Herman Vanderpoortenstadion,Lierse,Challenger Pro League,Lier,51.14416667,4.57361111,be,be-challenger-pro-league,belgium_top_3,LIE,be-challenger-pro-league,2025-26,active,
+be-lokeren,Daknamstadion,Lokeren,Challenger Pro League,Lokeren,51.11638889,3.98722222,be,be-challenger-pro-league,belgium_top_3,LOK,be-challenger-pro-league,2025-26,active,
+be-lommel-sk,Soevereinstadion,Lommel SK,Challenger Pro League,Lommel,51.2317,5.3151,be,be-challenger-pro-league,belgium_top_3,LOM,be-challenger-pro-league,2025-26,active,be-promotion-relegation-playoffs
+be-olympic-charleroi,Stade de la Neuville,Olympic Charleroi,Challenger Pro League,Charleroi,50.4108,4.4446,be,be-challenger-pro-league,belgium_top_3,OLY,be-challenger-pro-league,2025-26,active,
+be-patro-eisden,Gemeentelijk Sportparkstadion,Patro Eisden,Challenger Pro League,Maasmechelen,50.966,5.6944,be,be-challenger-pro-league,belgium_top_3,PAT,be-challenger-pro-league,2025-26,active,
+be-rfc-liege,Stade de Rocourt,RFC Liege,Challenger Pro League,Liege,50.6672,5.5488,be,be-challenger-pro-league,belgium_top_3,RFL,be-challenger-pro-league,2025-26,active,
+be-rsca-futures,Lotto Park,RSCA Futures,Challenger Pro League,Anderlecht,50.83416667,4.29833333,be,be-challenger-pro-league,belgium_top_3,RSF,be-challenger-pro-league,2025-26,active,
+be-rwdm-brussels,Edmond Machtens Stadium,RWDM Brussels,Challenger Pro League,Brussels,50.8609,4.3125,be,be-challenger-pro-league,belgium_top_3,RWD,be-challenger-pro-league,2025-26,active,
+be-seraing,Stade du Pairay,Seraing,Challenger Pro League,Seraing,50.5993,5.5141,be,be-challenger-pro-league,belgium_top_3,SER,be-challenger-pro-league,2025-26,active,
+be-crossing-schaerbeek,Crossing Stadium,Crossing Schaerbeek,National Division 1 ACFF,Schaerbeek,50.867,4.3785,be,be-national-division-1-acff,belgium_top_3,CSC,be-national-division-1-acff,2025-26,active,
+be-habay-la-neuve,Stade communal de Habay-la-Neuve,Habay La Neuve,National Division 1 ACFF,Habay-la-Neuve,49.7234,5.646,be,be-national-division-1-acff,belgium_top_3,HAB,be-national-division-1-acff,2025-26,active,be-national-division-1-acff-promotion-group
+be-meux,Stade des Verts Pres,Meux,National Division 1 ACFF,Meux,50.5517,4.8011,be,be-national-division-1-acff,belgium_top_3,MEU,be-national-division-1-acff,2025-26,active,be-national-division-1-acff-promotion-group
+be-renaissance-mons,Stade Charles Tondreau,Renaissance Mons,National Division 1 ACFF,Mons,50.461957,3.963822,be,be-national-division-1-acff,belgium_top_3,MON,be-national-division-1-acff,2025-26,active,be-national-division-1-acff-promotion-group
+be-sl16-fc,Stade Maurice Dufrasne,SL16 FC,National Division 1 ACFF,Liege,50.61,5.54333333,be,be-national-division-1-acff,belgium_top_3,SL1,be-national-division-1-acff,2025-26,active,
+be-stockay-warfusee,Terrain rue Joseph Wauters,Stockay-Warfusee,National Division 1 ACFF,Saint-Georges-sur-Meuse,50.582,5.337,be,be-national-division-1-acff,belgium_top_3,STO,be-national-division-1-acff,2025-26,active,
+be-tubize-braine,Stade Leburton,Tubize-Braine,National Division 1 ACFF,Tubize,50.6918,4.2016,be,be-national-division-1-acff,belgium_top_3,TUB,be-national-division-1-acff,2025-26,active,be-national-division-1-acff-promotion-group
+be-union-namur,Stade ADEPS de Jambes,Union Namur,National Division 1 ACFF,Namur,50.4674,4.8718,be,be-national-division-1-acff,belgium_top_3,NAM,be-national-division-1-acff,2025-26,active,
+be-union-rochefortoise,Stade de Rochefort,Union Rochefortoise,National Division 1 ACFF,Rochefort,50.1633,5.2214,be,be-national-division-1-acff,belgium_top_3,ROC,be-national-division-1-acff,2025-26,active,be-national-division-1-acff-promotion-group
+be-union-sg-b,Stade Marien annexe,Union SG B,National Division 1 ACFF,Forest,53.6,9.53333333,be,be-national-division-1-acff,belgium_top_3,USB,be-national-division-1-acff,2025-26,active,
+be-virton,Stade Yvan Georges,Virton,National Division 1 ACFF,Virton,49.5625,5.5306,be,be-national-division-1-acff,belgium_top_3,VIR,be-national-division-1-acff,2025-26,active,be-national-division-1-acff-promotion-group
+be-zebra-elites,Stade du Pays de Charleroi,Zébra Élites,National Division 1 ACFF,Charleroi,50.414609,4.453787,be,be-national-division-1-acff,belgium_top_3,ZEB,be-national-division-1-acff,2025-26,active,
+be-belisia-bilzen,Sportcomplex De Katteberg,Belisia Bilzen,National Division 1 VV,Bilzen,50.8733,5.5184,be,be-national-division-1-vv,belgium_top_3,BEL,be-national-division-1-vv,2025-26,active,
+be-dessel-sport,Armand Melis Stadion,Dessel Sport,National Division 1 VV,Dessel,51.2399,5.1145,be,be-national-division-1-vv,belgium_top_3,DES,be-national-division-1-vv,2025-26,active,
+be-diegem,Gemeentelijk Sportstadion,Diegem,National Division 1 VV,Diegem,50.894232,4.435623,be,be-national-division-1-vv,belgium_top_3,DIE,be-national-division-1-vv,2025-26,active,
+be-hasselt,Stedelijk Sportstadion Hasselt,Hasselt,National Division 1 VV,Hasselt,50.93,5.3375,be,be-national-division-1-vv,belgium_top_3,HAS,be-national-division-1-vv,2025-26,active,
+be-hoogstraten,Sportcomplex Seminarie,Hoogstraten,National Division 1 VV,Hoogstraten,51.4003,4.7606,be,be-national-division-1-vv,belgium_top_3,HOO,be-national-division-1-vv,2025-26,active,
+be-houtvenne,Stadion KFC Houtvenne A Terrein,Houtvenne,National Division 1 VV,Houtvenne,51.08333333,4.78333333,be,be-national-division-1-vv,belgium_top_3,HOU,be-national-division-1-vv,2025-26,active,
+be-jong-cercle,Jan Breydel Stadium,Jong Cercle,National Division 1 VV,Bruges,51.19333333,3.18055556,be,be-national-division-1-vv,belgium_top_3,JCE,be-national-division-1-vv,2025-26,active,
+be-knokke,Burgemeester Graaf Leopold Lippens Park,Knokke,National Division 1 VV,Knokke,51.34638889,3.28777778,be,be-national-division-1-vv,belgium_top_3,KNO,be-national-division-1-vv,2025-26,active,
+be-lyra-lierse-berlaar,Lyrastadion,Lyra-Lierse Berlaar,National Division 1 VV,Lier,51.1313,4.5706,be,be-national-division-1-vv,belgium_top_3,LYR,be-national-division-1-vv,2025-26,active,
+be-merelbeke,Molenkouterstadion,Merelbeke,National Division 1 VV,Merelbeke,51.0,3.75,be,be-national-division-1-vv,belgium_top_3,MER,be-national-division-1-vv,2025-26,active,
+be-ninove,De Kloppers,Ninove,National Division 1 VV,Ninove,50.83333333,4.01666667,be,be-national-division-1-vv,belgium_top_3,NIN,be-national-division-1-vv,2025-26,active,
+be-oh-leuven-u-23,Den Dreef,OH Leuven U-23,National Division 1 VV,Leuven,50.86833333,4.69416667,be,be-national-division-1-vv,belgium_top_3,OH3,be-national-division-1-vv,2025-26,active,
+be-roeselare,Schiervelde Stadion,Roeselare,National Division 1 VV,Roeselare,50.952087,3.105354,be,be-national-division-1-vv,belgium_top_3,ROE,be-national-division-1-vv,2025-26,active,
+be-thes-sport,Gemeentelijk Sportpark,Thes Sport,National Division 1 VV,Tessenderlo,50.86092778,6.03870278,be,be-national-division-1-vv,belgium_top_3,THE,be-national-division-1-vv,2025-26,active,
+be-tienen,Bergéstadion,Tienen,National Division 1 VV,Tienen,50.8079,4.9385,be,be-national-division-1-vv,belgium_top_3,TIE,be-national-division-1-vv,2025-26,active,
+be-zelzate,Armand Seghers Complex,Zelzate,National Division 1 VV,Zelzate,51.2,3.81666667,be,be-national-division-1-vv,belgium_top_3,ZEL,be-national-division-1-vv,2025-26,active,
