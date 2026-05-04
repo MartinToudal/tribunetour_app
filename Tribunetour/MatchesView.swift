@@ -319,23 +319,21 @@ struct MatchesView: View {
                     Text(upcomingMatchesHeaderTitle)
                 }
 
-                if !visibleNonProgressionClubs.isEmpty || !nonTopSystemFixtures.isEmpty {
-                    Section("Synlige uden for aktuelt topsystem") {
-                        Text("Kampe og klubber her tæller ikke med i det aktuelle topsystem, men bliver bevaret som et separat spor for nedrykkede, historiske eller ekstra turneringer.")
+                Section("Synlige uden for aktuelt topsystem") {
+                    Text("Kampe og klubber her tæller ikke med i det aktuelle topsystem, men bliver bevaret som et separat spor for nedrykkede, historiske eller ekstra turneringer.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    if nonTopSystemFixtures.isEmpty {
+                        Text("Ingen kommende kampe i dette spor lige nu. Når de første ikke-topsystem-klubber får kampe i data, dukker de op her.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-
-                        if nonTopSystemFixtures.isEmpty {
-                            Text("Ingen kommende kampe i dette spor lige nu.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        } else {
-                            ForEach(nonTopSystemFixtures.prefix(20)) { f in
-                                matchNavigationRow(
-                                    for: f,
-                                    statusOverride: clubById[f.venueClubId]?.membershipStatusLabel
-                                )
-                            }
+                    } else {
+                        ForEach(nonTopSystemFixtures.prefix(20)) { f in
+                            matchNavigationRow(
+                                for: f,
+                                statusOverride: clubById[f.venueClubId]?.membershipStatusLabel
+                            )
                         }
                     }
                 }

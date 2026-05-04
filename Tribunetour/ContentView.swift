@@ -448,12 +448,17 @@ struct StadiumsView: View {
                     }
                 }
 
-                if !countryFilteredNonProgressionClubs.isEmpty {
-                    Section("Synlige uden for aktuelt topsystem") {
-                        Text("De her klubber er stadig synlige, men de tæller ikke med i det aktuelle top-system for scope, kort og progression.")
+                Section("Synlige uden for aktuelt topsystem") {
+                    Text("De her klubber er stadig synlige, men de tæller ikke med i det aktuelle top-system for scope, kort og progression.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    if countryFilteredNonProgressionClubs.isEmpty {
+                        Text("Der er ingen klubber i dette spor endnu. Når de første nedrykkede eller historiske hold kommer i data, dukker de op her.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-
+                            .padding(.vertical, 6)
+                    } else {
                         ForEach(countryFilteredNonProgressionClubs.sorted(by: sortComparator)) { club in
                             NavigationLink {
                                 StadiumDetailView(

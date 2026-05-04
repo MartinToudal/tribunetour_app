@@ -893,12 +893,17 @@ struct StatsView: View {
                     }
                 }
 
-                if !relegatedOrHistoricalRows.isEmpty {
-                    Section("Synlige uden for aktuelt topsystem") {
-                        Text("De her klubber tæller ikke med i dine aktuelle top-system stats, men de bliver bevaret i oversigten, så nedrykkede og historiske spor ikke forsvinder.")
+                Section("Synlige uden for aktuelt topsystem") {
+                    Text("De her klubber tæller ikke med i dine aktuelle top-system stats, men de bliver bevaret i oversigten, så nedrykkede, historiske og ekstra turneringsspor ikke forsvinder.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    if relegatedOrHistoricalRows.isEmpty {
+                        Text("Der er ingen klubber i dette spor endnu. Når de første nedrykkede eller historiske hold kommer i data, dukker de op her.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-
+                            .padding(.vertical, 6)
+                    } else {
                         ForEach(relegatedOrHistoricalRows) { club in
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack(alignment: .top) {
