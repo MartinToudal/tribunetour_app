@@ -22,6 +22,8 @@ struct RemoteFixtureDTO: Decodable {
     let status: String
     let homeScore: Int?
     let awayScore: Int?
+    let competitionId: String?
+    let seasonId: String?
 
     func toFixture() throws -> Fixture {
         guard let kickoffDate = Self.parseISODate(kickoff) else {
@@ -40,7 +42,9 @@ struct RemoteFixtureDTO: Decodable {
             venueClubId: venueClubId,
             status: mappedStatus,
             homeScore: homeScore,
-            awayScore: awayScore
+            awayScore: awayScore,
+            competitionId: competitionId,
+            seasonId: seasonId
         )
     }
 

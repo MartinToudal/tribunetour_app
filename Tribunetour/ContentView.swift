@@ -145,8 +145,17 @@ struct StadiumsView: View {
         countryFilteredClubs.filter { visitedStore.isVisited($0.id) }.count
     }
 
+    private var progressionClubs: [Club] {
+        clubs.filter(\.countsTowardTopSystemProgression)
+    }
+
+    private var nonProgressionVisibleClubs: [Club] {
+        clubs.filter(\.shouldRemainVisibleOutsideTopSystem)
+    }
+
     private var countryOptions: [String] {
-        Array(Set(clubs.map(\.countryCode))).sorted { left, right in
+        let source = progressionClubs.isEmpty ? clubs : progressionClubs
+        return Array(Set(source.map(\.countryCode))).sorted { left, right in
             if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
                 return LeaguePresentation.countryRank(left) < LeaguePresentation.countryRank(right)
             }
@@ -159,8 +168,14 @@ struct StadiumsView: View {
     }
 
     private var countryFilteredClubs: [Club] {
-        guard countryFilterRawValue != "all" else { return clubs }
-        return clubs.filter { $0.countryCode == countryFilterRawValue }
+        let source = progressionClubs.isEmpty ? clubs : progressionClubs
+        guard countryFilterRawValue != "all" else { return source }
+        return source.filter { $0.countryCode == countryFilterRawValue }
+    }
+
+    private var countryFilteredNonProgressionClubs: [Club] {
+        guard countryFilterRawValue != "all" else { return nonProgressionVisibleClubs }
+        return nonProgressionVisibleClubs.filter { $0.countryCode == countryFilterRawValue }
     }
 
     private var clubByIdMap: [String: Club] {
@@ -430,6 +445,54 @@ struct StadiumsView: View {
                             .padding(.vertical, 4)
                         }
                         .accessibilityIdentifier("stadium-row-\(club.id)")
+                    }
+                }
+
+                if !countryFilteredNonProgressionClubs.isEmpty {
+                    Section("Synlige uden for aktuelt topsystem") {
+                        Text("De her klubber er stadig synlige, men de tæller ikke med i det aktuelle top-system for scope, kort og progression.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+
+                        ForEach(countryFilteredNonProgressionClubs.sorted(by: sortComparator)) { club in
+                            NavigationLink {
+                                StadiumDetailView(
+                                    club: club,
+                                    visitedStore: visitedStore,
+                                    photosStore: photosStore,
+                                    notesStore: notesStore,
+                                    reviewsStore: reviewsStore,
+                                    clubById: clubByIdMap,
+                                    fixtures: fixtures
+                                )
+                            } label: {
+                                HStack(alignment: .top) {
+                                    VStack(alignment: .leading, spacing: 6) {
+                                        Text(club.name)
+                                            .font(.headline)
+                                            .lineLimit(2)
+
+                                        Text(club.stadium.name)
+                                            .font(.subheadline)
+                                            .lineLimit(2)
+
+                                        Text("\(club.division) • \(club.stadium.city)")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                            .lineLimit(2)
+
+                                        if let membershipStatusLabel = club.membershipStatusLabel {
+                                            Text(membershipStatusLabel)
+                                                .font(.caption2.weight(.semibold))
+                                                .foregroundStyle(.secondary)
+                                        }
+                                    }
+
+                                    Spacer()
+                                }
+                                .padding(.vertical, 4)
+                            }
+                        }
                     }
                 }
             }

@@ -23,7 +23,7 @@ enum FixturesCSVError: LocalizedError {
 struct FixturesCSVImporter {
 
     /// Forventer header:
-    /// id,kickoff,round,homeTeamId,awayTeamId,venueClubId,status,homeScore,awayScore
+    /// id,kickoff,round,homeTeamId,awayTeamId,venueClubId,status,homeScore,awayScore,competitionId,seasonId
     static func loadFixturesFromBundle(csvFileName: String) throws -> [Fixture] {
 
         // ✅ Undgå Bundle.url(forResource:) som kan give console-støj
@@ -86,6 +86,8 @@ struct FixturesCSVImporter {
 
             let homeScoreStr = value(row, "homescore")
             let awayScoreStr = value(row, "awayscore")
+            let competitionId = value(row, "competitionid")
+            let seasonId = value(row, "seasonid")
 
             guard
                 !id.isEmpty,
@@ -112,7 +114,9 @@ struct FixturesCSVImporter {
                     venueClubId: venue,
                     status: status,
                     homeScore: homeScore,
-                    awayScore: awayScore
+                    awayScore: awayScore,
+                    competitionId: competitionId.isEmpty ? nil : competitionId,
+                    seasonId: seasonId.isEmpty ? nil : seasonId
                 )
             )
         }

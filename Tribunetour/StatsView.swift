@@ -69,18 +69,26 @@ struct StatsView: View {
     // MARK: - Derived stats
 
     private var visitedClubs: [Club] {
-        clubs.filter { visitedStore.isVisited($0.id) }
+        progressionClubs.filter { visitedStore.isVisited($0.id) }
     }
 
     private var unvisitedClubs: [Club] {
-        clubs.filter { !visitedStore.isVisited($0.id) }
+        progressionClubs.filter { !visitedStore.isVisited($0.id) }
+    }
+
+    private var progressionClubs: [Club] {
+        clubs.filter(\.countsTowardTopSystemProgression)
+    }
+
+    private var nonProgressionVisibleClubs: [Club] {
+        clubs.filter(\.shouldRemainVisibleOutsideTopSystem)
     }
 
     private var visitedCount: Int { visitedClubs.count }
-    private var totalCount: Int { clubs.count }
+    private var totalCount: Int { progressionClubs.count }
     private var unvisitedCount: Int { unvisitedClubs.count }
-    private var coreClubs: [Club] { clubs.filter { $0.leaguePack == AppLeaguePackId.coreDenmark.rawValue } }
-    private var premiumClubs: [Club] { clubs.filter { $0.leaguePack != AppLeaguePackId.coreDenmark.rawValue } }
+    private var coreClubs: [Club] { progressionClubs.filter { $0.leaguePack == AppLeaguePackId.coreDenmark.rawValue } }
+    private var premiumClubs: [Club] { progressionClubs.filter { $0.leaguePack != AppLeaguePackId.coreDenmark.rawValue } }
     private var coreVisitedCount: Int { coreClubs.filter { visitedStore.isVisited($0.id) }.count }
     private var coreTotalCount: Int { coreClubs.count }
     private var premiumVisitedCount: Int { premiumClubs.filter { visitedStore.isVisited($0.id) }.count }
@@ -124,7 +132,8 @@ struct StatsView: View {
     }
 
     private var countryOptions: [String] {
-        Array(Set(clubs.map(\.countryCode))).sorted { left, right in
+        let source = progressionClubs.isEmpty ? clubs : progressionClubs
+        return Array(Set(source.map(\.countryCode))).sorted { left, right in
             if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
                 return LeaguePresentation.countryRank(left) < LeaguePresentation.countryRank(right)
             }
@@ -159,7 +168,7 @@ struct StatsView: View {
     }
 
     private var visitedByDivision: [DivisionProgressRow] {
-        divisionRows(from: clubs)
+        divisionRows(from: progressionClubs)
     }
 
     private var coreVisitedByDivision: [DivisionProgressRow] {
@@ -167,7 +176,7 @@ struct StatsView: View {
     }
 
     private var activeHomeCountryCode: String {
-        LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(clubs.map(\.countryCode)))
+        LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set((progressionClubs.isEmpty ? clubs : progressionClubs).map(\.countryCode)))
     }
 
     private var currentScopeLabel: String {
@@ -225,6 +234,22 @@ struct StatsView: View {
 
     private var visitedDivisionsCount: Int {
         Set(visitedClubs.map { $0.division.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }).count
+    }
+
+    private var relegatedOrHistoricalRows: [Club] {
+        nonProgressionVisibleClubs.sorted { lhs, rhs in
+            if lhs.countryCode != rhs.countryCode {
+                return LeaguePresentation.countryRank(lhs.countryCode) < LeaguePresentation.countryRank(rhs.countryCode)
+            }
+
+            let lhsRank = LeaguePresentation.divisionRank(lhs.division, countryCode: lhs.countryCode)
+            let rhsRank = LeaguePresentation.divisionRank(rhs.division, countryCode: rhs.countryCode)
+            if lhsRank != rhsRank {
+                return lhsRank < rhsRank
+            }
+
+            return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+        }
     }
 
     private var coreAchievements: [Achievement] {
@@ -862,6 +887,44 @@ struct StatsView: View {
                                         .foregroundStyle(.secondary)
                                 }
                                 ProgressView(value: row.total == 0 ? 0 : Double(row.visited) / Double(row.total))
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    }
+                }
+
+                if !relegatedOrHistoricalRows.isEmpty {
+                    Section("Synlige uden for aktuelt topsystem") {
+                        Text("De her klubber tæller ikke med i dine aktuelle top-system stats, men de bliver bevaret i oversigten, så nedrykkede og historiske spor ikke forsvinder.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+
+                        ForEach(relegatedOrHistoricalRows) { club in
+                            VStack(alignment: .leading, spacing: 4) {
+                                HStack(alignment: .top) {
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(club.name)
+                                            .font(.headline)
+                                        Text("\(club.stadium.name) • \(club.stadium.city)")
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+
+                                    Spacer()
+
+                                    if let membershipStatusLabel = club.membershipStatusLabel {
+                                        Text(membershipStatusLabel)
+                                            .font(.caption2.weight(.semibold))
+                                            .padding(.horizontal, 8)
+                                            .padding(.vertical, 4)
+                                            .background(Color.secondary.opacity(0.12))
+                                            .clipShape(Capsule())
+                                    }
+                                }
+
+                                Text(LeaguePresentation.divisionDisplayName(club.division, countryCode: club.countryCode))
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
                             }
                             .padding(.vertical, 4)
                         }

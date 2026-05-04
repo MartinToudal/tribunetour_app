@@ -1,33 +1,5 @@
 import Foundation
 
-enum AppPremiumAdminPack: String, CaseIterable, Identifiable {
-    case germanyTop3 = "germany_top_3"
-    case englandTop4 = "england_top_4"
-    case italyTop3 = "italy_top_3"
-    case spainTop4 = "spain_top_4"
-    case franceTop3 = "france_top_3"
-    case premiumFull = "premium_full"
-
-    var id: String { rawValue }
-
-    var title: String {
-        switch self {
-        case .germanyTop3:
-            return "Tyskland"
-        case .englandTop4:
-            return "England"
-        case .italyTop3:
-            return "Italien"
-        case .spainTop4:
-            return "Spanien"
-        case .franceTop3:
-            return "Frankrig"
-        case .premiumFull:
-            return "Alle premium-pakker"
-        }
-    }
-}
-
 struct PremiumAccessAdminRow: Identifiable, Decodable, Equatable {
     let email: String
     let userId: String
@@ -38,7 +10,7 @@ struct PremiumAccessAdminRow: Identifiable, Decodable, Equatable {
     var id: String { "\(userId)-\(packKey)" }
 
     var packTitle: String {
-        AppPremiumAdminPack(rawValue: packKey)?.title ?? packKey
+        AppLeaguePackCatalog.label(forPackId: packKey)
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -63,7 +35,7 @@ struct PremiumAccessRequestAdminRow: Identifiable, Decodable, Equatable {
     var id: String { requestId }
 
     var packTitle: String {
-        AppPremiumAdminPack(rawValue: packKey)?.title ?? packKey
+        AppLeaguePackCatalog.label(forPackId: packKey)
     }
 
     var isOpen: Bool { status == "open" }
@@ -91,7 +63,7 @@ struct PremiumAccessRequestUserRow: Identifiable, Decodable, Equatable {
     var id: String { requestId }
 
     var packTitle: String {
-        AppPremiumAdminPack(rawValue: packKey)?.title ?? packKey
+        AppLeaguePackCatalog.label(forPackId: packKey)
     }
 
     var isOpen: Bool { status == "open" }

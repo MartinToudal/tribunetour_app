@@ -1,240 +1,34 @@
 import Foundation
 
-enum AppLeaguePackId: String, CaseIterable {
-    case coreDenmark = "core_denmark"
-    case germanyTop3 = "germany_top_3"
-    case englandTop4 = "england_top_4"
-    case italyTop3 = "italy_top_3"
-    case spainTop4 = "spain_top_4"
-    case franceTop3 = "france_top_3"
-    case premiumFull = "premium_full"
-}
-
-enum AppLeaguePackSettings {
-    static let germanyTop3EnabledKey = "leaguePacks.germanyTop3.enabled"
-    static let remoteEnabledLeaguePacksKey = "leaguePacks.remote.enabled"
-    static let preferredHomeCountryCodeKey = "app.preferredHomeCountryCode"
-
-    static var debugEnabledLeaguePacks: Set<String> {
-        var ids = Set<String>()
-        if UserDefaults.standard.bool(forKey: germanyTop3EnabledKey) {
-            ids.insert(AppLeaguePackId.germanyTop3.rawValue)
-        }
-        return ids
-    }
-
-    static var remoteEnabledLeaguePacks: Set<String> {
-        let values = UserDefaults.standard.array(forKey: remoteEnabledLeaguePacksKey) as? [String] ?? []
-        return Set(values)
-    }
-
-    static var effectiveEnabledLeaguePacks: Set<String> {
-        var ids: Set<String> = [AppLeaguePackId.coreDenmark.rawValue]
-        ids.formUnion(debugEnabledLeaguePacks)
-        ids.formUnion(remoteEnabledLeaguePacks)
-        if ids.contains(AppLeaguePackId.premiumFull.rawValue) {
-            ids.insert(AppLeaguePackId.germanyTop3.rawValue)
-            ids.insert(AppLeaguePackId.englandTop4.rawValue)
-            ids.insert(AppLeaguePackId.italyTop3.rawValue)
-            ids.insert(AppLeaguePackId.spainTop4.rawValue)
-            ids.insert(AppLeaguePackId.franceTop3.rawValue)
-        }
-        return ids
-    }
-
-    static var germanyTop3Enabled: Bool {
-        effectiveEnabledLeaguePacks.contains(AppLeaguePackId.germanyTop3.rawValue)
-    }
-
-    static func setRemoteEnabledLeaguePacks(_ ids: Set<String>) {
-        UserDefaults.standard.set(Array(ids).sorted(), forKey: remoteEnabledLeaguePacksKey)
-    }
-
-    static func clearRemoteEnabledLeaguePacks() {
-        UserDefaults.standard.removeObject(forKey: remoteEnabledLeaguePacksKey)
-    }
-}
-
 enum LeaguePresentation {
     static func countryRank(_ countryCode: String) -> Int {
-        switch countryCode {
-        case "dk": return 0
-        case "de": return 1
-        case "en": return 2
-        case "it": return 3
-        case "es": return 4
-        case "fr": return 5
-        default: return 99
-        }
+        AppLeaguePackCatalog.countryRank(countryCode)
     }
 
     static func countryLabel(_ countryCode: String) -> String {
-        switch countryCode {
-        case "dk": return "Danmark"
-        case "de": return "Tyskland"
-        case "en": return "England"
-        case "it": return "Italien"
-        case "es": return "Spanien"
-        case "fr": return "Frankrig"
-        default: return countryCode.uppercased()
-        }
+        AppLeaguePackCatalog.countryLabel(countryCode)
     }
 
     static func normalizedDivision(_ division: String) -> String {
-        division.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
-            .replacingOccurrences(of: "bundelsliga", with: "bundesliga")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+        CompetitionCatalog.normalizedCompetitionName(division)
     }
 
     static func divisionRank(_ division: String, countryCode: String) -> Int {
-        let normalized = normalizedDivision(division)
-
-        switch countryCode {
-        case "dk":
-            if normalized.contains("superliga") { return 0 }
-            if normalized == "1. division" || normalized == "1 division" { return 1 }
-            if normalized == "2. division" || normalized == "2 division" { return 2 }
-            if normalized == "3. division" || normalized == "3 division" { return 3 }
-        case "de":
-            if normalized == "bundesliga" { return 0 }
-            if normalized == "2. bundesliga" || normalized == "2 bundesliga" { return 1 }
-            if normalized == "3. liga" || normalized == "3 liga" { return 2 }
-        case "en":
-            if normalized == "premier league" { return 0 }
-            if normalized == "championship" { return 1 }
-            if normalized == "league one" { return 2 }
-            if normalized == "league two" { return 3 }
-        case "it":
-            if normalized == "serie a" { return 0 }
-            if normalized == "serie b" { return 1 }
-            if normalized == "serie c - gruppe a" { return 2 }
-            if normalized == "serie c - gruppe b" { return 3 }
-            if normalized == "serie c - gruppe c" { return 4 }
-        case "es":
-            if normalized == "la liga" { return 0 }
-            if normalized == "segunda division" || normalized == "segunda división" { return 1 }
-            if normalized == "primera federacion - gruppe 1" || normalized == "primera federación - gruppe 1" { return 2 }
-            if normalized == "primera federacion - gruppe 2" || normalized == "primera federación - gruppe 2" { return 3 }
-        case "fr":
-            if normalized == "ligue 1" { return 0 }
-            if normalized == "ligue 2" { return 1 }
-            if normalized == "national" { return 2 }
-        default:
-            break
-        }
-
-        if normalized.contains("superliga") { return 0 }
-        if normalized == "bundesliga" { return 10 }
-        if normalized == "2. bundesliga" || normalized == "2 bundesliga" { return 11 }
-        if normalized == "3. liga" || normalized == "3 liga" { return 12 }
-        if normalized == "premier league" { return 30 }
-        if normalized == "championship" { return 31 }
-        if normalized == "league one" { return 32 }
-        if normalized == "league two" { return 33 }
-        if normalized == "serie a" { return 40 }
-        if normalized == "serie b" { return 41 }
-        if normalized == "serie c - gruppe a" { return 42 }
-        if normalized == "serie c - gruppe b" { return 43 }
-        if normalized == "serie c - gruppe c" { return 44 }
-        if normalized == "la liga" { return 50 }
-        if normalized == "segunda division" || normalized == "segunda división" { return 51 }
-        if normalized == "primera federacion - gruppe 1" || normalized == "primera federación - gruppe 1" { return 52 }
-        if normalized == "primera federacion - gruppe 2" || normalized == "primera federación - gruppe 2" { return 53 }
-        if normalized == "ligue 1" { return 60 }
-        if normalized == "ligue 2" { return 61 }
-        if normalized == "national" { return 62 }
-        if normalized == "1. division" || normalized == "1 division" { return 20 }
-        if normalized == "2. division" || normalized == "2 division" { return 21 }
-        if normalized == "3. division" || normalized == "3 division" { return 22 }
-
-        return 99
+        CompetitionCatalog.sortOrder(
+            competitionId: nil,
+            leagueCode: nil,
+            leagueName: division,
+            countryCode: countryCode
+        )
     }
 
     static func divisionDisplayName(_ division: String, countryCode: String) -> String {
-        let normalized = normalizedDivision(division)
-        let canonicalDivision: String
-
-        switch countryCode {
-        case "dk":
-            switch normalized {
-            case let value where value.contains("superliga"):
-                canonicalDivision = "Superliga"
-            case "1. division", "1 division":
-                canonicalDivision = "1. division"
-            case "2. division", "2 division":
-                canonicalDivision = "2. division"
-            case "3. division", "3 division":
-                canonicalDivision = "3. division"
-            default:
-                canonicalDivision = division
-            }
-        case "de":
-            switch normalized {
-            case "bundesliga":
-                canonicalDivision = "Bundesliga"
-            case "2. bundesliga", "2 bundesliga":
-                canonicalDivision = "2. Bundesliga"
-            case "3. liga", "3 liga":
-                canonicalDivision = "3. Liga"
-            default:
-                canonicalDivision = division
-            }
-        case "en":
-            switch normalized {
-            case "premier league":
-                canonicalDivision = "Premier League"
-            case "championship":
-                canonicalDivision = "Championship"
-            case "league one":
-                canonicalDivision = "League One"
-            case "league two":
-                canonicalDivision = "League Two"
-            default:
-                canonicalDivision = division
-            }
-        case "it":
-            switch normalized {
-            case "serie a":
-                canonicalDivision = "Serie A"
-            case "serie b":
-                canonicalDivision = "Serie B"
-            case "serie c - gruppe a":
-                canonicalDivision = "Serie C - Gruppe A"
-            case "serie c - gruppe b":
-                canonicalDivision = "Serie C - Gruppe B"
-            case "serie c - gruppe c":
-                canonicalDivision = "Serie C - Gruppe C"
-            default:
-                canonicalDivision = division
-            }
-        case "es":
-            switch normalized {
-            case "la liga":
-                canonicalDivision = "La Liga"
-            case "segunda division", "segunda división":
-                canonicalDivision = "Segunda División"
-            case "primera federacion - gruppe 1", "primera federación - gruppe 1":
-                canonicalDivision = "Primera Federación - Gruppe 1"
-            case "primera federacion - gruppe 2", "primera federación - gruppe 2":
-                canonicalDivision = "Primera Federación - Gruppe 2"
-            default:
-                canonicalDivision = division
-            }
-        case "fr":
-            switch normalized {
-            case "ligue 1":
-                canonicalDivision = "Ligue 1"
-            case "ligue 2":
-                canonicalDivision = "Ligue 2"
-            case "national":
-                canonicalDivision = "National"
-            default:
-                canonicalDivision = division
-            }
-        default:
-            canonicalDivision = division
-        }
-
+        let canonicalDivision = CompetitionCatalog.displayName(
+            competitionId: nil,
+            leagueCode: nil,
+            fallbackLeagueName: division,
+            countryCode: countryCode
+        )
         return "\(countryLabel(countryCode)) - \(canonicalDivision)"
     }
 
@@ -362,6 +156,10 @@ struct Club: Identifiable, Hashable {
     let leagueCode: String?
     let leaguePack: String
     let shortCode: String?
+    let primaryCompetitionId: String?
+    let primarySeasonId: String?
+    let membershipStatus: CompetitionMembershipStatus
+    let competitionMemberships: [CompetitionMembership]
 
     init(
         id: String,
@@ -371,7 +169,11 @@ struct Club: Identifiable, Hashable {
         countryCode: String = "dk",
         leagueCode: String? = nil,
         leaguePack: String = "core_denmark",
-        shortCode: String? = nil
+        shortCode: String? = nil,
+        primaryCompetitionId: String? = nil,
+        primarySeasonId: String? = nil,
+        membershipStatus: CompetitionMembershipStatus = .active,
+        competitionMemberships: [CompetitionMembership] = []
     ) {
         self.id = id
         self.name = name
@@ -381,6 +183,49 @@ struct Club: Identifiable, Hashable {
         self.leagueCode = leagueCode
         self.leaguePack = leaguePack
         self.shortCode = shortCode
+        self.primaryCompetitionId = primaryCompetitionId
+        self.primarySeasonId = primarySeasonId
+        self.membershipStatus = membershipStatus
+
+        if competitionMemberships.isEmpty, let primaryCompetitionId {
+            self.competitionMemberships = [
+                CompetitionMembership(
+                    competitionId: primaryCompetitionId,
+                    seasonId: primarySeasonId,
+                    status: membershipStatus,
+                    isPrimary: true
+                )
+            ]
+        } else {
+            self.competitionMemberships = competitionMemberships
+        }
+    }
+
+    var primaryMembership: CompetitionMembership? {
+        competitionMemberships.first(where: \.isPrimary)
+    }
+
+    var secondaryMemberships: [CompetitionMembership] {
+        competitionMemberships.filter { !$0.isPrimary }
+    }
+
+    var countsTowardTopSystemProgression: Bool {
+        membershipStatus == .active && CompetitionCatalog.isPrimaryDomesticCompetition(primaryCompetitionId)
+    }
+
+    var shouldRemainVisibleOutsideTopSystem: Bool {
+        membershipStatus != .active || !secondaryMemberships.isEmpty
+    }
+
+    var membershipStatusLabel: String? {
+        switch membershipStatus {
+        case .active:
+            return nil
+        case .relegated:
+            return "Nedrykket"
+        case .historical:
+            return "Historisk"
+        }
     }
 }
 
@@ -485,6 +330,13 @@ struct CSVClubImporter {
             return row[idx].trimmingCharacters(in: .whitespacesAndNewlines)
         }
 
+        func splitMultiValue(_ raw: String) -> [String] {
+            raw
+                .split(whereSeparator: { $0 == "|" || $0 == ";" || $0 == "," })
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty }
+        }
+
         var clubs: [Club] = []
         clubs.reserveCapacity(lines.count - 1)
 
@@ -500,6 +352,16 @@ struct CSVClubImporter {
             let leagueCode = value(row, "league_code").nonEmpty
             let leaguePack = value(row, "league_pack").nonEmpty ?? defaultLeaguePack
             let shortCode = value(row, "short_code").nonEmpty
+            let primaryCompetitionId =
+                value(row, "competition_id").nonEmpty ??
+                CompetitionCatalog.inferredCompetitionId(
+                    leagueCode: leagueCode,
+                    leagueName: league,
+                    countryCode: countryCode
+                )
+            let primarySeasonId = value(row, "season_id").nonEmpty
+            let membershipStatus = CompetitionMembershipStatus(rawValue: value(row, "membership_status").lowercased()) ?? .active
+            let secondaryCompetitionIds = splitMultiValue(value(row, "secondary_competition_ids"))
 
             guard
                 !id.isEmpty,
@@ -533,7 +395,34 @@ struct CSVClubImporter {
                 countryCode: countryCode,
                 leagueCode: leagueCode,
                 leaguePack: leaguePack,
-                shortCode: shortCode
+                shortCode: shortCode,
+                primaryCompetitionId: primaryCompetitionId,
+                primarySeasonId: primarySeasonId,
+                membershipStatus: membershipStatus,
+                competitionMemberships: {
+                    var memberships: [CompetitionMembership] = []
+                    if let primaryCompetitionId {
+                        memberships.append(
+                            CompetitionMembership(
+                                competitionId: primaryCompetitionId,
+                                seasonId: primarySeasonId,
+                                status: membershipStatus,
+                                isPrimary: true
+                            )
+                        )
+                    }
+                    memberships.append(
+                        contentsOf: secondaryCompetitionIds.map {
+                            CompetitionMembership(
+                                competitionId: $0,
+                                seasonId: primarySeasonId,
+                                status: .active,
+                                isPrimary: false
+                            )
+                        }
+                    )
+                    return memberships
+                }()
             )
 
             clubs.append(club)

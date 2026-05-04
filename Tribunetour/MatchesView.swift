@@ -89,12 +89,47 @@ struct MatchesView: View {
     private var locationHintText: String { locationAuthorizationHint(locationStore.authorization) }
 
     private var countryOptions: [String] {
-        Array(Set(clubs.map(\.countryCode))).sorted { left, right in
+        let source = progressionClubs.isEmpty ? clubs : progressionClubs
+        return Array(Set(source.map(\.countryCode))).sorted { left, right in
             if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
                 return LeaguePresentation.countryRank(left) < LeaguePresentation.countryRank(right)
             }
             return LeaguePresentation.countryLabel(left).localizedCaseInsensitiveCompare(LeaguePresentation.countryLabel(right)) == .orderedAscending
         }
+    }
+
+    private var progressionClubs: [Club] {
+        clubs.filter(\.countsTowardTopSystemProgression)
+    }
+
+    private var progressionClubIds: Set<String> {
+        Set(progressionClubs.map(\.id))
+    }
+
+    private var visibleNonProgressionClubs: [Club] {
+        clubs.filter(\.shouldRemainVisibleOutsideTopSystem)
+    }
+
+    private func fixtureCountsTowardTopSystem(_ fixture: Fixture) -> Bool {
+        progressionClubIds.contains(fixture.venueClubId)
+            && progressionClubIds.contains(fixture.homeTeamId)
+            && progressionClubIds.contains(fixture.awayTeamId)
+    }
+
+    private var nonTopSystemFixtures: [Fixture] {
+        let cal = matchCalendar
+        let todayStart = cal.startOfDay(for: Date())
+
+        return fixtures
+            .filter { $0.kickoff >= todayStart }
+            .filter { !fixtureCountsTowardTopSystem($0) }
+            .filter { fixture in
+                if countryFilterRawValue == "all" {
+                    return true
+                }
+                return clubById[fixture.venueClubId]?.countryCode == countryFilterRawValue
+            }
+            .sorted { $0.kickoff < $1.kickoff }
     }
 
     private var shouldShowCountryFilter: Bool {
@@ -122,12 +157,16 @@ struct MatchesView: View {
         return "\(fixturesCount) kommende \(noun) med \(activeFilterCount) aktive filtre"
     }
 
+    private var upcomingMatchesHeaderTitle: String {
+        "Kommende kampe (" + String(filteredFixtures.count) + ")"
+    }
+
     private var filteredFixtures: [Fixture] {
         let cal = matchCalendar
         let todayStart = cal.startOfDay(for: Date())
 
         // ✅ Kun kampe fra i dag og frem
-        var base = fixtures.filter { $0.kickoff >= todayStart }
+        var base = fixtures.filter { $0.kickoff >= todayStart && fixtureCountsTowardTopSystem($0) }
 
         // ✅ Tid-filter (endExclusive)
         let endExclusive: Date = {
@@ -237,22 +276,7 @@ struct MatchesView: View {
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 8) {
                                 ForEach(TimeFilter.allCases) { f in
-                                    Button {
-                                        timeFilter = f
-                                    } label: {
-                                        Text(f.rawValue)
-                                            .font(.subheadline.weight(.semibold))
-                                            .padding(.horizontal, 12)
-                                            .padding(.vertical, 8)
-                                            .foregroundStyle(timeFilter == f ? .white : .primary)
-                                            .background(
-                                                Capsule()
-                                                    .fill(timeFilter == f ? Color.black : Color(.secondarySystemBackground))
-                                            )
-                                    }
-                                    .buttonStyle(.plain)
-                                    .accessibilityLabel("Vis kampe: \(f.rawValue)")
-                                    .accessibilityHint("Sætter tidsfilter for kampoversigten")
+                                    timeFilterButton(for: f)
                                 }
                             }
                         }
@@ -288,31 +312,32 @@ struct MatchesView: View {
                         .padding(.vertical, 8)
                     } else {
                         ForEach(filteredFixtures.prefix(maxShownFixtures)) { f in
-                            NavigationLink {
-                                MatchDetailView(
-                                    fixture: f,
-                                    clubById: clubById,
-                                    visitedStore: visitedStore,
-                                    photosStore: photosStore,
-                                    notesStore: notesStore,
-                                    reviewsStore: reviewsStore,
-                                    fixtures: fixtures
-                                )
-                            } label: {
-                                MatchRow(
-                                    fixture: f,
-                                    clubById: clubById,
-                                    venueVisited: visitedStore.isVisited(f.venueClubId),
-                                    distance: (sortMode == .byDistance)
-                                        ? locationStore.location.flatMap { distanceText(for: f, from: $0) }
-                                        : nil
-                                )
-                            }
-                            .accessibilityIdentifier("match-row-\(f.id)")
+                            matchNavigationRow(for: f)
                         }
                     }
                 } header: {
-                    Text("Kommende kampe (\(filteredFixtures.count))")
+                    Text(upcomingMatchesHeaderTitle)
+                }
+
+                if !visibleNonProgressionClubs.isEmpty || !nonTopSystemFixtures.isEmpty {
+                    Section("Synlige uden for aktuelt topsystem") {
+                        Text("Kampe og klubber her tæller ikke med i det aktuelle topsystem, men bliver bevaret som et separat spor for nedrykkede, historiske eller ekstra turneringer.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+
+                        if nonTopSystemFixtures.isEmpty {
+                            Text("Ingen kommende kampe i dette spor lige nu.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        } else {
+                            ForEach(nonTopSystemFixtures.prefix(20)) { f in
+                                matchNavigationRow(
+                                    for: f,
+                                    statusOverride: clubById[f.venueClubId]?.membershipStatusLabel
+                                )
+                            }
+                        }
+                    }
                 }
             }
             .navigationTitle("Kampe")
@@ -370,6 +395,68 @@ struct MatchesView: View {
         }
     }
 
+}
+
+private extension MatchesView {
+    @ViewBuilder
+    func matchNavigationRow(for fixture: Fixture, statusOverride: String? = nil) -> some View {
+        let accessibilityId = "match-row-" + fixture.id
+
+        NavigationLink {
+            MatchDetailView(
+                fixture: fixture,
+                clubById: clubById,
+                visitedStore: visitedStore,
+                photosStore: photosStore,
+                notesStore: notesStore,
+                reviewsStore: reviewsStore,
+                fixtures: fixtures
+            )
+        } label: {
+            MatchRow(
+                fixture: fixture,
+                clubById: clubById,
+                venueVisited: visitedStore.isVisited(fixture.venueClubId),
+                distance: matchDistanceText(for: fixture),
+                statusOverride: statusOverride
+            )
+        }
+        .accessibilityIdentifier(accessibilityId)
+    }
+
+    func matchDistanceText(for fixture: Fixture) -> String? {
+        guard sortMode == .byDistance, let location = locationStore.location else {
+            return nil
+        }
+
+        return distanceText(for: fixture, from: location)
+    }
+
+    @ViewBuilder
+    func timeFilterButton(for filter: TimeFilter) -> some View {
+        Button {
+            timeFilter = filter
+        } label: {
+            timeFilterChip(for: filter)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("Vis kampe: " + filter.rawValue)
+        .accessibilityHint("Sætter tidsfilter for kampoversigten")
+    }
+
+    @ViewBuilder
+    func timeFilterChip(for filter: TimeFilter) -> some View {
+        let isSelected = timeFilter == filter
+        Text(filter.rawValue)
+            .font(.subheadline.weight(.semibold))
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .foregroundStyle(isSelected ? .white : .primary)
+            .background(
+                Capsule()
+                    .fill(isSelected ? Color.black : Color(.secondarySystemBackground))
+            )
+    }
 }
 
 private struct MatchesContextChip: View {
@@ -466,6 +553,7 @@ private struct MatchRow: View {
     let clubById: [String: Club]
     let venueVisited: Bool
     let distance: String?
+    let statusOverride: String?
     private let matchTimeZone = TimeZone(identifier: "Europe/Copenhagen") ?? .current
 
     private var homeName: String { clubById[fixture.homeTeamId]?.name ?? fixture.homeTeamId }
@@ -543,6 +631,10 @@ private struct MatchRow: View {
 
                 if let r = fixture.round, !r.isEmpty {
                     MatchBadge(text: r, icon: "flag")
+                }
+
+                if let statusOverride, !statusOverride.isEmpty {
+                    MatchBadge(text: statusOverride, icon: "arrow.down.circle")
                 }
             }
         }
