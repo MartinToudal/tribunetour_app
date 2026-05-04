@@ -8,6 +8,7 @@ enum AppLeaguePackId: String, CaseIterable {
     case spainTop4 = "spain_top_4"
     case franceTop3 = "france_top_3"
     case portugalTop3 = "portugal_top_3"
+    case netherlandsTop3 = "netherlands_top_3"
     case premiumFull = "premium_full"
 }
 
@@ -18,6 +19,7 @@ enum AppPremiumAdminPack: String, CaseIterable, Identifiable {
     case spainTop4 = "spain_top_4"
     case franceTop3 = "france_top_3"
     case portugalTop3 = "portugal_top_3"
+    case netherlandsTop3 = "netherlands_top_3"
     case premiumFull = "premium_full"
 
     var id: String { rawValue }
@@ -121,6 +123,17 @@ enum AppLeaguePackCatalog {
             isPremium: true,
             includedByPremiumFull: true,
             requestDescription: "Liga Portugal, Liga Portugal 2 og Liga 3 - Oprykningsgruppe"
+        ),
+        AppLeaguePackCatalogEntry(
+            id: .netherlandsTop3,
+            countryCode: "nl",
+            label: "Holland",
+            sortOrder: 70,
+            levels: 3,
+            isCore: false,
+            isPremium: true,
+            includedByPremiumFull: true,
+            requestDescription: "Eredivisie, Eerste Divisie og Tweede Divisie"
         ),
         AppLeaguePackCatalogEntry(
             id: .premiumFull,
