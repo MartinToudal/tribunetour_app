@@ -59,6 +59,8 @@ final class WeekendOpportunityNotifier {
     nonisolated static func countUnvisitedVenues(
         fixtures: [Fixture],
         visitedVenueClubIds: Set<String>,
+        clubById: [String: Club],
+        preferredCountryCode: String?,
         start: Date,
         end: Date
     ) -> Int {
@@ -66,6 +68,10 @@ final class WeekendOpportunityNotifier {
             guard fixture.kickoff >= start, fixture.kickoff < end else { return nil }
             guard fixture.status != .cancelled, fixture.status != .finished else { return nil }
             guard !visitedVenueClubIds.contains(fixture.venueClubId) else { return nil }
+            if let preferredCountryCode,
+               clubById[fixture.venueClubId]?.countryCode != preferredCountryCode {
+                return nil
+            }
             return fixture.venueClubId
         }
         return Set(weekendVenueIds).count
@@ -97,14 +103,26 @@ final class WeekendOpportunityNotifier {
             return
         }
 
+        let preferredCountryCode = preferredHomeCountryCode(clubById: clubById)
+
         if weekendEnabled {
-            await scheduleWeekendReminder(fixtures: fixtures, visitedVenueClubIds: visitedVenueClubIds)
+            await scheduleWeekendReminder(
+                fixtures: fixtures,
+                visitedVenueClubIds: visitedVenueClubIds,
+                clubById: clubById,
+                preferredCountryCode: preferredCountryCode
+            )
         } else {
             center.removePendingNotificationRequests(withIdentifiers: [weekendReminderIdentifier])
         }
 
         if midweekEnabled {
-            await scheduleMidweekReminder(fixtures: fixtures, visitedVenueClubIds: visitedVenueClubIds)
+            await scheduleMidweekReminder(
+                fixtures: fixtures,
+                visitedVenueClubIds: visitedVenueClubIds,
+                clubById: clubById,
+                preferredCountryCode: preferredCountryCode
+            )
         } else {
             center.removePendingNotificationRequests(withIdentifiers: [midweekReminderIdentifier])
         }
@@ -113,7 +131,8 @@ final class WeekendOpportunityNotifier {
             await scheduleNextMissingStadiumReminder(
                 fixtures: fixtures,
                 visitedVenueClubIds: visitedVenueClubIds,
-                clubById: clubById
+                clubById: clubById,
+                preferredCountryCode: preferredCountryCode
             )
         } else {
             center.removePendingNotificationRequests(withIdentifiers: [nextMissingStadiumIdentifier])
@@ -141,14 +160,17 @@ final class WeekendOpportunityNotifier {
         }
     }
 
-    func sendTestNotificationInFiveSeconds(fixtures: [Fixture], visitedVenueClubIds: Set<String>) async {
+    func sendTestNotificationInFiveSeconds(fixtures: [Fixture], visitedVenueClubIds: Set<String>, clubById: [String: Club] = [:]) async {
         let granted = await ensureAuthorizationIfNeeded()
         guard granted else { return }
 
         guard let weekendWindow = upcomingWeekendWindow(from: Date()) else { return }
+        let preferredCountryCode = preferredHomeCountryCode(clubById: clubById)
         let count = countUnvisitedWeekendVenues(
             fixtures: fixtures,
             visitedVenueClubIds: visitedVenueClubIds,
+            clubById: clubById,
+            preferredCountryCode: preferredCountryCode,
             start: weekendWindow.start,
             end: weekendWindow.end
         )
@@ -169,14 +191,17 @@ final class WeekendOpportunityNotifier {
         }
     }
 
-    func sendMidweekTestNotificationInFiveSeconds(fixtures: [Fixture], visitedVenueClubIds: Set<String>) async {
+    func sendMidweekTestNotificationInFiveSeconds(fixtures: [Fixture], visitedVenueClubIds: Set<String>, clubById: [String: Club] = [:]) async {
         let granted = await ensureAuthorizationIfNeeded()
         guard granted else { return }
 
         guard let midweekWindow = upcomingMidweekWindow(from: Date()) else { return }
+        let preferredCountryCode = preferredHomeCountryCode(clubById: clubById)
         let count = countUnvisitedVenues(
             fixtures: fixtures,
             visitedVenueClubIds: visitedVenueClubIds,
+            clubById: clubById,
+            preferredCountryCode: preferredCountryCode,
             start: midweekWindow.start,
             end: midweekWindow.end
         )
@@ -205,7 +230,14 @@ final class WeekendOpportunityNotifier {
         let granted = await ensureAuthorizationIfNeeded()
         guard granted else { return }
 
-        guard let fixture = nextUnvisitedFixture(fixtures: fixtures, visitedVenueClubIds: visitedVenueClubIds, now: Date()) else { return }
+        let preferredCountryCode = preferredHomeCountryCode(clubById: clubById)
+        guard let fixture = nextUnvisitedFixture(
+            fixtures: fixtures,
+            visitedVenueClubIds: visitedVenueClubIds,
+            clubById: clubById,
+            preferredCountryCode: preferredCountryCode,
+            now: Date()
+        ) else { return }
         let venueName = clubById[fixture.venueClubId]?.stadium.name ?? fixture.venueClubId
         let kickoffText = kickoffText(for: fixture.kickoff)
 
@@ -316,12 +348,16 @@ final class WeekendOpportunityNotifier {
     private func countUnvisitedWeekendVenues(
         fixtures: [Fixture],
         visitedVenueClubIds: Set<String>,
+        clubById: [String: Club],
+        preferredCountryCode: String?,
         start: Date,
         end: Date
     ) -> Int {
         countUnvisitedVenues(
             fixtures: fixtures,
             visitedVenueClubIds: visitedVenueClubIds,
+            clubById: clubById,
+            preferredCountryCode: preferredCountryCode,
             start: start,
             end: end
         )
@@ -330,18 +366,33 @@ final class WeekendOpportunityNotifier {
     private func countUnvisitedVenues(
         fixtures: [Fixture],
         visitedVenueClubIds: Set<String>,
+        clubById: [String: Club],
+        preferredCountryCode: String?,
         start: Date,
         end: Date
     ) -> Int {
         Self.countUnvisitedVenues(
             fixtures: fixtures,
             visitedVenueClubIds: visitedVenueClubIds,
+            clubById: clubById,
+            preferredCountryCode: preferredCountryCode,
             start: start,
             end: end
         )
     }
 
-    private func scheduleWeekendReminder(fixtures: [Fixture], visitedVenueClubIds: Set<String>) async {
+    private func preferredHomeCountryCode(clubById: [String: Club]) -> String? {
+        let availableCountryCodes = Set(clubById.values.map(\.countryCode))
+        guard !availableCountryCodes.isEmpty else { return nil }
+        return LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: availableCountryCodes)
+    }
+
+    private func scheduleWeekendReminder(
+        fixtures: [Fixture],
+        visitedVenueClubIds: Set<String>,
+        clubById: [String: Club],
+        preferredCountryCode: String?
+    ) async {
         guard
             let nextThursdayAt20 = nextThursdayAtEightPM(from: Date()),
             let weekendWindow = weekendWindow(after: nextThursdayAt20)
@@ -352,6 +403,8 @@ final class WeekendOpportunityNotifier {
         let count = countUnvisitedWeekendVenues(
             fixtures: fixtures,
             visitedVenueClubIds: visitedVenueClubIds,
+            clubById: clubById,
+            preferredCountryCode: preferredCountryCode,
             start: weekendWindow.start,
             end: weekendWindow.end
         )
@@ -379,7 +432,12 @@ final class WeekendOpportunityNotifier {
         }
     }
 
-    private func scheduleMidweekReminder(fixtures: [Fixture], visitedVenueClubIds: Set<String>) async {
+    private func scheduleMidweekReminder(
+        fixtures: [Fixture],
+        visitedVenueClubIds: Set<String>,
+        clubById: [String: Club],
+        preferredCountryCode: String?
+    ) async {
         guard
             let nextMondayAt20 = nextMondayAtEightPM(from: Date()),
             let midweekWindow = midweekWindow(after: nextMondayAt20)
@@ -390,6 +448,8 @@ final class WeekendOpportunityNotifier {
         let count = countUnvisitedVenues(
             fixtures: fixtures,
             visitedVenueClubIds: visitedVenueClubIds,
+            clubById: clubById,
+            preferredCountryCode: preferredCountryCode,
             start: midweekWindow.start,
             end: midweekWindow.end
         )
@@ -450,10 +510,17 @@ final class WeekendOpportunityNotifier {
     private func scheduleNextMissingStadiumReminder(
         fixtures: [Fixture],
         visitedVenueClubIds: Set<String>,
-        clubById: [String: Club]
+        clubById: [String: Club],
+        preferredCountryCode: String?
     ) async {
         let now = Date()
-        guard let fixture = nextUnvisitedFixture(fixtures: fixtures, visitedVenueClubIds: visitedVenueClubIds, now: now) else {
+        guard let fixture = nextUnvisitedFixture(
+            fixtures: fixtures,
+            visitedVenueClubIds: visitedVenueClubIds,
+            clubById: clubById,
+            preferredCountryCode: preferredCountryCode,
+            now: now
+        ) else {
             center.removePendingNotificationRequests(withIdentifiers: [nextMissingStadiumIdentifier])
             return
         }
@@ -492,11 +559,21 @@ final class WeekendOpportunityNotifier {
         }
     }
 
-    private func nextUnvisitedFixture(fixtures: [Fixture], visitedVenueClubIds: Set<String>, now: Date) -> Fixture? {
+    private func nextUnvisitedFixture(
+        fixtures: [Fixture],
+        visitedVenueClubIds: Set<String>,
+        clubById: [String: Club],
+        preferredCountryCode: String?,
+        now: Date
+    ) -> Fixture? {
         fixtures
             .filter { $0.status == .scheduled }
             .filter { $0.kickoff > now }
             .filter { !visitedVenueClubIds.contains($0.venueClubId) }
+            .filter { fixture in
+                guard let preferredCountryCode else { return true }
+                return clubById[fixture.venueClubId]?.countryCode == preferredCountryCode
+            }
             .sorted { $0.kickoff < $1.kickoff }
             .first
     }

@@ -501,9 +501,9 @@ struct StadiumsView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 16))
                         } else {
                             ContentUnavailableView(
-                                "Kortet er skjult i Alle aktive lande",
+                                "Kortet er bedst pr. land",
                                 systemImage: "map",
-                                description: Text("Vælg et enkelt land for at få en hurtigere og mere brugbar kortvisning.")
+                                description: Text("Vælg et enkelt land eller åbn kortet i fuldskærm for en lettere og mere brugbar visning.")
                             )
                             .frame(maxWidth: .infinity)
                             .frame(height: 220)
@@ -570,17 +570,12 @@ struct StadiumsView: View {
                     }
                 }
 
-                Section("Synlige uden for aktuelt topsystem") {
-                    Text("De her klubber er stadig synlige, men de tæller ikke med i det aktuelle top-system for scope, kort og progression.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
-                    if snapshot.visibleNonProgressionClubs.isEmpty {
-                        Text("Der er ingen klubber i dette spor endnu. Når de første nedrykkede eller historiske hold kommer i data, dukker de op her.")
+                if !snapshot.visibleNonProgressionClubs.isEmpty {
+                    Section("Andre klubber") {
+                        Text("Klubber her tæller ikke med i din aktuelle fremdrift, men bliver stadig bevaret i appen.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                            .padding(.vertical, 6)
-                    } else {
+
                         ForEach(snapshot.visibleNonProgressionClubs) { club in
                             NavigationLink {
                                 StadiumDetailView(

@@ -97,16 +97,15 @@ struct StatsView: View {
     private var visitedCount: Int { visitedClubs.count }
     private var totalCount: Int { progressionClubs.count }
     private var unvisitedCount: Int { unvisitedClubs.count }
-    private var coreClubs: [Club] { progressionClubs.filter { $0.leaguePack == AppLeaguePackId.coreDenmark.rawValue } }
-    private var premiumClubs: [Club] { progressionClubs.filter { $0.leaguePack != AppLeaguePackId.coreDenmark.rawValue } }
-    private var coreVisitedCount: Int { coreClubs.filter { visitedClubIds.contains($0.id) }.count }
-    private var coreTotalCount: Int { coreClubs.count }
-    private var premiumVisitedCount: Int { premiumClubs.filter { visitedClubIds.contains($0.id) }.count }
-    private var premiumTotalCount: Int { premiumClubs.count }
-    private var hasPremiumCountries: Bool { !premiumClubs.isEmpty }
+    private var homeCountryClubs: [Club] { progressionClubs.filter { $0.countryCode == activeHomeCountryCode } }
+    private var internationalClubs: [Club] { progressionClubs.filter { $0.countryCode != activeHomeCountryCode } }
+    private var homeCountryVisitedCount: Int { homeCountryClubs.filter { visitedClubIds.contains($0.id) }.count }
+    private var homeCountryTotalCount: Int { homeCountryClubs.count }
+    private var internationalVisitedCount: Int { internationalClubs.filter { visitedClubIds.contains($0.id) }.count }
+    private var hasInternationalCountries: Bool { !internationalClubs.isEmpty }
     private var shouldShowAccountPrompt: Bool {
         guard !authSession.snapshot.isAuthenticated, !accountPromptDismissed else { return false }
-        return visitedCount >= 3 || notesCount > 0 || reviewedCount > 0 || totalPhotoCount > 0 || hasPremiumCountries
+        return visitedCount >= 3 || notesCount > 0 || reviewedCount > 0 || totalPhotoCount > 0 || hasInternationalCountries
     }
 
     private var accountPromptHighlights: [String] {
@@ -117,12 +116,12 @@ struct StatsView: View {
         if notesCount > 0 || totalPhotoCount > 0 || reviewedCount > 0 {
             highlights.append("Gem noter, anmeldelser og billeder sikkert på din konto")
         }
-        if hasPremiumCountries {
-            highlights.append("Få adgang til premium-funktioner og ligaer i andre lande")
+        if hasInternationalCountries {
+            highlights.append("Få adgang til flere ligaer og stadionrejser i andre lande")
         }
         if highlights.isEmpty {
             highlights.append("Synk dine data mellem app og web")
-            highlights.append("Få adgang til premium-funktioner og flere ligaer")
+            highlights.append("Få adgang til flere ligaer og stadionrejser")
         }
         return Array(highlights.prefix(3))
     }
@@ -181,8 +180,8 @@ struct StatsView: View {
         divisionRows(from: progressionClubs)
     }
 
-    private var coreVisitedByDivision: [DivisionProgressRow] {
-        divisionRows(from: coreClubs)
+    private var homeCountryVisitedByDivision: [DivisionProgressRow] {
+        divisionRows(from: homeCountryClubs)
     }
 
     private var activeHomeCountryCode: String {
@@ -262,10 +261,7 @@ struct StatsView: View {
         }
     }
 
-    private var coreAchievements: [Achievement] {
-        let completeDivisions = coreVisitedByDivision.filter { $0.total > 0 && $0.visited == $0.total }.count
-        let halfThreshold = max(1, Int(ceil(Double(max(coreTotalCount, 1)) * 0.5)))
-
+    private var journeyAchievements: [Achievement] {
         return [
             Achievement(
                 id: "first_visit",
@@ -290,22 +286,6 @@ struct StatsView: View {
                 systemImage: "map.fill",
                 isUnlocked: visitedCount >= 12,
                 progressText: "\(min(visitedCount, 12))/12"
-            ),
-            Achievement(
-                id: "halfway",
-                title: "Halvvejs",
-                description: "Besøg halvdelen af de danske stadions i grundpakken.",
-                systemImage: "chart.bar.xaxis",
-                isUnlocked: coreVisitedCount >= halfThreshold,
-                progressText: "\(min(coreVisitedCount, halfThreshold))/\(halfThreshold)"
-            ),
-            Achievement(
-                id: "league_complete",
-                title: "Række-specialist",
-                description: "Fuldfør alle stadions i én dansk række.",
-                systemImage: "trophy",
-                isUnlocked: completeDivisions >= 1,
-                progressText: "\(completeDivisions)/1"
             ),
             Achievement(
                 id: "first_review",
@@ -370,14 +350,6 @@ struct StatsView: View {
                 systemImage: "point.3.connected.trianglepath.dotted",
                 isUnlocked: visitedDivisionsCount >= 3,
                 progressText: "\(min(visitedDivisionsCount, 3))/3"
-            ),
-            Achievement(
-                id: "all_stadiums",
-                title: "Tribune Tour Master",
-                description: "Besøg alle stadions i grundpakken for Danmark.",
-                systemImage: "crown",
-                isUnlocked: coreTotalCount > 0 && coreVisitedCount == coreTotalCount,
-                progressText: "\(coreVisitedCount)/\(max(1, coreTotalCount))"
             )
         ]
         .sorted { a, b in
@@ -386,45 +358,84 @@ struct StatsView: View {
         }
     }
 
-    private var premiumAchievements: [Achievement] {
-        guard hasPremiumCountries else { return [] }
-
-        let premiumVisitedByDivision = divisionRows(from: premiumClubs)
-        let completePremiumDivisions = premiumVisitedByDivision.filter { $0.total > 0 && $0.visited == $0.total }.count
-        let crossBorderTarget = min(Set(clubs.map(\.countryCode)).count, 2)
+    private var homeCountryAchievements: [Achievement] {
+        let homeCountryLabel = LeaguePresentation.countryLabel(activeHomeCountryCode)
+        let completedHomeDivisions = homeCountryVisitedByDivision.filter { $0.total > 0 && $0.visited == $0.total }.count
+        let halfThreshold = max(1, Int(ceil(Double(max(homeCountryTotalCount, 1)) * 0.5)))
 
         return [
             Achievement(
-                id: "premium_first_visit",
-                title: "Udebanestart",
-                description: "Besøg dit første premium-stadion.",
-                systemImage: "airplane.departure",
-                isUnlocked: premiumVisitedCount >= 1,
-                progressText: "\(min(premiumVisitedCount, 1))/1"
+                id: "home_country_halfway",
+                title: "Halvvejs hjemme",
+                description: "Besøg halvdelen af stadions i \(homeCountryLabel).",
+                systemImage: "chart.bar.xaxis",
+                isUnlocked: homeCountryVisitedCount >= halfThreshold,
+                progressText: "\(min(homeCountryVisitedCount, halfThreshold))/\(halfThreshold)"
             ),
             Achievement(
-                id: "premium_explorer",
+                id: "home_country_league_complete",
+                title: "Række-specialist",
+                description: "Fuldfør alle stadions i én række i \(homeCountryLabel).",
+                systemImage: "trophy",
+                isUnlocked: completedHomeDivisions >= 1,
+                progressText: "\(completedHomeDivisions)/1"
+            ),
+            Achievement(
+                id: "home_country_complete",
+                title: "Tribune Tour Master",
+                description: "Besøg alle stadions i \(homeCountryLabel).",
+                systemImage: "crown",
+                isUnlocked: homeCountryTotalCount > 0 && homeCountryVisitedCount == homeCountryTotalCount,
+                progressText: "\(homeCountryVisitedCount)/\(max(1, homeCountryTotalCount))"
+            )
+        ]
+        .sorted { a, b in
+            if a.isUnlocked != b.isUnlocked { return a.isUnlocked && !b.isUnlocked }
+            return a.title.localizedCaseInsensitiveCompare(b.title) == .orderedAscending
+        }
+    }
+
+    private var internationalAchievements: [Achievement] {
+        guard hasInternationalCountries else { return [] }
+
+        let internationalVisitedByDivision = divisionRows(from: internationalClubs)
+        let completedInternationalDivisions = internationalVisitedByDivision.filter { $0.total > 0 && $0.visited == $0.total }.count
+        let activeCountryCount = Set(progressionClubs.map(\.countryCode)).count
+        let visitedCountryCount = Set(visitedClubs.map(\.countryCode)).count
+        let crossBorderTarget = min(activeCountryCount, 2)
+
+        return [
+            Achievement(
+                id: "international_first_visit",
+                title: "Udebanestart",
+                description: "Besøg dit første stadion uden for dit hjemland.",
+                systemImage: "airplane.departure",
+                isUnlocked: internationalVisitedCount >= 1,
+                progressText: "\(min(internationalVisitedCount, 1))/1"
+            ),
+            Achievement(
+                id: "international_explorer",
                 title: "International groundhopper",
-                description: "Besøg 5 premium-stadions.",
+                description: "Besøg 5 stadions uden for dit hjemland.",
                 systemImage: "globe.europe.africa",
-                isUnlocked: premiumVisitedCount >= 5,
-                progressText: "\(min(premiumVisitedCount, 5))/5"
+                isUnlocked: internationalVisitedCount >= 5,
+                progressText: "\(min(internationalVisitedCount, 5))/5"
             ),
             Achievement(
                 id: "cross_border",
                 title: "På tværs af grænser",
                 description: "Besøg stadions i mindst 2 aktive lande.",
                 systemImage: "point.topleft.down.curvedto.point.bottomright.up",
-                isUnlocked: crossBorderTarget <= 1 || Set(visitedClubs.map(\.countryCode)).count >= crossBorderTarget,
-                progressText: "\(min(Set(visitedClubs.map(\.countryCode)).count, crossBorderTarget))/\(crossBorderTarget)"
+                isUnlocked: crossBorderTarget <= 1 || visitedCountryCount >= crossBorderTarget,
+                progressText: "\(min(visitedCountryCount, crossBorderTarget))/\(crossBorderTarget)"
             ),
             Achievement(
-                id: "premium_league_complete",
-                title: "Premium-specialist",
-                description: "Fuldfør alle stadions i én premium-række.",
+                id: "international_league_complete",
+                title: "Udebanespecialist",
+                description: "Fuldfør alle stadions i én international række.",
                 systemImage: "flag.pattern.checkered",
-                isUnlocked: completePremiumDivisions >= 1,
-                progressText: "\(completePremiumDivisions)/1"
+                isUnlocked: completedInternationalDivisions >= 1,
+                progressText: "\(completedInternationalDivisions)/1"
             )
         ]
         .sorted { a, b in
@@ -434,7 +445,7 @@ struct StatsView: View {
     }
 
     private var achievements: [Achievement] {
-        coreAchievements + premiumAchievements
+        journeyAchievements + homeCountryAchievements + internationalAchievements
     }
 
     private var unlockedAchievementsCount: Int {
@@ -562,7 +573,7 @@ struct StatsView: View {
 
     @ViewBuilder
     private var accountAndSyncSection: some View {
-        Section("Konto og sync") {
+        Section("Konto") {
             if authSession.snapshot.isAuthenticated {
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Logget ind")
@@ -679,7 +690,7 @@ struct StatsView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Log ind")
                             .font(.headline)
-                        Text("Brug samme konto som på web. I appen logger vi nu ind direkte med e-mail og adgangskode.")
+                        Text("Brug samme konto som på web for at synkronisere dine data og få adgang til dine ligaer.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
 
@@ -700,10 +711,6 @@ struct StatsView: View {
                         }
                         .buttonStyle(.plain)
 
-                        Text("Supabase URL: \(configuration.redactedSupabaseURL)")
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-
                         if let loginInfoMessage {
                             Text(loginInfoMessage)
                                 .font(.caption)
@@ -718,9 +725,9 @@ struct StatsView: View {
                     }
                 } else {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Login klargøres")
+                        Text("Login er midlertidigt utilgængeligt")
                             .font(.headline)
-                        Text("Appen mangler stadig sin standard auth-konfiguration. Når Supabase URL og publishable key er indbygget i appen, kan du logge ind her uden Interne værktøjer.")
+                        Text("Du kan stadig bruge appen lokalt. Hvis du har brug for konto og synkronisering lige nu, kan du bruge web-versionen.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         if let validationMessage = configuration.supabaseURLValidationMessage {
@@ -728,7 +735,7 @@ struct StatsView: View {
                                 .font(.caption)
                                 .foregroundStyle(.red)
                         } else if !configuration.hasAnonKey {
-                            Text("Supabase anon/publishable key mangler.")
+                            Text("Login-konfiguration mangler stadig i denne build.")
                                 .font(.caption)
                                 .foregroundStyle(.red)
                         }
@@ -804,7 +811,7 @@ struct StatsView: View {
                 }
 
                 if let suggestedNextClub {
-                    Section("Næste oplagte stadion") {
+                    Section("Næste stop") {
                         NavigationLink {
                                 StadiumDetailView(
                                     club: suggestedNextClub,
@@ -830,7 +837,7 @@ struct StatsView: View {
                     }
                 }
 
-                Section("Overblik") {
+                Section("Din status") {
                     StatsOverviewRow(label: "Besøgte stadions", value: "\(visitedCount) / \(totalCount)")
                     StatsOverviewRow(label: "Ikke besøgt endnu", value: "\(unvisitedCount)")
                     StatsOverviewRow(label: "Noter", value: "\(notesCount)")
@@ -858,37 +865,50 @@ struct StatsView: View {
                             .foregroundStyle(.secondary)
                     }
 
-                    Text("Når appen åbner, vælger vi automatisk dit hjemland som aktivt scope.")
+                    Text("Når appen åbner, bruger vi dit hjemland som udgangspunkt.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
 
-                Section("Grundachievements") {
+                Section("Rejsemål") {
                     HStack {
                         Text("Låst op")
                         Spacer()
-                        Text("\(coreAchievements.filter(\.isUnlocked).count)/\(coreAchievements.count)")
+                        Text("\(journeyAchievements.filter(\.isUnlocked).count)/\(journeyAchievements.count)")
                             .foregroundStyle(.secondary)
                     }
 
-                    ForEach(coreAchievements) { achievement in
+                    ForEach(journeyAchievements) { achievement in
                         AchievementRow(achievement: achievement)
                     }
                 }
 
-                if !premiumAchievements.isEmpty {
-                    Section("Premium achievements") {
+                Section("Mål i \(LeaguePresentation.countryLabel(activeHomeCountryCode))") {
+                    HStack {
+                        Text("Låst op")
+                        Spacer()
+                        Text("\(homeCountryAchievements.filter(\.isUnlocked).count)/\(homeCountryAchievements.count)")
+                            .foregroundStyle(.secondary)
+                    }
+
+                    ForEach(homeCountryAchievements) { achievement in
+                        AchievementRow(achievement: achievement)
+                    }
+                }
+
+                if !internationalAchievements.isEmpty {
+                    Section("Internationale mål") {
                         HStack(alignment: .top, spacing: 10) {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Ekstra mål for aktive premium-lande")
+                                Text("Mål uden for hjemlandet")
                                     .font(.headline)
-                                Text("Grundachievements kan stadig fuldføres uanset om du har flere lande aktive. De ekstra achievements her bliver synlige, når du har premium-indhold i dit scope.")
+                                Text("De her mål følger med, når du har aktive lande uden for dit hjemland.")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
                         }
 
-                        ForEach(premiumAchievements) { achievement in
+                        ForEach(internationalAchievements) { achievement in
                             AchievementRow(achievement: achievement)
                         }
                     }
@@ -916,17 +936,12 @@ struct StatsView: View {
                     }
                 }
 
-                Section("Synlige uden for aktuelt topsystem") {
-                    Text("De her klubber tæller ikke med i dine aktuelle top-system stats, men de bliver bevaret i oversigten, så nedrykkede, historiske og ekstra turneringsspor ikke forsvinder.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
-                    if relegatedOrHistoricalRows.isEmpty {
-                        Text("Der er ingen klubber i dette spor endnu. Når de første nedrykkede eller historiske hold kommer i data, dukker de op her.")
+                if !relegatedOrHistoricalRows.isEmpty {
+                    Section("Andre klubber") {
+                        Text("Klubber her tæller ikke med i din aktuelle fremdrift, men bliver stadig bevaret i appen.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                            .padding(.vertical, 6)
-                    } else {
+
                         ForEach(relegatedOrHistoricalRows) { club in
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack(alignment: .top) {

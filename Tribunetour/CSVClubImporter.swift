@@ -214,7 +214,7 @@ struct Club: Identifiable, Hashable {
     }
 
     var shouldRemainVisibleOutsideTopSystem: Bool {
-        membershipStatus != .active || !secondaryMemberships.isEmpty
+        membershipStatus != .active
     }
 
     var membershipStatusLabel: String? {

@@ -86,7 +86,8 @@ struct InternalToolsView: View {
                     Task {
                         await WeekendOpportunityNotifier.shared.sendTestNotificationInFiveSeconds(
                             fixtures: fixtures,
-                            visitedVenueClubIds: visitedVenueClubIds
+                            visitedVenueClubIds: visitedVenueClubIds,
+                            clubById: clubById
                         )
                     }
                 } label: {
@@ -97,7 +98,8 @@ struct InternalToolsView: View {
                     Task {
                         await WeekendOpportunityNotifier.shared.sendMidweekTestNotificationInFiveSeconds(
                             fixtures: fixtures,
-                            visitedVenueClubIds: visitedVenueClubIds
+                            visitedVenueClubIds: visitedVenueClubIds,
+                            clubById: clubById
                         )
                     }
                 } label: {

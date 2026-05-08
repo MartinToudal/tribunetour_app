@@ -343,16 +343,12 @@ struct MatchesView: View {
                     Text("Kommende kampe (\(snapshot.visibleFixtureCount))")
                 }
 
-                Section("Synlige uden for aktuelt topsystem") {
-                    Text("Kampe og klubber her tæller ikke med i det aktuelle topsystem, men bliver bevaret som et separat spor for nedrykkede, historiske eller ekstra turneringer.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
-                    if snapshot.visibleNonTopSystemFixtures.isEmpty {
-                        Text("Ingen kommende kampe i dette spor lige nu. Når de første ikke-topsystem-klubber får kampe i data, dukker de op her.")
+                if !snapshot.visibleNonTopSystemFixtures.isEmpty {
+                    Section("Andre kampe") {
+                        Text("Kampe her tæller ikke med i din aktuelle fremdrift, men bliver stadig bevaret i appen.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
-                    } else {
+
                         ForEach(snapshot.visibleNonTopSystemFixtures.prefix(20)) { f in
                             matchNavigationRow(
                                 for: f,
