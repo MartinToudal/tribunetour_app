@@ -2,6 +2,15 @@ import SwiftUI
 import CoreLocation
 
 struct MatchesView: View {
+    private struct Snapshot {
+        var visibleFixtures: [Fixture] = []
+        var visibleNonTopSystemFixtures: [Fixture] = []
+        var distanceTextByFixtureId: [String: String] = [:]
+        var resultSummaryText: String = "0 kommende kampe"
+        var visibleFixtureCount: Int = 0
+    }
+
+    let isActive: Bool
     let clubs: [Club]
     let clubById: [String: Club]
     let fixtures: [Fixture]
@@ -11,6 +20,7 @@ struct MatchesView: View {
     @ObservedObject var reviewsStore: AppReviewsStore
 
     init(
+        isActive: Bool,
         clubs: [Club],
         clubById: [String: Club]? = nil,
         fixtures: [Fixture],
@@ -19,6 +29,7 @@ struct MatchesView: View {
         notesStore: AppNotesStore,
         reviewsStore: AppReviewsStore
     ) {
+        self.isActive = isActive
         self.clubs = clubs
         self.clubById = clubById ?? ClubIdentityResolver.aliasMap(
             from: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
@@ -51,6 +62,7 @@ struct MatchesView: View {
     @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
     @State private var searchText = ""
     @State private var isShowingFilters = false
+    @State private var snapshot = Snapshot()
 
     // Distance sorting
     @AppStorage("matches.sortMode") private var sortModeRawValue: String = SortMode.byDate.rawValue
@@ -87,6 +99,13 @@ struct MatchesView: View {
     }
 
     private var locationHintText: String { locationAuthorizationHint(locationStore.authorization) }
+    private var locationSnapshotToken: String {
+        guard let location = locationStore.location else { return "none" }
+        let roundedLatitude = String(format: "%.3f", location.coordinate.latitude)
+        let roundedLongitude = String(format: "%.3f", location.coordinate.longitude)
+        let roundedTimestamp = Int(location.timestamp.timeIntervalSince1970 / 60)
+        return "\(roundedLatitude)|\(roundedLongitude)|\(roundedTimestamp)"
+    }
 
     private var countryOptions: [String] {
         let source = progressionClubs.isEmpty ? clubs : progressionClubs
@@ -102,34 +121,8 @@ struct MatchesView: View {
         clubs.filter(\.countsTowardTopSystemProgression)
     }
 
-    private var progressionClubIds: Set<String> {
-        Set(progressionClubs.map(\.id))
-    }
-
-    private var visibleNonProgressionClubs: [Club] {
-        clubs.filter(\.shouldRemainVisibleOutsideTopSystem)
-    }
-
-    private func fixtureCountsTowardTopSystem(_ fixture: Fixture) -> Bool {
-        progressionClubIds.contains(fixture.venueClubId)
-            && progressionClubIds.contains(fixture.homeTeamId)
-            && progressionClubIds.contains(fixture.awayTeamId)
-    }
-
-    private var nonTopSystemFixtures: [Fixture] {
-        let cal = matchCalendar
-        let todayStart = cal.startOfDay(for: Date())
-
-        return fixtures
-            .filter { $0.kickoff >= todayStart }
-            .filter { !fixtureCountsTowardTopSystem($0) }
-            .filter { fixture in
-                if countryFilterRawValue == "all" {
-                    return true
-                }
-                return clubById[fixture.venueClubId]?.countryCode == countryFilterRawValue
-            }
-            .sorted { $0.kickoff < $1.kickoff }
+    private var visitedVenueClubIds: Set<String> {
+        Set(visitedStore.records.lazy.filter(\.value.visited).map(\.key))
     }
 
     private var shouldShowCountryFilter: Bool {
@@ -148,27 +141,42 @@ struct MatchesView: View {
         countryFilterRawValue == "all" ? "Alle aktive lande" : LeaguePresentation.countryLabel(countryFilterRawValue)
     }
 
-    private var resultSummaryText: String {
-        let fixturesCount = filteredFixtures.count
-        let noun = fixturesCount == 1 ? "kamp" : "kampe"
-        if activeFilterCount == 0 {
-            return "\(fixturesCount) kommende \(noun) i dit nuværende tidsrum"
-        }
-        return "\(fixturesCount) kommende \(noun) med \(activeFilterCount) aktive filtre"
-    }
+    private func rebuildSnapshot() {
+        guard isActive else { return }
 
-    private var upcomingMatchesHeaderTitle: String {
-        "Kommende kampe (" + String(filteredFixtures.count) + ")"
-    }
-
-    private var filteredFixtures: [Fixture] {
         let cal = matchCalendar
         let todayStart = cal.startOfDay(for: Date())
+        let progressionClubIds = Set(progressionClubs.map(\.id))
+        let visitedIds = visitedVenueClubIds
 
-        // ✅ Kun kampe fra i dag og frem
-        var base = fixtures.filter { $0.kickoff >= todayStart && fixtureCountsTowardTopSystem($0) }
+        let fixtureCountsTowardTopSystem: (Fixture) -> Bool = { fixture in
+            progressionClubIds.contains(fixture.venueClubId)
+                && progressionClubIds.contains(fixture.homeTeamId)
+                && progressionClubIds.contains(fixture.awayTeamId)
+        }
 
-        // ✅ Tid-filter (endExclusive)
+        let countryMatches: (Fixture) -> Bool = { fixture in
+            if countryFilterRawValue == "all" {
+                return true
+            }
+            return clubById[fixture.venueClubId]?.countryCode == countryFilterRawValue
+        }
+
+        let searchedMatches: (Fixture) -> Bool = { fixture in
+            let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !query.isEmpty else { return true }
+
+            let needle = query.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+            let home = clubById[fixture.homeTeamId]?.name ?? fixture.homeTeamId
+            let away = clubById[fixture.awayTeamId]?.name ?? fixture.awayTeamId
+            let venue = clubById[fixture.venueClubId]?.stadium.name ?? fixture.venueClubId
+            let city = clubById[fixture.venueClubId]?.stadium.city ?? ""
+            let round = fixture.round ?? ""
+            let haystack = "\(home) \(away) \(venue) \(city) \(round)"
+                .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+            return haystack.contains(needle)
+        }
+
         let endExclusive: Date = {
             switch timeFilter {
             case .today:
@@ -182,57 +190,44 @@ struct MatchesView: View {
             }
         }()
 
-        base = base.filter { $0.kickoff < endExclusive }
+        let scopedUpcomingFixtures = fixtures.filter { $0.kickoff >= todayStart }
+        var visibleFixtures = scopedUpcomingFixtures
+            .filter { fixtureCountsTowardTopSystem($0) }
+            .filter { $0.kickoff < endExclusive }
+            .filter(countryMatches)
+            .filter(searchedMatches)
 
-        if countryFilterRawValue != "all" {
-            base = base.filter { fixture in
-                clubById[fixture.venueClubId]?.countryCode == countryFilterRawValue
-            }
-        }
-
-        // ✅ Toggle: kun ikke-besøgte stadions
         if onlyUnvisitedVenues {
-            base = base.filter { !visitedStore.isVisited($0.venueClubId) }
+            visibleFixtures.removeAll { visitedIds.contains($0.venueClubId) }
         }
 
-        // ✅ Search
-        let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-        if !q.isEmpty {
-            let needle = q.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
-            base = base.filter { f in
-                let home = clubById[f.homeTeamId]?.name ?? f.homeTeamId
-                let away = clubById[f.awayTeamId]?.name ?? f.awayTeamId
-                let venue = clubById[f.venueClubId]?.stadium.name ?? f.venueClubId
-                let city  = clubById[f.venueClubId]?.stadium.city ?? ""
-                let round = f.round ?? ""
+        let visibleNonTopSystemFixtures = scopedUpcomingFixtures
+            .filter { !fixtureCountsTowardTopSystem($0) }
+            .filter(countryMatches)
+            .filter(searchedMatches)
+            .sorted { $0.kickoff < $1.kickoff }
 
-                let hay = "\(home) \(away) \(venue) \(city) \(round)"
-                    .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
-
-                return hay.contains(needle)
-            }
-        }
-
-        // ✅ Sortering
+        var distanceTextByFixtureId: [String: String] = [:]
         switch sortMode {
         case .byDate:
-            return base.sorted { $0.kickoff < $1.kickoff }
+            visibleFixtures.sort { $0.kickoff < $1.kickoff }
 
         case .byDistance:
             guard let here = locationStore.location else {
-                // fallback hvis vi mangler lokation
-                return base.sorted { $0.kickoff < $1.kickoff }
+                visibleFixtures.sort { $0.kickoff < $1.kickoff }
+                break
             }
 
-            // Precompute distances for stable + hurtigere sort
-            let distById: [String: Double] = Dictionary(
-                uniqueKeysWithValues: base.map { f in
-                    let d = distanceMeters(for: f, from: here) ?? Double.greatestFiniteMagnitude
-                    return (f.id, d)
-                }
-            )
+            let distById = Dictionary(uniqueKeysWithValues: visibleFixtures.map { fixture in
+                let distance = distanceMeters(for: fixture, from: here) ?? Double.greatestFiniteMagnitude
+                return (fixture.id, distance)
+            })
+            distanceTextByFixtureId = Dictionary(uniqueKeysWithValues: visibleFixtures.map { fixture in
+                let text = distanceText(for: fixture, from: here) ?? ""
+                return (fixture.id, text)
+            })
 
-            return base.sorted { a, b in
+            visibleFixtures.sort { a, b in
                 let da = distById[a.id] ?? Double.greatestFiniteMagnitude
                 let db = distById[b.id] ?? Double.greatestFiniteMagnitude
 
@@ -240,14 +235,43 @@ struct MatchesView: View {
                     return reverseDistanceSort ? (da > db) : (da < db)
                 }
 
-                // tie-breaker: kickoff
                 return a.kickoff < b.kickoff
+            }
+        }
+
+        let visibleFixtureCount = visibleFixtures.count
+        let noun = visibleFixtureCount == 1 ? "kamp" : "kampe"
+        let resultSummaryText: String = {
+            if activeFilterCount == 0 {
+                return "\(visibleFixtureCount) kommende \(noun) i dit nuværende tidsrum"
+            }
+            return "\(visibleFixtureCount) kommende \(noun) med \(activeFilterCount) aktive filtre"
+        }()
+
+        snapshot = Snapshot(
+            visibleFixtures: visibleFixtures,
+            visibleNonTopSystemFixtures: visibleNonTopSystemFixtures,
+            distanceTextByFixtureId: distanceTextByFixtureId,
+            resultSummaryText: resultSummaryText,
+            visibleFixtureCount: visibleFixtureCount
+        )
+    }
+
+    var body: some View {
+        Group {
+            if isActive {
+                activeBody
+            } else {
+                NavigationStack {
+                    Color.clear
+                        .navigationTitle("Kampe")
+                }
             }
         }
     }
 
-    var body: some View {
-        NavigationStack {
+    private var activeBody: some View {
+        return NavigationStack {
             List {
                 Section {
                     VStack(alignment: .leading, spacing: 12) {
@@ -255,7 +279,7 @@ struct MatchesView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Find næste gode kamp")
                                     .font(.headline)
-                                Text(resultSummaryText)
+                                Text(snapshot.resultSummaryText)
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
                             }
@@ -298,7 +322,7 @@ struct MatchesView: View {
                 }
 
                 Section {
-                    if filteredFixtures.isEmpty {
+                    if snapshot.visibleFixtures.isEmpty {
                         ContentUnavailableView(
                             "Ingen kampe matcher dit filter",
                             systemImage: searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -311,12 +335,12 @@ struct MatchesView: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 8)
                     } else {
-                        ForEach(filteredFixtures.prefix(maxShownFixtures)) { f in
+                        ForEach(snapshot.visibleFixtures.prefix(maxShownFixtures)) { f in
                             matchNavigationRow(for: f)
                         }
                     }
                 } header: {
-                    Text(upcomingMatchesHeaderTitle)
+                    Text("Kommende kampe (\(snapshot.visibleFixtureCount))")
                 }
 
                 Section("Synlige uden for aktuelt topsystem") {
@@ -324,12 +348,12 @@ struct MatchesView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
-                    if nonTopSystemFixtures.isEmpty {
+                    if snapshot.visibleNonTopSystemFixtures.isEmpty {
                         Text("Ingen kommende kampe i dette spor lige nu. Når de første ikke-topsystem-klubber får kampe i data, dukker de op her.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     } else {
-                        ForEach(nonTopSystemFixtures.prefix(20)) { f in
+                        ForEach(snapshot.visibleNonTopSystemFixtures.prefix(20)) { f in
                             matchNavigationRow(
                                 for: f,
                                 statusOverride: clubById[f.venueClubId]?.membershipStatusLabel
@@ -372,14 +396,17 @@ struct MatchesView: View {
             }
         }
         .onAppear {
-            // Vi starter lokation “passivt” – permission popper først når du vælger afstand
-            locationStore.start()
+            if sortMode == .byDistance {
+                locationStore.start()
+            }
+            rebuildSnapshot()
         }
         .onChange(of: sortMode) { _, newValue in
             if newValue == .byDistance {
                 locationStore.requestPermission()
                 locationStore.start()
             }
+            rebuildSnapshot()
         }
         .onAppear {
             let resolvedHomeCountry = countryOptions.contains(preferredHomeCountryCode)
@@ -390,6 +417,42 @@ struct MatchesView: View {
             } else if !countryOptions.contains(countryFilterRawValue) {
                 countryFilterRawValue = resolvedHomeCountry
             }
+            rebuildSnapshot()
+        }
+        .onChange(of: isActive) { _, isActive in
+            if isActive {
+                rebuildSnapshot()
+            }
+        }
+        .onChange(of: timeFilterRawValue) { _, _ in
+            rebuildSnapshot()
+        }
+        .onChange(of: onlyUnvisitedVenues) { _, _ in
+            rebuildSnapshot()
+        }
+        .onChange(of: countryFilterRawValue) { _, _ in
+            rebuildSnapshot()
+        }
+        .onChange(of: searchText) { _, _ in
+            rebuildSnapshot()
+        }
+        .onChange(of: fixtures) { _, _ in
+            rebuildSnapshot()
+        }
+        .onChange(of: clubs) { _, _ in
+            rebuildSnapshot()
+        }
+        .onChange(of: visitedStore.records) { _, _ in
+            rebuildSnapshot()
+        }
+        .onChange(of: sortModeRawValue) { _, _ in
+            rebuildSnapshot()
+        }
+        .onChange(of: reverseDistanceSort) { _, _ in
+            rebuildSnapshot()
+        }
+        .onChange(of: locationSnapshotToken) { _, _ in
+            rebuildSnapshot()
         }
     }
 
@@ -414,20 +477,12 @@ private extension MatchesView {
             MatchRow(
                 fixture: fixture,
                 clubById: clubById,
-                venueVisited: visitedStore.isVisited(fixture.venueClubId),
-                distance: matchDistanceText(for: fixture),
+                venueVisited: visitedVenueClubIds.contains(fixture.venueClubId),
+                distance: snapshot.distanceTextByFixtureId[fixture.id],
                 statusOverride: statusOverride
             )
         }
         .accessibilityIdentifier(accessibilityId)
-    }
-
-    func matchDistanceText(for fixture: Fixture) -> String? {
-        guard sortMode == .byDistance, let location = locationStore.location else {
-            return nil
-        }
-
-        return distanceText(for: fixture, from: location)
     }
 
     @ViewBuilder
@@ -552,7 +607,21 @@ private struct MatchRow: View {
     let venueVisited: Bool
     let distance: String?
     let statusOverride: String?
-    private let matchTimeZone = TimeZone(identifier: "Europe/Copenhagen") ?? .current
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "da_DK")
+        formatter.timeZone = TimeZone(identifier: "Europe/Copenhagen") ?? .current
+        formatter.dateStyle = .medium
+        formatter.timeStyle = .none
+        return formatter
+    }()
+    private static let timeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "da_DK")
+        formatter.timeZone = TimeZone(identifier: "Europe/Copenhagen") ?? .current
+        formatter.dateFormat = "HH:mm"
+        return formatter
+    }()
 
     private var homeName: String { clubById[fixture.homeTeamId]?.name ?? fixture.homeTeamId }
     private var awayName: String { clubById[fixture.awayTeamId]?.name ?? fixture.awayTeamId }
@@ -560,19 +629,10 @@ private struct MatchRow: View {
     private var city: String { clubById[fixture.venueClubId]?.stadium.city ?? "" }
     private var division: String? { clubById[fixture.venueClubId]?.division }
     private var kickoffDateText: String {
-        let df = DateFormatter()
-        df.locale = Locale(identifier: "da_DK")
-        df.timeZone = matchTimeZone
-        df.dateStyle = .medium
-        df.timeStyle = .none
-        return df.string(from: fixture.kickoff)
+        Self.dateFormatter.string(from: fixture.kickoff)
     }
     private var kickoffTimeText: String {
-        let df = DateFormatter()
-        df.locale = Locale(identifier: "da_DK")
-        df.timeZone = matchTimeZone
-        df.dateFormat = "HH:mm"
-        return df.string(from: fixture.kickoff)
+        Self.timeFormatter.string(from: fixture.kickoff)
     }
 
     var body: some View {

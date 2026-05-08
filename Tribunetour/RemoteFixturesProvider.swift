@@ -108,17 +108,12 @@ struct RemoteFixturesProvider {
     }
 
     private func mergeWithLocalLeaguePackFixturesIfNeeded(remoteFixtures: [Fixture]) -> [Fixture] {
-        let enabledExperimentalPacks = AppLeaguePackSettings.effectiveEnabledLeaguePacks.subtracting([AppLeaguePackId.coreDenmark.rawValue])
-        guard !enabledExperimentalPacks.isEmpty else {
-            return remoteFixtures
-        }
-
         guard let localFixtures = try? localFallback(), !localFixtures.isEmpty else {
             return remoteFixtures
         }
 
         var mergedById = Dictionary(uniqueKeysWithValues: remoteFixtures.map { ($0.id, $0) })
-        for fixture in localFixtures where mergedById[fixture.id] == nil {
+        for fixture in localFixtures {
             mergedById[fixture.id] = fixture
         }
 

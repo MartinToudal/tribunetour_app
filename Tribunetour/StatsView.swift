@@ -8,7 +8,9 @@ struct StatsView: View {
         case password
     }
 
+    let isActive: Bool
     let clubs: [Club]
+    let clubById: [String: Club]
     @ObservedObject var visitedStore: VisitedStore
     @ObservedObject var photosStore: AppPhotosStore
     @ObservedObject var notesStore: AppNotesStore
@@ -68,12 +70,20 @@ struct StatsView: View {
 
     // MARK: - Derived stats
 
+    private var visitedClubIds: Set<String> {
+        Set(visitedStore.records.lazy.filter(\.value.visited).map(\.key))
+    }
+
+    private var sortedVisitedClubs: [Club] {
+        visitedClubs.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
+    }
+
     private var visitedClubs: [Club] {
-        progressionClubs.filter { visitedStore.isVisited($0.id) }
+        progressionClubs.filter { visitedClubIds.contains($0.id) }
     }
 
     private var unvisitedClubs: [Club] {
-        progressionClubs.filter { !visitedStore.isVisited($0.id) }
+        progressionClubs.filter { !visitedClubIds.contains($0.id) }
     }
 
     private var progressionClubs: [Club] {
@@ -89,9 +99,9 @@ struct StatsView: View {
     private var unvisitedCount: Int { unvisitedClubs.count }
     private var coreClubs: [Club] { progressionClubs.filter { $0.leaguePack == AppLeaguePackId.coreDenmark.rawValue } }
     private var premiumClubs: [Club] { progressionClubs.filter { $0.leaguePack != AppLeaguePackId.coreDenmark.rawValue } }
-    private var coreVisitedCount: Int { coreClubs.filter { visitedStore.isVisited($0.id) }.count }
+    private var coreVisitedCount: Int { coreClubs.filter { visitedClubIds.contains($0.id) }.count }
     private var coreTotalCount: Int { coreClubs.count }
-    private var premiumVisitedCount: Int { premiumClubs.filter { visitedStore.isVisited($0.id) }.count }
+    private var premiumVisitedCount: Int { premiumClubs.filter { visitedClubIds.contains($0.id) }.count }
     private var premiumTotalCount: Int { premiumClubs.count }
     private var hasPremiumCountries: Bool { !premiumClubs.isEmpty }
     private var shouldShowAccountPrompt: Bool {
@@ -144,7 +154,7 @@ struct StatsView: View {
     private func divisionRows(from clubs: [Club]) -> [DivisionProgressRow] {
         let grouped = Dictionary(grouping: clubs) { DivisionKey(countryCode: $0.countryCode, division: $0.division) }
         let rows = grouped.map { division, clubsInDivision in
-            let v = clubsInDivision.filter { visitedStore.isVisited($0.id) }.count
+            let v = clubsInDivision.filter { visitedClubIds.contains($0.id) }.count
             return DivisionProgressRow(
                 countryCode: division.countryCode,
                 division: division.division,
@@ -730,6 +740,19 @@ struct StatsView: View {
     }
 
     var body: some View {
+        Group {
+            if isActive {
+                activeBody
+            } else {
+                NavigationStack {
+                    Color.clear
+                        .navigationTitle("Min tur")
+                }
+            }
+        }
+    }
+
+    private var activeBody: some View {
         NavigationStack {
             List {
                 Section {
@@ -783,14 +806,14 @@ struct StatsView: View {
                 if let suggestedNextClub {
                     Section("Næste oplagte stadion") {
                         NavigationLink {
-                            StadiumDetailView(
-                                club: suggestedNextClub,
-                                visitedStore: visitedStore,
-                                photosStore: photosStore,
-                                notesStore: notesStore,
-                                reviewsStore: reviewsStore,
-                                clubById: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
-                            )
+                                StadiumDetailView(
+                                    club: suggestedNextClub,
+                                    visitedStore: visitedStore,
+                                    photosStore: photosStore,
+                                    notesStore: notesStore,
+                                    reviewsStore: reviewsStore,
+                                    clubById: clubById
+                                )
                         } label: {
                             VStack(alignment: .leading, spacing: 6) {
                                 Text(suggestedNextClub.name)
@@ -954,7 +977,7 @@ struct StatsView: View {
                                     photosStore: photosStore,
                                     notesStore: notesStore,
                                     reviewsStore: reviewsStore,
-                                    clubById: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
+                                    clubById: clubById
                                 )
                             } label: {
                                 VStack(alignment: .leading, spacing: 4) {
@@ -984,7 +1007,7 @@ struct StatsView: View {
                         )
                         .padding(.vertical, 8)
                     } else {
-                        ForEach(visitedClubs.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }) { club in
+                        ForEach(sortedVisitedClubs) { club in
                             NavigationLink {
                                 StadiumDetailView(
                                     club: club,
@@ -992,7 +1015,7 @@ struct StatsView: View {
                                     photosStore: photosStore,
                                     notesStore: notesStore,
                                     reviewsStore: reviewsStore,
-                                    clubById: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
+                                    clubById: clubById
                                 )
                             } label: {
                                 VStack(alignment: .leading, spacing: 4) {

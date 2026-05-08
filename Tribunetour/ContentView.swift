@@ -3,8 +3,16 @@ import MapKit
 import CoreLocation
 
 struct ContentView: View {
+    private enum AppTab: Hashable {
+        case stadiums
+        case matches
+        case planner
+        case stats
+    }
+
     @StateObject private var appState = AppState()
     @Environment(\.scenePhase) private var scenePhase
+    @State private var selectedTab: AppTab = .stadiums
 
     var body: some View {
         Group {
@@ -24,8 +32,9 @@ struct ContentView: View {
                     }
                 }
             } else {
-                TabView {
+                TabView(selection: $selectedTab) {
                     StadiumsView(
+                        isActive: selectedTab == .stadiums,
                         clubs: appState.clubs,
                         clubById: appState.clubById,
                         fixtures: appState.fixtures,
@@ -35,8 +44,10 @@ struct ContentView: View {
                         reviewsStore: appState.reviewsStore
                     )
                         .tabItem { Label("Stadions", systemImage: "map") }
+                        .tag(AppTab.stadiums)
 
                     MatchesView(
+                        isActive: selectedTab == .matches,
                         clubs: appState.clubs,
                         clubById: appState.clubById,
                         fixtures: appState.fixtures,
@@ -46,17 +57,23 @@ struct ContentView: View {
                         reviewsStore: appState.reviewsStore
                     )
                         .tabItem { Label("Kampe", systemImage: "sportscourt") }
+                        .tag(AppTab.matches)
 
                     WeekendPlannerView(
+                        isActive: selectedTab == .planner,
                         clubs: appState.clubs,
+                        clubById: appState.clubById,
                         fixtures: appState.fixtures,
                         visitedStore: appState.visitedStore,
                         planStore: appState.weekendPlanStore
                     )
                         .tabItem { Label("Plan", systemImage: "calendar") }
+                        .tag(AppTab.planner)
 
                     StatsView(
+                        isActive: selectedTab == .stats,
                         clubs: appState.clubs,
+                        clubById: appState.clubById,
                         visitedStore: appState.visitedStore,
                         photosStore: appState.photosStore,
                         notesStore: appState.notesStore,
@@ -72,6 +89,7 @@ struct ContentView: View {
                                 ? "\(appState.adminNotificationsManager.badgeCount)"
                                 : nil
                         )
+                        .tag(AppTab.stats)
                 }
             }
         }
@@ -95,6 +113,23 @@ struct ContentView: View {
 // MARK: - Stadions tab
 
 struct StadiumsView: View {
+    private struct Snapshot {
+        var visibleClubs: [Club] = []
+        var displayedClubs: [Club] = []
+        var visibleNonProgressionClubs: [Club] = []
+        var mapPreviewClubs: [Club] = []
+        var distanceTextByClubId: [String: String] = [:]
+        var activeScopeLabel: String = ""
+        var mapSummary: String = "0 stadions i scope • 0 ubesøgte"
+        var visitedCount: Int = 0
+        var scopeTotalCount: Int = 0
+        var remainingClubCount: Int = 0
+        var shouldPaginateClubList: Bool = false
+        var shouldRenderMapForCurrentScope: Bool = true
+        var mapIsTruncated: Bool = false
+    }
+
+    let isActive: Bool
     let clubs: [Club]
     let clubById: [String: Club]
     let fixtures: [Fixture]
@@ -107,6 +142,9 @@ struct StadiumsView: View {
 
     @State private var selectedClub: Club?
     @State private var detailSheetClub: Club?
+    @State private var showFullscreenMap: Bool = false
+    @State private var visibleClubLimit: Int = 80
+    @State private var snapshot = Snapshot()
     #if DEBUG
     @State private var hiddenToolsTapCount: Int = 0
     @State private var showInternalTools: Bool = false
@@ -134,6 +172,8 @@ struct StadiumsView: View {
     @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
     @State private var searchText: String = ""
     private let maxMapAnnotations = 120
+    private let maxMapScopeWithoutCountrySelection = 80
+    private let listPageSize = 80
 
     private var filter: VisitedFilter {
         get { VisitedFilter(rawValue: filterRawValue) ?? .all }
@@ -145,19 +185,16 @@ struct StadiumsView: View {
         nonmutating set { sortRawValue = newValue.rawValue }
     }
 
-    private var visitedCount: Int {
-        countryFilteredClubs.filter { visitedStore.isVisited($0.id) }.count
+    private var visitedClubIds: Set<String> {
+        Set(visitedStore.records.lazy.filter(\.value.visited).map(\.key))
     }
 
-    private var progressionClubs: [Club] {
-        clubs.filter(\.countsTowardTopSystemProgression)
-    }
-
-    private var nonProgressionVisibleClubs: [Club] {
-        clubs.filter(\.shouldRemainVisibleOutsideTopSystem)
+    private var reviewedClubIds: Set<String> {
+        Set(reviewsStore.reviewsByClubId.keys)
     }
 
     private var countryOptions: [String] {
+        let progressionClubs = clubs.filter(\.countsTowardTopSystemProgression)
         let source = progressionClubs.isEmpty ? clubs : progressionClubs
         return Array(Set(source.map(\.countryCode))).sorted { left, right in
             if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
@@ -171,87 +208,13 @@ struct StadiumsView: View {
         countryOptions.count > 1
     }
 
-    private var countryFilteredClubs: [Club] {
-        let source = progressionClubs.isEmpty ? clubs : progressionClubs
-        guard countryFilterRawValue != "all" else { return source }
-        return source.filter { $0.countryCode == countryFilterRawValue }
-    }
-
-    private var countryFilteredNonProgressionClubs: [Club] {
-        guard countryFilterRawValue != "all" else { return nonProgressionVisibleClubs }
-        return nonProgressionVisibleClubs.filter { $0.countryCode == countryFilterRawValue }
-    }
-
-    private var mapClubs: [Club] {
-        Array(filteredAndSortedClubs.prefix(maxMapAnnotations))
-    }
-
-    private var isMapTruncated: Bool {
-        filteredAndSortedClubs.count > maxMapAnnotations
-    }
-
-    private func isReviewed(_ clubId: String) -> Bool {
-        reviewsStore.hasMeaningfulReview(for: clubId)
-    }
-
-    private var filteredAndSortedClubs: [Club] {
-        // 1) Besøgt-filter
-        let base: [Club] = {
-            switch filter {
-            case .all:
-                return countryFilteredClubs
-            case .visited:
-                return countryFilteredClubs.filter { visitedStore.isVisited($0.id) }
-            case .notVisited:
-                return countryFilteredClubs.filter { !visitedStore.isVisited($0.id) }
-            }
-        }()
-
-        // 2) Search
-        let searched: [Club] = {
-            let q = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !q.isEmpty else { return base }
-
-            let needle = q.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
-
-            return base.filter { club in
-                let haystack = [
-                    club.name,
-                    club.stadium.name,
-                    club.stadium.city,
-                    club.division
-                ]
-                .joined(separator: " ")
-                .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
-
-                return haystack.contains(needle)
-            }
-        }()
-
-        // 3) Sortering
-        return searched.sorted(by: sortComparator)
-    }
-
     private var hasSearchText: Bool {
         !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    private var activeScopeLabel: String {
-        if countryFilterRawValue == "all" {
-            return shouldShowCountryFilter ? "Alle aktive lande" : LeaguePresentation.countryLabel(countryOptions.first ?? "dk")
-        }
-        return LeaguePresentation.countryLabel(countryFilterRawValue)
-    }
-
-    private var mapSummaryText: String {
-        let total = filteredAndSortedClubs.count
-        let unvisited = filteredAndSortedClubs.filter { !visitedStore.isVisited($0.id) }.count
-        return "\(total) stadions i scope • \(unvisited) ubesøgte"
-    }
-
     private func sortComparator(_ a: Club, _ b: Club) -> Bool {
-        let aVisited = visitedStore.isVisited(a.id)
-        let bVisited = visitedStore.isVisited(b.id)
+        let aVisited = visitedClubIds.contains(a.id)
+        let bVisited = visitedClubIds.contains(b.id)
 
         switch sort {
         case .leagueThenTeam:
@@ -319,8 +282,163 @@ struct StadiumsView: View {
         locationAuthorizationHint(locationStore.authorization)
     }
 
+    private func resetVisibleClubLimit() {
+        visibleClubLimit = listPageSize
+    }
+
+    private var locationSnapshotToken: String {
+        guard let location = locationStore.location else { return "none" }
+        let roundedLatitude = String(format: "%.3f", location.coordinate.latitude)
+        let roundedLongitude = String(format: "%.3f", location.coordinate.longitude)
+        let roundedTimestamp = Int(location.timestamp.timeIntervalSince1970 / 60)
+        return "\(roundedLatitude)|\(roundedLongitude)|\(roundedTimestamp)"
+    }
+
+    private func rebuildSnapshot() {
+        guard isActive else { return }
+
+        let visitedIds = visitedClubIds
+        let reviewedIds = reviewedClubIds
+        let progressionClubs = clubs.filter(\.countsTowardTopSystemProgression)
+        let nonProgressionVisibleClubs = clubs.filter(\.shouldRemainVisibleOutsideTopSystem)
+        let sourceClubs = progressionClubs.isEmpty ? clubs : progressionClubs
+        let countryFilteredClubs: [Club] = {
+            guard countryFilterRawValue != "all" else { return sourceClubs }
+            return sourceClubs.filter { $0.countryCode == countryFilterRawValue }
+        }()
+        let countryFilteredNonProgressionClubs: [Club] = {
+            guard countryFilterRawValue != "all" else { return nonProgressionVisibleClubs }
+            return nonProgressionVisibleClubs.filter { $0.countryCode == countryFilterRawValue }
+        }()
+
+        let baseClubs: [Club] = {
+            switch filter {
+            case .all:
+                return countryFilteredClubs
+            case .visited:
+                return countryFilteredClubs.filter { visitedIds.contains($0.id) }
+            case .notVisited:
+                return countryFilteredClubs.filter { !visitedIds.contains($0.id) }
+            }
+        }()
+
+        let searchedClubs: [Club] = {
+            let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !query.isEmpty else { return baseClubs }
+
+            let needle = query.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+            return baseClubs.filter { club in
+                let haystack = [
+                    club.name,
+                    club.stadium.name,
+                    club.stadium.city,
+                    club.division
+                ]
+                .joined(separator: " ")
+                .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+                return haystack.contains(needle)
+            }
+        }()
+
+        let sortComparator: (Club, Club) -> Bool = { a, b in
+            let aVisited = visitedIds.contains(a.id)
+            let bVisited = visitedIds.contains(b.id)
+
+            switch sort {
+            case .leagueThenTeam:
+                let ca = LeaguePresentation.countryRank(a.countryCode)
+                let cb = LeaguePresentation.countryRank(b.countryCode)
+                if ca != cb { return ca < cb }
+
+                let ra = LeaguePresentation.divisionRank(a.division, countryCode: a.countryCode)
+                let rb = LeaguePresentation.divisionRank(b.division, countryCode: b.countryCode)
+                if ra != rb { return ra < rb }
+                if a.division != b.division {
+                    return a.division.localizedCaseInsensitiveCompare(b.division) == .orderedAscending
+                }
+                return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
+
+            case .teamAZ:
+                return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
+
+            case .stadiumAZ:
+                return a.stadium.name.localizedCaseInsensitiveCompare(b.stadium.name) == .orderedAscending
+
+            case .visitedFirst:
+                if aVisited != bVisited { return aVisited && !bVisited }
+                return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
+
+            case .notVisitedFirst:
+                if aVisited != bVisited { return !aVisited && bVisited }
+                return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
+
+            case .nearest:
+                guard let here = locationStore.location else {
+                    let ra = LeaguePresentation.divisionRank(a.division, countryCode: a.countryCode)
+                    let rb = LeaguePresentation.divisionRank(b.division, countryCode: b.countryCode)
+                    if ra != rb { return ra < rb }
+                    return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
+                }
+
+                let da = here.distance(from: CLLocation(latitude: a.stadium.latitude, longitude: a.stadium.longitude))
+                let db = here.distance(from: CLLocation(latitude: b.stadium.latitude, longitude: b.stadium.longitude))
+                if da != db { return da < db }
+                return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
+            }
+        }
+
+        let visibleClubs = searchedClubs.sorted(by: sortComparator)
+        let visibleNonProgressionClubs = countryFilteredNonProgressionClubs.sorted(by: sortComparator)
+        let shouldPaginateClubList = countryFilterRawValue == "all" && visibleClubs.count > listPageSize
+        let displayedClubs = shouldPaginateClubList ? Array(visibleClubs.prefix(visibleClubLimit)) : visibleClubs
+        let mapPreviewClubs = Array(visibleClubs.prefix(maxMapAnnotations))
+        let shouldRenderMapForCurrentScope = !(countryFilterRawValue == "all" && visibleClubs.count > maxMapScopeWithoutCountrySelection)
+        let activeScopeLabel = countryFilterRawValue == "all"
+            ? (shouldShowCountryFilter ? "Alle aktive lande" : LeaguePresentation.countryLabel(countryOptions.first ?? "dk"))
+            : LeaguePresentation.countryLabel(countryFilterRawValue)
+
+        var distanceTextByClubId: [String: String] = [:]
+        if sort == .nearest, let here = locationStore.location {
+            distanceTextByClubId = Dictionary(uniqueKeysWithValues: displayedClubs.map { club in
+                let distance = here.distance(from: CLLocation(latitude: club.stadium.latitude, longitude: club.stadium.longitude))
+                let text = distance < 1000 ? "\(Int(distance)) m" : String(format: "%.1f km", distance / 1000.0)
+                return (club.id, text)
+            })
+        }
+
+        snapshot = Snapshot(
+            visibleClubs: visibleClubs,
+            displayedClubs: displayedClubs,
+            visibleNonProgressionClubs: visibleNonProgressionClubs,
+            mapPreviewClubs: mapPreviewClubs,
+            distanceTextByClubId: distanceTextByClubId,
+            activeScopeLabel: activeScopeLabel,
+            mapSummary: "\(visibleClubs.count) stadions i scope • \(visibleClubs.filter { !visitedIds.contains($0.id) }.count) ubesøgte",
+            visitedCount: countryFilteredClubs.filter { visitedIds.contains($0.id) }.count,
+            scopeTotalCount: countryFilteredClubs.count,
+            remainingClubCount: max(0, visibleClubs.count - displayedClubs.count),
+            shouldPaginateClubList: shouldPaginateClubList,
+            shouldRenderMapForCurrentScope: shouldRenderMapForCurrentScope,
+            mapIsTruncated: visibleClubs.count > maxMapAnnotations
+        )
+        _ = reviewedIds
+    }
+
     var body: some View {
-        NavigationStack {
+        Group {
+            if isActive {
+                activeBody
+            } else {
+                NavigationStack {
+                    Color.clear
+                        .navigationTitle("Stadions")
+                }
+            }
+        }
+    }
+
+    private var activeBody: some View {
+        return NavigationStack {
             List {
                 if sort == .nearest && locationStore.location == nil {
                     Section {
@@ -351,32 +469,53 @@ struct StadiumsView: View {
                 Section {
                     VStack(alignment: .leading, spacing: 8) {
                         HStack(spacing: 8) {
-                            Badge(text: activeScopeLabel, icon: "globe.europe.africa")
-                            Badge(text: mapSummaryText, icon: "map")
+                            Badge(text: snapshot.activeScopeLabel, icon: "globe.europe.africa")
+                            Badge(text: snapshot.mapSummary, icon: "map")
                         }
                         .font(.caption2)
 
-                        if isMapTruncated {
-                            Text("Kortet viser de første \(maxMapAnnotations) stadions i dit nuværende filter for at holde appen hurtig.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                        Button {
+                            showFullscreenMap = true
+                        } label: {
+                            Label("Vis kort i fuldskærm", systemImage: "map")
+                                .font(.subheadline.weight(.semibold))
+                                .frame(maxWidth: .infinity)
                         }
+                        .buttonStyle(.bordered)
 
-                        StadiumMapView(
-                            clubs: mapClubs,
-                            visitedStore: visitedStore,
-                            onSelect: { club in
-                                selectedClub = club
+                        if snapshot.shouldRenderMapForCurrentScope {
+                            if snapshot.mapIsTruncated {
+                                Text("Kortet viser de første \(maxMapAnnotations) stadions i dit nuværende filter for at holde appen hurtig.")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
                             }
-                        )
-                        .frame(height: 320)
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
+
+                            StadiumMapView(
+                                clubs: snapshot.mapPreviewClubs,
+                                visitedStore: visitedStore,
+                                onSelect: { club in
+                                    selectedClub = club
+                                }
+                            )
+                            .frame(height: 320)
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                        } else {
+                            ContentUnavailableView(
+                                "Kortet er skjult i Alle aktive lande",
+                                systemImage: "map",
+                                description: Text("Vælg et enkelt land for at få en hurtigere og mere brugbar kortvisning.")
+                            )
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 220)
+                            .background(Color(.secondarySystemBackground))
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                        }
                     }
                     .padding(.vertical, 8)
                 }
                 .listRowInsets(EdgeInsets())
 
-                if filteredAndSortedClubs.isEmpty {
+                if snapshot.visibleClubs.isEmpty {
                     Section {
                         ContentUnavailableView(
                             hasSearchText ? "Ingen søgeresultater" : "Ingen stadions matcher filteret",
@@ -389,7 +528,7 @@ struct StadiumsView: View {
                         .padding(.vertical, 8)
                     }
                 } else {
-                    ForEach(filteredAndSortedClubs) { club in
+                    ForEach(snapshot.displayedClubs) { club in
                         NavigationLink {
                             StadiumDetailView(
                                 club: club,
@@ -401,62 +540,33 @@ struct StadiumsView: View {
                                 fixtures: fixtures
                             )
                         } label: {
-                            HStack(alignment: .top) {
-                                VStack(alignment: .leading, spacing: 6) {
-                                    HStack(alignment: .firstTextBaseline, spacing: 8) {
-                                        Text(club.name)
-                                            .font(.headline)
-                                            .lineLimit(2)
-                                    }
-
-                                    if visitedStore.isVisited(club.id) || isReviewed(club.id) {
-                                        HStack(spacing: 6) {
-                                            if visitedStore.isVisited(club.id) {
-                                                StatusBadge(text: "Besøgt")
-                                            }
-                                            if isReviewed(club.id) {
-                                                StatusBadge(text: "Anmeldt")
-                                            }
-                                        }
-                                    }
-
-                                    Text(club.stadium.name)
-                                        .font(.subheadline)
-                                        .lineLimit(2)
-
-                                    Text("\(club.division) • \(club.stadium.city)")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                        .lineLimit(2)
-
-                                    if shouldShowCountryFilter {
-                                        Text(LeaguePresentation.countryLabel(club.countryCode))
-                                            .font(.caption2.weight(.semibold))
-                                            .foregroundStyle(.secondary)
-                                    }
-
-                                    if sort == .nearest, let dist = distanceText(for: club) {
-                                        Text("Afstand: \(dist)")
-                                            .font(.caption.weight(.semibold))
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
-
-                                Spacer()
-
-                                Toggle("", isOn: Binding(
-                                    get: { visitedStore.isVisited(club.id) },
+                            StadiumListRow(
+                                club: club,
+                                isVisited: visitedClubIds.contains(club.id),
+                                isReviewed: reviewedClubIds.contains(club.id),
+                                shouldShowCountryFilter: shouldShowCountryFilter,
+                                countryLabel: LeaguePresentation.countryLabel(club.countryCode),
+                                distanceText: sort == .nearest ? snapshot.distanceTextByClubId[club.id] : nil,
+                                visitedBinding: Binding(
+                                    get: { visitedClubIds.contains(club.id) },
                                     set: { visitedStore.setVisited(club.id, $0) }
-                                ))
-                                .labelsHidden()
-                                .accessibilityIdentifier("stadium-toggle-\(club.id)")
-                                .accessibilityLabel("Markér \(club.name) som besøgt")
-                                .accessibilityHint("Skifter besøgt-status for stadionet")
-                            }
-                            .accessibilityElement(children: .combine)
-                            .padding(.vertical, 4)
+                                )
+                            )
                         }
                         .accessibilityIdentifier("stadium-row-\(club.id)")
+                    }
+
+                    if snapshot.shouldPaginateClubList, snapshot.remainingClubCount > 0 {
+                        Section {
+                            Button {
+                                visibleClubLimit += listPageSize
+                                rebuildSnapshot()
+                            } label: {
+                                Text("Vis flere stadions (\(snapshot.remainingClubCount) tilbage)")
+                                    .frame(maxWidth: .infinity)
+                            }
+                            .buttonStyle(.bordered)
+                        }
                     }
                 }
 
@@ -465,13 +575,13 @@ struct StadiumsView: View {
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
-                    if countryFilteredNonProgressionClubs.isEmpty {
+                    if snapshot.visibleNonProgressionClubs.isEmpty {
                         Text("Der er ingen klubber i dette spor endnu. Når de første nedrykkede eller historiske hold kommer i data, dukker de op her.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .padding(.vertical, 6)
                     } else {
-                        ForEach(countryFilteredNonProgressionClubs.sorted(by: sortComparator)) { club in
+                        ForEach(snapshot.visibleNonProgressionClubs) { club in
                             NavigationLink {
                                 StadiumDetailView(
                                     club: club,
@@ -483,31 +593,7 @@ struct StadiumsView: View {
                                     fixtures: fixtures
                                 )
                             } label: {
-                                HStack(alignment: .top) {
-                                    VStack(alignment: .leading, spacing: 6) {
-                                        Text(club.name)
-                                            .font(.headline)
-                                            .lineLimit(2)
-
-                                        Text(club.stadium.name)
-                                            .font(.subheadline)
-                                            .lineLimit(2)
-
-                                        Text("\(club.division) • \(club.stadium.city)")
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                            .lineLimit(2)
-
-                                        if let membershipStatusLabel = club.membershipStatusLabel {
-                                            Text(membershipStatusLabel)
-                                                .font(.caption2.weight(.semibold))
-                                                .foregroundStyle(.secondary)
-                                        }
-                                    }
-
-                                    Spacer()
-                                }
-                                .padding(.vertical, 4)
+                                NonTopSystemStadiumRow(club: club)
                             }
                         }
                     }
@@ -521,7 +607,7 @@ struct StadiumsView: View {
             )
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Text("Besøgt \(visitedCount) / \(countryFilteredClubs.count)")
+                    Text("Besøgt \(snapshot.visitedCount) / \(snapshot.scopeTotalCount)")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         #if DEBUG
@@ -571,25 +657,62 @@ struct StadiumsView: View {
             }
         }
         .onAppear {
-            locationStore.start()
+            if sort == .nearest {
+                locationStore.start()
+            }
             let resolvedHomeCountry = LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(countryOptions))
             if !countryOptions.contains(countryFilterRawValue) {
                 countryFilterRawValue = resolvedHomeCountry
             }
+            rebuildSnapshot()
         }
         .onChange(of: sort) { _, newValue in
             if newValue == .nearest {
                 locationStore.requestPermission()
                 locationStore.start()
             }
+            rebuildSnapshot()
+        }
+        .onChange(of: isActive) { _, isActive in
+            if isActive {
+                rebuildSnapshot()
+            }
+        }
+        .onChange(of: countryFilterRawValue) { _, _ in
+            resetVisibleClubLimit()
+            rebuildSnapshot()
+        }
+        .onChange(of: filterRawValue) { _, _ in
+            resetVisibleClubLimit()
+            rebuildSnapshot()
+        }
+        .onChange(of: sortRawValue) { _, _ in
+            resetVisibleClubLimit()
+            rebuildSnapshot()
+        }
+        .onChange(of: searchText) { _, _ in
+            resetVisibleClubLimit()
+            rebuildSnapshot()
+        }
+        .onChange(of: visitedStore.records) { _, _ in
+            rebuildSnapshot()
+        }
+        .onChange(of: reviewsStore.reviewsByClubId) { _, _ in
+            rebuildSnapshot()
+        }
+        .onChange(of: clubs) { _, _ in
+            rebuildSnapshot()
+        }
+        .onChange(of: locationSnapshotToken) { _, _ in
+            rebuildSnapshot()
         }
         .safeAreaInset(edge: .bottom) {
             if let club = selectedClub {
                 StadiumMiniCard(
                     club: club,
-                    visited: visitedStore.isVisited(club.id),
-                    reviewed: isReviewed(club.id),
-                    distance: (sort == .nearest ? distanceText(for: club) : nil),
+                    visited: visitedClubIds.contains(club.id),
+                    reviewed: reviewedClubIds.contains(club.id),
+                    distance: (sort == .nearest ? snapshot.distanceTextByClubId[club.id] : nil),
                     onClose: { selectedClub = nil },
                     onOpenDetails: { detailSheetClub = club },
                     onToggleVisited: { visitedStore.toggle(club.id) },
@@ -613,6 +736,22 @@ struct StadiumsView: View {
                 )
             }
         }
+        .sheet(isPresented: $showFullscreenMap) {
+            NavigationStack {
+                StadiumMapScreen(
+                    title: snapshot.activeScopeLabel,
+                    clubs: snapshot.mapPreviewClubs,
+                    visitedStore: visitedStore,
+                    onSelect: { club in
+                        showFullscreenMap = false
+                        selectedClub = nil
+                        DispatchQueue.main.async {
+                            detailSheetClub = club
+                        }
+                    }
+                )
+            }
+        }
         #if DEBUG
         .sheet(isPresented: $showInternalTools) {
             NavigationStack {
@@ -620,6 +759,100 @@ struct StadiumsView: View {
             }
         }
         #endif
+    }
+}
+
+private struct StadiumListRow: View {
+    let club: Club
+    let isVisited: Bool
+    let isReviewed: Bool
+    let shouldShowCountryFilter: Bool
+    let countryLabel: String
+    let distanceText: String?
+    let visitedBinding: Binding<Bool>
+
+    var body: some View {
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(club.name)
+                    .font(.headline)
+                    .lineLimit(2)
+
+                if isVisited || isReviewed {
+                    HStack(spacing: 6) {
+                        if isVisited {
+                            StatusBadge(text: "Besøgt")
+                        }
+                        if isReviewed {
+                            StatusBadge(text: "Anmeldt")
+                        }
+                    }
+                }
+
+                Text(club.stadium.name)
+                    .font(.subheadline)
+                    .lineLimit(2)
+
+                Text("\(club.division) • \(club.stadium.city)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+
+                if shouldShowCountryFilter {
+                    Text(countryLabel)
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+
+                if let distanceText {
+                    Text("Afstand: \(distanceText)")
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            Spacer()
+
+            Toggle("", isOn: visitedBinding)
+                .labelsHidden()
+                .accessibilityIdentifier("stadium-toggle-\(club.id)")
+                .accessibilityLabel("Markér \(club.name) som besøgt")
+                .accessibilityHint("Skifter besøgt-status for stadionet")
+        }
+        .accessibilityElement(children: .combine)
+        .padding(.vertical, 4)
+    }
+}
+
+private struct NonTopSystemStadiumRow: View {
+    let club: Club
+
+    var body: some View {
+        HStack(alignment: .top) {
+            VStack(alignment: .leading, spacing: 6) {
+                Text(club.name)
+                    .font(.headline)
+                    .lineLimit(2)
+
+                Text(club.stadium.name)
+                    .font(.subheadline)
+                    .lineLimit(2)
+
+                Text("\(club.division) • \(club.stadium.city)")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(2)
+
+                if let membershipStatusLabel = club.membershipStatusLabel {
+                    Text(membershipStatusLabel)
+                        .font(.caption2.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            Spacer()
+        }
+        .padding(.vertical, 4)
     }
 }
 
@@ -782,6 +1015,35 @@ private struct StadiumMiniStatePill: View {
     }
 }
 
+private struct StadiumMapScreen: View {
+    let title: String
+    let clubs: [Club]
+    @ObservedObject var visitedStore: VisitedStore
+    let onSelect: (Club) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 0) {
+            StadiumMapView(
+                clubs: clubs,
+                visitedStore: visitedStore,
+                onSelect: onSelect
+            )
+            .ignoresSafeArea(edges: .bottom)
+        }
+        .navigationTitle(title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarLeading) {
+                Button("Luk") {
+                    dismiss()
+                }
+            }
+        }
+    }
+}
+
 // MARK: - Map
 
 struct StadiumMapView: View {
@@ -790,6 +1052,10 @@ struct StadiumMapView: View {
     let onSelect: (Club) -> Void
 
     @State private var position: MapCameraPosition = .automatic
+
+    private var visitedClubIds: Set<String> {
+        Set(visitedStore.records.lazy.filter(\.value.visited).map(\.key))
+    }
 
     var body: some View {
         Map(position: $position) {
@@ -805,7 +1071,7 @@ struct StadiumMapView: View {
                         zoomToClub(club)
                         onSelect(club)
                     } label: {
-                        StadiumMapPin(isVisited: visitedStore.isVisited(club.id))
+                        StadiumMapPin(isVisited: visitedClubIds.contains(club.id))
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabel("\(club.stadium.name), \(club.name)")

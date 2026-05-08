@@ -1,7 +1,9 @@
 import SwiftUI
 
 struct WeekendPlannerView: View {
+    let isActive: Bool
     let clubs: [Club]
+    let clubById: [String: Club]
     let fixtures: [Fixture]
     @ObservedObject var visitedStore: VisitedStore
     @ObservedObject var planStore: AppWeekendPlanStore
@@ -28,12 +30,6 @@ struct WeekendPlannerView: View {
     @State private var pickerMode: PickerMode = .start
     @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
     private let isUITestingWeekendDefault = ProcessInfo.processInfo.arguments.contains("--uitesting-plan-weekend")
-
-    private var clubById: [String: Club] {
-        ClubIdentityResolver.aliasMap(
-            from: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
-        )
-    }
 
     enum PickerMode {
         case start
@@ -197,6 +193,19 @@ struct WeekendPlannerView: View {
     // MARK: - UI
 
     var body: some View {
+        Group {
+            if isActive {
+                activeBody
+            } else {
+                NavigationStack {
+                    Color.clear
+                        .navigationTitle("Plan")
+                }
+            }
+        }
+    }
+
+    private var activeBody: some View {
         NavigationStack {
             List {
                 Section {
