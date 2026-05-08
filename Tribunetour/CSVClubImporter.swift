@@ -307,6 +307,9 @@ struct CSVClubImporter {
         if enabledLeaguePacks.contains(AppLeaguePackId.netherlandsTop3.rawValue) {
             clubs.append(contentsOf: try loadClubsFromBundle(csvFileName: "netherlands_top_3"))
         }
+        if enabledLeaguePacks.contains(AppLeaguePackId.belgiumTop3.rawValue) {
+            clubs.append(contentsOf: try loadClubsFromBundle(csvFileName: "belgium_top_3"))
+        }
 
         return clubs
     }
