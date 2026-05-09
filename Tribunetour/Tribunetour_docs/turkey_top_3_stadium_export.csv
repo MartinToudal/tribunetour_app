@@ -1,0 +1,76 @@
+league,team,name,city,lat,lon,competition_id,league_pack
+1. Lig,Adana Demirspor,New Adana Stadium,Adana,36.9863599,35.3252861,tr-1-lig,turkey_top_3
+1. Lig,Amedspor,Diyarbakır Stadium,Diyarbakır,37.9430838,40.1205233,tr-1-lig,turkey_top_3
+1. Lig,Bandırmaspor,17 Eylül Stadium,Bandırma,40.3382198,27.9840709,tr-1-lig,turkey_top_3
+1. Lig,Bodrumspor,Bodrum District Stadium,Bodrum,37.0343987,27.430651,tr-1-lig,turkey_top_3
+1. Lig,Boluspor,Bolu Atatürk Stadium,Bolu,40.7361755,31.6074996,tr-1-lig,turkey_top_3
+1. Lig,Erzurumspor,Kazım Karabekir Stadium,Erzurum,39.9111652,41.2381073,tr-1-lig,turkey_top_3
+1. Lig,Esenler Erokspor,Esenler Stadium,Esenler,41.0539055,28.8793982,tr-1-lig,turkey_top_3
+1. Lig,Hatayspor,Fuat Tosyalı Stadium,Antakya,36.2025574,36.1640991,tr-1-lig,turkey_top_3
+1. Lig,Iğdır,Iğdır City Stadium,Iğdır,39.8945292,43.9427459,tr-1-lig,turkey_top_3
+1. Lig,Keçiörengücü,Ankara Aktepe Stadium,Keçiören,39.977713,32.8669801,tr-1-lig,turkey_top_3
+1. Lig,Manisa,Manisa 19 Mayıs Stadium,Manisa,38.8574402,28.0565711,tr-1-lig,turkey_top_3
+1. Lig,Pendikspor,Pendik Stadium,Pendik,40.8768715,29.2349672,tr-1-lig,turkey_top_3
+1. Lig,Sakaryaspor,New Sakarya Stadium,Adapazarı,40.7805,30.4324,tr-1-lig,turkey_top_3
+1. Lig,Sarıyer,Yusuf Ziya Öniş Stadium,Sarıyer,41.1725,29.0503,tr-1-lig,turkey_top_3
+1. Lig,Serikspor,Serik İsmail Oğan Stadium,Serik,36.9165,31.1028,tr-1-lig,turkey_top_3
+1. Lig,Sivasspor,New Sivas 4 Eylül Stadium,Sivas,39.72833333,36.98388889,tr-1-lig,turkey_top_3
+1. Lig,Vanspor,Van Atatürk Stadium,Van,38.4960867,43.3730708,tr-1-lig,turkey_top_3
+1. Lig,Çorum,Çorum City Stadium,Çorum,40.5698389,34.7269292,tr-1-lig,turkey_top_3
+1. Lig,Ümraniyespor,Ümraniye Municipality City Stadium,Ümraniye,41.03111111,29.10805556,tr-1-lig,turkey_top_3
+1. Lig,İstanbulspor,Esenyurt Necmi Kadıoğlu Stadium,Büyükçekmece,41.021654,28.579757,tr-1-lig,turkey_top_3
+2. Lig Beyaz Grup,24 Erzincanspor,"Erzincan 13 Şubat Şehir Stadyumu, Erzincan",24 Erzincan,39.7504861,39.4966888,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Adana 01,Ali Hoşfikirer Stadium,Adana,37.0,35.32133333,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Altınordu,Bornova Aziz Kocaoğlu Stadium,Bornova,38.45454695,27.22938607,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Ankaraspor,Etimesgut Belediyesi Atatürk Stadyumu,Ankara,39.9250035,32.8576445,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Batman Petrolspor,"Batman Stadium, Batman",Batman,37.8569787,41.1327731,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Beykoz Anadoluspor,Sancaktepe Stadium,Sancaktepe,41.0024389,29.2260889,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Beyoğlu Yeni Çarşı,"Maltepe Hasan Polat Stadium, Istanbul",Beyoğlu Yeni Çarşı,40.9204393,29.1313521,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Bucaspor 1928,Yeni Buca,Bucaspor 1928,38.3622044,27.2270873,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Elazığspor,Elazığ Atatürk Stadium,Elazığ,38.6240127,39.107531,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Erbaaspor,Erbaa İlçe Stadium,Erbaa,40.6667,36.5667,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Karacabey Belediyespor,Mustafa Fehmi Gerçeker Stadyumu,Karacabey,40.2133,28.3614,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Karaman,Yeni Karaman Stadyumu,Karaman,37.18194444,33.21805556,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Kastamonuspor,Kastamonu Gazi Stadium,Kastamonu,41.37638889,33.77638889,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Kepezspor,Kepez Hasan Doğan Stadium,Antalya,36.88694444,30.70333333,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,MKE Ankaragücü,Eryaman Stadium,Ankara,39.979993,32.6132207,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Muğlaspor,"Muğla Atatürk Stadium, , Muğla",Muğla,37.21666667,28.36666667,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,İnegölspor,"İnegöl İlçe Stadium, Bursa",İnegöl,40.0810929,29.5011569,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,İskenderunspor,İskenderun 5 Temmuz Stadium,İskenderun,36.5851,36.1553,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Beyaz Grup,Şanlıurfaspor,"Şanlıurfa 11 Nisan Stadium, Urfa",Şanlıurfa,37.1454,38.784,tr-2-lig-beyaz-grup,turkey_top_3
+2. Lig Kırmızı Grup,1461 Trabzon,"Yavuz Selim Stadium, Ortahisar",1461 Trabzon,41.0054605,39.7301463,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,68 Aksaray Belediyespor,"Dağılgan Stadium, Aksaray",68 Aksaray,38.3528738,34.0388284,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Adanaspor,Adana Stadium,Adana,37.0325,35.2625,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Aliağa,Aliağa Atatürk Stadı,Aliağa,38.8,26.9722,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Ankara Demirspor,"TCDD Ankara Demirspor Stadium, Ankara",Ankara,39.92888889,32.85472222,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Arnavutköy Belediyespor,Bolluca Stadium,Arnavutköy,41.199406,28.753056,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Bursaspor,Centennial Atatürk Stadium,Bursa,40.19722222,29.06222222,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Fethiyespor,"Fethiye İlçe Stadium,, Fethiye, Muğla",Fethiye,36.65138889,29.12305556,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Güzide Gebzespor,"Alaettin Kurt Stadium, Gebze",Güzide Gebze,40.7710028,29.4363104,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Isparta 32,Isparta Atatürk Stadyum,Isparta,37.7648,30.5566,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Kahramanmaraş İstiklalspor,Batıpark Adem Şahan Sentetik Çim Sahası,Kahramanmaraş,37.5858,36.9371,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Kırklarelispor,"Kırklareli Atatürk Stadium, Kırklareli",Kırklareli,41.73472222,27.22527778,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Mardin 1969,21 Kasım Şehir Stadı,Mardin,37.3132581,40.7354383,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Menemen,"Menemen İlçe Stadium, İzmir",Menemen,38.6,27.06666667,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Muşspor,Muş Şehir Stadı,Muş,38.73333333,41.49111111,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Somaspor,Soma Atatürk Stadium,Soma,39.1987193,27.6241754,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Yeni Malatyaspor,New Malatya Stadium,Yeni Malatya,38.4332606,38.3420745,tr-2-lig-kirmizi-grup,turkey_top_3
+2. Lig Kırmızı Grup,Yeni Mersin İdmanyurdu,"Mersin Arena, Mersin, Turkey",Yeni Mersin,36.3645821,33.9429862,tr-2-lig-kirmizi-grup,turkey_top_3
+Süper Lig,Alanyaspor,Alanya Oba Stadium,Alanya,36.8865728,30.7030242,tr-super-lig,turkey_top_3
+Süper Lig,Antalyaspor,Corendon Airlines Park,Antalya,36.88816,30.6684452,tr-super-lig,turkey_top_3
+Süper Lig,Başakşehir,Fatih Terim Stadium,Başakşehir,41.1228067,28.8093852,tr-super-lig,turkey_top_3
+Süper Lig,Beşiktaş,Tüpraş Stadium,Beşiktaş,41.0394982,28.9943382,tr-super-lig,turkey_top_3
+Süper Lig,Eyüpspor,Recep Tayyip Erdoğan Stadium,Eyüpsultan,41.0327948,28.9723833,tr-super-lig,turkey_top_3
+Süper Lig,Fatih Karagümrük,Atatürk Olympic Stadium,Fatih,41.0744732,28.7656611,tr-super-lig,turkey_top_3
+Süper Lig,Fenerbahçe,Chobani Stadium,Kadıköy,40.9875807,29.0369773,tr-super-lig,turkey_top_3
+Süper Lig,Galatasaray,Rams Park,Sarıyer,41.103369,28.9909522,tr-super-lig,turkey_top_3
+Süper Lig,Gaziantep,Gaziantep Stadium,Gaziantep,37.0628317,37.3792617,tr-super-lig,turkey_top_3
+Süper Lig,Gençlerbirliği,Eryaman Stadium,Yenimahalle,39.979993,32.6132207,tr-super-lig,turkey_top_3
+Süper Lig,Göztepe,Gürsel Aksel Stadium,İzmir,38.3967727,27.0764098,tr-super-lig,turkey_top_3
+Süper Lig,Kasımpaşa,Recep Tayyip Erdoğan Stadium,Kasımpaşa,41.0327948,28.9723833,tr-super-lig,turkey_top_3
+Süper Lig,Kayserispor,RHG Enertürk Enerji Stadium,Kayseri,38.73723,35.4224695,tr-super-lig,turkey_top_3
+Süper Lig,Kocaelispor,Kocaeli Stadium,İzmit,40.7750844,30.017023,tr-super-lig,turkey_top_3
+Süper Lig,Konyaspor,Konya Metropolitan Municipality Stadium,Konya,37.946107,32.4880729,tr-super-lig,turkey_top_3
+Süper Lig,Rizespor,Rize City Stadium,Rize,40.9569617,40.884428,tr-super-lig,turkey_top_3
+Süper Lig,Samsunspor,Samsun 19 Mayıs Stadium,Samsun,41.2303557,35.9683338,tr-super-lig,turkey_top_3
+Süper Lig,Trabzonspor,Papara Park,Trabzon,40.9986861,39.6453902,tr-super-lig,turkey_top_3
