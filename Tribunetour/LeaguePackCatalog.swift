@@ -10,6 +10,7 @@ enum AppLeaguePackId: String, CaseIterable {
     case portugalTop3 = "portugal_top_3"
     case netherlandsTop3 = "netherlands_top_3"
     case belgiumTop3 = "belgium_top_3"
+    case turkeyTop3 = "turkey_top_3"
     case premiumFull = "premium_full"
 }
 
@@ -22,6 +23,7 @@ enum AppPremiumAdminPack: String, CaseIterable, Identifiable {
     case portugalTop3 = "portugal_top_3"
     case netherlandsTop3 = "netherlands_top_3"
     case belgiumTop3 = "belgium_top_3"
+    case turkeyTop3 = "turkey_top_3"
     case premiumFull = "premium_full"
 
     var id: String { rawValue }
@@ -147,6 +149,17 @@ enum AppLeaguePackCatalog {
             isPremium: true,
             includedByPremiumFull: true,
             requestDescription: "Jupiler Pro League, Challenger Pro League og National Division 1 ACFF/VV"
+        ),
+        AppLeaguePackCatalogEntry(
+            id: .turkeyTop3,
+            countryCode: "tr",
+            label: "Tyrkiet",
+            sortOrder: 90,
+            levels: 3,
+            isCore: false,
+            isPremium: true,
+            includedByPremiumFull: true,
+            requestDescription: "Süper Lig, 1. Lig og 2. Lig"
         ),
         AppLeaguePackCatalogEntry(
             id: .premiumFull,
