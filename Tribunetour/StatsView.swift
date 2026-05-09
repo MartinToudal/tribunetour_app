@@ -47,6 +47,58 @@ struct StatsView: View {
         var id: String { "\(countryCode)-\(division)" }
     }
 
+    private struct RecentVisit: Identifiable {
+        let club: Club
+        let date: Date
+
+        var id: String { club.id }
+    }
+
+    private struct LeagueMilestone {
+        let countryCode: String
+        let division: String
+        let remaining: Int
+    }
+
+    private struct Snapshot {
+        var visitedCount: Int = 0
+        var totalCount: Int = 0
+        var unvisitedCount: Int = 0
+        var progress: Double = 0
+        var progressPercentText: String = "0%"
+        var notesCount: Int = 0
+        var reviewedCount: Int = 0
+        var averageReviewScoreText: String?
+        var totalPhotoCount: Int = 0
+        var stadiumsWithPhotosCount: Int = 0
+        var visitedCitiesCount: Int = 0
+        var visitedDivisionsCount: Int = 0
+        var activeHomeCountryCode: String = "dk"
+        var currentScopeLabel: String = "Alle aktive lande"
+        var countryOptions: [String] = []
+        var hasInternationalCountries: Bool = false
+        var shouldShowAccountPrompt: Bool = false
+        var accountPromptHighlights: [String] = []
+        var sortedVisitedClubs: [Club] = []
+        var recentVisited: [RecentVisit] = []
+        var relegatedOrHistoricalRows: [Club] = []
+        var journeyAchievements: [Achievement] = []
+        var homeCountryAchievements: [Achievement] = []
+        var internationalAchievements: [Achievement] = []
+        var achievements: [Achievement] = []
+        var unlockedAchievementIds: Set<String> = []
+        var unlockedAchievementsCount: Int = 0
+        var nextLockedAchievement: Achievement?
+        var nextLeagueMilestone: LeagueMilestone?
+        var suggestedNextClub: Club?
+        var heroSummaryText: String = "Dit scope er tomt lige nu."
+        var nextMilestoneTitle: String = "Fortsæt rejsen"
+        var nextMilestoneDescription: String = "Hvert nyt besøg bringer dig tættere på næste kapitel."
+        var suggestionDescription: String = "Et oplagt næste stadion at sætte på ønskelisten."
+        var visitedByDivision: [DivisionProgressRow] = []
+        var homeCountryVisitedByDivision: [DivisionProgressRow] = []
+    }
+
     // Feedback / Mail
     @State private var showMailComposer = false
     @State private var mailUnavailableAlert = false
@@ -66,6 +118,7 @@ struct StatsView: View {
     @State private var premiumRequestLoading: Bool = false
     @State private var premiumRequestRows: [PremiumAccessRequestUserRow] = []
     @State private var premiumRequestRowsLoading: Bool = false
+    @State private var snapshot = Snapshot()
     @FocusState private var focusedAuthField: AuthField?
 
     // MARK: - Derived stats
@@ -174,6 +227,283 @@ struct StatsView: View {
             if $0.total != $1.total { return $0.total > $1.total }
             return $0.division.localizedCaseInsensitiveCompare($1.division) == .orderedAscending
         }
+    }
+
+    private func buildDivisionRows(from clubs: [Club], visitedIds: Set<String>) -> [DivisionProgressRow] {
+        let grouped = Dictionary(grouping: clubs) { DivisionKey(countryCode: $0.countryCode, division: $0.division) }
+        let rows = grouped.map { division, clubsInDivision in
+            let visited = clubsInDivision.filter { visitedIds.contains($0.id) }.count
+            return DivisionProgressRow(
+                countryCode: division.countryCode,
+                division: division.division,
+                visited: visited,
+                total: clubsInDivision.count
+            )
+        }
+
+        return rows.sorted {
+            let countryA = LeaguePresentation.countryRank($0.countryCode)
+            let countryB = LeaguePresentation.countryRank($1.countryCode)
+            if countryA != countryB { return countryA < countryB }
+
+            let leagueA = LeaguePresentation.divisionRank($0.division, countryCode: $0.countryCode)
+            let leagueB = LeaguePresentation.divisionRank($1.division, countryCode: $1.countryCode)
+            if leagueA != leagueB { return leagueA < leagueB }
+
+            if $0.total != $1.total { return $0.total > $1.total }
+            return $0.division.localizedCaseInsensitiveCompare($1.division) == .orderedAscending
+        }
+    }
+
+    private func refreshSnapshot() {
+        let visitedIds = Set(visitedStore.records.lazy.filter(\.value.visited).map(\.key))
+        let progressionClubs = clubs.filter(\.countsTowardTopSystemProgression)
+        let nonProgressionVisibleClubs = clubs.filter(\.shouldRemainVisibleOutsideTopSystem)
+        let visitedClubs = progressionClubs.filter { visitedIds.contains($0.id) }
+        let unvisitedClubs = progressionClubs.filter { !visitedIds.contains($0.id) }
+        let visitedCount = visitedClubs.count
+        let totalCount = progressionClubs.count
+        let unvisitedCount = unvisitedClubs.count
+        let progress = totalCount > 0 ? Double(visitedCount) / Double(totalCount) : 0
+        let progressPercentText = "\(Int((progress * 100.0).rounded()))%"
+        let sourceClubs = progressionClubs.isEmpty ? clubs : progressionClubs
+        let countryOptions = Array(Set(sourceClubs.map(\.countryCode))).sorted { left, right in
+            if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
+                return LeaguePresentation.countryRank(left) < LeaguePresentation.countryRank(right)
+            }
+            return LeaguePresentation.countryLabel(left).localizedCaseInsensitiveCompare(LeaguePresentation.countryLabel(right)) == .orderedAscending
+        }
+        let activeHomeCountryCode = LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(sourceClubs.map(\.countryCode)))
+        let currentScopeLabel = countryFilterRawValue == "all" ? "Alle aktive lande" : LeaguePresentation.countryLabel(countryFilterRawValue)
+        let homeCountryClubs = progressionClubs.filter { $0.countryCode == activeHomeCountryCode }
+        let internationalClubs = progressionClubs.filter { $0.countryCode != activeHomeCountryCode }
+        let homeCountryVisitedCount = homeCountryClubs.filter { visitedIds.contains($0.id) }.count
+        let homeCountryTotalCount = homeCountryClubs.count
+        let internationalVisitedCount = internationalClubs.filter { visitedIds.contains($0.id) }.count
+        let hasInternationalCountries = !internationalClubs.isEmpty
+        let notesCount = visitedStore.records.values.reduce(0) { acc, r in
+            let trimmed = r.notes.trimmingCharacters(in: .whitespacesAndNewlines)
+            return acc + (trimmed.isEmpty ? 0 : 1)
+        }
+        let reviewedCount = reviewsStore.reviewsByClubId.count
+        let averageReviewScoreText: String? = {
+            let averages = reviewsStore.reviewsByClubId.values.compactMap { $0.averageScore }
+            guard !averages.isEmpty else { return nil }
+            let total = averages.reduce(0, +)
+            let overall = total / Double(averages.count)
+            return String(format: "%.1f", overall)
+        }()
+        let totalPhotoCount = visitedStore.records.values.reduce(0) { acc, record in
+            acc + record.photoFileNames.count
+        }
+        let stadiumsWithPhotosCount = visitedStore.records.values.reduce(0) { acc, record in
+            acc + (record.photoFileNames.isEmpty ? 0 : 1)
+        }
+        let visitedCitiesCount = Set(visitedClubs.map { $0.stadium.city.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }).count
+        let visitedDivisionsCount = Set(visitedClubs.map { $0.division.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }).count
+        let shouldShowAccountPrompt = !authSession.snapshot.isAuthenticated
+            && !accountPromptDismissed
+            && (visitedCount >= 3 || notesCount > 0 || reviewedCount > 0 || totalPhotoCount > 0 || hasInternationalCountries)
+        let accountPromptHighlights: [String] = {
+            var highlights: [String] = []
+            if visitedCount > 0 {
+                highlights.append("Synk dine \(visitedCount) markerede stadionbesøg mellem app og web")
+            }
+            if notesCount > 0 || totalPhotoCount > 0 || reviewedCount > 0 {
+                highlights.append("Gem noter, anmeldelser og billeder sikkert på din konto")
+            }
+            if hasInternationalCountries {
+                highlights.append("Få adgang til flere ligaer og stadionrejser i andre lande")
+            }
+            if highlights.isEmpty {
+                highlights.append("Synk dine data mellem app og web")
+                highlights.append("Få adgang til flere ligaer og stadionrejser")
+            }
+            return Array(highlights.prefix(3))
+        }()
+        let visitedByDivision = buildDivisionRows(from: progressionClubs, visitedIds: visitedIds)
+        let homeCountryVisitedByDivision = buildDivisionRows(from: homeCountryClubs, visitedIds: visitedIds)
+        let recentVisited = visitedClubs.compactMap { club -> RecentVisit? in
+            if let date = visitedStore.visitedDate(for: club.id) {
+                return RecentVisit(club: club, date: date)
+            }
+            if let rec = visitedStore.records[club.id], rec.visited {
+                return RecentVisit(club: club, date: rec.updatedAt)
+            }
+            return nil
+        }
+        .sorted { $0.date > $1.date }
+        let relegatedOrHistoricalRows = nonProgressionVisibleClubs.sorted { lhs, rhs in
+            if lhs.countryCode != rhs.countryCode {
+                return LeaguePresentation.countryRank(lhs.countryCode) < LeaguePresentation.countryRank(rhs.countryCode)
+            }
+            let lhsRank = LeaguePresentation.divisionRank(lhs.division, countryCode: lhs.countryCode)
+            let rhsRank = LeaguePresentation.divisionRank(rhs.division, countryCode: rhs.countryCode)
+            if lhsRank != rhsRank {
+                return lhsRank < rhsRank
+            }
+            return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+        }
+
+        let journeyAchievements = [
+            Achievement(id: "first_visit", title: "Første skridt", description: "Besøg dit første stadion.", systemImage: "figure.walk", isUnlocked: visitedCount >= 1, progressText: "\(min(visitedCount, 1))/1"),
+            Achievement(id: "five_stadiums", title: "Groundhopper I", description: "Besøg 5 stadions.", systemImage: "map", isUnlocked: visitedCount >= 5, progressText: "\(min(visitedCount, 5))/5"),
+            Achievement(id: "twelve_stadiums", title: "Groundhopper II", description: "Besøg 12 stadions.", systemImage: "map.fill", isUnlocked: visitedCount >= 12, progressText: "\(min(visitedCount, 12))/12"),
+            Achievement(id: "first_review", title: "Anmelder", description: "Lav din første stadion-anmeldelse.", systemImage: "text.bubble", isUnlocked: reviewedCount >= 1, progressText: "\(min(reviewedCount, 1))/1"),
+            Achievement(id: "reviewer_level_2", title: "Anmelder II", description: "Lav anmeldelser af 5 stadions.", systemImage: "text.bubble.fill", isUnlocked: reviewedCount >= 5, progressText: "\(min(reviewedCount, 5))/5"),
+            Achievement(id: "note_writer", title: "Noteskriver", description: "Skriv noter på 5 stadions.", systemImage: "note.text", isUnlocked: notesCount >= 5, progressText: "\(min(notesCount, 5))/5"),
+            Achievement(id: "first_photo", title: "Fotograf", description: "Tilføj dit første stadionbillede.", systemImage: "camera", isUnlocked: totalPhotoCount >= 1, progressText: "\(min(totalPhotoCount, 1))/1"),
+            Achievement(id: "photo_collector", title: "Fotojæger", description: "Tilføj 10 stadionbilleder i alt.", systemImage: "camera.fill", isUnlocked: totalPhotoCount >= 10, progressText: "\(min(totalPhotoCount, 10))/10"),
+            Achievement(id: "gallery_builder", title: "Galleri-bygger", description: "Tilføj billeder på 3 forskellige stadions.", systemImage: "photo.on.rectangle", isUnlocked: stadiumsWithPhotosCount >= 3, progressText: "\(min(stadiumsWithPhotosCount, 3))/3"),
+            Achievement(id: "city_hopper", title: "Byhopper", description: "Besøg stadions i 5 forskellige byer.", systemImage: "building.2", isUnlocked: visitedCitiesCount >= 5, progressText: "\(min(visitedCitiesCount, 5))/5"),
+            Achievement(id: "league_explorer", title: "Række-rejsende", description: "Besøg stadions i 3 forskellige ligaer.", systemImage: "point.3.connected.trianglepath.dotted", isUnlocked: visitedDivisionsCount >= 3, progressText: "\(min(visitedDivisionsCount, 3))/3"),
+        ].sorted { a, b in
+            if a.isUnlocked != b.isUnlocked { return a.isUnlocked && !b.isUnlocked }
+            return a.title.localizedCaseInsensitiveCompare(b.title) == .orderedAscending
+        }
+
+        let homeCountryLabel = LeaguePresentation.countryLabel(activeHomeCountryCode)
+        let completedHomeDivisions = homeCountryVisitedByDivision.filter { $0.total > 0 && $0.visited == $0.total }.count
+        let halfThreshold = max(1, Int(ceil(Double(max(homeCountryTotalCount, 1)) * 0.5)))
+        let homeCountryAchievements = [
+            Achievement(id: "home_country_halfway", title: "Halvvejs hjemme", description: "Besøg halvdelen af stadions i \(homeCountryLabel).", systemImage: "chart.bar.xaxis", isUnlocked: homeCountryVisitedCount >= halfThreshold, progressText: "\(min(homeCountryVisitedCount, halfThreshold))/\(halfThreshold)"),
+            Achievement(id: "home_country_league_complete", title: "Række-specialist", description: "Fuldfør alle stadions i én række i \(homeCountryLabel).", systemImage: "trophy", isUnlocked: completedHomeDivisions >= 1, progressText: "\(completedHomeDivisions)/1"),
+            Achievement(id: "home_country_complete", title: "Tribune Tour Master", description: "Besøg alle stadions i \(homeCountryLabel).", systemImage: "crown", isUnlocked: homeCountryTotalCount > 0 && homeCountryVisitedCount == homeCountryTotalCount, progressText: "\(homeCountryVisitedCount)/\(max(1, homeCountryTotalCount))"),
+        ].sorted { a, b in
+            if a.isUnlocked != b.isUnlocked { return a.isUnlocked && !b.isUnlocked }
+            return a.title.localizedCaseInsensitiveCompare(b.title) == .orderedAscending
+        }
+
+        let internationalAchievements: [Achievement] = {
+            guard hasInternationalCountries else { return [] }
+            let internationalVisitedByDivision = buildDivisionRows(from: internationalClubs, visitedIds: visitedIds)
+            let completedInternationalDivisions = internationalVisitedByDivision.filter { $0.total > 0 && $0.visited == $0.total }.count
+            let activeCountryCount = Set(progressionClubs.map(\.countryCode)).count
+            let visitedCountryCount = Set(visitedClubs.map(\.countryCode)).count
+            let crossBorderTarget = min(activeCountryCount, 2)
+            return [
+                Achievement(id: "international_first_visit", title: "Udebanestart", description: "Besøg dit første stadion uden for dit hjemland.", systemImage: "airplane.departure", isUnlocked: internationalVisitedCount >= 1, progressText: "\(min(internationalVisitedCount, 1))/1"),
+                Achievement(id: "international_explorer", title: "International groundhopper", description: "Besøg 5 stadions uden for dit hjemland.", systemImage: "globe.europe.africa", isUnlocked: internationalVisitedCount >= 5, progressText: "\(min(internationalVisitedCount, 5))/5"),
+                Achievement(id: "cross_border", title: "På tværs af grænser", description: "Besøg stadions i mindst 2 aktive lande.", systemImage: "point.topleft.down.curvedto.point.bottomright.up", isUnlocked: crossBorderTarget <= 1 || visitedCountryCount >= crossBorderTarget, progressText: "\(min(visitedCountryCount, crossBorderTarget))/\(crossBorderTarget)"),
+                Achievement(id: "international_league_complete", title: "Udebanespecialist", description: "Fuldfør alle stadions i én international række.", systemImage: "flag.pattern.checkered", isUnlocked: completedInternationalDivisions >= 1, progressText: "\(completedInternationalDivisions)/1"),
+            ].sorted { a, b in
+                if a.isUnlocked != b.isUnlocked { return a.isUnlocked && !b.isUnlocked }
+                return a.title.localizedCaseInsensitiveCompare(b.title) == .orderedAscending
+            }
+        }()
+
+        let achievements = journeyAchievements + homeCountryAchievements + internationalAchievements
+        let unlockedAchievementIds = Set(achievements.filter(\.isUnlocked).map(\.id))
+        let nextLockedAchievement = achievements.first(where: { !$0.isUnlocked })
+        let nextLeagueMilestone = visitedByDivision
+            .filter { $0.total > 0 && $0.visited < $0.total }
+            .sorted { lhs, rhs in
+                let lhsRemaining = lhs.total - lhs.visited
+                let rhsRemaining = rhs.total - rhs.visited
+                if lhsRemaining != rhsRemaining { return lhsRemaining < rhsRemaining }
+                let lhsCountryRank = LeaguePresentation.countryRank(lhs.countryCode)
+                let rhsCountryRank = LeaguePresentation.countryRank(rhs.countryCode)
+                if lhsCountryRank != rhsCountryRank { return lhsCountryRank < rhsCountryRank }
+                let lhsRank = LeaguePresentation.divisionRank(lhs.division, countryCode: lhs.countryCode)
+                let rhsRank = LeaguePresentation.divisionRank(rhs.division, countryCode: rhs.countryCode)
+                if lhsRank != rhsRank { return lhsRank < rhsRank }
+                return lhs.division.localizedCaseInsensitiveCompare(rhs.division) == .orderedAscending
+            }
+            .map { LeagueMilestone(countryCode: $0.countryCode, division: $0.division, remaining: $0.total - $0.visited) }
+            .first
+
+        let suggestedNextClub: Club? = {
+            if let nextLeagueMilestone {
+                let prioritized = unvisitedClubs
+                    .filter { $0.division == nextLeagueMilestone.division && $0.countryCode == nextLeagueMilestone.countryCode }
+                    .sorted { lhs, rhs in
+                        if lhs.countryCode != rhs.countryCode {
+                            return LeaguePresentation.countryRank(lhs.countryCode) < LeaguePresentation.countryRank(rhs.countryCode)
+                        }
+                        return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+                    }
+                if let first = prioritized.first { return first }
+            }
+            return unvisitedClubs.sorted { lhs, rhs in
+                if lhs.countryCode != rhs.countryCode {
+                    return LeaguePresentation.countryRank(lhs.countryCode) < LeaguePresentation.countryRank(rhs.countryCode)
+                }
+                return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+            }.first
+        }()
+
+        let heroSummaryText: String = {
+            if totalCount == 0 { return "Dit scope er tomt lige nu." }
+            if visitedCount == 0 { return "Din stadionrejse starter med det første besøg." }
+            if visitedCount == totalCount { return "Du har besøgt alle stadions i dit nuværende scope." }
+            return "\(visitedCount) af \(totalCount) stadions er allerede krydset af."
+        }()
+
+        let nextMilestoneTitle: String = {
+            if let nextLeagueMilestone {
+                if nextLeagueMilestone.remaining == 1 {
+                    return "Du mangler 1 stadion for at fuldføre \(LeaguePresentation.divisionDisplayName(nextLeagueMilestone.division, countryCode: nextLeagueMilestone.countryCode))"
+                }
+                return "Du mangler \(nextLeagueMilestone.remaining) stadions for at fuldføre \(LeaguePresentation.divisionDisplayName(nextLeagueMilestone.division, countryCode: nextLeagueMilestone.countryCode))"
+            }
+            if let nextLockedAchievement { return nextLockedAchievement.title }
+            return "Fortsæt rejsen"
+        }()
+
+        let nextMilestoneDescription: String = {
+            if nextLeagueMilestone != nil { return "Det er den korteste vej til din næste store milepæl." }
+            if let nextLockedAchievement { return nextLockedAchievement.description }
+            return "Hvert nyt besøg bringer dig tættere på næste kapitel."
+        }()
+
+        let suggestionDescription: String = {
+            if let nextLeagueMilestone {
+                return "Et nyt besøg her vil bringe dig tættere på at fuldføre \(LeaguePresentation.divisionDisplayName(nextLeagueMilestone.division, countryCode: nextLeagueMilestone.countryCode))."
+            }
+            if let nextLockedAchievement {
+                return "Et godt næste stop, hvis du vil arbejde videre mod achievementen “\(nextLockedAchievement.title)”."
+            }
+            return "Et oplagt næste stadion at sætte på ønskelisten."
+        }()
+
+        snapshot = Snapshot(
+            visitedCount: visitedCount,
+            totalCount: totalCount,
+            unvisitedCount: unvisitedCount,
+            progress: progress,
+            progressPercentText: progressPercentText,
+            notesCount: notesCount,
+            reviewedCount: reviewedCount,
+            averageReviewScoreText: averageReviewScoreText,
+            totalPhotoCount: totalPhotoCount,
+            stadiumsWithPhotosCount: stadiumsWithPhotosCount,
+            visitedCitiesCount: visitedCitiesCount,
+            visitedDivisionsCount: visitedDivisionsCount,
+            activeHomeCountryCode: activeHomeCountryCode,
+            currentScopeLabel: currentScopeLabel,
+            countryOptions: countryOptions,
+            hasInternationalCountries: hasInternationalCountries,
+            shouldShowAccountPrompt: shouldShowAccountPrompt,
+            accountPromptHighlights: accountPromptHighlights,
+            sortedVisitedClubs: visitedClubs.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending },
+            recentVisited: recentVisited,
+            relegatedOrHistoricalRows: relegatedOrHistoricalRows,
+            journeyAchievements: journeyAchievements,
+            homeCountryAchievements: homeCountryAchievements,
+            internationalAchievements: internationalAchievements,
+            achievements: achievements,
+            unlockedAchievementIds: unlockedAchievementIds,
+            unlockedAchievementsCount: unlockedAchievementIds.count,
+            nextLockedAchievement: nextLockedAchievement,
+            nextLeagueMilestone: nextLeagueMilestone,
+            suggestedNextClub: suggestedNextClub,
+            heroSummaryText: heroSummaryText,
+            nextMilestoneTitle: nextMilestoneTitle,
+            nextMilestoneDescription: nextMilestoneDescription,
+            suggestionDescription: suggestionDescription,
+            visitedByDivision: visitedByDivision,
+            homeCountryVisitedByDivision: homeCountryVisitedByDivision
+        )
     }
 
     private var visitedByDivision: [DivisionProgressRow] {
@@ -694,9 +1024,9 @@ struct StatsView: View {
                             .font(.caption)
                             .foregroundStyle(.secondary)
 
-                        if shouldShowAccountPrompt {
+                        if snapshot.shouldShowAccountPrompt {
                             AccountPromptCard(
-                                highlights: accountPromptHighlights,
+                                highlights: snapshot.accountPromptHighlights,
                                 onDismiss: { accountPromptDismissed = true }
                             )
                         }
@@ -767,33 +1097,33 @@ struct StatsView: View {
                         VStack(alignment: .leading, spacing: 6) {
                             Text("Byg din stadionrejse")
                                 .font(.headline)
-                            Text(heroSummaryText)
+                            Text(snapshot.heroSummaryText)
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                         }
 
                         HStack(spacing: 10) {
-                            StatsHeroMetric(title: "Besøgte", value: "\(visitedCount)")
-                            StatsHeroMetric(title: "Mangler", value: "\(unvisitedCount)")
-                            StatsHeroMetric(title: "Fremdrift", value: progressPercentText)
+                            StatsHeroMetric(title: "Besøgte", value: "\(snapshot.visitedCount)")
+                            StatsHeroMetric(title: "Mangler", value: "\(snapshot.unvisitedCount)")
+                            StatsHeroMetric(title: "Fremdrift", value: snapshot.progressPercentText)
                         }
 
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
                                 Text("Fremdrift")
                                 Spacer()
-                                Text("\(visitedCount) / \(totalCount)")
+                                Text("\(snapshot.visitedCount) / \(snapshot.totalCount)")
                                     .foregroundStyle(.secondary)
                             }
 
-                            ProgressView(value: progress)
+                            ProgressView(value: snapshot.progress)
                                 .tint(.green)
                         }
 
                         HStack(spacing: 8) {
-                            StatsContextChip(label: "Noter", value: notesCount, systemImage: "note.text")
-                            StatsContextChip(label: "Anmeldelser", value: reviewedCount, systemImage: "star.bubble")
-                            StatsContextChip(label: "Billeder", value: totalPhotoCount, systemImage: "camera")
+                            StatsContextChip(label: "Noter", value: snapshot.notesCount, systemImage: "note.text")
+                            StatsContextChip(label: "Anmeldelser", value: snapshot.reviewedCount, systemImage: "star.bubble")
+                            StatsContextChip(label: "Billeder", value: snapshot.totalPhotoCount, systemImage: "camera")
                         }
                     }
                     .padding(.vertical, 6)
@@ -801,16 +1131,16 @@ struct StatsView: View {
 
                 Section("Næste milepæl") {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text(nextMilestoneTitle)
+                        Text(snapshot.nextMilestoneTitle)
                             .font(.headline)
-                        Text(nextMilestoneDescription)
+                        Text(snapshot.nextMilestoneDescription)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
                     .padding(.vertical, 4)
                 }
 
-                if let suggestedNextClub {
+                if let suggestedNextClub = snapshot.suggestedNextClub {
                     Section("Næste stop") {
                         NavigationLink {
                                 StadiumDetailView(
@@ -828,7 +1158,7 @@ struct StatsView: View {
                                 Text("\(suggestedNextClub.stadium.name) • \(suggestedNextClub.stadium.city)")
                                     .font(.subheadline)
                                     .foregroundStyle(.secondary)
-                                Text(suggestionDescription)
+                                Text(snapshot.suggestionDescription)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
@@ -838,22 +1168,22 @@ struct StatsView: View {
                 }
 
                 Section("Din status") {
-                    StatsOverviewRow(label: "Besøgte stadions", value: "\(visitedCount) / \(totalCount)")
-                    StatsOverviewRow(label: "Ikke besøgt endnu", value: "\(unvisitedCount)")
-                    StatsOverviewRow(label: "Noter", value: "\(notesCount)")
-                    StatsOverviewRow(label: "Anmeldte stadions", value: "\(reviewedCount)")
+                    StatsOverviewRow(label: "Besøgte stadions", value: "\(snapshot.visitedCount) / \(snapshot.totalCount)")
+                    StatsOverviewRow(label: "Ikke besøgt endnu", value: "\(snapshot.unvisitedCount)")
+                    StatsOverviewRow(label: "Noter", value: "\(snapshot.notesCount)")
+                    StatsOverviewRow(label: "Anmeldte stadions", value: "\(snapshot.reviewedCount)")
 
-                    if let averageReviewScoreText {
+                    if let averageReviewScoreText = snapshot.averageReviewScoreText {
                         StatsOverviewRow(label: "Gns. anmeldelsesscore", value: "\(averageReviewScoreText) / 10")
                     }
 
-                    StatsOverviewRow(label: "Stadions med billeder", value: "\(stadiumsWithPhotosCount)")
-                    StatsOverviewRow(label: "Billeder i alt", value: "\(totalPhotoCount)")
+                    StatsOverviewRow(label: "Stadions med billeder", value: "\(snapshot.stadiumsWithPhotosCount)")
+                    StatsOverviewRow(label: "Billeder i alt", value: "\(snapshot.totalPhotoCount)")
                 }
 
                 Section("Hjemland og scope") {
                     Picker("Hjemland", selection: $preferredHomeCountryCode) {
-                        ForEach(countryOptions, id: \.self) { countryCode in
+                        ForEach(snapshot.countryOptions, id: \.self) { countryCode in
                             Text(LeaguePresentation.countryLabel(countryCode)).tag(countryCode)
                         }
                     }
@@ -861,7 +1191,7 @@ struct StatsView: View {
                     HStack {
                         Text("Aktivt scope")
                         Spacer()
-                        Text(currentScopeLabel)
+                        Text(snapshot.currentScopeLabel)
                             .foregroundStyle(.secondary)
                     }
 
@@ -874,29 +1204,29 @@ struct StatsView: View {
                     HStack {
                         Text("Låst op")
                         Spacer()
-                        Text("\(journeyAchievements.filter(\.isUnlocked).count)/\(journeyAchievements.count)")
+                        Text("\(snapshot.journeyAchievements.filter(\.isUnlocked).count)/\(snapshot.journeyAchievements.count)")
                             .foregroundStyle(.secondary)
                     }
 
-                    ForEach(journeyAchievements) { achievement in
+                    ForEach(snapshot.journeyAchievements) { achievement in
                         AchievementRow(achievement: achievement)
                     }
                 }
 
-                Section("Mål i \(LeaguePresentation.countryLabel(activeHomeCountryCode))") {
+                Section("Mål i \(LeaguePresentation.countryLabel(snapshot.activeHomeCountryCode))") {
                     HStack {
                         Text("Låst op")
                         Spacer()
-                        Text("\(homeCountryAchievements.filter(\.isUnlocked).count)/\(homeCountryAchievements.count)")
+                        Text("\(snapshot.homeCountryAchievements.filter(\.isUnlocked).count)/\(snapshot.homeCountryAchievements.count)")
                             .foregroundStyle(.secondary)
                     }
 
-                    ForEach(homeCountryAchievements) { achievement in
+                    ForEach(snapshot.homeCountryAchievements) { achievement in
                         AchievementRow(achievement: achievement)
                     }
                 }
 
-                if !internationalAchievements.isEmpty {
+                if !snapshot.internationalAchievements.isEmpty {
                     Section("Internationale mål") {
                         HStack(alignment: .top, spacing: 10) {
                             VStack(alignment: .leading, spacing: 4) {
@@ -908,7 +1238,7 @@ struct StatsView: View {
                             }
                         }
 
-                        ForEach(internationalAchievements) { achievement in
+                        ForEach(snapshot.internationalAchievements) { achievement in
                             AchievementRow(achievement: achievement)
                         }
                     }
@@ -916,11 +1246,11 @@ struct StatsView: View {
 
                 // MARK: By division
                 Section("Fordelt på liga") {
-                    if visitedByDivision.isEmpty {
+                    if snapshot.visitedByDivision.isEmpty {
                         Text("Ingen data.")
                             .foregroundStyle(.secondary)
                     } else {
-                        ForEach(visitedByDivision) { row in
+                        ForEach(snapshot.visitedByDivision) { row in
                             VStack(alignment: .leading, spacing: 6) {
                                 HStack {
                                     Text(LeaguePresentation.divisionDisplayName(row.division, countryCode: row.countryCode))
@@ -936,13 +1266,13 @@ struct StatsView: View {
                     }
                 }
 
-                if !relegatedOrHistoricalRows.isEmpty {
+                if !snapshot.relegatedOrHistoricalRows.isEmpty {
                     Section("Andre klubber") {
                         Text("Klubber her tæller ikke med i din aktuelle fremdrift, men bliver stadig bevaret i appen.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
 
-                        ForEach(relegatedOrHistoricalRows) { club in
+                        ForEach(snapshot.relegatedOrHistoricalRows) { club in
                             VStack(alignment: .leading, spacing: 4) {
                                 HStack(alignment: .top) {
                                     VStack(alignment: .leading, spacing: 2) {
@@ -976,7 +1306,7 @@ struct StatsView: View {
 
                 // MARK: Recent visits
                 Section("Seneste besøg") {
-                    if recentVisited.isEmpty {
+                    if snapshot.recentVisited.isEmpty {
                         ContentUnavailableView(
                             "Ingen besøg endnu",
                             systemImage: "checkmark.circle",
@@ -984,7 +1314,7 @@ struct StatsView: View {
                         )
                         .padding(.vertical, 8)
                     } else {
-                        ForEach(recentVisited.prefix(10), id: \.club.id) { item in
+                        ForEach(snapshot.recentVisited.prefix(10), id: \.club.id) { item in
                             NavigationLink {
                                 StadiumDetailView(
                                     club: item.club,
@@ -1014,7 +1344,7 @@ struct StatsView: View {
 
                 // MARK: Visited list
                 Section("Mine besøgte") {
-                    if visitedClubs.isEmpty {
+                    if snapshot.sortedVisitedClubs.isEmpty {
                         ContentUnavailableView(
                             "Ingen besøgte stadions",
                             systemImage: "mappin.slash",
@@ -1022,7 +1352,7 @@ struct StatsView: View {
                         )
                         .padding(.vertical, 8)
                     } else {
-                        ForEach(sortedVisitedClubs) { club in
+                        ForEach(snapshot.sortedVisitedClubs) { club in
                             NavigationLink {
                                 StadiumDetailView(
                                     club: club,
@@ -1217,9 +1547,11 @@ struct StatsView: View {
                 Text("Foerste gang du logger ind, bruger vi dine \(status.localVisitedCount) registreringer i appen til at oprette din samlede visited-status. Hvis du allerede har markeret noget paa web, bliver appens nuvaerende registreringer brugt som udgangspunkt.")
             }
             .onAppear {
+                refreshSnapshot()
                 syncSeenUnlockedIds()
             }
             .onChange(of: authSession.snapshot.isAuthenticated) { _, isAuthenticated in
+                refreshSnapshot()
                 if isAuthenticated {
                     dismissAuthKeyboard()
                     showAuthSheet = false
@@ -1228,19 +1560,29 @@ struct StatsView: View {
                 }
             }
             .onChange(of: visitedStore.records) { _, _ in
+                refreshSnapshot()
+                syncSeenUnlockedIds()
+            }
+            .onChange(of: reviewsStore.reviewsByClubId) { _, _ in
+                refreshSnapshot()
                 syncSeenUnlockedIds()
             }
             .onAppear {
-                if !countryOptions.isEmpty {
-                    let resolvedHomeCountry = LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(countryOptions))
+                if !snapshot.countryOptions.isEmpty {
+                    let resolvedHomeCountry = LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(snapshot.countryOptions))
                     if preferredHomeCountryCode != resolvedHomeCountry {
                         preferredHomeCountryCode = resolvedHomeCountry
                     }
                 }
             }
             .onChange(of: preferredHomeCountryCode) { _, newValue in
-                guard countryOptions.contains(newValue) else { return }
+                guard snapshot.countryOptions.contains(newValue) else { return }
                 countryFilterRawValue = newValue
+                refreshSnapshot()
+                syncSeenUnlockedIds()
+            }
+            .onChange(of: countryFilterRawValue) { _, _ in
+                refreshSnapshot()
             }
         }
         .task(id: authSession.snapshot.isAuthenticated) {
@@ -1271,15 +1613,15 @@ struct StatsView: View {
     }
 
     private func syncSeenUnlockedIds() {
-        let unlocked = unlockedAchievementIds
+        let unlocked = snapshot.unlockedAchievementIds
         let seen = seenUnlockedIds
         let newlyUnlocked = unlocked.subtracting(seen)
 
         if !newlyUnlocked.isEmpty {
             let message: String
             if newlyUnlocked.count == 1,
-               let firstNewId = achievements.first(where: { newlyUnlocked.contains($0.id) })?.id,
-               let title = achievements.first(where: { $0.id == firstNewId })?.title {
+               let firstNewId = snapshot.achievements.first(where: { newlyUnlocked.contains($0.id) })?.id,
+               let title = snapshot.achievements.first(where: { $0.id == firstNewId })?.title {
                 message = "Ny achievement låst op: \(title)"
             } else {
                 message = "Nye achievements låst op: \(newlyUnlocked.count)"
