@@ -146,7 +146,9 @@ struct MatchesView: View {
 
         let cal = matchCalendar
         let todayStart = cal.startOfDay(for: Date())
-        let progressionClubIds = Set(progressionClubs.map(\.id))
+        let progressionClubIds = Set(
+            progressionClubs.flatMap { ClubIdentityResolver.allKnownIds(for: $0.id) }
+        )
         let visitedIds = visitedVenueClubIds
 
         let fixtureCountsTowardTopSystem: (Fixture) -> Bool = { fixture in
