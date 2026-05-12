@@ -529,7 +529,10 @@ ech-r46-sheffield-wednesday-west-bromwich-albion,2026-05-02T13:30:00+01:00,Champ
 ech-r46-swansea-city-charlton-athletic,2026-05-02T13:30:00+01:00,Championship - 46. runde,en-swansea-city,en-charlton-athletic,en-swansea-city,scheduled,,,,
 ech-r46-watford-coventry-city,2026-05-02T13:30:00+01:00,Championship - 46. runde,en-watford,en-coventry-city,en-watford,scheduled,,,,
 ech-r46-wrexham-middlesbrough,2026-05-02T13:30:00+01:00,Championship - 46. runde,en-wrexham,en-middlesbrough,en-wrexham,scheduled,,,,
-echp-sf1-millwall-hull-city,2026-05-11T21:00:00+02:00,Championship - Play Offs - Semifinale,en-millwall,en-hull-city,en-millwall,scheduled,,,,
+echp-sf1-hull-city-millwall,2026-05-08T21:00:00+02:00,Championship - Play Offs - Semifinale,en-hull-city,en-millwall,en-hull-city,scheduled,,,en-championship-playoffs,2025-26
+echp-sf2-middlesbrough-southampton,2026-05-09T13:30:00+02:00,Championship - Play Offs - Semifinale,en-middlesbrough,en-southampton,en-middlesbrough,scheduled,,,en-championship-playoffs,2025-26
+echp-sf3-millwall-hull-city,2026-05-11T21:00:00+02:00,Championship - Play Offs - Semifinale,en-millwall,en-hull-city,en-millwall,scheduled,,,en-championship-playoffs,2025-26
+echp-sf4-southampton-middlesbrough,2026-05-12T21:00:00+02:00,Championship - Play Offs - Semifinale,en-southampton,en-middlesbrough,en-southampton,scheduled,,,en-championship-playoffs,2025-26
 epl-r35-aston-villa-tottenham-hotspur,2026-05-03T20:00:00+01:00,Premier League - 35. runde,en-aston-villa,en-tottenham-hotspur,en-aston-villa,scheduled,,,,
 3d-r26-lys-vej,2026-05-02T13:30:00+02:00,3. division - Spillerunde 26,dk-if-lyseng,dk-vejgaard-b,dk-if-lyseng,scheduled,,,,
 bl-r32-fcb-fch,2026-05-02T15:30:00+02:00,Bundesliga - Runde 32,de-bayern-munchen,de-heidenheim,de-bayern-munchen,scheduled,,,,
@@ -562,6 +565,10 @@ el1-r46-port-vale-lincoln-city,2026-05-02T16:00:00+01:00,League One - 46. runde,
 el1-r46-reading-blackpool,2026-05-02T16:00:00+01:00,League One - 46. runde,en-reading,en-blackpool,en-reading,scheduled,,,,
 el1-r46-stevenage-wigan-athletic,2026-05-02T16:00:00+01:00,League One - 46. runde,en-stevenage,en-wigan-athletic,en-stevenage,scheduled,,,,
 el1-r46-wycombe-wanderers-rotherham-united,2026-05-02T16:00:00+01:00,League One - 46. runde,en-wycombe-wanderers,en-rotherham-united,en-wycombe-wanderers,scheduled,,,,
+el1p-sf1-stevenage-stockport-county,2026-05-09T16:00:00+02:00,League One - Play Offs - Semifinale,en-stevenage,en-stockport-county,en-stevenage,scheduled,,,en-league-one-playoffs,2025-26
+el1p-sf2-bolton-wanderers-bradford-city,2026-05-09T21:00:00+02:00,League One - Play Offs - Semifinale,en-bolton-wanderers,en-bradford-city,en-bolton-wanderers,scheduled,,,en-league-one-playoffs,2025-26
+el1p-sf3-stockport-county-stevenage,2026-05-13T21:00:00+02:00,League One - Play Offs - Semifinale,en-stockport-county,en-stevenage,en-stockport-county,scheduled,,,en-league-one-playoffs,2025-26
+el1p-sf4-bradford-city-bolton-wanderers,2026-05-14T21:00:00+02:00,League One - Play Offs - Semifinale,en-bradford-city,en-bolton-wanderers,en-bradford-city,scheduled,,,en-league-one-playoffs,2025-26
 el2-r46-barrow-newport-county,2026-05-02T16:00:00+01:00,League Two - 46. runde,en-barrow,en-newport-county,en-barrow,scheduled,,,,
 el2-r46-bromley-walsall,2026-05-02T16:00:00+01:00,League Two - 46. runde,en-bromley,en-walsall,en-bromley,scheduled,,,,
 el2-r46-cheltenham-town-colchester-united,2026-05-02T16:00:00+01:00,League Two - 46. runde,en-cheltenham-town,en-colchester-united,en-cheltenham-town,scheduled,,,,
@@ -690,6 +697,10 @@ itb-r38-pescara-spezia,2026-05-08T20:30:00+02:00,Serie B - 38. runde,it-pescara,
 itb-r38-sudtirol-juve-stabia,2026-05-08T20:30:00+02:00,Serie B - 38. runde,it-sudtirol,it-juve-stabia,it-sudtirol,scheduled,,,,
 itb-r38-venezia-palermo,2026-05-08T20:30:00+02:00,Serie B - 38. runde,it-venezia,it-palermo,it-venezia,scheduled,,,,
 itb-r38-virtus-entella-carrarese,2026-05-08T20:30:00+02:00,Serie B - 38. runde,it-virtus-entella,it-carrarese,it-virtus-entella,scheduled,,,,
+itbp-qf1-modena-juve-stabia,2026-05-12T18:45:00+02:00,Serie B - Play Offs - Kvartfinale,it-modena,it-juve-stabia,it-modena,scheduled,,,it-serie-b-playoffs,2025-26
+itbp-qf2-catanzaro-avellino,2026-05-12T21:00:00+02:00,Serie B - Play Offs - Kvartfinale,it-catanzaro,it-avellino,it-catanzaro,scheduled,,,it-serie-b-playoffs,2025-26
+itbo-f1-bari-sudtirol,2026-05-15T20:00:00+02:00,Serie B - Play Out - Finale,it-bari,it-sudtirol,it-bari,scheduled,,,it-serie-b-playouts,2025-26
+itbo-f2-sudtirol-bari,2026-05-22T20:00:00+02:00,Serie B - Play Out - Finale,it-sudtirol,it-bari,it-sudtirol,scheduled,,,it-serie-b-playouts,2025-26
 fr1-r33-lens-nantes,2026-05-08T20:45:00+02:00,Ligue 1 - 33. runde,fr-lens,fr-nantes,fr-lens,scheduled,,,,
 esl-r35-levante-osasuna,2026-05-08T21:00:00+02:00,La Liga - 35. runde,es-levante,es-osasuna,es-levante,scheduled,,,,
 esf1-b-r36-atl-madrid-b-sabadell,2026-05-08T21:15:00+02:00,Primera Federación - Gruppe 2 - 36. runde,es-atl-madrid-b,es-sabadell,es-atl-madrid-b,scheduled,,,,

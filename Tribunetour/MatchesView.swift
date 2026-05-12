@@ -160,6 +160,7 @@ struct MatchesView: View {
         let fixtureCountsTowardTopSystem: (Fixture) -> Bool = { fixture in
             if let competitionId = fixture.competitionId,
                CompetitionCatalog.isTrackedDomesticCompetition(competitionId) {
+                let qualifyingCompetitionIds = CompetitionCatalog.qualifyingCompetitionIds(for: competitionId)
                 let involvedClubs = [
                     clubById[fixture.venueClubId],
                     clubById[fixture.homeTeamId],
@@ -168,7 +169,9 @@ struct MatchesView: View {
 
                 return involvedClubs.allSatisfy { club in
                     guard let club else { return false }
-                    return clubHasActiveMembershipInFixtureCompetition(club, competitionId)
+                    return qualifyingCompetitionIds.contains { qualifyingCompetitionId in
+                        clubHasActiveMembershipInFixtureCompetition(club, qualifyingCompetitionId)
+                    }
                 }
             }
 
