@@ -114,7 +114,9 @@ struct RemoteFixturesProvider {
 
         var mergedById = Dictionary(uniqueKeysWithValues: remoteFixtures.map { ($0.id, $0) })
         for fixture in localFixtures {
-            mergedById[fixture.id] = fixture
+            if mergedById[fixture.id] == nil {
+                mergedById[fixture.id] = fixture
+            }
         }
 
         return mergedById.values.sorted { $0.kickoff < $1.kickoff }
