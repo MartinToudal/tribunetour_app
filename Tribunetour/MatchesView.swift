@@ -646,16 +646,6 @@ private struct MatchRow: View {
     private var venueName: String { clubById[fixture.venueClubId]?.stadium.name ?? fixture.venueClubId }
     private var city: String { clubById[fixture.venueClubId]?.stadium.city ?? "" }
     private var division: String? { clubById[fixture.venueClubId]?.division }
-    private var competitionLabel: String? {
-        guard
-            let competitionId = fixture.competitionId,
-            CompetitionCatalog.isSupplementalDomesticCompetition(competitionId)
-        else {
-            return nil
-        }
-
-        return CompetitionCatalog.displayName(for: competitionId)
-    }
     private var kickoffDateText: String {
         Self.dateFormatter.string(from: fixture.kickoff)
     }
@@ -711,10 +701,6 @@ private struct MatchRow: View {
             }
 
             HStack(spacing: 6) {
-                if let competitionLabel, !competitionLabel.isEmpty {
-                    MatchBadge(text: competitionLabel, icon: "flag.2.crossed")
-                }
-
                 if let division, !division.isEmpty {
                     MatchBadge(text: division, icon: "trophy")
                 }

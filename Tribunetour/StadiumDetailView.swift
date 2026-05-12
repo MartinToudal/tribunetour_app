@@ -26,16 +26,6 @@ struct StadiumDetailView: View {
         return calendar
     }
 
-    private func competitionLabel(for fixture: Fixture) -> String? {
-        guard
-            let competitionId = fixture.competitionId,
-            CompetitionCatalog.isSupplementalDomesticCompetition(competitionId)
-        else {
-            return nil
-        }
-
-        return CompetitionCatalog.displayName(for: competitionId)
-    }
 
     init(
         club: Club,
@@ -140,12 +130,6 @@ struct StadiumDetailView: View {
             if let nextFixture {
                 Section("Næste kamp") {
                     VStack(alignment: .leading, spacing: 8) {
-                        if let competitionLabel = competitionLabel(for: nextFixture) {
-                            Text(competitionLabel)
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(.secondary)
-                        }
-
                         if let round = nextFixture.round, !round.isEmpty {
                             Text(round)
                                 .font(.caption.weight(.semibold))
@@ -199,11 +183,6 @@ struct StadiumDetailView: View {
                             )
                         } label: {
                             VStack(alignment: .leading, spacing: 4) {
-                                if let competitionLabel = competitionLabel(for: fixture) {
-                                    Text(competitionLabel)
-                                        .font(.caption2.weight(.semibold))
-                                        .foregroundStyle(.secondary)
-                                }
                                 if let round = fixture.round, !round.isEmpty {
                                     Text(round)
                                         .font(.caption2.weight(.semibold))
