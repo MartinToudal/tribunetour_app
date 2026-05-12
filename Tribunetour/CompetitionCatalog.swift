@@ -174,6 +174,11 @@ enum CompetitionCatalog {
         return entry.type == .domesticLeague && entry.leaguePackId != nil
     }
 
+    static func isSupplementalDomesticCompetition(_ competitionId: String?) -> Bool {
+        guard let entry = entry(forId: competitionId) else { return false }
+        return entry.type == .domesticLeague && entry.leaguePackId != nil && !entry.isPrimaryDomestic
+    }
+
     static func displayName(for competitionId: String?, fallback: String? = nil) -> String? {
         if let name = entry(forId: competitionId)?.name {
             return name
