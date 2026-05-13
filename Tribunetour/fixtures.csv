@@ -850,6 +850,7 @@ esl-r35-vallecano-girona,2026-05-11T21:00:00+02:00,La Liga - 35. runde,es-vallec
 esl-r36-celta-vigo-levante,2026-05-12T19:00:00+02:00,La Liga - 36. runde,es-celta-vigo,es-levante,es-celta-vigo,scheduled,,,,
 esl-r36-betis-elche,2026-05-12T20:00:00+02:00,La Liga - 36. runde,es-betis,es-elche,es-betis,scheduled,,,,
 esl-r36-osasuna-atl-madrid,2026-05-12T21:30:00+02:00,La Liga - 36. runde,es-osasuna,es-atl-madrid,es-osasuna,scheduled,,,,
+epl-r31-manchester-city-crystal-palace,2026-05-13T21:00:00+01:00,Premier League - 31. runde,en-manchester-city,en-crystal-palace,en-manchester-city,scheduled,,,,
 2d-r28-ab-ros,2026-05-13T18:00:00+02:00,2. division - Spillerunde 28,dk-ab,dk-fc-roskilde,dk-ab,scheduled,,,,
 2d-r28-hel-faa,2026-05-13T18:30:00+02:00,2. division - Spillerunde 28,dk-fc-helsingor,dk-fremad-amager,dk-fc-helsingor,scheduled,,,,
 2d-r28-ish-bra,2026-05-13T19:00:00+02:00,2. division - Spillerunde 28,dk-ishoj-if,dk-brabrand-if,dk-ishoj-if,scheduled,,,,
@@ -859,7 +860,13 @@ esl-r36-osasuna-atl-madrid,2026-05-12T21:30:00+02:00,La Liga - 36. runde,es-osas
 esl-r36-espanyol-ath-bilbao,2026-05-13T19:00:00+02:00,La Liga - 36. runde,es-espanyol,es-ath-bilbao,es-espanyol,scheduled,,,,
 esl-r36-villarreal-sevilla,2026-05-13T19:00:00+02:00,La Liga - 36. runde,es-villarreal,es-sevilla,es-villarreal,scheduled,,,,
 fr1-r29-brest-strasbourg,2026-05-13T19:00:00+02:00,Ligue 1 - 29. runde,fr-brest,fr-strasbourg,fr-brest,scheduled,,,,
+itlp-r16-lecco-pianese,2026-05-13T20:00:00+02:00,Lega Pro - Oprykning - Play Offs - 1/8 finale,it-lecco,it-pianese,it-lecco,scheduled,,,it-lega-pro-promotion-playoffs,2025-26
+itlp-r16-ravenna-cittadella,2026-05-13T20:00:00+02:00,Lega Pro - Oprykning - Play Offs - 1/8 finale,it-ravenna,it-cittadella,it-ravenna,scheduled,,,it-lega-pro-promotion-playoffs,2025-26
+itlp-r16-renate-casarano,2026-05-13T20:00:00+02:00,Lega Pro - Oprykning - Play Offs - 1/8 finale,it-renate,it-casarano,it-renate,scheduled,,,it-lega-pro-promotion-playoffs,2025-26
+nlpo-05-almere-city-willem-ii,2026-05-13T20:00:00+02:00,Eredivisie Playoffs - Semifinale,nl-almere-city,nl-willem-ii,nl-almere-city,scheduled,,,nl-promotion-relegation-playoffs,2025-26
+itlp-r16-salernitana-casertana,2026-05-13T20:45:00+02:00,Lega Pro - Oprykning - Play Offs - 1/8 finale,it-salernitana,it-casertana,it-salernitana,scheduled,,,it-lega-pro-promotion-playoffs,2025-26
 fr1-r29-lens-psg,2026-05-13T21:00:00+02:00,Ligue 1 - 29. runde,fr-lens,fr-psg,fr-lens,scheduled,,,,
+itlp-r16-potenza-campobasso,2026-05-13T21:00:00+02:00,Lega Pro - Oprykning - Play Offs - 1/8 finale,it-potenza,it-campobasso,it-potenza,scheduled,,,it-lega-pro-promotion-playoffs,2025-26
 esl-r36-alaves-barcelona,2026-05-13T21:30:00+02:00,La Liga - 36. runde,es-alaves,es-barcelona,es-alaves,scheduled,,,,
 esl-r36-getafe-mallorca,2026-05-13T21:30:00+02:00,La Liga - 36. runde,es-getafe,es-mallorca,es-getafe,scheduled,,,,
 1d-r30-hob-aaf,2026-05-14T13:00:00+02:00,1. division - Spillerunde 30,dk-hobro-ik,dk-aarhus-fremad,dk-hobro-ik,scheduled,,,,
@@ -1192,6 +1199,7 @@ nlpo-01-rkc-waalwijk-willem-ii,2026-05-05T18:45:00+02:00,Eredivisie Playoffs - K
 nlpo-02-almere-city-de-graafschap,2026-05-06T18:45:00+02:00,Eredivisie Playoffs - Kvartfinale,nl-almere-city,nl-de-graafschap,nl-almere-city,scheduled,,,nl-promotion-relegation-playoffs,2025-26
 nlpo-03-willem-ii-rkc-waalwijk,2026-05-09T16:30:00+02:00,Eredivisie Playoffs - Kvartfinale,nl-willem-ii,nl-rkc-waalwijk,nl-willem-ii,scheduled,,,nl-promotion-relegation-playoffs,2025-26
 nlpo-04-de-graafschap-almere-city,2026-05-09T20:00:00+02:00,Eredivisie Playoffs - Kvartfinale,nl-de-graafschap,nl-almere-city,nl-de-graafschap,scheduled,,,nl-promotion-relegation-playoffs,2025-26
+nlpo-06-willem-ii-almere-city,2026-05-16T20:00:00+02:00,Eredivisie Playoffs - Semifinale,nl-willem-ii,nl-almere-city,nl-willem-ii,scheduled,,,nl-promotion-relegation-playoffs,2025-26
 be1r-01-st-liege-leuven,2026-05-08T20:45:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 37,be-st-liege,be-leuven,be-st-liege,scheduled,,,be-pro-league-relegation-playoffs,2025-26
 be1r-02-raal-la-louviere-cercle-brugge,2026-05-09T16:00:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 36,be-raal-la-louviere,be-cercle-brugge,be-raal-la-louviere,scheduled,,,be-pro-league-relegation-playoffs,2025-26
 be1r-03-waregem-dender,2026-05-09T16:00:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 36,be-waregem,be-dender,be-waregem,scheduled,,,be-pro-league-relegation-playoffs,2025-26
