@@ -699,8 +699,7 @@ itb-r38-venezia-palermo,2026-05-08T20:30:00+02:00,Serie B - 38. runde,it-venezia
 itb-r38-virtus-entella-carrarese,2026-05-08T20:30:00+02:00,Serie B - 38. runde,it-virtus-entella,it-carrarese,it-virtus-entella,scheduled,,,,
 itbp-qf1-modena-juve-stabia,2026-05-12T18:45:00+02:00,Serie B - Play Offs - Kvartfinale,it-modena,it-juve-stabia,it-modena,scheduled,,,it-serie-b-playoffs,2025-26
 itbp-qf2-catanzaro-avellino,2026-05-12T21:00:00+02:00,Serie B - Play Offs - Kvartfinale,it-catanzaro,it-avellino,it-catanzaro,scheduled,,,it-serie-b-playoffs,2025-26
-itbo-f1-bari-sudtirol,2026-05-15T20:00:00+02:00,Serie B - Play Out - Finale,it-bari,it-sudtirol,it-bari,scheduled,,,it-serie-b-playouts,2025-26
-itbo-f2-sudtirol-bari,2026-05-22T20:00:00+02:00,Serie B - Play Out - Finale,it-sudtirol,it-bari,it-sudtirol,scheduled,,,it-serie-b-playouts,2025-26
+itbo-f2-sudtirol-bari,2026-05-22T20:00:00+02:00,Finale,it-sudtirol,it-bari,it-sudtirol,scheduled,,,it-serie-b-playouts,2025-26
 fr1-r33-lens-nantes,2026-05-08T20:45:00+02:00,Ligue 1 - 33. runde,fr-lens,fr-nantes,fr-lens,scheduled,,,,
 esl-r35-levante-osasuna,2026-05-08T21:00:00+02:00,La Liga - 35. runde,es-levante,es-osasuna,es-levante,scheduled,,,,
 esf1-b-r36-atl-madrid-b-sabadell,2026-05-08T21:15:00+02:00,Primera Federación - Gruppe 2 - 36. runde,es-atl-madrid-b,es-sabadell,es-atl-madrid-b,scheduled,,,,
@@ -873,9 +872,9 @@ esl-r36-getafe-mallorca,2026-05-13T21:30:00+02:00,La Liga - 36. runde,es-getafe,
 esl-r36-valencia-vallecano,2026-05-14T19:00:00+02:00,La Liga - 36. runde,es-valencia,es-vallecano,es-valencia,scheduled,,,,
 esl-r36-girona-real-sociedad,2026-05-14T20:00:00+02:00,La Liga - 36. runde,es-girona,es-real-sociedad,es-girona,scheduled,,,,
 esl-r36-real-madrid-oviedo,2026-05-14T21:30:00+02:00,La Liga - 36. runde,es-real-madrid,es-oviedo,es-real-madrid,scheduled,,,,
-1d-r30-kol-lyn,2026-05-15T18:00:00+02:00,1. division - Spillerunde 30,dk-kolding-if,dk-lyngby-boldklub,dk-kolding-if,scheduled,,,,
-1d-r30-b93-aab,2026-05-15T19:00:00+02:00,1. division - Spillerunde 30,dk-b-93,dk-aab,dk-b-93,scheduled,,,,
-3d-r28-nyk-hør,2026-05-17T14:00:00+02:00,3. division - Spillerunde 28,dk-nykobing-fc,dk-horsholm-usserod-ik,dk-nykobing-fc,scheduled,,,,
+1d-r30-kol-lyn,2026-05-15T18:00:00+02:00,Runde 30,dk-kolding-if,dk-lyngby-boldklub,dk-kolding-if,scheduled,,,,2025-26
+1d-r30-b93-aab,2026-05-15T19:00:00+02:00,Runde 30,dk-b-93,dk-aab,dk-b-93,scheduled,,,,2025-26
+3d-r28-nyk-hør,2026-11-15T15:00:00+02:00,Runde 16,dk-nykobing-fc,dk-horsholm-usserod-ik,dk-nykobing-fc,scheduled,,,,2025-26
 fr3-r34-aubagne-caen,2026-05-15T19:30:00+02:00,National - 34. runde,fr-aubagne,fr-caen,fr-aubagne,scheduled,,,,
 fr3-r34-concarneau-villefranche,2026-05-15T19:30:00+02:00,National - 34. runde,fr-concarneau,fr-villefranche,fr-concarneau,scheduled,,,,
 fr3-r34-dijon-orleans,2026-05-15T19:30:00+02:00,National - 34. runde,fr-dijon,fr-orleans,fr-dijon,scheduled,,,,
@@ -884,10 +883,9 @@ fr3-r34-quevilly-rouen-paris-13-atl,2026-05-15T19:30:00+02:00,National - 34. run
 fr3-r34-sochaux-le-puy,2026-05-15T19:30:00+02:00,National - 34. runde,fr-sochaux,fr-le-puy,fr-sochaux,scheduled,,,,
 fr3-r34-valenciennes-chateauroux,2026-05-15T19:30:00+02:00,National - 34. runde,fr-valenciennes,fr-chateauroux,fr-valenciennes,scheduled,,,,
 fr3-r34-versailles-stade-briochin,2026-05-15T19:30:00+02:00,National - 34. runde,fr-versailles,fr-stade-briochin,fr-versailles,scheduled,,,,
-es2-r40-castellon-cadiz,2026-05-15T20:30:00+02:00,Segunda División - 40. runde,es-castellon,es-cadiz,es-castellon,scheduled,,,,
-es2-r40-cordoba-albacete,2026-05-15T21:00:00+02:00,Segunda División - 40. runde,es-cordoba,es-albacete,es-cordoba,scheduled,,,,
-1d-r30-hil-efb,2026-05-16T13:00:00+02:00,1. division - Spillerunde 30,dk-hillerod-fodbold,dk-esbjerg-fb,dk-hillerod-fodbold,scheduled,,,,
-3d-r28-vej-sun,2026-05-16T13:00:00+02:00,3. division - Spillerunde 28,dk-vejgaard-b,dk-sundby-bk,dk-vejgaard-b,scheduled,,,,
+es2-r40-cordoba-albacete,2026-05-15T21:00:00+02:00,Runde 40,es-cordoba,es-albacete,es-cordoba,scheduled,,,,2025-26
+1d-r30-hil-efb,2026-05-16T13:00:00+02:00,Runde 30,dk-hillerod-fodbold,dk-esbjerg-fb,dk-hillerod-fodbold,scheduled,,,,2025-26
+3d-r28-vej-sun,2026-05-16T13:00:00+02:00,Runde 28,dk-vejgaard-b,dk-sundby-bk,dk-vejgaard-b,scheduled,,,,2025-26
 b3-r38-aac-hav,2026-05-16T13:30:00+02:00,3. Liga - Runde 38,de-alemannia-aachen,de-tsv-havelse,de-alemannia-aachen,scheduled,,,,
 b3-r38-fci-svwm,2026-05-16T13:30:00+02:00,3. Liga - Runde 38,de-fc-ingolstadt-04,de-waldhof-mannheim,de-fc-ingolstadt-04,scheduled,,,,
 b3-r38-fcs-fchr,2026-05-16T13:30:00+02:00,3. Liga - Runde 38,de-saarbrucken,de-hansa-rostock,de-saarbrucken,scheduled,,,,
@@ -907,28 +905,28 @@ bl-r34-fcu-fca,2026-05-16T15:30:00+02:00,Bundesliga - Runde 34,de-union-berlin,d
 bl-r34-scf-rbl,2026-05-16T15:30:00+02:00,Bundesliga - Runde 34,de-sc-freiburg,de-rb-leipzig,de-sc-freiburg,scheduled,,,,
 bl-r34-sge-vfb,2026-05-16T15:30:00+02:00,Bundesliga - Runde 34,de-eintracht-frankfurt,de-vfb-stuttgart,de-eintracht-frankfurt,scheduled,,,,
 bl-r34-svw-bvb,2026-05-16T15:30:00+02:00,Bundesliga - Runde 34,de-werder-bremen,de-borussia-dortmund,de-werder-bremen,scheduled,,,,
-1d-r30-mid-hbk,2026-05-16T14:00:00+02:00,1. division - Spillerunde 30,dk-middelfart,dk-hb-koge,dk-middelfart,scheduled,,,,
-2d-r29-bra-vsk,2026-05-16T14:00:00+02:00,2. division - Spillerunde 29,dk-brabrand-if,dk-vsk-aarhus,dk-brabrand-if,scheduled,,,,
-2d-r29-hik-thi,2026-05-16T14:00:00+02:00,2. division - Spillerunde 29,dk-hik,dk-thisted-fc,dk-hik,scheduled,,,,
-2d-r29-ros-nas,2026-05-16T14:00:00+02:00,2. division - Spillerunde 29,dk-fc-roskilde,dk-naestved,dk-fc-roskilde,scheduled,,,,
-3d-r28-fa2-van,2026-05-16T14:00:00+02:00,3. division - Spillerunde 28,dk-fa-2000,dk-vanlose,dk-fa-2000,scheduled,,,,
-3d-r28-fre-lys,2026-05-16T14:00:00+02:00,3. division - Spillerunde 28,dk-frem,dk-if-lyseng,dk-frem,scheduled,,,,
-3d-r28-næs-brø,2026-05-16T14:00:00+02:00,3. division - Spillerunde 28,dk-naesby-bk,dk-bronshoj,dk-naesby-bk,scheduled,,,,
-es2-r40-real-sociedad-b-mirandes,2026-05-16T14:00:00+02:00,Segunda División - 40. runde,es-real-sociedad-b,es-mirandes,es-real-sociedad-b,scheduled,,,,
-1d-r30-ach-hvi,2026-05-16T15:00:00+02:00,1. division - Spillerunde 30,dk-ac-horsens,dk-hvidovre-if,dk-ac-horsens,scheduled,,,,
-2d-r29-faa-ish,2026-05-16T15:00:00+02:00,2. division - Spillerunde 29,dk-fremad-amager,dk-ishoj-if,dk-fremad-amager,scheduled,,,,
-es2-r40-ceuta-malaga,2026-05-16T16:15:00+02:00,Segunda División - 40. runde,es-ceuta,es-malaga,es-ceuta,scheduled,,,,
-es2-r40-cultural-leonesa-eibar,2026-05-16T16:15:00+02:00,Segunda División - 40. runde,es-cultural-leonesa,es-eibar,es-cultural-leonesa,scheduled,,,,
+1d-r30-mid-hbk,2026-05-16T14:00:00+02:00,Runde 30,dk-middelfart,dk-hb-koge,dk-middelfart,scheduled,,,,2025-26
+2d-r29-bra-vsk,2026-05-16T14:00:00+02:00,Runde 29,dk-brabrand-if,dk-vsk-aarhus,dk-brabrand-if,scheduled,,,,2025-26
+2d-r29-hik-thi,2026-05-16T14:00:00+02:00,Runde 29,dk-hik,dk-thisted-fc,dk-hik,scheduled,,,,2025-26
+2d-r29-ros-nas,2026-05-16T14:00:00+02:00,Runde 29,dk-fc-roskilde,dk-naestved,dk-fc-roskilde,scheduled,,,,2025-26
+3d-r28-fa2-van,2026-05-16T14:00:00+02:00,Runde 28,dk-fa-2000,dk-vanlose,dk-fa-2000,scheduled,,,,2025-26
+3d-r28-fre-lys,2026-10-04T14:00:00+02:00,Runde 10,dk-frem,dk-if-lyseng,dk-frem,scheduled,,,,2025-26
+3d-r28-næs-brø,2026-05-16T14:00:00+02:00,Runde 28,dk-naesby-bk,dk-bronshoj,dk-naesby-bk,scheduled,,,,2025-26
+es2-r40-real-sociedad-b-mirandes,2026-05-16T14:00:00+02:00,Runde 40,es-real-sociedad-b,es-mirandes,es-real-sociedad-b,scheduled,,,,2025-26
+1d-r30-ach-hvi,2026-05-16T15:00:00+02:00,Runde 30,dk-ac-horsens,dk-hvidovre-if,dk-ac-horsens,scheduled,,,,2025-26
+2d-r29-faa-ish,2026-05-16T15:00:00+02:00,Runde 29,dk-fremad-amager,dk-ishoj-if,dk-fremad-amager,scheduled,,,,2025-26
+es2-r40-ceuta-malaga,2026-05-16T16:15:00+02:00,Runde 40,es-ceuta,es-malaga,es-ceuta,scheduled,,,,2025-26
+es2-r40-cultural-leonesa-eibar,2026-05-16T16:15:00+02:00,Runde 40,es-cultural-leonesa,es-eibar,es-cultural-leonesa,scheduled,,,,2025-26
 pt3-r14-academica-trofense,2026-05-16T17:30:00+01:00,Liga 3 - Oprykningsgruppe - 14. runde,pt-academica,pt-trofense,pt-academica,scheduled,,,,
 pt3-r14-guimaraes-b-amarante,2026-05-16T17:30:00+01:00,Liga 3 - Oprykningsgruppe - 14. runde,pt-guimaraes-b,pt-amarante,pt-guimaraes-b,scheduled,,,,
 pt3-r14-os-belenenses-mafra,2026-05-16T17:30:00+01:00,Liga 3 - Oprykningsgruppe - 14. runde,pt-os-belenenses,pt-mafra,pt-os-belenenses,scheduled,,,,
 pt3-r14-santarem-varzim,2026-05-16T17:30:00+01:00,Liga 3 - Oprykningsgruppe - 14. runde,pt-santarem,pt-varzim,pt-santarem,scheduled,,,,
-es2-r40-almeria-las-palmas,2026-05-16T18:30:00+02:00,Segunda División - 40. runde,es-almeria,es-las-palmas,es-almeria,scheduled,,,,
-es2-r40-granada-burgos-cf,2026-05-16T18:30:00+02:00,Segunda División - 40. runde,es-granada,es-burgos-cf,es-granada,scheduled,,,,
-es2-r40-racing-santander-valladolid,2026-05-16T18:30:00+02:00,Segunda División - 40. runde,es-racing-santander,es-valladolid,es-racing-santander,scheduled,,,,
-2d-r29-hel-ski,2026-05-17T13:00:00+02:00,2. division - Spillerunde 29,dk-fc-helsingor,dk-skive,dk-fc-helsingor,scheduled,,,,
-2d-r29-ven-ab,2026-05-17T13:00:00+02:00,2. division - Spillerunde 29,dk-vendsyssel-ff,dk-ab,dk-vendsyssel-ff,scheduled,,,,
-3d-r28-hol-odd,2026-05-16T13:00:00+02:00,3. division - Spillerunde 28,dk-holbaek-bi,dk-odder-fodbold,dk-holbaek-bi,scheduled,,,,
+es2-r40-almeria-las-palmas,2026-05-16T18:30:00+02:00,Runde 40,es-almeria,es-las-palmas,es-almeria,scheduled,,,,2025-26
+es2-r40-granada-burgos-cf,2026-05-16T18:30:00+02:00,Runde 40,es-granada,es-burgos-cf,es-granada,scheduled,,,,2025-26
+es2-r40-racing-santander-valladolid,2026-05-16T18:30:00+02:00,Runde 40,es-racing-santander,es-valladolid,es-racing-santander,scheduled,,,,2025-26
+2d-r29-hel-ski,2026-05-17T13:00:00+02:00,Runde 29,dk-fc-helsingor,dk-skive,dk-fc-helsingor,scheduled,,,,2025-26
+2d-r29-ven-ab,2026-05-17T13:00:00+02:00,Runde 29,dk-vendsyssel-ff,dk-ab,dk-vendsyssel-ff,scheduled,,,,2025-26
+3d-r28-hol-odd,2026-05-16T13:00:00+02:00,Runde 28,dk-holbaek-bi,dk-odder-fodbold,dk-holbaek-bi,scheduled,,,,2025-26
 b2-r34-d98-scp,2026-05-17T15:30:00+02:00,2. Bundesliga - Runde 34,de-sv-darmstadt-98,de-sc-paderborn-07,de-sv-darmstadt-98,scheduled,,,,
 b2-r34-dsc-bsc,2026-05-17T15:30:00+02:00,2. Bundesliga - Runde 34,de-arminia-bielefeld,de-hertha-bsc,de-arminia-bielefeld,scheduled,,,,
 b2-r34-fcm-fckl,2026-05-17T15:30:00+02:00,2. Bundesliga - Runde 34,de-magdeburg,de-kaiserslautern,de-magdeburg,scheduled,,,,
@@ -938,32 +936,29 @@ b2-r34-s04-ebs,2026-05-17T15:30:00+02:00,2. Bundesliga - Runde 34,de-schalke-04,
 b2-r34-sgd-ksv,2026-05-17T15:30:00+02:00,2. Bundesliga - Runde 34,de-dynamo-dresden,de-holstein-kiel,de-dynamo-dresden,scheduled,,,,
 b2-r34-sgf-f95,2026-05-17T15:30:00+02:00,2. Bundesliga - Runde 34,de-greuther-furth,de-fortuna-dusseldorf,de-greuther-furth,scheduled,,,,
 b2-r34-sve-scpm,2026-05-17T15:30:00+02:00,2. Bundesliga - Runde 34,de-sv-elversberg,de-preussen-munster,de-sv-elversberg,scheduled,,,,
-es2-r40-la-coruna-andorra,2026-05-17T14:00:00+02:00,Segunda División - 40. runde,es-la-coruna,es-andorra,es-la-coruna,scheduled,,,,
-epl-r37-afc-bournemouth-manchester-city,2026-05-17T16:00:00+01:00,Premier League - 37. runde,en-afc-bournemouth,en-manchester-city,en-afc-bournemouth,scheduled,,,,
-epl-r37-arsenal-burnley,2026-05-17T16:00:00+01:00,Premier League - 37. runde,en-arsenal,en-burnley,en-arsenal,scheduled,,,,
-epl-r37-aston-villa-liverpool,2026-05-17T16:00:00+01:00,Premier League - 37. runde,en-aston-villa,en-liverpool,en-aston-villa,scheduled,,,,
-epl-r37-brentford-crystal-palace,2026-05-17T16:00:00+01:00,Premier League - 37. runde,en-brentford,en-crystal-palace,en-brentford,scheduled,,,,
-epl-r37-chelsea-tottenham-hotspur,2026-05-17T16:00:00+01:00,Premier League - 37. runde,en-chelsea,en-tottenham-hotspur,en-chelsea,scheduled,,,,
-epl-r37-everton-sunderland,2026-05-17T16:00:00+01:00,Premier League - 37. runde,en-everton,en-sunderland,en-everton,scheduled,,,,
-epl-r37-leeds-united-brighton-and-hove-albion,2026-05-17T16:00:00+01:00,Premier League - 37. runde,en-leeds-united,en-brighton-and-hove-albion,en-leeds-united,scheduled,,,,
-epl-r37-manchester-united-nottingham-forest,2026-05-17T16:00:00+01:00,Premier League - 37. runde,en-manchester-united,en-nottingham-forest,en-manchester-united,scheduled,,,,
-epl-r37-newcastle-united-west-ham-united,2026-05-17T16:00:00+01:00,Premier League - 37. runde,en-newcastle-united,en-west-ham-united,en-newcastle-united,scheduled,,,,
-epl-r37-wolverhampton-wanderers-fulham,2026-05-17T16:00:00+01:00,Premier League - 37. runde,en-wolverhampton-wanderers,en-fulham,en-wolverhampton-wanderers,scheduled,,,,
-sl-r32-agf-vff,2026-05-17T18:00:00+02:00,Superliga - Spillerunde 32,dk-agf,dk-viborg-ff,dk-agf,scheduled,,,,
-sl-r32-fcf-sif,2026-05-17T14:00:00+02:00,Superliga - Spillerunde 32,dk-fc-fredericia,dk-silkeborg-if,dk-fc-fredericia,scheduled,,,,
-sl-r32-fck-ran,2026-05-17T14:00:00+02:00,Superliga - Spillerunde 32,dk-fc-kobenhavn,dk-randers-fc,dk-fc-kobenhavn,scheduled,,,,
-sl-r32-fcm-bif,2026-05-17T18:00:00+02:00,Superliga - Spillerunde 32,dk-fc-midtjylland,dk-brondby-if,dk-fc-midtjylland,scheduled,,,,
-sl-r32-ob-vb,2026-05-17T14:00:00+02:00,Superliga - Spillerunde 32,dk-ob,dk-vejle-boldklub,dk-ob,scheduled,,,,
-sl-r32-sje-fcn,2026-05-17T18:00:00+02:00,Superliga - Spillerunde 32,dk-sonderjyske,dk-fc-nordsjaelland,dk-sonderjyske,scheduled,,,,
-pt2-r34-academico-viseu-sporting-b,2026-05-17T17:00:00+01:00,Liga Portugal 2 - 34. runde,pt-academico-viseu,pt-sporting-b,pt-academico-viseu,scheduled,,,,
-pt2-r34-ferreira-penafiel,2026-05-17T17:00:00+01:00,Liga Portugal 2 - 34. runde,pt-ferreira,pt-penafiel,pt-ferreira,scheduled,,,,
-pt2-r34-leiria-feirense,2026-05-17T17:00:00+01:00,Liga Portugal 2 - 34. runde,pt-leiria,pt-feirense,pt-leiria,scheduled,,,,
-pt2-r34-leixoes-lusitania-fc,2026-05-17T17:00:00+01:00,Liga Portugal 2 - 34. runde,pt-leixoes,pt-lusitania-fc,pt-leixoes,scheduled,,,,
-pt2-r34-maritimo-chaves,2026-05-17T17:00:00+01:00,Liga Portugal 2 - 34. runde,pt-maritimo,pt-chaves,pt-maritimo,scheduled,,,,
-pt2-r34-oliveirense-felgueiras,2026-05-17T17:00:00+01:00,Liga Portugal 2 - 34. runde,pt-oliveirense,pt-felgueiras,pt-oliveirense,scheduled,,,,
-pt2-r34-portimonense-farense,2026-05-17T17:00:00+01:00,Liga Portugal 2 - 34. runde,pt-portimonense,pt-farense,pt-portimonense,scheduled,,,,
-pt2-r34-porto-b-benfica-b,2026-05-17T17:00:00+01:00,Liga Portugal 2 - 34. runde,pt-porto-b,pt-benfica-b,pt-porto-b,scheduled,,,,
-pt2-r34-torreense-vizela,2026-05-17T17:00:00+01:00,Liga Portugal 2 - 34. runde,pt-torreense,pt-vizela,pt-torreense,scheduled,,,,
+es2-r40-la-coruna-andorra,2026-05-17T14:00:00+02:00,Runde 40,es-la-coruna,es-andorra,es-la-coruna,scheduled,,,,2025-26
+epl-r37-afc-bournemouth-manchester-city,2026-05-19T20:30:00+01:00,Runde 37,en-afc-bournemouth,en-manchester-city,en-afc-bournemouth,scheduled,,,,2025-26
+epl-r37-arsenal-burnley,2026-05-18T21:00:00+01:00,Runde 37,en-arsenal,en-burnley,en-arsenal,scheduled,,,,2025-26
+epl-r37-brentford-crystal-palace,2026-05-17T16:00:00+01:00,Runde 37,en-brentford,en-crystal-palace,en-brentford,scheduled,,,,2025-26
+epl-r37-chelsea-tottenham-hotspur,2026-05-19T21:15:00+01:00,Runde 37,en-chelsea,en-tottenham-hotspur,en-chelsea,scheduled,,,,2025-26
+epl-r37-everton-sunderland,2026-05-17T16:00:00+01:00,Runde 37,en-everton,en-sunderland,en-everton,scheduled,,,,2025-26
+epl-r37-leeds-united-brighton-and-hove-albion,2026-05-17T16:00:00+01:00,Runde 37,en-leeds-united,en-brighton-and-hove-albion,en-leeds-united,scheduled,,,,2025-26
+epl-r37-manchester-united-nottingham-forest,2026-05-17T13:30:00+01:00,Runde 37,en-manchester-united,en-nottingham-forest,en-manchester-united,scheduled,,,,2025-26
+epl-r37-newcastle-united-west-ham-united,2026-05-17T18:30:00+01:00,Runde 37,en-newcastle-united,en-west-ham-united,en-newcastle-united,scheduled,,,,2025-26
+epl-r37-wolverhampton-wanderers-fulham,2026-05-17T16:00:00+01:00,Runde 37,en-wolverhampton-wanderers,en-fulham,en-wolverhampton-wanderers,scheduled,,,,2025-26
+sl-r32-agf-vff,2026-05-17T18:00:00+02:00,Runde 32,dk-agf,dk-viborg-ff,dk-agf,scheduled,,,,2025-26
+sl-r32-fcf-sif,2026-05-17T14:00:00+02:00,Runde 32,dk-fc-fredericia,dk-silkeborg-if,dk-fc-fredericia,scheduled,,,,2025-26
+sl-r32-fck-ran,2026-05-17T14:00:00+02:00,Runde 32,dk-fc-kobenhavn,dk-randers-fc,dk-fc-kobenhavn,scheduled,,,,2025-26
+sl-r32-fcm-bif,2026-05-17T18:00:00+02:00,Runde 32,dk-fc-midtjylland,dk-brondby-if,dk-fc-midtjylland,scheduled,,,,2025-26
+sl-r32-ob-vb,2026-05-17T14:00:00+02:00,Runde 32,dk-ob,dk-vejle-boldklub,dk-ob,scheduled,,,,2025-26
+sl-r32-sje-fcn,2026-05-17T18:00:00+02:00,Runde 32,dk-sonderjyske,dk-fc-nordsjaelland,dk-sonderjyske,scheduled,,,,2025-26
+pt2-r34-academico-viseu-sporting-b,2026-05-16T12:00:00+01:00,Runde 34,pt-academico-viseu,pt-sporting-b,pt-academico-viseu,scheduled,,,,2025-26
+pt2-r34-ferreira-penafiel,2026-05-17T21:30:00+01:00,Runde 34,pt-ferreira,pt-penafiel,pt-ferreira,scheduled,,,,2025-26
+pt2-r34-leiria-feirense,2026-05-17T16:30:00+01:00,Runde 34,pt-leiria,pt-feirense,pt-leiria,scheduled,,,,2025-26
+pt2-r34-leixoes-lusitania-fc,2026-05-17T19:00:00+01:00,Runde 34,pt-leixoes,pt-lusitania-fc,pt-leixoes,scheduled,,,,2025-26
+pt2-r34-oliveirense-felgueiras,2026-05-17T12:00:00+01:00,Runde 34,pt-oliveirense,pt-felgueiras,pt-oliveirense,scheduled,,,,2025-26
+pt2-r34-portimonense-farense,2026-05-17T21:30:00+01:00,Runde 34,pt-portimonense,pt-farense,pt-portimonense,scheduled,,,,2025-26
+pt2-r34-torreense-vizela,2026-05-16T12:00:00+01:00,Runde 34,pt-torreense,pt-vizela,pt-torreense,scheduled,,,,2025-26
 pt1-r34-arouca-tondela,2026-05-16T19:00:00+01:00,Liga Portugal - 34. runde,pt-arouca,pt-tondela,pt-arouca,scheduled,,,,
 pt1-r34-braga-estrela,2026-05-16T19:00:00+01:00,Liga Portugal - 34. runde,pt-braga,pt-estrela,pt-braga,scheduled,,,,
 pt1-r34-casa-pia-rio-ave,2026-05-16T19:00:00+01:00,Liga Portugal - 34. runde,pt-casa-pia,pt-rio-ave,pt-casa-pia,scheduled,,,,
@@ -993,26 +988,26 @@ esf1-b-r37-teruel-sanluqueno,2026-05-16T21:00:00+02:00,Primera Federación - Gru
 esf1-b-r37-torremolinos-murcia,2026-05-16T21:00:00+02:00,Primera Federación - Gruppe 2 - 37. runde,es-torremolinos,es-murcia,es-torremolinos,scheduled,,,,
 esf1-b-r37-ud-ibiza-cartagena,2026-05-16T21:00:00+02:00,Primera Federación - Gruppe 2 - 37. runde,es-ud-ibiza,es-cartagena,es-ud-ibiza,scheduled,,,,
 esf1-b-r37-villarreal-b-sevilla-b,2026-05-16T21:00:00+02:00,Primera Federación - Gruppe 2 - 37. runde,es-villarreal-b,es-sevilla-b,es-villarreal-b,scheduled,,,,
-esl-r37-ath-bilbao-celta-vigo,2026-05-17T19:00:00+02:00,La Liga - 37. runde,es-ath-bilbao,es-celta-vigo,es-ath-bilbao,scheduled,,,,
-esl-r37-atl-madrid-girona,2026-05-17T19:00:00+02:00,La Liga - 37. runde,es-atl-madrid,es-girona,es-atl-madrid,scheduled,,,,
-esl-r37-barcelona-betis,2026-05-17T19:00:00+02:00,La Liga - 37. runde,es-barcelona,es-betis,es-barcelona,scheduled,,,,
-esl-r37-elche-getafe,2026-05-17T19:00:00+02:00,La Liga - 37. runde,es-elche,es-getafe,es-elche,scheduled,,,,
-esl-r37-levante-mallorca,2026-05-17T19:00:00+02:00,La Liga - 37. runde,es-levante,es-mallorca,es-levante,scheduled,,,,
-esl-r37-osasuna-espanyol,2026-05-17T19:00:00+02:00,La Liga - 37. runde,es-osasuna,es-espanyol,es-osasuna,scheduled,,,,
-esl-r37-oviedo-alaves,2026-05-17T19:00:00+02:00,La Liga - 37. runde,es-oviedo,es-alaves,es-oviedo,scheduled,,,,
-esl-r37-real-sociedad-valencia,2026-05-17T19:00:00+02:00,La Liga - 37. runde,es-real-sociedad,es-valencia,es-real-sociedad,scheduled,,,,
-esl-r37-sevilla-real-madrid,2026-05-17T19:00:00+02:00,La Liga - 37. runde,es-sevilla,es-real-madrid,es-sevilla,scheduled,,,,
-esl-r37-vallecano-villarreal,2026-05-17T19:00:00+02:00,La Liga - 37. runde,es-vallecano,es-villarreal,es-vallecano,scheduled,,,,
-ita-r37-atalanta-bologna,2026-05-17T15:00:00+02:00,Serie A - 37. runde,it-atalanta,it-bologna,it-atalanta,scheduled,,,,
-ita-r37-cagliari-torino,2026-05-17T15:00:00+02:00,Serie A - 37. runde,it-cagliari,it-torino,it-cagliari,scheduled,,,,
-ita-r37-como-parma-calcio-1913,2026-05-17T15:00:00+02:00,Serie A - 37. runde,it-como,it-parma,it-como,scheduled,,,,
-ita-r37-genoa-ac-milan,2026-05-17T15:00:00+02:00,Serie A - 37. runde,it-genoa,it-ac-milan,it-genoa,scheduled,,,,
-ita-r37-inter-verona,2026-05-17T15:00:00+02:00,Serie A - 37. runde,it-inter,it-verona,it-inter,scheduled,,,,
-ita-r37-juventus-fiorentina,2026-05-17T15:00:00+02:00,Serie A - 37. runde,it-juventus,it-fiorentina,it-juventus,scheduled,,,,
-ita-r37-pisa-ssc-napoli,2026-05-17T15:00:00+02:00,Serie A - 37. runde,it-pisa,it-ssc-napoli,it-pisa,scheduled,,,,
-ita-r37-roma-lazio,2026-05-17T15:00:00+02:00,Serie A - 37. runde,it-roma,it-lazio,it-roma,scheduled,,,,
-ita-r37-sassuolo-lecce,2026-05-17T15:00:00+02:00,Serie A - 37. runde,it-sassuolo,it-lecce,it-sassuolo,scheduled,,,,
-ita-r37-udinese-cremonese,2026-05-17T15:00:00+02:00,Serie A - 37. runde,it-udinese,it-cremonese,it-udinese,scheduled,,,,
+esl-r37-ath-bilbao-celta-vigo,2026-05-17T19:00:00+02:00,Runde 37,es-ath-bilbao,es-celta-vigo,es-ath-bilbao,scheduled,,,,2025-26
+esl-r37-atl-madrid-girona,2026-05-17T19:00:00+02:00,Runde 37,es-atl-madrid,es-girona,es-atl-madrid,scheduled,,,,2025-26
+esl-r37-barcelona-betis,2026-05-17T21:15:00+02:00,Runde 37,es-barcelona,es-betis,es-barcelona,scheduled,,,,2025-26
+esl-r37-elche-getafe,2026-05-17T19:00:00+02:00,Runde 37,es-elche,es-getafe,es-elche,scheduled,,,,2025-26
+esl-r37-levante-mallorca,2026-05-17T19:00:00+02:00,Runde 37,es-levante,es-mallorca,es-levante,scheduled,,,,2025-26
+esl-r37-osasuna-espanyol,2026-05-17T19:00:00+02:00,Runde 37,es-osasuna,es-espanyol,es-osasuna,scheduled,,,,2025-26
+esl-r37-oviedo-alaves,2026-05-17T19:00:00+02:00,Runde 37,es-oviedo,es-alaves,es-oviedo,scheduled,,,,2025-26
+esl-r37-real-sociedad-valencia,2026-05-17T19:00:00+02:00,Runde 37,es-real-sociedad,es-valencia,es-real-sociedad,scheduled,,,,2025-26
+esl-r37-sevilla-real-madrid,2026-05-17T19:00:00+02:00,Runde 37,es-sevilla,es-real-madrid,es-sevilla,scheduled,,,,2025-26
+esl-r37-vallecano-villarreal,2026-05-17T19:00:00+02:00,Runde 37,es-vallecano,es-villarreal,es-vallecano,scheduled,,,,2025-26
+ita-r37-atalanta-bologna,2026-05-17T18:00:00+02:00,Runde 37,it-atalanta,it-bologna,it-atalanta,scheduled,,,,2025-26
+ita-r37-cagliari-torino,2026-05-17T20:45:00+02:00,Runde 37,it-cagliari,it-torino,it-cagliari,scheduled,,,,2025-26
+ita-r37-como-parma-calcio-1913,2026-05-17T12:00:00+02:00,Runde 37,it-como,it-parma,it-como,scheduled,,,,2025-26
+ita-r37-genoa-ac-milan,2026-05-17T12:00:00+02:00,Runde 37,it-genoa,it-ac-milan,it-genoa,scheduled,,,,2025-26
+ita-r37-inter-verona,2026-05-17T15:00:00+02:00,Runde 37,it-inter,it-verona,it-inter,scheduled,,,,2025-26
+ita-r37-juventus-fiorentina,2026-05-17T12:00:00+02:00,Runde 37,it-juventus,it-fiorentina,it-juventus,scheduled,,,,2025-26
+ita-r37-pisa-ssc-napoli,2026-05-17T12:00:00+02:00,Runde 37,it-pisa,it-ssc-napoli,it-pisa,scheduled,,,,2025-26
+ita-r37-roma-lazio,2026-05-17T12:00:00+02:00,Runde 37,it-roma,it-lazio,it-roma,scheduled,,,,2025-26
+ita-r37-sassuolo-lecce,2026-05-17T20:45:00+02:00,Runde 37,it-sassuolo,it-lecce,it-sassuolo,scheduled,,,,2025-26
+ita-r37-udinese-cremonese,2026-05-17T20:45:00+02:00,Runde 37,it-udinese,it-cremonese,it-udinese,scheduled,,,,2025-26
 fr1-r34-brest-angers,2026-05-17T21:00:00+02:00,Ligue 1 - 34. runde,fr-brest,fr-angers,fr-brest,scheduled,,,,
 fr1-r34-lille-auxerre,2026-05-17T21:00:00+02:00,Ligue 1 - 34. runde,fr-lille,fr-auxerre,fr-lille,scheduled,,,,
 fr1-r34-lorient-le-havre,2026-05-17T21:00:00+02:00,Ligue 1 - 34. runde,fr-lorient,fr-le-havre,fr-lorient,scheduled,,,,
@@ -1022,43 +1017,43 @@ fr1-r34-nantes-toulouse,2026-05-17T21:00:00+02:00,Ligue 1 - 34. runde,fr-nantes,
 fr1-r34-nice-metz,2026-05-17T21:00:00+02:00,Ligue 1 - 34. runde,fr-nice,fr-metz,fr-nice,scheduled,,,,
 fr1-r34-paris-fc-psg,2026-05-17T21:00:00+02:00,Ligue 1 - 34. runde,fr-paris-fc,fr-psg,fr-paris-fc,scheduled,,,,
 fr1-r34-strasbourg-monaco,2026-05-17T21:00:00+02:00,Ligue 1 - 34. runde,fr-strasbourg,fr-monaco,fr-strasbourg,scheduled,,,,
-es2-r40-zaragoza-gijon,2026-05-17T21:15:00+02:00,Segunda División - 40. runde,es-zaragoza,es-gijon,es-zaragoza,scheduled,,,,
-es2-r40-leganes-huesca,2026-05-18T20:30:00+02:00,Segunda División - 40. runde,es-leganes,es-huesca,es-leganes,scheduled,,,,
-1d-r31-aaf-aab,2026-05-22T18:00:00+02:00,1. division - Spillerunde 31,dk-aarhus-fremad,dk-aab,dk-aarhus-fremad,scheduled,,,,
-2d-r30-ab-hik,2026-05-22T19:00:00+02:00,2. division - Spillerunde 30,dk-ab,dk-hik,dk-ab,scheduled,,,,
-2d-r30-bra-ski,2026-05-22T19:00:00+02:00,2. division - Spillerunde 30,dk-brabrand-if,dk-skive,dk-brabrand-if,scheduled,,,,
-3d-r29-hør-brø,2026-05-22T19:00:00+02:00,3. division - Spillerunde 29,dk-horsholm-usserod-ik,dk-bronshoj,dk-horsholm-usserod-ik,scheduled,,,,
-2d-r30-ish-hel,2026-05-23T13:00:00+02:00,2. division - Spillerunde 30,dk-ishoj-if,dk-fc-helsingor,dk-ishoj-if,scheduled,,,,
-2d-r30-nas-thi,2026-05-23T13:00:00+02:00,2. division - Spillerunde 30,dk-naestved,dk-thisted-fc,dk-naestved,scheduled,,,,
-3d-r29-odd-vej,2026-05-22T19:00:00+02:00,3. division - Spillerunde 29,dk-odder-fodbold,dk-vejgaard-b,dk-odder-fodbold,scheduled,,,,
-2d-r30-vsk-faa,2026-05-23T13:30:00+02:00,2. division - Spillerunde 30,dk-vsk-aarhus,dk-fremad-amager,dk-vsk-aarhus,scheduled,,,,
-3d-r29-lys-sun,2026-05-23T13:30:00+02:00,3. division - Spillerunde 29,dk-if-lyseng,dk-sundby-bk,dk-if-lyseng,scheduled,,,,
-1d-r31-mid-b93,2026-05-23T14:00:00+02:00,1. division - Spillerunde 31,dk-middelfart,dk-b-93,dk-middelfart,scheduled,,,,
-3d-r29-fa2-nyk,2026-05-23T14:00:00+02:00,3. division - Spillerunde 29,dk-fa-2000,dk-nykobing-fc,dk-fa-2000,scheduled,,,,
-3d-r29-fre-hol,2026-05-23T14:00:00+02:00,3. division - Spillerunde 29,dk-frem,dk-holbaek-bi,dk-frem,scheduled,,,,
-2d-r30-ven-ros,2026-05-24T14:00:00+02:00,2. division - Spillerunde 30,dk-vendsyssel-ff,dk-fc-roskilde,dk-vendsyssel-ff,scheduled,,,,
-1d-r31-hbk-hob,2026-05-24T16:00:00+02:00,1. division - Spillerunde 31,dk-hb-koge,dk-hobro-ik,dk-hb-koge,scheduled,,,,
-epl-r38-brighton-and-hove-albion-manchester-united,2026-05-24T17:00:00+01:00,Premier League - 38. runde,en-brighton-and-hove-albion,en-manchester-united,en-brighton-and-hove-albion,scheduled,,,,
-epl-r38-burnley-wolverhampton-wanderers,2026-05-24T17:00:00+01:00,Premier League - 38. runde,en-burnley,en-wolverhampton-wanderers,en-burnley,scheduled,,,,
-epl-r38-crystal-palace-arsenal,2026-05-24T17:00:00+01:00,Premier League - 38. runde,en-crystal-palace,en-arsenal,en-crystal-palace,scheduled,,,,
-epl-r38-fulham-newcastle-united,2026-05-24T17:00:00+01:00,Premier League - 38. runde,en-fulham,en-newcastle-united,en-fulham,scheduled,,,,
-epl-r38-liverpool-brentford,2026-05-24T17:00:00+01:00,Premier League - 38. runde,en-liverpool,en-brentford,en-liverpool,scheduled,,,,
-epl-r38-manchester-city-aston-villa,2026-05-24T17:00:00+01:00,Premier League - 38. runde,en-manchester-city,en-aston-villa,en-manchester-city,scheduled,,,,
-epl-r38-nottingham-forest-afc-bournemouth,2026-05-24T17:00:00+01:00,Premier League - 38. runde,en-nottingham-forest,en-afc-bournemouth,en-nottingham-forest,scheduled,,,,
-epl-r38-sunderland-chelsea,2026-05-24T17:00:00+01:00,Premier League - 38. runde,en-sunderland,en-chelsea,en-sunderland,scheduled,,,,
-epl-r38-tottenham-hotspur-everton,2026-05-24T17:00:00+01:00,Premier League - 38. runde,en-tottenham-hotspur,en-everton,en-tottenham-hotspur,scheduled,,,,
-epl-r38-west-ham-united-leeds-united,2026-05-24T17:00:00+01:00,Premier League - 38. runde,en-west-ham-united,en-leeds-united,en-west-ham-united,scheduled,,,,
-es2-r41-albacete-real-sociedad-b,2026-05-24T18:30:00+02:00,Segunda División - 41. runde,es-albacete,es-real-sociedad-b,es-albacete,scheduled,,,,
-es2-r41-andorra-ceuta,2026-05-24T18:30:00+02:00,Segunda División - 41. runde,es-andorra,es-ceuta,es-andorra,scheduled,,,,
-es2-r41-cadiz-leganes,2026-05-24T18:30:00+02:00,Segunda División - 41. runde,es-cadiz,es-leganes,es-cadiz,scheduled,,,,
-es2-r41-cultural-leonesa-burgos-cf,2026-05-24T18:30:00+02:00,Segunda División - 41. runde,es-cultural-leonesa,es-burgos-cf,es-cultural-leonesa,scheduled,,,,
-es2-r41-eibar-cordoba,2026-05-24T18:30:00+02:00,Segunda División - 41. runde,es-eibar,es-cordoba,es-eibar,scheduled,,,,
-es2-r41-gijon-almeria,2026-05-24T18:30:00+02:00,Segunda División - 41. runde,es-gijon,es-almeria,es-gijon,scheduled,,,,
-es2-r41-huesca-castellon,2026-05-24T18:30:00+02:00,Segunda División - 41. runde,es-huesca,es-castellon,es-huesca,scheduled,,,,
-es2-r41-las-palmas-zaragoza,2026-05-24T18:30:00+02:00,Segunda División - 41. runde,es-las-palmas,es-zaragoza,es-las-palmas,scheduled,,,,
-es2-r41-malaga-racing-santander,2026-05-24T18:30:00+02:00,Segunda División - 41. runde,es-malaga,es-racing-santander,es-malaga,scheduled,,,,
-es2-r41-mirandes-granada,2026-05-24T18:30:00+02:00,Segunda División - 41. runde,es-mirandes,es-granada,es-mirandes,scheduled,,,,
-es2-r41-valladolid-la-coruna,2026-05-24T18:30:00+02:00,Segunda División - 41. runde,es-valladolid,es-la-coruna,es-valladolid,scheduled,,,,
+es2-r40-zaragoza-gijon,2026-05-17T21:15:00+02:00,Runde 40,es-zaragoza,es-gijon,es-zaragoza,scheduled,,,,2025-26
+es2-r40-leganes-huesca,2026-05-18T20:30:00+02:00,Runde 40,es-leganes,es-huesca,es-leganes,scheduled,,,,2025-26
+1d-r31-aaf-aab,2026-05-22T18:00:00+02:00,Runde 31,dk-aarhus-fremad,dk-aab,dk-aarhus-fremad,scheduled,,,,2025-26
+2d-r30-ab-hik,2026-05-22T19:00:00+02:00,Runde 30,dk-ab,dk-hik,dk-ab,scheduled,,,,2025-26
+2d-r30-bra-ski,2026-05-22T19:00:00+02:00,Runde 30,dk-brabrand-if,dk-skive,dk-brabrand-if,scheduled,,,,2025-26
+3d-r29-hør-brø,2026-05-22T19:00:00+02:00,Runde 29,dk-horsholm-usserod-ik,dk-bronshoj,dk-horsholm-usserod-ik,scheduled,,,,2025-26
+2d-r30-ish-hel,2026-05-23T13:00:00+02:00,Runde 30,dk-ishoj-if,dk-fc-helsingor,dk-ishoj-if,scheduled,,,,2025-26
+2d-r30-nas-thi,2026-05-23T13:00:00+02:00,Runde 30,dk-naestved,dk-thisted-fc,dk-naestved,scheduled,,,,2025-26
+3d-r29-odd-vej,2026-05-22T19:00:00+02:00,Runde 29,dk-odder-fodbold,dk-vejgaard-b,dk-odder-fodbold,scheduled,,,,2025-26
+2d-r30-vsk-faa,2026-11-08T13:30:00+02:00,2. division - Spillerunde 30,dk-vsk-aarhus,dk-fremad-amager,dk-vsk-aarhus,scheduled,,,,2025-26
+3d-r29-lys-sun,2026-05-23T13:30:00+02:00,Runde 29,dk-if-lyseng,dk-sundby-bk,dk-if-lyseng,scheduled,,,,2025-26
+1d-r31-mid-b93,2026-11-22T13:00:00+02:00,Runde 17,dk-middelfart,dk-b-93,dk-middelfart,scheduled,,,,2025-26
+3d-r29-fa2-nyk,2026-05-23T14:00:00+02:00,Runde 29,dk-fa-2000,dk-nykobing-fc,dk-fa-2000,scheduled,,,,2025-26
+3d-r29-fre-hol,2026-05-23T14:00:00+02:00,Runde 29,dk-frem,dk-holbaek-bi,dk-frem,scheduled,,,,2025-26
+2d-r30-ven-ros,2026-05-24T14:00:00+02:00,Runde 30,dk-vendsyssel-ff,dk-fc-roskilde,dk-vendsyssel-ff,scheduled,,,,2025-26
+1d-r31-hbk-hob,2026-05-24T16:00:00+02:00,Runde 31,dk-hb-koge,dk-hobro-ik,dk-hb-koge,scheduled,,,,2025-26
+epl-r38-brighton-and-hove-albion-manchester-united,2026-05-24T17:00:00+01:00,Runde 38,en-brighton-and-hove-albion,en-manchester-united,en-brighton-and-hove-albion,scheduled,,,,2025-26
+epl-r38-burnley-wolverhampton-wanderers,2026-05-24T17:00:00+01:00,Runde 38,en-burnley,en-wolverhampton-wanderers,en-burnley,scheduled,,,,2025-26
+epl-r38-crystal-palace-arsenal,2026-05-24T17:00:00+01:00,Runde 38,en-crystal-palace,en-arsenal,en-crystal-palace,scheduled,,,,2025-26
+epl-r38-fulham-newcastle-united,2026-05-24T17:00:00+01:00,Runde 38,en-fulham,en-newcastle-united,en-fulham,scheduled,,,,2025-26
+epl-r38-liverpool-brentford,2026-05-24T17:00:00+01:00,Runde 38,en-liverpool,en-brentford,en-liverpool,scheduled,,,,2025-26
+epl-r38-manchester-city-aston-villa,2026-05-24T17:00:00+01:00,Runde 38,en-manchester-city,en-aston-villa,en-manchester-city,scheduled,,,,2025-26
+epl-r38-nottingham-forest-afc-bournemouth,2026-05-24T17:00:00+01:00,Runde 38,en-nottingham-forest,en-afc-bournemouth,en-nottingham-forest,scheduled,,,,2025-26
+epl-r38-sunderland-chelsea,2026-05-24T17:00:00+01:00,Runde 38,en-sunderland,en-chelsea,en-sunderland,scheduled,,,,2025-26
+epl-r38-tottenham-hotspur-everton,2026-05-24T17:00:00+01:00,Runde 38,en-tottenham-hotspur,en-everton,en-tottenham-hotspur,scheduled,,,,2025-26
+epl-r38-west-ham-united-leeds-united,2026-05-24T17:00:00+01:00,Runde 38,en-west-ham-united,en-leeds-united,en-west-ham-united,scheduled,,,,2025-26
+es2-r41-albacete-real-sociedad-b,2026-05-24T18:30:00+02:00,Runde 41,es-albacete,es-real-sociedad-b,es-albacete,scheduled,,,,2025-26
+es2-r41-andorra-ceuta,2026-05-24T18:30:00+02:00,Runde 41,es-andorra,es-ceuta,es-andorra,scheduled,,,,2025-26
+es2-r41-cadiz-leganes,2026-05-24T18:30:00+02:00,Runde 41,es-cadiz,es-leganes,es-cadiz,scheduled,,,,2025-26
+es2-r41-cultural-leonesa-burgos-cf,2026-05-24T18:30:00+02:00,Runde 41,es-cultural-leonesa,es-burgos-cf,es-cultural-leonesa,scheduled,,,,2025-26
+es2-r41-eibar-cordoba,2026-05-24T18:30:00+02:00,Runde 41,es-eibar,es-cordoba,es-eibar,scheduled,,,,2025-26
+es2-r41-gijon-almeria,2026-05-24T18:30:00+02:00,Runde 41,es-gijon,es-almeria,es-gijon,scheduled,,,,2025-26
+es2-r41-huesca-castellon,2026-05-24T18:30:00+02:00,Runde 41,es-huesca,es-castellon,es-huesca,scheduled,,,,2025-26
+es2-r41-las-palmas-zaragoza,2026-05-24T18:30:00+02:00,Runde 41,es-las-palmas,es-zaragoza,es-las-palmas,scheduled,,,,2025-26
+es2-r41-malaga-racing-santander,2026-05-24T18:30:00+02:00,Runde 41,es-malaga,es-racing-santander,es-malaga,scheduled,,,,2025-26
+es2-r41-mirandes-granada,2026-05-24T18:30:00+02:00,Runde 41,es-mirandes,es-granada,es-mirandes,scheduled,,,,2025-26
+es2-r41-valladolid-la-coruna,2026-05-24T18:30:00+02:00,Runde 41,es-valladolid,es-la-coruna,es-valladolid,scheduled,,,,2025-26
 esf1-a-r38-arenas-getxo-zamora,2026-05-23T18:30:00+02:00,Primera Federación - Gruppe 1 - 38. runde,es-arenas-getxo,es-zamora,es-arenas-getxo,scheduled,,,,
 esf1-a-r38-barakaldo-celta-vigo-b,2026-05-23T18:30:00+02:00,Primera Federación - Gruppe 1 - 38. runde,es-barakaldo,es-celta-vigo-b,es-barakaldo,scheduled,,,,
 esf1-a-r38-cacereno-cf-talavera,2026-05-23T18:30:00+02:00,Primera Federación - Gruppe 1 - 38. runde,es-cacereno,es-cf-talavera,es-cacereno,scheduled,,,,
@@ -1079,77 +1074,77 @@ esf1-b-r38-sanluqueno-villarreal-b,2026-05-23T18:30:00+02:00,Primera Federación
 esf1-b-r38-sevilla-b-alcorcon,2026-05-23T18:30:00+02:00,Primera Federación - Gruppe 2 - 38. runde,es-sevilla-b,es-alcorcon,es-sevilla-b,scheduled,,,,
 esf1-b-r38-tarazona-sabadell,2026-05-23T18:30:00+02:00,Primera Federación - Gruppe 2 - 38. runde,es-tarazona,es-sabadell,es-tarazona,scheduled,,,,
 esf1-b-r38-ud-marbella-teruel,2026-05-23T18:30:00+02:00,Primera Federación - Gruppe 2 - 38. runde,es-ud-marbella,es-teruel,es-ud-marbella,scheduled,,,,
-esl-r38-alaves-vallecano,2026-05-23T21:00:00+02:00,La Liga - 38. runde,es-alaves,es-vallecano,es-alaves,scheduled,,,,
-esl-r38-betis-levante,2026-05-23T21:00:00+02:00,La Liga - 38. runde,es-betis,es-levante,es-betis,scheduled,,,,
-esl-r38-celta-vigo-sevilla,2026-05-23T21:00:00+02:00,La Liga - 38. runde,es-celta-vigo,es-sevilla,es-celta-vigo,scheduled,,,,
-esl-r38-espanyol-real-sociedad,2026-05-23T21:00:00+02:00,La Liga - 38. runde,es-espanyol,es-real-sociedad,es-espanyol,scheduled,,,,
-esl-r38-getafe-osasuna,2026-05-23T21:00:00+02:00,La Liga - 38. runde,es-getafe,es-osasuna,es-getafe,scheduled,,,,
-esl-r38-girona-elche,2026-05-23T21:00:00+02:00,La Liga - 38. runde,es-girona,es-elche,es-girona,scheduled,,,,
-esl-r38-mallorca-oviedo,2026-05-23T21:00:00+02:00,La Liga - 38. runde,es-mallorca,es-oviedo,es-mallorca,scheduled,,,,
-esl-r38-real-madrid-ath-bilbao,2026-05-23T21:00:00+02:00,La Liga - 38. runde,es-real-madrid,es-ath-bilbao,es-real-madrid,scheduled,,,,
-esl-r38-valencia-barcelona,2026-05-23T21:00:00+02:00,La Liga - 38. runde,es-valencia,es-barcelona,es-valencia,scheduled,,,,
-esl-r38-villarreal-atl-madrid,2026-05-24T21:00:00+02:00,La Liga - 38. runde,es-villarreal,es-atl-madrid,es-villarreal,scheduled,,,,
-ita-r38-ac-milan-cagliari,2026-05-24T15:00:00+02:00,Serie A - 38. runde,it-ac-milan,it-cagliari,it-ac-milan,scheduled,,,,
-ita-r38-bologna-inter,2026-05-24T15:00:00+02:00,Serie A - 38. runde,it-bologna,it-inter,it-bologna,scheduled,,,,
-ita-r38-cremonese-como,2026-05-24T15:00:00+02:00,Serie A - 38. runde,it-cremonese,it-como,it-cremonese,scheduled,,,,
-ita-r38-fiorentina-atalanta,2026-05-24T15:00:00+02:00,Serie A - 38. runde,it-fiorentina,it-atalanta,it-fiorentina,scheduled,,,,
-ita-r38-lazio-pisa,2026-05-24T15:00:00+02:00,Serie A - 38. runde,it-lazio,it-pisa,it-lazio,scheduled,,,,
-ita-r38-lecce-genoa,2026-05-24T15:00:00+02:00,Serie A - 38. runde,it-lecce,it-genoa,it-lecce,scheduled,,,,
-ita-r38-parma-calcio-1913-sassuolo,2026-05-24T15:00:00+02:00,Serie A - 38. runde,it-parma,it-sassuolo,it-parma,scheduled,,,,
-ita-r38-ssc-napoli-udinese,2026-05-24T15:00:00+02:00,Serie A - 38. runde,it-ssc-napoli,it-udinese,it-ssc-napoli,scheduled,,,,
-ita-r38-torino-juventus,2026-05-24T15:00:00+02:00,Serie A - 38. runde,it-torino,it-juventus,it-torino,scheduled,,,,
-ita-r38-verona-roma,2026-05-24T15:00:00+02:00,Serie A - 38. runde,it-verona,it-roma,it-verona,scheduled,,,,
-1d-r31-kol-hil,2026-05-25T13:00:00+02:00,1. division - Spillerunde 31,dk-kolding-if,dk-hillerod-fodbold,dk-kolding-if,scheduled,,,,
-3d-r29-van-næs,2026-05-25T14:00:00+02:00,3. division - Spillerunde 29,dk-vanlose,dk-naesby-bk,dk-vanlose,scheduled,,,,
-1d-r31-hvi-efb,2026-05-25T15:00:00+02:00,1. division - Spillerunde 31,dk-hvidovre-if,dk-esbjerg-fb,dk-hvidovre-if,scheduled,,,,
-1d-r31-lyn-ach,2026-05-25T18:00:00+02:00,1. division - Spillerunde 31,dk-lyngby-boldklub,dk-ac-horsens,dk-lyngby-boldklub,scheduled,,,,
-2d-r31-thi-ros,2026-05-29T18:00:00+02:00,2. division - Spillerunde 31,dk-thisted-fc,dk-fc-roskilde,dk-thisted-fc,scheduled,,,,
-3d-r30-brø-van,2026-05-29T18:30:00+02:00,3. division - Spillerunde 30,dk-bronshoj,dk-vanlose,dk-bronshoj,scheduled,,,,
-2d-r31-faa-ski,2026-05-29T19:00:00+02:00,2. division - Spillerunde 31,dk-fremad-amager,dk-skive,dk-fremad-amager,scheduled,,,,
-2d-r31-nas-ab,2026-05-29T19:00:00+02:00,2. division - Spillerunde 31,dk-naestved,dk-ab,dk-naestved,scheduled,,,,
-3d-r30-hør-fa2,2026-05-29T19:00:00+02:00,3. division - Spillerunde 30,dk-horsholm-usserod-ik,dk-fa-2000,dk-horsholm-usserod-ik,scheduled,,,,
-2d-r31-ish-vsk,2026-05-30T13:00:00+02:00,2. division - Spillerunde 31,dk-ishoj-if,dk-vsk-aarhus,dk-ishoj-if,scheduled,,,,
-3d-r30-hol-lys,2026-05-30T13:00:00+02:00,3. division - Spillerunde 30,dk-holbaek-bi,dk-if-lyseng,dk-holbaek-bi,scheduled,,,,
-3d-r30-sun-odd,2026-05-30T13:00:00+02:00,3. division - Spillerunde 30,dk-sundby-bk,dk-odder-fodbold,dk-sundby-bk,scheduled,,,,
-3d-r30-vej-fre,2026-05-30T13:00:00+02:00,3. division - Spillerunde 30,dk-vejgaard-b,dk-frem,dk-vejgaard-b,scheduled,,,,
-2d-r31-hik-ven,2026-05-30T14:00:00+02:00,2. division - Spillerunde 31,dk-hik,dk-vendsyssel-ff,dk-hik,scheduled,,,,
-1d-r32-aab-hbk,2026-05-30T15:00:00+02:00,1. division - Spillerunde 32,dk-aab,dk-hb-koge,dk-aab,scheduled,,,,
-1d-r32-b93-aaf,2026-05-30T15:00:00+02:00,1. division - Spillerunde 32,dk-b-93,dk-aarhus-fremad,dk-b-93,scheduled,,,,
-1d-r32-hob-mid,2026-05-30T15:00:00+02:00,1. division - Spillerunde 32,dk-hobro-ik,dk-middelfart,dk-hobro-ik,scheduled,,,,
-3d-r30-nyk-næs,2026-05-31T14:00:00+02:00,3. division - Spillerunde 30,dk-nykobing-fc,dk-naesby-bk,dk-nykobing-fc,scheduled,,,,
-1d-r32-ach-kol,2026-05-31T15:00:00+02:00,1. division - Spillerunde 32,dk-ac-horsens,dk-kolding-if,dk-ac-horsens,scheduled,,,,
-1d-r32-efb-lyn,2026-05-31T15:00:00+02:00,1. division - Spillerunde 32,dk-esbjerg-fb,dk-lyngby-boldklub,dk-esbjerg-fb,scheduled,,,,
-1d-r32-hil-hvi,2026-05-31T15:00:00+02:00,1. division - Spillerunde 32,dk-hillerod-fodbold,dk-hvidovre-if,dk-hillerod-fodbold,scheduled,,,,
-es2-r42-almeria-valladolid,2026-05-31T18:00:00+02:00,Segunda División - 42. runde,es-almeria,es-valladolid,es-almeria,scheduled,,,,
-es2-r42-burgos-cf-andorra,2026-05-31T18:00:00+02:00,Segunda División - 42. runde,es-burgos-cf,es-andorra,es-burgos-cf,scheduled,,,,
-es2-r42-castellon-eibar,2026-05-31T18:00:00+02:00,Segunda División - 42. runde,es-castellon,es-eibar,es-castellon,scheduled,,,,
-es2-r42-ceuta-albacete,2026-05-31T18:00:00+02:00,Segunda División - 42. runde,es-ceuta,es-albacete,es-ceuta,scheduled,,,,
-es2-r42-cordoba-huesca,2026-05-31T18:00:00+02:00,Segunda División - 42. runde,es-cordoba,es-huesca,es-cordoba,scheduled,,,,
-es2-r42-granada-gijon,2026-05-31T18:00:00+02:00,Segunda División - 42. runde,es-granada,es-gijon,es-granada,scheduled,,,,
-es2-r42-la-coruna-las-palmas,2026-05-31T18:00:00+02:00,Segunda División - 42. runde,es-la-coruna,es-las-palmas,es-la-coruna,scheduled,,,,
-es2-r42-leganes-mirandes,2026-05-31T18:00:00+02:00,Segunda División - 42. runde,es-leganes,es-mirandes,es-leganes,scheduled,,,,
-es2-r42-racing-santander-cadiz,2026-05-31T18:00:00+02:00,Segunda División - 42. runde,es-racing-santander,es-cadiz,es-racing-santander,scheduled,,,,
-es2-r42-real-sociedad-b-cultural-leonesa,2026-05-31T18:00:00+02:00,Segunda División - 42. runde,es-real-sociedad-b,es-cultural-leonesa,es-real-sociedad-b,scheduled,,,,
-es2-r42-zaragoza-malaga,2026-05-31T18:00:00+02:00,Segunda División - 42. runde,es-zaragoza,es-malaga,es-zaragoza,scheduled,,,,
-2d-r31-hel-bra,2026-05-30T13:00:00+02:00,2. division - Spillerunde 31,dk-fc-helsingor,dk-brabrand-if,dk-fc-helsingor,scheduled,,,,
-3d-r31-sun-hol,2026-06-05T19:00:00+02:00,3. division - Spillerunde 31,dk-sundby-bk,dk-holbaek-bi,dk-sundby-bk,scheduled,,,,
-3d-r31-odd-fre,2026-06-06T13:00:00+02:00,3. division - Spillerunde 31,dk-odder-fodbold,dk-frem,dk-odder-fodbold,scheduled,,,,
-3d-r31-vej-lys,2026-06-06T13:00:00+02:00,3. division - Spillerunde 31,dk-vejgaard-b,dk-if-lyseng,dk-vejgaard-b,scheduled,,,,
-2d-r32-ab-thi,2026-06-06T14:00:00+02:00,2. division - Spillerunde 32,dk-ab,dk-thisted-fc,dk-ab,scheduled,,,,
-2d-r32-bra-faa,2026-06-06T14:00:00+02:00,2. division - Spillerunde 32,dk-brabrand-if,dk-fremad-amager,dk-brabrand-if,scheduled,,,,
-2d-r32-ros-hik,2026-06-06T14:00:00+02:00,2. division - Spillerunde 32,dk-fc-roskilde,dk-hik,dk-fc-roskilde,scheduled,,,,
-2d-r32-ski-ish,2026-06-06T14:00:00+02:00,2. division - Spillerunde 32,dk-skive,dk-ishoj-if,dk-skive,scheduled,,,,
-2d-r32-ven-nas,2026-06-06T14:00:00+02:00,2. division - Spillerunde 32,dk-vendsyssel-ff,dk-naestved,dk-vendsyssel-ff,scheduled,,,,
-2d-r32-vsk-hel,2026-06-06T14:00:00+02:00,2. division - Spillerunde 32,dk-vsk-aarhus,dk-fc-helsingor,dk-vsk-aarhus,scheduled,,,,
-3d-r31-brø-nyk,2026-06-06T14:00:00+02:00,3. division - Spillerunde 31,dk-bronshoj,dk-nykobing-fc,dk-bronshoj,scheduled,,,,
-3d-r31-næs-fa2,2026-06-06T14:00:00+02:00,3. division - Spillerunde 31,dk-naesby-bk,dk-fa-2000,dk-naesby-bk,scheduled,,,,
-3d-r31-van-hør,2026-06-06T14:00:00+02:00,3. division - Spillerunde 31,dk-vanlose,dk-horsholm-usserod-ik,dk-vanlose,scheduled,,,,
-3d-r32-fa2-brø,2026-06-13T14:00:00+02:00,3. division - Spillerunde 32,dk-fa-2000,dk-bronshoj,dk-fa-2000,scheduled,,,,
-3d-r32-fre-sun,2026-06-13T14:00:00+02:00,3. division - Spillerunde 32,dk-frem,dk-sundby-bk,dk-frem,scheduled,,,,
-3d-r32-hol-vej,2026-06-13T14:00:00+02:00,3. division - Spillerunde 32,dk-holbaek-bi,dk-vejgaard-b,dk-holbaek-bi,scheduled,,,,
-3d-r32-hør-næs,2026-06-13T14:00:00+02:00,3. division - Spillerunde 32,dk-horsholm-usserod-ik,dk-naesby-bk,dk-horsholm-usserod-ik,scheduled,,,,
-3d-r32-lys-odd,2026-06-13T14:00:00+02:00,3. division - Spillerunde 32,dk-if-lyseng,dk-odder-fodbold,dk-if-lyseng,scheduled,,,,
-3d-r32-nyk-van,2026-06-13T14:00:00+02:00,3. division - Spillerunde 32,dk-nykobing-fc,dk-vanlose,dk-nykobing-fc,scheduled,,,,
+esl-r38-alaves-vallecano,2026-05-23T21:00:00+02:00,Runde 38,es-alaves,es-vallecano,es-alaves,scheduled,,,,2025-26
+esl-r38-betis-levante,2026-05-23T21:00:00+02:00,Runde 38,es-betis,es-levante,es-betis,scheduled,,,,2025-26
+esl-r38-celta-vigo-sevilla,2026-05-23T21:00:00+02:00,Runde 38,es-celta-vigo,es-sevilla,es-celta-vigo,scheduled,,,,2025-26
+esl-r38-espanyol-real-sociedad,2026-05-23T21:00:00+02:00,Runde 38,es-espanyol,es-real-sociedad,es-espanyol,scheduled,,,,2025-26
+esl-r38-getafe-osasuna,2026-05-23T21:00:00+02:00,Runde 38,es-getafe,es-osasuna,es-getafe,scheduled,,,,2025-26
+esl-r38-girona-elche,2026-05-23T21:00:00+02:00,Runde 38,es-girona,es-elche,es-girona,scheduled,,,,2025-26
+esl-r38-mallorca-oviedo,2026-05-23T21:00:00+02:00,Runde 38,es-mallorca,es-oviedo,es-mallorca,scheduled,,,,2025-26
+esl-r38-real-madrid-ath-bilbao,2026-05-23T21:00:00+02:00,Runde 38,es-real-madrid,es-ath-bilbao,es-real-madrid,scheduled,,,,2025-26
+esl-r38-valencia-barcelona,2026-05-23T21:00:00+02:00,Runde 38,es-valencia,es-barcelona,es-valencia,scheduled,,,,2025-26
+esl-r38-villarreal-atl-madrid,2026-05-24T21:00:00+02:00,Runde 38,es-villarreal,es-atl-madrid,es-villarreal,scheduled,,,,2025-26
+ita-r38-ac-milan-cagliari,2026-05-24T15:00:00+02:00,Runde 38,it-ac-milan,it-cagliari,it-ac-milan,scheduled,,,,2025-26
+ita-r38-bologna-inter,2026-05-24T15:00:00+02:00,Runde 38,it-bologna,it-inter,it-bologna,scheduled,,,,2025-26
+ita-r38-cremonese-como,2026-05-24T15:00:00+02:00,Runde 38,it-cremonese,it-como,it-cremonese,scheduled,,,,2025-26
+ita-r38-fiorentina-atalanta,2026-05-24T15:00:00+02:00,Runde 38,it-fiorentina,it-atalanta,it-fiorentina,scheduled,,,,2025-26
+ita-r38-lazio-pisa,2026-05-24T15:00:00+02:00,Runde 38,it-lazio,it-pisa,it-lazio,scheduled,,,,2025-26
+ita-r38-lecce-genoa,2026-05-24T15:00:00+02:00,Runde 38,it-lecce,it-genoa,it-lecce,scheduled,,,,2025-26
+ita-r38-parma-calcio-1913-sassuolo,2026-05-24T15:00:00+02:00,Runde 38,it-parma,it-sassuolo,it-parma,scheduled,,,,2025-26
+ita-r38-ssc-napoli-udinese,2026-05-24T15:00:00+02:00,Runde 38,it-ssc-napoli,it-udinese,it-ssc-napoli,scheduled,,,,2025-26
+ita-r38-torino-juventus,2026-05-24T15:00:00+02:00,Runde 38,it-torino,it-juventus,it-torino,scheduled,,,,2025-26
+ita-r38-verona-roma,2026-05-24T15:00:00+02:00,Runde 38,it-verona,it-roma,it-verona,scheduled,,,,2025-26
+1d-r31-kol-hil,2026-05-25T13:00:00+02:00,Runde 31,dk-kolding-if,dk-hillerod-fodbold,dk-kolding-if,scheduled,,,,2025-26
+3d-r29-van-næs,2026-05-25T14:00:00+02:00,Runde 29,dk-vanlose,dk-naesby-bk,dk-vanlose,scheduled,,,,2025-26
+1d-r31-hvi-efb,2026-05-25T15:00:00+02:00,Runde 31,dk-hvidovre-if,dk-esbjerg-fb,dk-hvidovre-if,scheduled,,,,2025-26
+1d-r31-lyn-ach,2026-05-25T18:00:00+02:00,Runde 31,dk-lyngby-boldklub,dk-ac-horsens,dk-lyngby-boldklub,scheduled,,,,2025-26
+2d-r31-thi-ros,2026-05-29T18:00:00+02:00,Runde 31,dk-thisted-fc,dk-fc-roskilde,dk-thisted-fc,scheduled,,,,2025-26
+3d-r30-brø-van,2026-10-10T18:30:00+02:00,Runde 11,dk-bronshoj,dk-vanlose,dk-bronshoj,scheduled,,,,2025-26
+2d-r31-faa-ski,2026-11-14T19:00:00+02:00,2. division - Spillerunde 31,dk-fremad-amager,dk-skive,dk-fremad-amager,scheduled,,,,2025-26
+2d-r31-nas-ab,2026-10-17T19:00:00+02:00,2. division - Spillerunde 31,dk-naestved,dk-ab,dk-naestved,scheduled,,,,2025-26
+3d-r30-hør-fa2,2026-05-29T19:00:00+02:00,Runde 30,dk-horsholm-usserod-ik,dk-fa-2000,dk-horsholm-usserod-ik,scheduled,,,,2025-26
+2d-r31-ish-vsk,2026-05-30T13:00:00+02:00,Runde 31,dk-ishoj-if,dk-vsk-aarhus,dk-ishoj-if,scheduled,,,,2025-26
+3d-r30-hol-lys,2026-05-30T13:00:00+02:00,Runde 30,dk-holbaek-bi,dk-if-lyseng,dk-holbaek-bi,scheduled,,,,2025-26
+3d-r30-sun-odd,2026-05-30T13:00:00+02:00,Runde 30,dk-sundby-bk,dk-odder-fodbold,dk-sundby-bk,scheduled,,,,2025-26
+3d-r30-vej-fre,2026-11-01T14:00:00+02:00,Runde 14,dk-vejgaard-b,dk-frem,dk-vejgaard-b,scheduled,,,,2025-26
+2d-r31-hik-ven,2026-11-14T18:00:00+02:00,2. division - Spillerunde 31,dk-hik,dk-vendsyssel-ff,dk-hik,scheduled,,,,2025-26
+1d-r32-aab-hbk,2026-05-30T15:00:00+02:00,Runde 32,dk-aab,dk-hb-koge,dk-aab,scheduled,,,,2025-26
+1d-r32-b93-aaf,2026-05-30T15:00:00+02:00,Runde 32,dk-b-93,dk-aarhus-fremad,dk-b-93,scheduled,,,,2025-26
+1d-r32-hob-mid,2026-05-30T15:00:00+02:00,Runde 32,dk-hobro-ik,dk-middelfart,dk-hobro-ik,scheduled,,,,2025-26
+3d-r30-nyk-næs,2026-10-25T15:00:00+02:00,Runde 13,dk-nykobing-fc,dk-naesby-bk,dk-nykobing-fc,scheduled,,,,2025-26
+1d-r32-ach-kol,2026-05-31T15:00:00+02:00,Runde 32,dk-ac-horsens,dk-kolding-if,dk-ac-horsens,scheduled,,,,2025-26
+1d-r32-efb-lyn,2026-05-31T15:00:00+02:00,Runde 32,dk-esbjerg-fb,dk-lyngby-boldklub,dk-esbjerg-fb,scheduled,,,,2025-26
+1d-r32-hil-hvi,2026-10-18T14:00:00+02:00,Runde 13,dk-hillerod-fodbold,dk-hvidovre-if,dk-hillerod-fodbold,scheduled,,,,2025-26
+es2-r42-almeria-valladolid,2026-05-31T18:00:00+02:00,Runde 42,es-almeria,es-valladolid,es-almeria,scheduled,,,,2025-26
+es2-r42-burgos-cf-andorra,2026-05-31T18:00:00+02:00,Runde 42,es-burgos-cf,es-andorra,es-burgos-cf,scheduled,,,,2025-26
+es2-r42-castellon-eibar,2026-05-31T18:00:00+02:00,Runde 42,es-castellon,es-eibar,es-castellon,scheduled,,,,2025-26
+es2-r42-ceuta-albacete,2026-05-31T18:00:00+02:00,Runde 42,es-ceuta,es-albacete,es-ceuta,scheduled,,,,2025-26
+es2-r42-cordoba-huesca,2026-05-31T18:00:00+02:00,Runde 42,es-cordoba,es-huesca,es-cordoba,scheduled,,,,2025-26
+es2-r42-granada-gijon,2026-05-31T18:00:00+02:00,Runde 42,es-granada,es-gijon,es-granada,scheduled,,,,2025-26
+es2-r42-la-coruna-las-palmas,2026-05-31T18:00:00+02:00,Runde 42,es-la-coruna,es-las-palmas,es-la-coruna,scheduled,,,,2025-26
+es2-r42-leganes-mirandes,2026-05-31T18:00:00+02:00,Runde 42,es-leganes,es-mirandes,es-leganes,scheduled,,,,2025-26
+es2-r42-racing-santander-cadiz,2026-05-31T18:00:00+02:00,Runde 42,es-racing-santander,es-cadiz,es-racing-santander,scheduled,,,,2025-26
+es2-r42-real-sociedad-b-cultural-leonesa,2026-05-31T18:00:00+02:00,Runde 42,es-real-sociedad-b,es-cultural-leonesa,es-real-sociedad-b,scheduled,,,,2025-26
+es2-r42-zaragoza-malaga,2026-05-31T18:00:00+02:00,Runde 42,es-zaragoza,es-malaga,es-zaragoza,scheduled,,,,2025-26
+2d-r31-hel-bra,2026-05-30T13:00:00+02:00,Runde 31,dk-fc-helsingor,dk-brabrand-if,dk-fc-helsingor,scheduled,,,,2025-26
+3d-r31-sun-hol,2026-06-05T19:00:00+02:00,Runde 31,dk-sundby-bk,dk-holbaek-bi,dk-sundby-bk,scheduled,,,,2025-26
+3d-r31-odd-fre,2026-06-06T13:00:00+02:00,Runde 31,dk-odder-fodbold,dk-frem,dk-odder-fodbold,scheduled,,,,2025-26
+3d-r31-vej-lys,2026-06-05T18:30:00+02:00,Runde 31,dk-vejgaard-b,dk-if-lyseng,dk-vejgaard-b,scheduled,,,,2025-26
+2d-r32-ab-thi,2026-06-06T14:00:00+02:00,Runde 32,dk-ab,dk-thisted-fc,dk-ab,scheduled,,,,2025-26
+2d-r32-bra-faa,2026-06-06T14:00:00+02:00,Runde 32,dk-brabrand-if,dk-fremad-amager,dk-brabrand-if,scheduled,,,,2025-26
+2d-r32-ros-hik,2026-06-06T14:00:00+02:00,Runde 32,dk-fc-roskilde,dk-hik,dk-fc-roskilde,scheduled,,,,2025-26
+2d-r32-ski-ish,2026-06-06T14:00:00+02:00,Runde 32,dk-skive,dk-ishoj-if,dk-skive,scheduled,,,,2025-26
+2d-r32-ven-nas,2026-06-06T14:00:00+02:00,Runde 32,dk-vendsyssel-ff,dk-naestved,dk-vendsyssel-ff,scheduled,,,,2025-26
+2d-r32-vsk-hel,2026-06-06T14:00:00+02:00,Runde 32,dk-vsk-aarhus,dk-fc-helsingor,dk-vsk-aarhus,scheduled,,,,2025-26
+3d-r31-brø-nyk,2026-06-06T14:00:00+02:00,Runde 31,dk-bronshoj,dk-nykobing-fc,dk-bronshoj,scheduled,,,,2025-26
+3d-r31-næs-fa2,2026-06-06T14:00:00+02:00,Runde 31,dk-naesby-bk,dk-fa-2000,dk-naesby-bk,scheduled,,,,2025-26
+3d-r31-van-hør,2026-10-04T14:00:00+02:00,Runde 10,dk-vanlose,dk-horsholm-usserod-ik,dk-vanlose,scheduled,,,,2025-26
+3d-r32-fa2-brø,2026-06-13T14:00:00+02:00,Runde 32,dk-fa-2000,dk-bronshoj,dk-fa-2000,scheduled,,,,2025-26
+3d-r32-fre-sun,2026-06-13T14:00:00+02:00,Runde 32,dk-frem,dk-sundby-bk,dk-frem,scheduled,,,,2025-26
+3d-r32-hol-vej,2026-10-11T13:00:00+02:00,Runde 11,dk-holbaek-bi,dk-vejgaard-b,dk-holbaek-bi,scheduled,,,,2025-26
+3d-r32-hør-næs,2026-06-13T14:00:00+02:00,Runde 32,dk-horsholm-usserod-ik,dk-naesby-bk,dk-horsholm-usserod-ik,scheduled,,,,2025-26
+3d-r32-lys-odd,2026-06-13T14:00:00+02:00,Runde 32,dk-if-lyseng,dk-odder-fodbold,dk-if-lyseng,scheduled,,,,2025-26
+3d-r32-nyk-van,2026-06-13T14:00:00+02:00,Runde 32,dk-nykobing-fc,dk-vanlose,dk-nykobing-fc,scheduled,,,,2025-26
 nl1-01-ajax-utrecht,2026-05-10T16:45:00+02:00,Eredivisie - Runde 33,nl-ajax,nl-utrecht,nl-ajax,scheduled,,,nl-eredivisie,2025-26
 nl1-02-breda-heerenveen,2026-05-10T16:45:00+02:00,Eredivisie - Runde 33,nl-breda,nl-heerenveen,nl-breda,scheduled,,,nl-eredivisie,2025-26
 nl1-03-excelsior-fc-volendam,2026-05-10T16:45:00+02:00,Eredivisie - Runde 33,nl-excelsior,nl-fc-volendam,nl-excelsior,scheduled,,,nl-eredivisie,2025-26
@@ -1209,15 +1204,15 @@ tr1-06-genclerbirligi-kasimpasa,2026-05-09T19:00:00+03:00,Süper Lig - Runde 33,
 tr1-07-goztepe-gaziantep,2026-05-09T19:00:00+03:00,Süper Lig - Runde 33,tr-goztepe,tr-gaziantep,tr-goztepe,scheduled,,,tr-super-lig,2025-26
 tr1-08-kocaelispor-fatih-karagumruk,2026-05-09T19:00:00+03:00,Süper Lig - Runde 33,tr-kocaelispor,tr-fatih-karagumruk,tr-kocaelispor,scheduled,,,tr-super-lig,2025-26
 tr1-09-konyaspor-fenerbahce,2026-05-09T19:00:00+03:00,Süper Lig - Runde 33,tr-konyaspor,tr-fenerbahce,tr-konyaspor,scheduled,,,tr-super-lig,2025-26
-tr1-10-antalyaspor-kocaelispor,2026-05-17T19:00:00+03:00,Süper Lig - Runde 34,tr-antalyaspor,tr-kocaelispor,tr-antalyaspor,scheduled,,,tr-super-lig,2025-26
-tr1-11-fenerbahce-eyupspor,2026-05-17T19:00:00+03:00,Süper Lig - Runde 34,tr-fenerbahce,tr-eyupspor,tr-fenerbahce,scheduled,,,tr-super-lig,2025-26
-tr1-12-gaziantep-basaksehir,2026-05-17T19:00:00+03:00,Süper Lig - Runde 34,tr-gaziantep,tr-basaksehir,tr-gaziantep,scheduled,,,tr-super-lig,2025-26
-tr1-13-fatih-karagumruk-alanyaspor,2026-05-17T19:00:00+03:00,Süper Lig - Runde 34,tr-fatih-karagumruk,tr-alanyaspor,tr-fatih-karagumruk,scheduled,,,tr-super-lig,2025-26
-tr1-14-kasimpasa-galatasaray,2026-05-17T19:00:00+03:00,Süper Lig - Runde 34,tr-kasimpasa,tr-galatasaray,tr-kasimpasa,scheduled,,,tr-super-lig,2025-26
-tr1-15-kayserispor-konyaspor,2026-05-17T19:00:00+03:00,Süper Lig - Runde 34,tr-kayserispor,tr-konyaspor,tr-kayserispor,scheduled,,,tr-super-lig,2025-26
-tr1-16-rizespor-besiktas,2026-05-17T19:00:00+03:00,Süper Lig - Runde 34,tr-rizespor,tr-besiktas,tr-rizespor,scheduled,,,tr-super-lig,2025-26
-tr1-17-samsunspor-goztepe,2026-05-17T19:00:00+03:00,Süper Lig - Runde 34,tr-samsunspor,tr-goztepe,tr-samsunspor,scheduled,,,tr-super-lig,2025-26
-tr1-18-trabzonspor-genclerbirligi,2026-05-17T19:00:00+03:00,Süper Lig - Runde 34,tr-trabzonspor,tr-genclerbirligi,tr-trabzonspor,scheduled,,,tr-super-lig,2025-26
+tr1-10-antalyaspor-kocaelispor,2026-05-17T19:00:00+03:00,Runde 34,tr-antalyaspor,tr-kocaelispor,tr-antalyaspor,scheduled,,,tr-super-lig,2025-26
+tr1-11-fenerbahce-eyupspor,2026-05-17T19:00:00+03:00,Runde 34,tr-fenerbahce,tr-eyupspor,tr-fenerbahce,scheduled,,,tr-super-lig,2025-26
+tr1-12-gaziantep-basaksehir,2026-05-16T19:00:00+03:00,Runde 34,tr-gaziantep,tr-basaksehir,tr-gaziantep,scheduled,,,tr-super-lig,2025-26
+tr1-13-fatih-karagumruk-alanyaspor,2026-05-16T16:00:00+03:00,Runde 34,tr-fatih-karagumruk,tr-alanyaspor,tr-fatih-karagumruk,scheduled,,,tr-super-lig,2025-26
+tr1-14-kasimpasa-galatasaray,2026-05-17T19:00:00+03:00,Runde 34,tr-kasimpasa,tr-galatasaray,tr-kasimpasa,scheduled,,,tr-super-lig,2025-26
+tr1-15-kayserispor-konyaspor,2026-05-17T16:00:00+03:00,Runde 34,tr-kayserispor,tr-konyaspor,tr-kayserispor,scheduled,,,tr-super-lig,2025-26
+tr1-16-rizespor-besiktas,2026-05-15T19:00:00+03:00,Runde 34,tr-rizespor,tr-besiktas,tr-rizespor,scheduled,,,tr-super-lig,2025-26
+tr1-17-samsunspor-goztepe,2026-05-16T19:00:00+03:00,Runde 34,tr-samsunspor,tr-goztepe,tr-samsunspor,scheduled,,,tr-super-lig,2025-26
+tr1-18-trabzonspor-genclerbirligi,2026-05-17T19:00:00+03:00,Runde 34,tr-trabzonspor,tr-genclerbirligi,tr-trabzonspor,scheduled,,,tr-super-lig,2025-26
 tr1p-02-corum-bodrumspor,2026-05-15T19:00:00+03:00,1. Lig - Slutspil - Semifinale,tr-corum,tr-bodrumspor,tr-corum,scheduled,,,tr-1-lig-playoffs,2025-26
 be1r-01-raal-la-louviere-cercle-brugge,2026-05-09T16:00:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 36,be-raal-la-louviere,be-cercle-brugge,be-raal-la-louviere,scheduled,,,be-pro-league-relegation-playoffs,2025-26
 be1r-02-waregem-dender,2026-05-09T16:00:00+02:00,Jupiler Pro League - Nedrykningsgruppe - Runde 36,be-waregem,be-dender,be-waregem,scheduled,,,be-pro-league-relegation-playoffs,2025-26
@@ -1235,15 +1230,14 @@ be1c-11-royale-union-sg-anderlecht,2026-05-24T18:30:00+02:00,Jupiler Pro League 
 be1c-12-st-truiden-kv-mechelen,2026-05-24T18:30:00+02:00,Jupiler Pro League - Mesterskabsspil - Runde 40,be-st-truiden,be-kv-mechelen,be-st-truiden,scheduled,,,be-pro-league-champions-playoffs,2025-26
 be1e-01-antwerp-charleroi,2026-05-10T16:00:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 37,be-antwerp,be-charleroi,be-antwerp,scheduled,,,be-pro-league-europe-playoffs,2025-26
 be1e-02-genk-westerlo,2026-05-10T19:15:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 37,be-genk,be-westerlo,be-genk,scheduled,,,be-pro-league-europe-playoffs,2025-26
-be1e-03-leuven-antwerp,2026-05-15T20:45:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 38,be-leuven,be-antwerp,be-leuven,scheduled,,,be-pro-league-europe-playoffs,2025-26
-be1e-04-charleroi-westerlo,2026-05-16T16:00:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 38,be-charleroi,be-westerlo,be-charleroi,scheduled,,,be-pro-league-europe-playoffs,2025-26
-be1e-05-st-liege-genk,2026-05-16T18:15:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 38,be-st-liege,be-genk,be-st-liege,scheduled,,,be-pro-league-europe-playoffs,2025-26
-be1e-06-charleroi-leuven,2026-05-19T20:30:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 39,be-charleroi,be-leuven,be-charleroi,scheduled,,,be-pro-league-europe-playoffs,2025-26
-be1e-07-genk-antwerp,2026-05-19T20:30:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 39,be-genk,be-antwerp,be-genk,scheduled,,,be-pro-league-europe-playoffs,2025-26
-be1e-08-westerlo-st-liege,2026-05-19T20:30:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 39,be-westerlo,be-st-liege,be-westerlo,scheduled,,,be-pro-league-europe-playoffs,2025-26
-be1e-09-antwerp-westerlo,2026-05-23T20:45:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 40,be-antwerp,be-westerlo,be-antwerp,scheduled,,,be-pro-league-europe-playoffs,2025-26
-be1e-10-leuven-genk,2026-05-23T20:45:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 40,be-leuven,be-genk,be-leuven,scheduled,,,be-pro-league-europe-playoffs,2025-26
-be1e-11-st-liege-charleroi,2026-05-23T20:45:00+02:00,Jupiler Pro League - Conference League Gruppe - Runde 40,be-st-liege,be-charleroi,be-st-liege,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-04-charleroi-westerlo,2026-05-16T16:00:00+02:00,Runde 38,be-charleroi,be-westerlo,be-charleroi,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-05-st-liege-genk,2026-05-16T18:15:00+02:00,Runde 38,be-st-liege,be-genk,be-st-liege,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-06-charleroi-leuven,2026-05-19T20:30:00+02:00,Runde 39,be-charleroi,be-leuven,be-charleroi,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-07-genk-antwerp,2026-05-19T20:30:00+02:00,Runde 39,be-genk,be-antwerp,be-genk,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-08-westerlo-st-liege,2026-05-19T20:30:00+02:00,Runde 39,be-westerlo,be-st-liege,be-westerlo,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-09-antwerp-westerlo,2026-05-23T20:45:00+02:00,Runde 40,be-antwerp,be-westerlo,be-antwerp,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-10-leuven-genk,2026-05-23T20:45:00+02:00,Runde 40,be-leuven,be-genk,be-leuven,scheduled,,,be-pro-league-europe-playoffs,2025-26
+be1e-11-st-liege-charleroi,2026-05-23T20:45:00+02:00,Runde 40,be-st-liege,be-charleroi,be-st-liege,scheduled,,,be-pro-league-europe-playoffs,2025-26
 be1p-01-beerschot-va-lommel-sk,2026-05-09T18:15:00+02:00,Belgisk promotion/relegation playoff - Semifinale,be-beerschot-va,be-lommel-sk,be-beerschot-va,scheduled,,,be-promotion-relegation-playoffs,2025-26
 be3a-01-union-namur-zebra-elites,2026-05-10T15:00:00+02:00,National Division 1 ACFF - Runde 10,be-union-namur,be-zebra-elites,be-union-namur,scheduled,,,be-national-division-1-acff,2025-26
 be3a-02-union-sg-b-stockay-warfusee,2026-05-10T15:00:00+02:00,National Division 1 ACFF - Runde 10,be-union-sg-b,be-stockay-warfusee,be-union-sg-b,scheduled,,,be-national-division-1-acff,2025-26
@@ -1251,3 +1245,173 @@ be3a-03-sl16-fc-crossing-schaerbeek,2026-05-10T15:00:00+02:00,National Division 
 be3ap-01-renaissance-mons-meux,2026-05-10T15:00:00+02:00,National Division 1 ACFF - Oprykningsgruppe - Runde 10,be-renaissance-mons,be-meux,be-renaissance-mons,scheduled,,,be-national-division-1-acff-promotion-group,2025-26
 be3ap-02-tubize-braine-union-rochefortoise,2026-05-10T15:00:00+02:00,National Division 1 ACFF - Oprykningsgruppe - Runde 10,be-tubize-braine,be-union-rochefortoise,be-tubize-braine,scheduled,,,be-national-division-1-acff-promotion-group,2025-26
 be3ap-03-virton-habay-la-neuve,2026-05-10T15:00:00+02:00,National Division 1 ACFF - Oprykningsgruppe - Runde 10,be-virton,be-habay-la-neuve,be-virton,scheduled,,,be-national-division-1-acff-promotion-group,2025-26
+sl-20261201-br-ndby-if-fc-fredericia,2026-12-01T19:00:00+02:00,Runde 17,dk-brondby-if,dk-fc-fredericia,dk-brondby-if,scheduled,,,,2025-26
+sl-20261103-fc-midtjylland-agf,2026-11-03T19:00:00+02:00,Runde 14,dk-fc-midtjylland,dk-agf,dk-fc-midtjylland,scheduled,,,,2025-26
+sl-20261205-fc-fredericia-ob,2026-12-05T19:00:00+02:00,Runde 18,dk-fc-fredericia,dk-ob,dk-fc-fredericia,scheduled,,,,2025-26
+sl-20261107-ob-silkeborg-if,2026-11-07T19:00:00+02:00,Runde 15,dk-ob,dk-silkeborg-if,dk-ob,scheduled,,,,2025-26
+sl-20261207-fc-nordsj-lland-silkeborg-if,2026-12-07T14:00:00+02:00,Runde 18,dk-fc-nordsjaelland,dk-silkeborg-if,dk-fc-nordsjaelland,scheduled,,,,2025-26
+sl-20261207-viborg-ff-fc-midtjylland,2026-12-07T14:00:00+02:00,Runde 18,dk-viborg-ff,dk-fc-midtjylland,dk-viborg-ff,scheduled,,,,2025-26
+sl-20261207-randers-fc-agf,2026-12-07T16:00:00+02:00,Runde 18,dk-randers-fc,dk-agf,dk-randers-fc,scheduled,,,,2025-26
+sl-20261207-fc-k-benhavn-s-nderjyske,2026-12-07T18:00:00+02:00,Runde 18,dk-fc-kobenhavn,dk-sonderjyske,dk-fc-kobenhavn,scheduled,,,,2025-26
+sl-20261208-vejle-boldklub-br-ndby-if,2026-12-08T19:00:00+02:00,Runde 18,dk-vejle-boldklub,dk-brondby-if,dk-vejle-boldklub,scheduled,,,,2025-26
+sl-20261109-fc-fredericia-viborg-ff,2026-11-09T14:00:00+02:00,Runde 15,dk-fc-fredericia,dk-viborg-ff,dk-fc-fredericia,scheduled,,,,2025-26
+sl-20261109-vejle-boldklub-fc-k-benhavn,2026-11-09T14:00:00+02:00,Runde 15,dk-vejle-boldklub,dk-fc-kobenhavn,dk-vejle-boldklub,scheduled,,,,2025-26
+sl-20261109-randers-fc-fc-midtjylland,2026-11-09T16:00:00+02:00,Runde 15,dk-randers-fc,dk-fc-midtjylland,dk-randers-fc,scheduled,,,,2025-26
+sl-20261109-agf-s-nderjyske,2026-11-09T18:00:00+02:00,Runde 15,dk-agf,dk-sonderjyske,dk-agf,scheduled,,,,2025-26
+sl-20261109-br-ndby-if-fc-nordsj-lland,2026-11-09T20:00:00+02:00,Runde 15,dk-brondby-if,dk-fc-nordsjaelland,dk-brondby-if,scheduled,,,,2025-26
+sl-20261121-silkeborg-if-agf,2026-11-21T19:00:00+02:00,Runde 16,dk-silkeborg-if,dk-agf,dk-silkeborg-if,scheduled,,,,2025-26
+sl-20261123-fc-k-benhavn-br-ndby-if,2026-11-23T12:00:00+02:00,Runde 16,dk-fc-kobenhavn,dk-brondby-if,dk-fc-kobenhavn,scheduled,,,,2025-26
+sl-20261123-viborg-ff-vejle-boldklub,2026-11-23T14:00:00+02:00,Runde 16,dk-viborg-ff,dk-vejle-boldklub,dk-viborg-ff,scheduled,,,,2025-26
+sl-20261123-fc-nordsj-lland-fc-fredericia,2026-11-23T16:00:00+02:00,Runde 16,dk-fc-nordsjaelland,dk-fc-fredericia,dk-fc-nordsjaelland,scheduled,,,,2025-26
+sl-20261123-s-nderjyske-fc-midtjylland,2026-11-23T18:00:00+02:00,Runde 16,dk-sonderjyske,dk-fc-midtjylland,dk-sonderjyske,scheduled,,,,2025-26
+sl-20261124-randers-fc-ob,2026-11-24T19:00:00+02:00,Runde 16,dk-randers-fc,dk-ob,dk-randers-fc,scheduled,,,,2025-26
+sl-20261128-s-nderjyske-viborg-ff,2026-11-28T19:00:00+02:00,Runde 17,dk-sonderjyske,dk-viborg-ff,dk-sonderjyske,scheduled,,,,2025-26
+sl-20261130-agf-fc-k-benhavn,2026-11-30T14:00:00+02:00,Runde 17,dk-agf,dk-fc-kobenhavn,dk-agf,scheduled,,,,2025-26
+sl-20261130-silkeborg-if-randers-fc,2026-11-30T14:00:00+02:00,Runde 17,dk-silkeborg-if,dk-randers-fc,dk-silkeborg-if,scheduled,,,,2025-26
+sl-20261130-fc-midtjylland-fc-nordsj-lland,2026-11-30T16:00:00+02:00,Runde 17,dk-fc-midtjylland,dk-fc-nordsjaelland,dk-fc-midtjylland,scheduled,,,,2025-26
+sl-20261130-ob-vejle-boldklub,2026-11-30T18:00:00+02:00,Runde 17,dk-ob,dk-vejle-boldklub,dk-ob,scheduled,,,,2025-26
+1d-20261101-aarhus-fremad-hvidovre-if,2026-11-01T14:00:00+02:00,Runde 15,dk-aarhus-fremad,dk-hvidovre-if,dk-aarhus-fremad,scheduled,,,,2025-26
+1d-20261101-hiller-d-fodbold-kolding-if,2026-11-01T14:00:00+02:00,Runde 15,dk-hillerod-fodbold,dk-kolding-if,dk-hillerod-fodbold,scheduled,,,,2025-26
+1d-20261101-middelfart-aab,2026-11-01T14:00:00+02:00,Runde 15,dk-middelfart,dk-aab,dk-middelfart,scheduled,,,,2025-26
+1d-20261102-lyngby-hobro-ik,2026-11-02T15:00:00+02:00,Runde 15,dk-lyngby-boldklub,dk-hobro-ik,dk-lyngby-boldklub,scheduled,,,,2025-26
+1d-20261102-esbjerg-fb-b-93,2026-11-02T17:00:00+02:00,Runde 15,dk-esbjerg-fb,dk-b-93,dk-esbjerg-fb,scheduled,,,,2025-26
+1d-20261107-hobro-ik-aarhus-fremad,2026-11-07T18:00:00+02:00,Runde 16,dk-hobro-ik,dk-aarhus-fremad,dk-hobro-ik,scheduled,,,,2025-26
+1d-20261107-hb-k-ge-hiller-d-fodbold,2026-11-07T18:30:00+02:00,Runde 16,dk-hb-koge,dk-hillerod-fodbold,dk-hb-koge,scheduled,,,,2025-26
+1d-20261107-kolding-if-ac-horsens,2026-11-07T19:00:00+02:00,Runde 16,dk-kolding-if,dk-ac-horsens,dk-kolding-if,scheduled,,,,2025-26
+1d-20261108-b-93-lyngby,2026-11-08T14:00:00+02:00,Runde 16,dk-b-93,dk-lyngby-boldklub,dk-b-93,scheduled,,,,2025-26
+1d-20261109-hvidovre-if-aab,2026-11-09T13:00:00+02:00,Runde 16,dk-hvidovre-if,dk-aab,dk-hvidovre-if,scheduled,,,,2025-26
+1d-20261110-esbjerg-fb-middelfart,2026-11-10T19:00:00+02:00,Runde 16,dk-esbjerg-fb,dk-middelfart,dk-esbjerg-fb,scheduled,,,,2025-26
+1d-20261017-hb-k-ge-kolding-if,2026-10-17T18:30:00+02:00,Runde 13,dk-hb-koge,dk-kolding-if,dk-hb-koge,scheduled,,,,2025-26
+1d-20261017-b-93-aab,2026-10-17T19:00:00+02:00,Runde 13,dk-b-93,dk-aab,dk-b-93,scheduled,,,,2025-26
+1d-20261018-middelfart-ac-horsens,2026-10-18T14:00:00+02:00,Runde 13,dk-middelfart,dk-ac-horsens,dk-middelfart,scheduled,,,,2025-26
+1d-20261019-lyngby-aarhus-fremad,2026-10-19T15:00:00+02:00,Runde 13,dk-lyngby-boldklub,dk-aarhus-fremad,dk-lyngby-boldklub,scheduled,,,,2025-26
+1d-20261120-hobro-ik-hvidovre-if,2026-11-20T18:30:00+02:00,Runde 17,dk-hobro-ik,dk-hvidovre-if,dk-hobro-ik,scheduled,,,,2025-26
+1d-20261121-lyngby-esbjerg-fb,2026-11-21T19:00:00+02:00,Runde 17,dk-lyngby-boldklub,dk-esbjerg-fb,dk-lyngby-boldklub,scheduled,,,,2025-26
+1d-20261122-aab-kolding-if,2026-11-22T14:00:00+02:00,Runde 17,dk-aab,dk-kolding-if,dk-aab,scheduled,,,,2025-26
+1d-20260523-middelfart-b-93,2026-05-23T14:00:00+02:00,Runde 31,dk-middelfart,dk-b-93,dk-middelfart,scheduled,,,,2025-26
+1d-20261023-hvidovre-if-hb-k-ge,2026-10-23T18:30:00+02:00,Runde 14,dk-hvidovre-if,dk-hb-koge,dk-hvidovre-if,scheduled,,,,2025-26
+1d-20261123-aarhus-fremad-hb-k-ge,2026-11-23T14:00:00+02:00,Runde 17,dk-aarhus-fremad,dk-hb-koge,dk-aarhus-fremad,scheduled,,,,2025-26
+1d-20261123-ac-horsens-hiller-d-fodbold,2026-11-23T15:00:00+02:00,Runde 17,dk-ac-horsens,dk-hillerod-fodbold,dk-ac-horsens,scheduled,,,,2025-26
+1d-20261024-b-93-ac-horsens,2026-10-24T19:00:00+02:00,Runde 14,dk-b-93,dk-ac-horsens,dk-b-93,scheduled,,,,2025-26
+1d-20261024-kolding-if-middelfart,2026-10-24T19:00:00+02:00,Runde 14,dk-kolding-if,dk-middelfart,dk-kolding-if,scheduled,,,,2025-26
+1d-20261025-aab-lyngby,2026-10-25T14:00:00+02:00,Runde 14,dk-aab,dk-lyngby-boldklub,dk-aab,scheduled,,,,2025-26
+1d-20261025-aarhus-fremad-esbjerg-fb,2026-10-25T14:00:00+02:00,Runde 14,dk-aarhus-fremad,dk-esbjerg-fb,dk-aarhus-fremad,scheduled,,,,2025-26
+1d-20261025-hobro-ik-hiller-d-fodbold,2026-10-25T14:00:00+02:00,Runde 14,dk-hobro-ik,dk-hillerod-fodbold,dk-hobro-ik,scheduled,,,,2025-26
+1d-20261128-b-93-hobro-ik,2026-11-28T19:00:00+02:00,Runde 18,dk-b-93,dk-hobro-ik,dk-b-93,scheduled,,,,2025-26
+1d-20261128-hiller-d-fodbold-lyngby,2026-11-28T19:00:00+02:00,Runde 18,dk-hillerod-fodbold,dk-lyngby-boldklub,dk-hillerod-fodbold,scheduled,,,,2025-26
+1d-20261129-hvidovre-if-esbjerg-fb,2026-11-29T13:30:00+02:00,Runde 18,dk-hvidovre-if,dk-esbjerg-fb,dk-hvidovre-if,scheduled,,,,2025-26
+1d-20261129-hb-k-ge-middelfart,2026-11-29T15:00:00+02:00,Runde 18,dk-hb-koge,dk-middelfart,dk-hb-koge,scheduled,,,,2025-26
+1d-20261130-ac-horsens-aab,2026-11-30T15:00:00+02:00,Runde 18,dk-ac-horsens,dk-aab,dk-ac-horsens,scheduled,,,,2025-26
+1d-20261130-kolding-if-aarhus-fremad,2026-11-30T15:00:00+02:00,Runde 18,dk-kolding-if,dk-aarhus-fremad,dk-kolding-if,scheduled,,,,2025-26
+1d-20260531-hiller-d-fodbold-hvidovre-if,2026-05-31T15:00:00+02:00,Runde 32,dk-hillerod-fodbold,dk-hvidovre-if,dk-hillerod-fodbold,scheduled,,,,2025-26
+1d-20261031-ac-horsens-hb-k-ge,2026-10-31T19:00:00+02:00,Runde 15,dk-ac-horsens,dk-hb-koge,dk-ac-horsens,scheduled,,,,2025-26
+2d-20261101-brabrand-if-hik,2026-11-01T14:00:00+02:00,,dk-brabrand-if,dk-hik,dk-brabrand-if,scheduled,,,,2025-26
+2d-20261101-fc-roskilde-thisted-fc,2026-11-01T14:00:00+02:00,,dk-fc-roskilde,dk-thisted-fc,dk-fc-roskilde,scheduled,,,,2025-26
+2d-20261101-skive-vsk-aarhus,2026-11-01T14:00:00+02:00,,dk-skive,dk-vsk-aarhus,dk-skive,scheduled,,,,2025-26
+2d-20261101-vendsyssel-ff-ish-j-if,2026-11-01T15:00:00+02:00,,dk-vendsyssel-ff,dk-ishoj-if,dk-vendsyssel-ff,scheduled,,,,2025-26
+2d-20261102-n-stved-bk-fc-helsing-r,2026-11-02T13:00:00+02:00,,dk-naestved,dk-fc-helsingor,dk-naestved,scheduled,,,,2025-26
+2d-20261107-skive-fc-roskilde,2026-11-07T18:30:00+02:00,,dk-skive,dk-fc-roskilde,dk-skive,scheduled,,,,2025-26
+2d-20261107-hik-fc-helsing-r,2026-11-07T19:00:00+02:00,,dk-hik,dk-fc-helsingor,dk-hik,scheduled,,,,2025-26
+2d-20261108-ish-j-if-brabrand-if,2026-11-08T13:00:00+02:00,,dk-ishoj-if,dk-brabrand-if,dk-ishoj-if,scheduled,,,,2025-26
+2d-20261108-ab-vendsyssel-ff,2026-11-08T15:00:00+02:00,,dk-ab,dk-vendsyssel-ff,dk-ab,scheduled,,,,2025-26
+2d-20261109-thisted-fc-n-stved-bk,2026-11-09T13:00:00+02:00,,dk-thisted-fc,dk-naestved,dk-thisted-fc,scheduled,,,,2025-26
+2d-20261011-ish-j-if-thisted-fc,2026-10-11T13:00:00+02:00,,dk-ishoj-if,dk-thisted-fc,dk-ishoj-if,scheduled,,,,2025-26
+2d-20261011-fc-roskilde-brabrand-if,2026-10-11T14:00:00+02:00,,dk-fc-roskilde,dk-brabrand-if,dk-fc-roskilde,scheduled,,,,2025-26
+2d-20261011-hik-vsk-aarhus,2026-10-11T14:00:00+02:00,,dk-hik,dk-vsk-aarhus,dk-hik,scheduled,,,,2025-26
+2d-20261114-fc-helsing-r-ab,2026-11-14T19:00:00+02:00,,dk-fc-helsingor,dk-ab,dk-fc-helsingor,scheduled,,,,2025-26
+2d-20261115-brabrand-if-fc-roskilde,2026-11-15T14:00:00+02:00,,dk-brabrand-if,dk-fc-roskilde,dk-brabrand-if,scheduled,,,,2025-26
+2d-20261115-thisted-fc-ish-j-if,2026-11-15T15:00:00+02:00,,dk-thisted-fc,dk-ishoj-if,dk-thisted-fc,scheduled,,,,2025-26
+2d-20261116-n-stved-bk-vsk-aarhus,2026-11-16T13:00:00+02:00,,dk-naestved,dk-vsk-aarhus,dk-naestved,scheduled,,,,2025-26
+2d-20261017-fc-helsing-r-ish-j-if,2026-10-17T19:00:00+02:00,,dk-fc-helsingor,dk-ishoj-if,dk-fc-helsingor,scheduled,,,,2025-26
+2d-20261017-fc-roskilde-fremad-amager,2026-10-17T19:00:00+02:00,,dk-fc-roskilde,dk-fremad-amager,dk-fc-roskilde,scheduled,,,,2025-26
+2d-20261017-skive-vendsyssel-ff,2026-10-17T19:00:00+02:00,,dk-skive,dk-vendsyssel-ff,dk-skive,scheduled,,,,2025-26
+2d-20261018-brabrand-if-vsk-aarhus,2026-10-18T14:00:00+02:00,,dk-brabrand-if,dk-vsk-aarhus,dk-brabrand-if,scheduled,,,,2025-26
+2d-20261019-thisted-fc-hik,2026-10-19T14:00:00+02:00,,dk-thisted-fc,dk-hik,dk-thisted-fc,scheduled,,,,2025-26
+2d-20260523-vsk-aarhus-fremad-amager,2026-05-23T13:30:00+02:00,Runde 30,dk-vsk-aarhus,dk-fremad-amager,dk-vsk-aarhus,scheduled,,,,2025-26
+2d-20261024-fc-helsing-r-thisted-fc,2026-10-24T19:00:00+02:00,,dk-fc-helsingor,dk-thisted-fc,dk-fc-helsingor,scheduled,,,,2025-26
+2d-20261024-vendsyssel-ff-fremad-amager,2026-10-24T19:00:00+02:00,,dk-vendsyssel-ff,dk-fremad-amager,dk-vendsyssel-ff,scheduled,,,,2025-26
+2d-20261025-ish-j-if-n-stved-bk,2026-10-25T13:00:00+02:00,,dk-ishoj-if,dk-naestved,dk-ishoj-if,scheduled,,,,2025-26
+2d-20261025-vsk-aarhus-fc-roskilde,2026-10-25T13:30:00+02:00,,dk-vsk-aarhus,dk-fc-roskilde,dk-vsk-aarhus,scheduled,,,,2025-26
+2d-20261025-ab-brabrand-if,2026-10-25T14:00:00+02:00,,dk-ab,dk-brabrand-if,dk-ab,scheduled,,,,2025-26
+2d-20261025-hik-skive,2026-10-25T14:00:00+02:00,,dk-hik,dk-skive,dk-hik,scheduled,,,,2025-26
+2d-20260529-fremad-amager-skive,2026-05-29T19:00:00+02:00,Runde 31,dk-fremad-amager,dk-skive,dk-fremad-amager,scheduled,,,,2025-26
+2d-20260529-n-stved-bk-ab,2026-05-29T19:00:00+02:00,Runde 31,dk-naestved,dk-ab,dk-naestved,scheduled,,,,2025-26
+2d-20260530-hik-vendsyssel-ff,2026-05-30T14:00:00+02:00,Runde 31,dk-hik,dk-vendsyssel-ff,dk-hik,scheduled,,,,2025-26
+2d-20261031-fremad-amager-ab,2026-10-31T19:00:00+02:00,,dk-fremad-amager,dk-ab,dk-fremad-amager,scheduled,,,,2025-26
+3d-20261101-holb-k-h-rsholm-usser-d,2026-11-01T13:00:00+02:00,Runde 14,dk-holbaek-bi,dk-horsholm-usserod-ik,dk-holbaek-bi,scheduled,,,,2025-26
+3d-20261101-odder-fa-2000,2026-11-01T13:00:00+02:00,Runde 14,dk-odder-fodbold,dk-fa-2000,dk-odder-fodbold,scheduled,,,,2025-26
+3d-20261101-if-lyseng-nyk-bing-fc,2026-11-01T13:30:00+02:00,Runde 14,dk-if-lyseng,dk-nykobing-fc,dk-if-lyseng,scheduled,,,,2025-26
+3d-20261101-sundby-n-sby,2026-11-01T14:00:00+02:00,Runde 14,dk-sundby-bk,dk-naesby-bk,dk-sundby-bk,scheduled,,,,2025-26
+3d-20261101-vanl-se-br-nsh-j,2026-11-01T14:00:00+02:00,Runde 14,dk-vanlose,dk-bronshoj,dk-vanlose,scheduled,,,,2025-26
+3d-20261004-odder-br-nsh-j,2026-10-04T13:00:00+02:00,Runde 10,dk-odder-fodbold,dk-bronshoj,dk-odder-fodbold,scheduled,,,,2025-26
+3d-20261004-n-sby-holb-k,2026-10-04T14:00:00+02:00,Runde 10,dk-naesby-bk,dk-holbaek-bi,dk-naesby-bk,scheduled,,,,2025-26
+3d-20261004-sundby-fa-2000,2026-10-04T14:00:00+02:00,Runde 10,dk-sundby-bk,dk-fa-2000,dk-sundby-bk,scheduled,,,,2025-26
+3d-20261004-vejgaard-nyk-bing-fc,2026-10-04T15:00:00+02:00,Runde 10,dk-vejgaard-b,dk-nykobing-fc,dk-vejgaard-b,scheduled,,,,2025-26
+3d-20260606-vanl-se-h-rsholm-usser-d,2026-06-06T14:00:00+02:00,Runde 31,dk-vanlose,dk-horsholm-usserod-ik,dk-vanlose,scheduled,,,,2025-26
+3d-20261108-holb-k-vanl-se,2026-11-08T13:00:00+02:00,Runde 15,dk-holbaek-bi,dk-vanlose,dk-holbaek-bi,scheduled,,,,2025-26
+3d-20261108-h-rsholm-usser-d-vejgaard,2026-11-08T13:00:00+02:00,Runde 15,dk-horsholm-usserod-ik,dk-vejgaard-b,dk-horsholm-usserod-ik,scheduled,,,,2025-26
+3d-20261108-bk-frem-odder,2026-11-08T14:00:00+02:00,Runde 15,dk-frem,dk-odder-fodbold,dk-frem,scheduled,,,,2025-26
+3d-20261108-br-nsh-j-nyk-bing-fc,2026-11-08T14:00:00+02:00,Runde 15,dk-bronshoj,dk-nykobing-fc,dk-bronshoj,scheduled,,,,2025-26
+3d-20261108-fa-2000-sundby,2026-11-08T14:00:00+02:00,Runde 15,dk-fa-2000,dk-sundby-bk,dk-fa-2000,scheduled,,,,2025-26
+3d-20261108-n-sby-if-lyseng,2026-11-08T14:00:00+02:00,Runde 15,dk-naesby-bk,dk-if-lyseng,dk-naesby-bk,scheduled,,,,2025-26
+3d-20261011-h-rsholm-usser-d-sundby,2026-10-11T13:00:00+02:00,Runde 11,dk-horsholm-usserod-ik,dk-sundby-bk,dk-horsholm-usserod-ik,scheduled,,,,2025-26
+3d-20261011-if-lyseng-n-sby,2026-10-11T13:30:00+02:00,Runde 11,dk-if-lyseng,dk-naesby-bk,dk-if-lyseng,scheduled,,,,2025-26
+3d-20261011-fa-2000-odder,2026-10-11T14:00:00+02:00,Runde 11,dk-fa-2000,dk-odder-fodbold,dk-fa-2000,scheduled,,,,2025-26
+3d-20261011-nyk-bing-fc-bk-frem,2026-10-11T15:00:00+02:00,Runde 11,dk-nykobing-fc,dk-frem,dk-nykobing-fc,scheduled,,,,2025-26
+3d-20260613-holb-k-vejgaard,2026-06-13T14:00:00+02:00,Runde 32,dk-holbaek-bi,dk-vejgaard-b,dk-holbaek-bi,scheduled,,,,2025-26
+3d-20261115-vejgaard-holb-k,2026-11-15T13:00:00+02:00,Runde 16,dk-vejgaard-b,dk-holbaek-bi,dk-vejgaard-b,scheduled,,,,2025-26
+3d-20261115-if-lyseng-br-nsh-j,2026-11-15T13:30:00+02:00,Runde 16,dk-if-lyseng,dk-bronshoj,dk-if-lyseng,scheduled,,,,2025-26
+3d-20261115-n-sby-fa-2000,2026-11-15T14:00:00+02:00,Runde 16,dk-naesby-bk,dk-fa-2000,dk-naesby-bk,scheduled,,,,2025-26
+3d-20261115-sundby-bk-frem,2026-11-15T14:00:00+02:00,Runde 16,dk-sundby-bk,dk-frem,dk-sundby-bk,scheduled,,,,2025-26
+3d-20261115-vanl-se-odder,2026-11-15T14:00:00+02:00,Runde 16,dk-vanlose,dk-odder-fodbold,dk-vanlose,scheduled,,,,2025-26
+3d-20260516-bk-frem-if-lyseng,2026-05-16T14:00:00+02:00,Runde 28,dk-frem,dk-if-lyseng,dk-frem,scheduled,,,,2025-26
+3d-20260517-nyk-bing-fc-h-rsholm-usser-d,2026-05-17T14:00:00+02:00,Runde 28,dk-nykobing-fc,dk-horsholm-usserod-ik,dk-nykobing-fc,scheduled,,,,2025-26
+3d-20261018-odder-holb-k,2026-10-18T13:00:00+02:00,Runde 12,dk-odder-fodbold,dk-holbaek-bi,dk-odder-fodbold,scheduled,,,,2025-26
+3d-20261018-bk-frem-h-rsholm-usser-d,2026-10-18T14:00:00+02:00,Runde 12,dk-frem,dk-horsholm-usserod-ik,dk-frem,scheduled,,,,2025-26
+3d-20261018-n-sby-br-nsh-j,2026-10-18T14:00:00+02:00,Runde 12,dk-naesby-bk,dk-bronshoj,dk-naesby-bk,scheduled,,,,2025-26
+3d-20261018-sundby-nyk-bing-fc,2026-10-18T14:00:00+02:00,Runde 12,dk-sundby-bk,dk-nykobing-fc,dk-sundby-bk,scheduled,,,,2025-26
+3d-20261018-vanl-se-if-lyseng,2026-10-18T14:00:00+02:00,Runde 12,dk-vanlose,dk-if-lyseng,dk-vanlose,scheduled,,,,2025-26
+3d-20261018-vejgaard-fa-2000,2026-10-18T14:00:00+02:00,Runde 12,dk-vejgaard-b,dk-fa-2000,dk-vejgaard-b,scheduled,,,,2025-26
+3d-20261025-h-rsholm-usser-d-odder,2026-10-25T13:00:00+02:00,Runde 13,dk-horsholm-usserod-ik,dk-odder-fodbold,dk-horsholm-usserod-ik,scheduled,,,,2025-26
+3d-20261025-if-lyseng-sundby,2026-10-25T13:30:00+02:00,Runde 13,dk-if-lyseng,dk-sundby-bk,dk-if-lyseng,scheduled,,,,2025-26
+3d-20261025-bk-frem-holb-k,2026-10-25T14:00:00+02:00,Runde 13,dk-frem,dk-holbaek-bi,dk-frem,scheduled,,,,2025-26
+3d-20261025-br-nsh-j-vejgaard,2026-10-25T14:00:00+02:00,Runde 13,dk-bronshoj,dk-vejgaard-b,dk-bronshoj,scheduled,,,,2025-26
+3d-20261025-fa-2000-vanl-se,2026-10-25T14:00:00+02:00,Runde 13,dk-fa-2000,dk-vanlose,dk-fa-2000,scheduled,,,,2025-26
+3d-20260529-br-nsh-j-vanl-se,2026-05-29T18:30:00+02:00,Runde 30,dk-bronshoj,dk-vanlose,dk-bronshoj,scheduled,,,,2025-26
+3d-20260530-vejgaard-bk-frem,2026-05-30T13:00:00+02:00,Runde 30,dk-vejgaard-b,dk-frem,dk-vejgaard-b,scheduled,,,,2025-26
+3d-20260531-nyk-bing-fc-n-sby,2026-05-31T14:00:00+02:00,Runde 30,dk-nykobing-fc,dk-naesby-bk,dk-nykobing-fc,scheduled,,,,2025-26
+ech-20260523-hull-southampton,2026-05-23T17:30:00+02:00,Finale,en-hull-city,en-southampton,en-hull-city,scheduled,,,,2025-26
+echp-20260523-hull-southampton,2026-05-23T17:30:00+02:00,Finale,en-hull-city,en-southampton,en-hull-city,scheduled,,,en-championship-playoffs,2025-26
+el1p-20260524-bolton-stockport,2026-05-24T14:00:00+02:00,Finale,en-bolton-wanderers,en-stockport-county,en-bolton-wanderers,scheduled,,,en-league-one-playoffs,2025-26
+el1-20260524-bolton-stockport,2026-05-24T14:00:00+02:00,Finale,en-bolton-wanderers,en-stockport-county,en-bolton-wanderers,scheduled,,,,2025-26
+el2-20260515-notts-county-chesterfield,2026-05-15T21:00:00+02:00,Semifinalerne,en-notts-county,en-chesterfield,en-notts-county,scheduled,,,,2025-26
+itbp-20260516-juve-stabia-monza,2026-05-16T20:00:00+02:00,Semifinalerne,it-juve-stabia,it-monza,it-juve-stabia,scheduled,,,it-serie-b-playoffs,2025-26
+itbp-20260517-catanzaro-palermo,2026-05-17T20:00:00+02:00,Semifinalerne,it-catanzaro,it-palermo,it-catanzaro,scheduled,,,it-serie-b-playoffs,2025-26
+itbp-20260519-monza-juve-stabia,2026-05-19T20:00:00+02:00,Semifinalerne,it-monza,it-juve-stabia,it-monza,scheduled,,,it-serie-b-playoffs,2025-26
+itbp-20260520-palermo-catanzaro,2026-05-20T20:00:00+02:00,Semifinalerne,it-palermo,it-catanzaro,it-palermo,scheduled,,,it-serie-b-playoffs,2025-26
+itlp-20260517-casarano-brescia,2026-05-17T20:00:00+02:00,Kvartfinalerne,it-casarano,it-brescia,it-casarano,scheduled,,,it-lega-pro-promotion-playoffs,2025-26
+itlp-20260517-potenza-ascoli,2026-05-17T20:00:00+02:00,Kvartfinalerne,it-potenza,it-ascoli,it-potenza,scheduled,,,it-lega-pro-promotion-playoffs,2025-26
+itlp-20260517-salernitana-ravenna,2026-05-17T20:00:00+02:00,Kvartfinalerne,it-salernitana,it-ravenna,it-salernitana,scheduled,,,it-lega-pro-promotion-playoffs,2025-26
+itlp-20260517-lecco-catania,2026-05-17T20:45:00+02:00,Kvartfinalerne,it-lecco,it-catania,it-lecco,scheduled,,,it-lega-pro-promotion-playoffs,2025-26
+itlp-20260520-ascoli-potenza,2026-05-20T20:00:00+02:00,Kvartfinalerne,it-ascoli,it-potenza,it-ascoli,scheduled,,,it-lega-pro-promotion-playoffs,2025-26
+itlp-20260520-brescia-casarano,2026-05-20T20:00:00+02:00,Kvartfinalerne,it-brescia,it-casarano,it-brescia,scheduled,,,it-lega-pro-promotion-playoffs,2025-26
+itlp-20260520-catania-lecco,2026-05-20T20:30:00+02:00,Kvartfinalerne,it-catania,it-lecco,it-catania,scheduled,,,it-lega-pro-promotion-playoffs,2025-26
+itlp-20260520-ravenna-salernitana,2026-05-20T20:45:00+02:00,Kvartfinalerne,it-ravenna,it-salernitana,it-ravenna,scheduled,,,it-lega-pro-promotion-playoffs,2025-26
+be-promotion-relegation-playoffs-20260517-lommel-sk-dender,2026-05-17T16:00:00+02:00,Finale,be-lommel-sk,be-dender,be-lommel-sk,scheduled,,,be-promotion-relegation-playoffs,2025-26
+be-promotion-relegation-playoffs-20260523-dender-lommel-sk,2026-05-23T18:15:00+02:00,Finale,be-dender,be-lommel-sk,be-dender,scheduled,,,be-promotion-relegation-playoffs,2025-26
+be-national-division-1-acff-20261206-tubize-braine-royal-union-sg-2,2026-12-06T20:00:00+02:00,Runde 16,be-tubize-braine,be-union-sg-b,be-tubize-braine,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261206-union-rochefortoise-charleroi-b,2026-12-06T20:00:00+02:00,Runde 16,be-union-rochefortoise,be-zebra-elites,be-union-rochefortoise,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261206-virton-st-liege-u23,2026-12-06T20:00:00+02:00,Runde 16,be-virton,be-sl16-fc,be-virton,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261207-namur-meux,2026-12-07T14:30:00+02:00,Runde 16,be-union-namur,be-meux,be-union-namur,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261207-stockay-warfusee-habay-la-neuve,2026-12-07T14:30:00+02:00,Runde 16,be-stockay-warfusee,be-habay-la-neuve,be-stockay-warfusee,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261207-schaerbeek-evere-renaissance-mons,2026-12-07T15:00:00+02:00,Runde 16,be-crossing-schaerbeek,be-renaissance-mons,be-crossing-schaerbeek,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261213-st-liege-u23-namur,2026-12-13T19:00:00+02:00,Runde 17,be-sl16-fc,be-union-namur,be-sl16-fc,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261213-royal-union-sg-2-charleroi-b,2026-12-13T19:30:00+02:00,Runde 17,be-union-sg-b,be-zebra-elites,be-union-sg-b,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261213-meux-union-rochefortoise,2026-12-13T20:00:00+02:00,Runde 17,be-meux,be-union-rochefortoise,be-meux,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261213-renaissance-mons-virton,2026-12-13T20:00:00+02:00,Runde 17,be-renaissance-mons,be-virton,be-renaissance-mons,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261214-habay-la-neuve-tubize-braine,2026-12-14T14:30:00+02:00,Runde 17,be-habay-la-neuve,be-tubize-braine,be-habay-la-neuve,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261214-schaerbeek-evere-stockay-warfusee,2026-12-14T15:00:00+02:00,Runde 17,be-crossing-schaerbeek,be-stockay-warfusee,be-crossing-schaerbeek,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261130-habay-la-neuve-union-rochefortoise,2026-11-30T14:30:00+02:00,Runde 15,be-habay-la-neuve,be-union-rochefortoise,be-habay-la-neuve,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261130-namur-schaerbeek-evere,2026-11-30T14:30:00+02:00,Runde 15,be-union-namur,be-crossing-schaerbeek,be-union-namur,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261130-st-liege-u23-tubize-braine,2026-11-30T14:30:00+02:00,Runde 15,be-sl16-fc,be-tubize-braine,be-sl16-fc,scheduled,,,be-national-division-1-acff,2025-26
+be-national-division-1-acff-20261130-charleroi-b-stockay-warfusee,2026-11-30T15:00:00+02:00,Runde 15,be-zebra-elites,be-stockay-warfusee,be-zebra-elites,scheduled,,,be-national-division-1-acff,2025-26
