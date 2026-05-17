@@ -14,6 +14,49 @@ Opdateres løbende sammen med sprint-arbejdet.
 
 ---
 
+## Sprint Parking Lot
+
+Formål: samle de vigtigste udeståender, som ikke skal forstyrre den aktuelle 14-dages plan, men som aktivt skal med ind i kommende sprints.
+
+### Snart
+- **Premium betaling via web**
+  - Vi har gjort adgangsflowet tydeligere, men ikke bygget den rigtige vej fra interesse til køb.
+  - Bør kobles til premium-logikken på web som næste naturlige kommercielle trin.
+- **Onboarding flow for nye brugere**
+  - Gør hjemland, scope, login og premium lettere at forstå fra første minut.
+  - Særligt vigtigt når produktet skal forklares uden manuel hjælp.
+- **Copy-polish i app og web**
+  - Fjerne sidste udvikleragtige eller interne formuleringer.
+  - Skærpe sproget om hvad man kan, ikke kan og hvorfor.
+- **`Min tur` som stærkere produktflade**
+  - Mere motiverende progression, tydeligere overblik og stærkere følelse af næste skridt.
+
+### Senere
+- **API'er til kampprogram og reference-data**
+  - Vurdér om dele af fixture-flowet skal løftes fra fil-/feed-tænkning til mere egentlige interne API'er.
+  - Relevansen stiger i takt med flere platforme, flere integrationspunkter og mere drift.
+- **Flere ligaer**
+  - Udvide premium-modellen kontrolleret med nye lande/liga-pakker.
+  - Skal ske uden at gøre Danmark-fundamentet eller playoff-logikken skrøbelig.
+- **Engelsk version af appen**
+  - Produktet bør kunne lokaliseres, hvis målgruppen skal udvides.
+  - Kræver både UI-oversættelse og sproglig stillingtagen til hele produktfortællingen.
+- **Håndtering af bredderækker med dansk fodbold som startpunkt**
+  - Afklar hvor dybt vi vil gå i pyramiden, og hvordan det påvirker progression, dataarbejde og brugerforventning.
+  - Bør besluttes som et produktspor, ikke kun et dataindsamlingsspor.
+
+### Hold øje med
+- **Premium-modellen på tværs af app og web**
+  - Den er blevet tydeligere, men bør fortsat samles som én mental model for brugeren.
+- **Debug- og overgangslag der kan lække ind i produktoplevelsen**
+  - Seneste Tyskland-sag viste, at release-adfærd og udvikler-adfærd skal holdes helt adskilt.
+- **Fixture-/playoff-edge cases**
+  - Især special cases, overlap mellem turneringer og sæsonafslutningsformater skal fortsat overvåges.
+- **Drift som produktområde**
+  - Daily sync, audit-mails og ændringslogs er ikke bare teknik; de er en del af produktets troværdighed.
+
+---
+
 ## Done (højdepunkter)
 - Kerneflow: Stadions, Kampe, Plan, Min tur
 - Filtrering/sortering/søgning inkl. afstand
