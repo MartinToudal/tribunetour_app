@@ -31,7 +31,7 @@ struct PremiumAccessStatusCard: View {
             }
 
             if !isLoggedIn {
-                Text("Log ind i Min tur for at se dine pakker og anmode om adgang til flere lande.")
+                Text("Log ind i Min tur for at se hvad der åbner sig for dig, og for at anmode om adgang til flere lande.")
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.secondary)
             }

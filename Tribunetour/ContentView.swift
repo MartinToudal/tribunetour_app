@@ -214,7 +214,9 @@ struct StadiumsView: View {
     }
 
     private var unlockedPremiumTitles: [String] {
-        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks
+        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
+            isAuthenticated: authSession.snapshot.isAuthenticated
+        )
         return AppLeaguePackCatalog.entries
             .filter { $0.isPremium && $0.id != .premiumFull && enabledPackIds.contains($0.id.rawValue) }
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -222,7 +224,9 @@ struct StadiumsView: View {
     }
 
     private var lockedPremiumTitles: [String] {
-        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks
+        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
+            isAuthenticated: authSession.snapshot.isAuthenticated
+        )
         return AppLeaguePackCatalog.entries
             .filter { $0.isPremium && $0.id != .premiumFull && !enabledPackIds.contains($0.id.rawValue) }
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -539,8 +543,8 @@ struct StadiumsView: View {
                         lockedPremiumTitles: lockedPremiumTitles,
                         title: "Adgang til stadions",
                         subtitle: authSession.snapshot.isAuthenticated
-                            ? "Det her er de lande din konto aktuelt har åbnet i appen."
-                            : "Du ser kun Danmark som grundpakke, indtil du logger ind og får adgang til flere lande."
+                            ? "Her ser du præcis de lande din konto har adgang til lige nu."
+                            : "Som gæst ser du kun Danmark. Log ind for at se dine pakker eller få adgang til flere lande."
                     )
                 }
 

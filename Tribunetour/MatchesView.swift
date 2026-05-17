@@ -143,7 +143,9 @@ struct MatchesView: View {
     }
 
     private var unlockedPremiumTitles: [String] {
-        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks
+        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
+            isAuthenticated: authSession.snapshot.isAuthenticated
+        )
         return AppLeaguePackCatalog.entries
             .filter { $0.isPremium && $0.id != .premiumFull && enabledPackIds.contains($0.id.rawValue) }
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -151,7 +153,9 @@ struct MatchesView: View {
     }
 
     private var lockedPremiumTitles: [String] {
-        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks
+        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
+            isAuthenticated: authSession.snapshot.isAuthenticated
+        )
         return AppLeaguePackCatalog.entries
             .filter { $0.isPremium && $0.id != .premiumFull && !enabledPackIds.contains($0.id.rawValue) }
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -370,8 +374,8 @@ struct MatchesView: View {
                         lockedPremiumTitles: lockedPremiumTitles,
                         title: "Adgang til kampe",
                         subtitle: authSession.snapshot.isAuthenticated
-                            ? "Kamplisten følger de lande din konto har åbnet."
-                            : "Flere internationale kampe bliver først synlige, når du logger ind og har adgang til de relevante premium-lande."
+                            ? "Du ser kun kampe fra lande din konto allerede har åbnet."
+                            : "Som gæst ser du kun kampe fra grundpakken. Log ind for at se dine pakker og åbne flere lande."
                     )
                 }
 

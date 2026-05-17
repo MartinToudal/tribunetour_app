@@ -183,14 +183,18 @@ struct StatsView: View {
         openPremiumRequestRows.first(where: { $0.packKey == premiumRequestPack.rawValue })
     }
     private var unlockedPremiumPackTitles: [String] {
-        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks
+        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
+            isAuthenticated: authSession.snapshot.isAuthenticated
+        )
         return AppLeaguePackCatalog.entries
             .filter { $0.isPremium && $0.id != .premiumFull && enabledPackIds.contains($0.id.rawValue) }
             .sorted { $0.sortOrder < $1.sortOrder }
             .map(\.label)
     }
     private var lockedPremiumPackTitles: [String] {
-        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks
+        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
+            isAuthenticated: authSession.snapshot.isAuthenticated
+        )
         return AppLeaguePackCatalog.entries
             .filter { $0.isPremium && $0.id != .premiumFull && !enabledPackIds.contains($0.id.rawValue) }
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -963,7 +967,7 @@ struct StatsView: View {
                         unlockedPremiumTitles: unlockedPremiumPackTitles,
                         lockedPremiumTitles: lockedPremiumPackTitles,
                         title: "Dine pakker",
-                        subtitle: "Danmark er altid med. Ekstra lande bliver åbnet som premium-pakker."
+                        subtitle: "Her kan du se hvad du allerede kan bruge, og hvilke lande der stadig kræver adgang."
                     )
 
                     Text("Anmod om adgang til ligaer i andre lande. Vi åbner den rigtige pakke på din konto, når anmodningen er godkendt.")
@@ -1062,7 +1066,7 @@ struct StatsView: View {
                             unlockedPremiumTitles: [],
                             lockedPremiumTitles: lockedPremiumPackTitles,
                             title: "Adgang i appen",
-                            subtitle: "Uden login ser du kun grundpakken. Premium-lande kræver adgang på din konto."
+                            subtitle: "Som gæst ser du kun Danmark. Log ind for at se dine pakker og få adgang til flere lande."
                         )
 
                         Button {

@@ -223,14 +223,22 @@ enum AppLeaguePackSettings {
         return Set(values)
     }
 
-    static var effectiveEnabledLeaguePacks: Set<String> {
+    static func effectiveEnabledLeaguePacks(isAuthenticated: Bool) -> Set<String> {
         var ids: Set<String> = [AppLeaguePackId.coreDenmark.rawValue]
         ids.formUnion(debugEnabledLeaguePacks)
-        ids.formUnion(remoteEnabledLeaguePacks)
+
+        if isAuthenticated {
+            ids.formUnion(remoteEnabledLeaguePacks)
+        }
+
         if ids.contains(AppLeaguePackId.premiumFull.rawValue) {
             ids.formUnion(AppLeaguePackCatalog.premiumFullIncludedPackIds)
         }
         return ids
+    }
+
+    static var effectiveEnabledLeaguePacks: Set<String> {
+        effectiveEnabledLeaguePacks(isAuthenticated: true)
     }
 
     static var germanyTop3Enabled: Bool {

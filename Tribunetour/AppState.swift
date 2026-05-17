@@ -175,6 +175,10 @@ final class AppState: ObservableObject {
             }
             .store(in: &cancellables)
 
+        if !authSession.snapshot.isAuthenticated {
+            AppLeaguePackSettings.clearRemoteEnabledLeaguePacks()
+        }
+
         if authSession.snapshot.isAuthenticated {
             Task {
                 await reconcileSharedSyncModeAfterSessionRestore(snapshot: authSession.snapshot)
@@ -188,7 +192,9 @@ final class AppState: ObservableObject {
     func loadData() {
         Task { // still on MainActor because AppState is @MainActor
             do {
-                let enabledLeaguePacks = AppLeaguePackSettings.effectiveEnabledLeaguePacks
+                let enabledLeaguePacks = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
+                    isAuthenticated: authSession.snapshot.isAuthenticated
+                )
                 let clubs = try await withCheckedThrowingContinuation { (cont: CheckedContinuation<[Club], Error>) in
                     DispatchQueue.global(qos: .userInitiated).async {
                         do {
