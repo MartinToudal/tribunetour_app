@@ -139,6 +139,7 @@ struct StadiumsView: View {
     @ObservedObject var reviewsStore: AppReviewsStore
 
     @EnvironmentObject private var locationStore: LocationStore
+    @EnvironmentObject private var authSession: AppAuthSession
 
     @State private var selectedClub: Club?
     @State private var detailSheetClub: Club?
@@ -210,6 +211,22 @@ struct StadiumsView: View {
 
     private var hasSearchText: Bool {
         !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    private var unlockedPremiumTitles: [String] {
+        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks
+        return AppLeaguePackCatalog.entries
+            .filter { $0.isPremium && $0.id != .premiumFull && enabledPackIds.contains($0.id.rawValue) }
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map(\.label)
+    }
+
+    private var lockedPremiumTitles: [String] {
+        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks
+        return AppLeaguePackCatalog.entries
+            .filter { $0.isPremium && $0.id != .premiumFull && !enabledPackIds.contains($0.id.rawValue) }
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map(\.label)
     }
 
     private func sortComparator(_ a: Club, _ b: Club) -> Bool {
@@ -514,6 +531,18 @@ struct StadiumsView: View {
                     .padding(.vertical, 8)
                 }
                 .listRowInsets(EdgeInsets())
+
+                Section {
+                    PremiumAccessStatusCard(
+                        isLoggedIn: authSession.snapshot.isAuthenticated,
+                        unlockedPremiumTitles: unlockedPremiumTitles,
+                        lockedPremiumTitles: lockedPremiumTitles,
+                        title: "Adgang til stadions",
+                        subtitle: authSession.snapshot.isAuthenticated
+                            ? "Det her er de lande din konto aktuelt har åbnet i appen."
+                            : "Du ser kun Danmark som grundpakke, indtil du logger ind og får adgang til flere lande."
+                    )
+                }
 
                 if snapshot.visibleClubs.isEmpty {
                     Section {

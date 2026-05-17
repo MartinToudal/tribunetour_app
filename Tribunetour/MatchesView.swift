@@ -69,6 +69,7 @@ struct MatchesView: View {
     @AppStorage("matches.reverseDistanceSort") private var reverseDistanceSort = false
 
     @EnvironmentObject private var locationStore: LocationStore
+    @EnvironmentObject private var authSession: AppAuthSession
     private let maxShownFixtures = 200
     private let matchCalendar: Calendar = {
         var cal = Calendar(identifier: .gregorian)
@@ -139,6 +140,22 @@ struct MatchesView: View {
 
     private var scopeLabel: String {
         countryFilterRawValue == "all" ? "Alle aktive lande" : LeaguePresentation.countryLabel(countryFilterRawValue)
+    }
+
+    private var unlockedPremiumTitles: [String] {
+        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks
+        return AppLeaguePackCatalog.entries
+            .filter { $0.isPremium && $0.id != .premiumFull && enabledPackIds.contains($0.id.rawValue) }
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map(\.label)
+    }
+
+    private var lockedPremiumTitles: [String] {
+        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks
+        return AppLeaguePackCatalog.entries
+            .filter { $0.isPremium && $0.id != .premiumFull && !enabledPackIds.contains($0.id.rawValue) }
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map(\.label)
     }
 
     private func rebuildSnapshot() {
@@ -344,6 +361,18 @@ struct MatchesView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                         }
                     }
+                }
+
+                Section {
+                    PremiumAccessStatusCard(
+                        isLoggedIn: authSession.snapshot.isAuthenticated,
+                        unlockedPremiumTitles: unlockedPremiumTitles,
+                        lockedPremiumTitles: lockedPremiumTitles,
+                        title: "Adgang til kampe",
+                        subtitle: authSession.snapshot.isAuthenticated
+                            ? "Kamplisten følger de lande din konto har åbnet."
+                            : "Flere internationale kampe bliver først synlige, når du logger ind og har adgang til de relevante premium-lande."
+                    )
                 }
 
                 Section {

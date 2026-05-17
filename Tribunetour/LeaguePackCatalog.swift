@@ -207,11 +207,15 @@ enum AppLeaguePackSettings {
     static let preferredHomeCountryCodeKey = "app.preferredHomeCountryCode"
 
     static var debugEnabledLeaguePacks: Set<String> {
+        #if DEBUG
         var ids = Set<String>()
         if UserDefaults.standard.bool(forKey: germanyTop3EnabledKey) {
             ids.insert(AppLeaguePackId.germanyTop3.rawValue)
         }
         return ids
+        #else
+        return []
+        #endif
     }
 
     static var remoteEnabledLeaguePacks: Set<String> {

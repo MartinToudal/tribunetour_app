@@ -182,6 +182,20 @@ struct StatsView: View {
     private var selectedPackOpenRequest: PremiumAccessRequestUserRow? {
         openPremiumRequestRows.first(where: { $0.packKey == premiumRequestPack.rawValue })
     }
+    private var unlockedPremiumPackTitles: [String] {
+        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks
+        return AppLeaguePackCatalog.entries
+            .filter { $0.isPremium && $0.id != .premiumFull && enabledPackIds.contains($0.id.rawValue) }
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map(\.label)
+    }
+    private var lockedPremiumPackTitles: [String] {
+        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks
+        return AppLeaguePackCatalog.entries
+            .filter { $0.isPremium && $0.id != .premiumFull && !enabledPackIds.contains($0.id.rawValue) }
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .map(\.label)
+    }
 
     private var progress: Double {
         guard totalCount > 0 else { return 0 }
@@ -940,7 +954,19 @@ struct StatsView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Premium-adgang")
                         .font(.headline)
-                    Text("Anmod om adgang til ligaer i andre lande. Vi behandler anmodningen manuelt og åbner for pakken på din konto.")
+                    Text("Her kan du se hvilke lande du allerede har adgang til, og hvilke der stadig er låst.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+
+                    PremiumAccessStatusCard(
+                        isLoggedIn: true,
+                        unlockedPremiumTitles: unlockedPremiumPackTitles,
+                        lockedPremiumTitles: lockedPremiumPackTitles,
+                        title: "Dine pakker",
+                        subtitle: "Danmark er altid med. Ekstra lande bliver åbnet som premium-pakker."
+                    )
+
+                    Text("Anmod om adgang til ligaer i andre lande. Vi åbner den rigtige pakke på din konto, når anmodningen er godkendt.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
@@ -1020,7 +1046,7 @@ struct StatsView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Log ind")
                             .font(.headline)
-                        Text("Brug samme konto som på web for at synkronisere dine data og få adgang til dine ligaer.")
+                        Text("Log ind for at gemme dine data, se dine adgangspakker og låse flere lande op.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
 
@@ -1030,6 +1056,14 @@ struct StatsView: View {
                                 onDismiss: { accountPromptDismissed = true }
                             )
                         }
+
+                        PremiumAccessStatusCard(
+                            isLoggedIn: false,
+                            unlockedPremiumTitles: [],
+                            lockedPremiumTitles: lockedPremiumPackTitles,
+                            title: "Adgang i appen",
+                            subtitle: "Uden login ser du kun grundpakken. Premium-lande kræver adgang på din konto."
+                        )
 
                         Button {
                             showAuthSheet = true
@@ -1954,7 +1988,7 @@ private struct AccountPromptCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Opret en konto og behold din fremdrift")
                         .font(.subheadline.weight(.semibold))
-                    Text("Det gør det lettere at få adgang til premium og fortsætte på tværs af app og web.")
+                    Text("Så kan du gemme dine data og åbne flere lande i samme konto.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
