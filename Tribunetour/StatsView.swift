@@ -131,6 +131,16 @@ struct StatsView: View {
         visitedClubs.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
 
+    private var enabledPackIds: Set<String> {
+        AppLeaguePackSettings.effectiveEnabledLeaguePacks(
+            isAuthenticated: authSession.snapshot.isAuthenticated
+        )
+    }
+
+    private var accessibleClubs: [Club] {
+        clubs.filter { enabledPackIds.contains($0.leaguePack) }
+    }
+
     private var visitedClubs: [Club] {
         progressionClubs.filter { visitedClubIds.contains($0.id) }
     }
@@ -140,11 +150,11 @@ struct StatsView: View {
     }
 
     private var progressionClubs: [Club] {
-        clubs.filter(\.countsTowardTopSystemProgression)
+        accessibleClubs.filter(\.countsTowardTopSystemProgression)
     }
 
     private var nonProgressionVisibleClubs: [Club] {
-        clubs.filter(\.shouldRemainVisibleOutsideTopSystem)
+        accessibleClubs.filter(\.shouldRemainVisibleOutsideTopSystem)
     }
 
     private var visitedCount: Int { visitedClubs.count }
@@ -183,18 +193,12 @@ struct StatsView: View {
         openPremiumRequestRows.first(where: { $0.packKey == premiumRequestPack.rawValue })
     }
     private var unlockedPremiumPackTitles: [String] {
-        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
-            isAuthenticated: authSession.snapshot.isAuthenticated
-        )
         return AppLeaguePackCatalog.entries
             .filter { $0.isPremium && $0.id != .premiumFull && enabledPackIds.contains($0.id.rawValue) }
             .sorted { $0.sortOrder < $1.sortOrder }
             .map(\.label)
     }
     private var lockedPremiumPackTitles: [String] {
-        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
-            isAuthenticated: authSession.snapshot.isAuthenticated
-        )
         return AppLeaguePackCatalog.entries
             .filter { $0.isPremium && $0.id != .premiumFull && !enabledPackIds.contains($0.id.rawValue) }
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -212,7 +216,7 @@ struct StatsView: View {
     }
 
     private var countryOptions: [String] {
-        let source = progressionClubs.isEmpty ? clubs : progressionClubs
+        let source = progressionClubs.isEmpty ? accessibleClubs : progressionClubs
         return Array(Set(source.map(\.countryCode))).sorted { left, right in
             if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
                 return LeaguePresentation.countryRank(left) < LeaguePresentation.countryRank(right)
@@ -275,8 +279,8 @@ struct StatsView: View {
 
     private func refreshSnapshot() {
         let visitedIds = Set(visitedStore.records.lazy.filter(\.value.visited).map(\.key))
-        let progressionClubs = clubs.filter(\.countsTowardTopSystemProgression)
-        let nonProgressionVisibleClubs = clubs.filter(\.shouldRemainVisibleOutsideTopSystem)
+        let progressionClubs = accessibleClubs.filter(\.countsTowardTopSystemProgression)
+        let nonProgressionVisibleClubs = accessibleClubs.filter(\.shouldRemainVisibleOutsideTopSystem)
         let visitedClubs = progressionClubs.filter { visitedIds.contains($0.id) }
         let unvisitedClubs = progressionClubs.filter { !visitedIds.contains($0.id) }
         let visitedCount = visitedClubs.count
@@ -284,7 +288,7 @@ struct StatsView: View {
         let unvisitedCount = unvisitedClubs.count
         let progress = totalCount > 0 ? Double(visitedCount) / Double(totalCount) : 0
         let progressPercentText = "\(Int((progress * 100.0).rounded()))%"
-        let sourceClubs = progressionClubs.isEmpty ? clubs : progressionClubs
+        let sourceClubs = progressionClubs.isEmpty ? accessibleClubs : progressionClubs
         let countryOptions = Array(Set(sourceClubs.map(\.countryCode))).sorted { left, right in
             if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
                 return LeaguePresentation.countryRank(left) < LeaguePresentation.countryRank(right)
@@ -533,7 +537,7 @@ struct StatsView: View {
     }
 
     private var activeHomeCountryCode: String {
-        LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set((progressionClubs.isEmpty ? clubs : progressionClubs).map(\.countryCode)))
+        LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set((progressionClubs.isEmpty ? accessibleClubs : progressionClubs).map(\.countryCode)))
     }
 
     private var currentScopeLabel: String {
@@ -1167,6 +1171,10 @@ struct StatsView: View {
                     .padding(.vertical, 6)
                 }
 
+                if !authSession.snapshot.isAuthenticated {
+                    accountAndSyncSection
+                }
+
                 Section("Næste milepæl") {
                     VStack(alignment: .leading, spacing: 8) {
                         Text(snapshot.nextMilestoneTitle)
@@ -1415,7 +1423,9 @@ struct StatsView: View {
                     }
                 }
 
-                accountAndSyncSection
+                if authSession.snapshot.isAuthenticated {
+                    accountAndSyncSection
+                }
 
                 // MARK: Feedback
                 Section("Feedback") {

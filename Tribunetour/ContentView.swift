@@ -190,13 +190,23 @@ struct StadiumsView: View {
         Set(visitedStore.records.lazy.filter(\.value.visited).map(\.key))
     }
 
+    private var enabledPackIds: Set<String> {
+        AppLeaguePackSettings.effectiveEnabledLeaguePacks(
+            isAuthenticated: authSession.snapshot.isAuthenticated
+        )
+    }
+
+    private var accessibleClubs: [Club] {
+        clubs.filter { enabledPackIds.contains($0.leaguePack) }
+    }
+
     private var reviewedClubIds: Set<String> {
         Set(reviewsStore.reviewsByClubId.keys)
     }
 
     private var countryOptions: [String] {
-        let progressionClubs = clubs.filter(\.countsTowardTopSystemProgression)
-        let source = progressionClubs.isEmpty ? clubs : progressionClubs
+        let progressionClubs = accessibleClubs.filter(\.countsTowardTopSystemProgression)
+        let source = progressionClubs.isEmpty ? accessibleClubs : progressionClubs
         return Array(Set(source.map(\.countryCode))).sorted { left, right in
             if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
                 return LeaguePresentation.countryRank(left) < LeaguePresentation.countryRank(right)
@@ -214,9 +224,6 @@ struct StadiumsView: View {
     }
 
     private var unlockedPremiumTitles: [String] {
-        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
-            isAuthenticated: authSession.snapshot.isAuthenticated
-        )
         return AppLeaguePackCatalog.entries
             .filter { $0.isPremium && $0.id != .premiumFull && enabledPackIds.contains($0.id.rawValue) }
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -224,9 +231,6 @@ struct StadiumsView: View {
     }
 
     private var lockedPremiumTitles: [String] {
-        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
-            isAuthenticated: authSession.snapshot.isAuthenticated
-        )
         return AppLeaguePackCatalog.entries
             .filter { $0.isPremium && $0.id != .premiumFull && !enabledPackIds.contains($0.id.rawValue) }
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -320,9 +324,9 @@ struct StadiumsView: View {
 
         let visitedIds = visitedClubIds
         let reviewedIds = reviewedClubIds
-        let progressionClubs = clubs.filter(\.countsTowardTopSystemProgression)
-        let nonProgressionVisibleClubs = clubs.filter(\.shouldRemainVisibleOutsideTopSystem)
-        let sourceClubs = progressionClubs.isEmpty ? clubs : progressionClubs
+        let progressionClubs = accessibleClubs.filter(\.countsTowardTopSystemProgression)
+        let nonProgressionVisibleClubs = accessibleClubs.filter(\.shouldRemainVisibleOutsideTopSystem)
+        let sourceClubs = progressionClubs.isEmpty ? accessibleClubs : progressionClubs
         let countryFilteredClubs: [Club] = {
             guard countryFilterRawValue != "all" else { return sourceClubs }
             return sourceClubs.filter { $0.countryCode == countryFilterRawValue }

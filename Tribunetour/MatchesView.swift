@@ -109,7 +109,7 @@ struct MatchesView: View {
     }
 
     private var countryOptions: [String] {
-        let source = progressionClubs.isEmpty ? clubs : progressionClubs
+        let source = progressionClubs.isEmpty ? accessibleClubs : progressionClubs
         return Array(Set(source.map(\.countryCode))).sorted { left, right in
             if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
                 return LeaguePresentation.countryRank(left) < LeaguePresentation.countryRank(right)
@@ -119,7 +119,23 @@ struct MatchesView: View {
     }
 
     private var progressionClubs: [Club] {
-        clubs.filter(\.countsTowardTopSystemProgression)
+        accessibleClubs.filter(\.countsTowardTopSystemProgression)
+    }
+
+    private var enabledPackIds: Set<String> {
+        AppLeaguePackSettings.effectiveEnabledLeaguePacks(
+            isAuthenticated: authSession.snapshot.isAuthenticated
+        )
+    }
+
+    private var accessibleClubs: [Club] {
+        clubs.filter { enabledPackIds.contains($0.leaguePack) }
+    }
+
+    private var accessibleClubById: [String: Club] {
+        ClubIdentityResolver.aliasMap(
+            from: Dictionary(uniqueKeysWithValues: accessibleClubs.map { ($0.id, $0) })
+        )
     }
 
     private var visitedVenueClubIds: Set<String> {
@@ -143,9 +159,6 @@ struct MatchesView: View {
     }
 
     private var unlockedPremiumTitles: [String] {
-        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
-            isAuthenticated: authSession.snapshot.isAuthenticated
-        )
         return AppLeaguePackCatalog.entries
             .filter { $0.isPremium && $0.id != .premiumFull && enabledPackIds.contains($0.id.rawValue) }
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -153,9 +166,6 @@ struct MatchesView: View {
     }
 
     private var lockedPremiumTitles: [String] {
-        let enabledPackIds = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
-            isAuthenticated: authSession.snapshot.isAuthenticated
-        )
         return AppLeaguePackCatalog.entries
             .filter { $0.isPremium && $0.id != .premiumFull && !enabledPackIds.contains($0.id.rawValue) }
             .sorted { $0.sortOrder < $1.sortOrder }
@@ -167,6 +177,7 @@ struct MatchesView: View {
 
         let cal = matchCalendar
         let todayStart = cal.startOfDay(for: Date())
+        let activeClubById = accessibleClubById
         let progressionClubIds = Set(
             progressionClubs.flatMap { ClubIdentityResolver.allKnownIds(for: $0.id) }
         )
@@ -183,9 +194,9 @@ struct MatchesView: View {
                CompetitionCatalog.isTrackedDomesticCompetition(competitionId) {
                 let qualifyingCompetitionIds = CompetitionCatalog.qualifyingCompetitionIds(for: competitionId)
                 let involvedClubs = [
-                    clubById[fixture.venueClubId],
-                    clubById[fixture.homeTeamId],
-                    clubById[fixture.awayTeamId]
+                    activeClubById[fixture.venueClubId],
+                    activeClubById[fixture.homeTeamId],
+                    activeClubById[fixture.awayTeamId]
                 ]
 
                 return involvedClubs.allSatisfy { club in
@@ -205,7 +216,7 @@ struct MatchesView: View {
             if countryFilterRawValue == "all" {
                 return true
             }
-            return clubById[fixture.venueClubId]?.countryCode == countryFilterRawValue
+            return activeClubById[fixture.venueClubId]?.countryCode == countryFilterRawValue
         }
 
         let searchedMatches: (Fixture) -> Bool = { fixture in
@@ -213,10 +224,10 @@ struct MatchesView: View {
             guard !query.isEmpty else { return true }
 
             let needle = query.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
-            let home = clubById[fixture.homeTeamId]?.name ?? fixture.homeTeamId
-            let away = clubById[fixture.awayTeamId]?.name ?? fixture.awayTeamId
-            let venue = clubById[fixture.venueClubId]?.stadium.name ?? fixture.venueClubId
-            let city = clubById[fixture.venueClubId]?.stadium.city ?? ""
+            let home = activeClubById[fixture.homeTeamId]?.name ?? fixture.homeTeamId
+            let away = activeClubById[fixture.awayTeamId]?.name ?? fixture.awayTeamId
+            let venue = activeClubById[fixture.venueClubId]?.stadium.name ?? fixture.venueClubId
+            let city = activeClubById[fixture.venueClubId]?.stadium.city ?? ""
             let round = fixture.round ?? ""
             let haystack = "\(home) \(away) \(venue) \(city) \(round)"
                 .folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
