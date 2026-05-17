@@ -225,9 +225,9 @@ enum AppLeaguePackSettings {
 
     static func effectiveEnabledLeaguePacks(isAuthenticated: Bool) -> Set<String> {
         var ids: Set<String> = [AppLeaguePackId.coreDenmark.rawValue]
-        ids.formUnion(debugEnabledLeaguePacks)
 
         if isAuthenticated {
+            ids.formUnion(debugEnabledLeaguePacks)
             ids.formUnion(remoteEnabledLeaguePacks)
         }
 
