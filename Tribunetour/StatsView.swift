@@ -979,7 +979,7 @@ struct StatsView: View {
                         .foregroundStyle(.secondary)
 
                     if premiumRequestRowsLoading {
-                        Text("Henter dine premium-anmodninger...")
+                        Text("Henter dine anmodninger...")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                     } else if let selectedPackOpenRequest {
@@ -1005,7 +1005,7 @@ struct StatsView: View {
                         }
                     }
 
-                    Picker("Pakke", selection: $premiumRequestPack) {
+                    Picker("Land", selection: $premiumRequestPack) {
                         ForEach(AppPremiumAdminPack.allCases) { pack in
                             Text(pack.title).tag(pack)
                         }
@@ -1019,7 +1019,7 @@ struct StatsView: View {
                         Task { await submitPremiumAccessRequest() }
                     } label: {
                         StatsActionButtonLabel(
-                            title: premiumRequestLoading ? "Sender..." : selectedPackOpenRequest == nil ? "Anmod om premium-adgang" : "Anmodning allerede sendt",
+                            title: premiumRequestLoading ? "Sender..." : selectedPackOpenRequest == nil ? "Anmod om adgang" : "Anmodning allerede sendt",
                             isActive: !premiumRequestLoading && selectedPackOpenRequest == nil
                         )
                     }
