@@ -960,9 +960,9 @@ struct StatsView: View {
                 }
 
                 VStack(alignment: .leading, spacing: 10) {
-                    Text("Premium-adgang")
+                    Text("Flere lande")
                         .font(.headline)
-                    Text("Her kan du se hvilke lande du allerede har adgang til, og hvilke der stadig er låst.")
+                    Text("Her kan du se hvilke lande der allerede er åbne for dig, og hvilke du stadig mangler.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
@@ -970,11 +970,11 @@ struct StatsView: View {
                         isLoggedIn: true,
                         unlockedPremiumTitles: unlockedPremiumPackTitles,
                         lockedPremiumTitles: lockedPremiumPackTitles,
-                        title: "Dine pakker",
-                        subtitle: "Her kan du se hvad du allerede kan bruge, og hvilke lande der stadig kræver adgang."
+                        title: "Dine lande",
+                        subtitle: "Her ser du hvad du allerede kan bruge, og hvad der stadig er lukket."
                     )
 
-                    Text("Anmod om adgang til ligaer i andre lande. Vi åbner den rigtige pakke på din konto, når anmodningen er godkendt.")
+                    Text("Vil du videre end Danmark, kan du bede om adgang til flere lande her.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
@@ -1054,7 +1054,7 @@ struct StatsView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Log ind")
                             .font(.headline)
-                        Text("Log ind for at gemme dine data, se dine adgangspakker og låse flere lande op.")
+                        Text("Log ind for at gemme dine data og åbne resten af Tribunetour på din konto.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
 
@@ -1069,8 +1069,8 @@ struct StatsView: View {
                             isLoggedIn: false,
                             unlockedPremiumTitles: [],
                             lockedPremiumTitles: lockedPremiumPackTitles,
-                            title: "Adgang i appen",
-                            subtitle: "Som gæst ser du kun Danmark. Log ind for at se dine pakker og få adgang til flere lande."
+                            title: "Det kan du se lige nu",
+                            subtitle: "Som gæst ser du de danske rækker. Log ind for at se flere lande."
                         )
 
                         Button {

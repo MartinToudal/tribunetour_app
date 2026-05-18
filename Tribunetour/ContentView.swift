@@ -547,8 +547,8 @@ struct StadiumsView: View {
                         lockedPremiumTitles: lockedPremiumTitles,
                         title: "Adgang til stadions",
                         subtitle: authSession.snapshot.isAuthenticated
-                            ? "Her ser du præcis de lande din konto har adgang til lige nu."
-                            : "Som gæst ser du kun Danmark. Log ind for at se dine pakker eller få adgang til flere lande."
+                            ? "Her ser du de lande, der er åbne på din konto lige nu."
+                            : "Som gæst ser du de danske rækker. Log ind for at se flere lande."
                     )
                 }
 

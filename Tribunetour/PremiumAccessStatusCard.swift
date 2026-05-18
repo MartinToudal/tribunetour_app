@@ -31,7 +31,7 @@ struct PremiumAccessStatusCard: View {
             }
 
             if !isLoggedIn {
-                Text("Log ind i Min tur for at se hvad der åbner sig for dig, og for at anmode om adgang til flere lande.")
+                Text("Log ind i Min tur for at se flere lande og bede om adgang, hvis du vil videre end Danmark.")
                     .font(.caption.weight(.medium))
                     .foregroundStyle(.secondary)
             }
@@ -44,24 +44,24 @@ struct PremiumAccessStatusCard: View {
     private var unlockedSummary: String {
         unlockedPremiumTitles.isEmpty
             ? "Kun Danmark"
-            : "Danmark + \(unlockedPremiumTitles.count) premiumland\(unlockedPremiumTitles.count == 1 ? "" : "e")"
+            : "Danmark + \(unlockedPremiumTitles.count) ekstra land\(unlockedPremiumTitles.count == 1 ? "" : "e")"
     }
 
     private var unlockedDetail: String {
         unlockedPremiumTitles.isEmpty
-            ? "Grundpakken er åben."
+            ? "De danske rækker er åbne."
             : summarize(unlockedPremiumTitles)
     }
 
     private var lockedSummary: String {
         lockedPremiumTitles.isEmpty
             ? "Alt er åbent"
-            : "\(lockedPremiumTitles.count) premiumland\(lockedPremiumTitles.count == 1 ? "" : "e") venter"
+            : "\(lockedPremiumTitles.count) land\(lockedPremiumTitles.count == 1 ? "" : "e") mangler"
     }
 
     private var lockedDetail: String {
         lockedPremiumTitles.isEmpty
-            ? "Ingen flere premium-pakker er låst."
+            ? "Der er ikke flere lande at åbne lige nu."
             : summarize(lockedPremiumTitles)
     }
 

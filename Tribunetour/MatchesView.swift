@@ -385,8 +385,8 @@ struct MatchesView: View {
                         lockedPremiumTitles: lockedPremiumTitles,
                         title: "Adgang til kampe",
                         subtitle: authSession.snapshot.isAuthenticated
-                            ? "Du ser kun kampe fra lande din konto allerede har åbnet."
-                            : "Som gæst ser du kun kampe fra grundpakken. Log ind for at se dine pakker og åbne flere lande."
+                            ? "Du ser kampe fra de lande, der allerede er åbne på din konto."
+                            : "Som gæst ser du kun kampe fra de danske rækker. Log ind for at se flere lande."
                     )
                 }
 
@@ -414,7 +414,7 @@ struct MatchesView: View {
 
                 if !snapshot.visibleNonTopSystemFixtures.isEmpty {
                     Section("Andre kampe") {
-                        Text("Kampe her tæller ikke med i din aktuelle fremdrift, men bliver stadig bevaret i appen.")
+                        Text("Kampe her ligger uden for det spor, du følger lige nu, men de bliver stadig gemt i appen.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
 
