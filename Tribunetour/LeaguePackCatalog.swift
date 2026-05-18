@@ -164,13 +164,13 @@ enum AppLeaguePackCatalog {
         AppLeaguePackCatalogEntry(
             id: .premiumFull,
             countryCode: nil,
-            label: "Alle premium-pakker",
+            label: "Alle lande",
             sortOrder: 1000,
             levels: 0,
             isCore: false,
             isPremium: true,
             includedByPremiumFull: false,
-            requestDescription: "Adgang til alle nuværende og kommende premium-pakker"
+            requestDescription: "Adgang til alle nuværende og kommende lande"
         ),
     ]
 

@@ -499,6 +499,36 @@ struct StadiumsView: View {
                         }
                         .font(.caption2)
 
+                        if shouldShowCountryFilter {
+                            let homeCountryCode = LeaguePresentation.resolvedHomeCountryCode(
+                                availableCountryCodes: Set(countryOptions)
+                            )
+
+                            ScrollView(.horizontal, showsIndicators: false) {
+                                HStack(spacing: 8) {
+                                    CountryScopeButton(
+                                        title: LeaguePresentation.countryLabel(homeCountryCode),
+                                        isSelected: countryFilterRawValue == homeCountryCode,
+                                        action: { countryFilterRawValue = homeCountryCode }
+                                    )
+
+                                    CountryScopeButton(
+                                        title: "Alle lande",
+                                        isSelected: countryFilterRawValue == "all",
+                                        action: { countryFilterRawValue = "all" }
+                                    )
+
+                                    ForEach(countryOptions.filter { $0 != homeCountryCode }, id: \.self) { countryCode in
+                                        CountryScopeButton(
+                                            title: LeaguePresentation.countryLabel(countryCode),
+                                            isSelected: countryFilterRawValue == countryCode,
+                                            action: { countryFilterRawValue = countryCode }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+
                         Button {
                             showFullscreenMap = true
                         } label: {
@@ -656,17 +686,6 @@ struct StadiumsView: View {
 
                 ToolbarItemGroup(placement: .topBarTrailing) {
                     Menu {
-                        if shouldShowCountryFilter {
-                            Picker("Land", selection: $countryFilterRawValue) {
-                                Text("Alle aktive lande").tag("all")
-                                ForEach(countryOptions, id: \.self) { countryCode in
-                                    Text(LeaguePresentation.countryLabel(countryCode)).tag(countryCode)
-                                }
-                            }
-
-                            Divider()
-                        }
-
                         Picker("Sortér", selection: Binding(get: { sort }, set: { sort = $0 })) {
                             ForEach(SortOption.allCases) { s in
                                 Text(s.rawValue).tag(s)
@@ -901,6 +920,26 @@ private struct Badge: View {
             .padding(.vertical, 4)
             .background(Color(.tertiarySystemFill))
             .clipShape(Capsule())
+    }
+}
+
+private struct CountryScopeButton: View {
+    let title: String
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            Text(title)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(isSelected ? Color.white : Color.secondary)
+                .lineLimit(1)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(isSelected ? Color.primary : Color(.tertiarySystemFill))
+                .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
     }
 }
 

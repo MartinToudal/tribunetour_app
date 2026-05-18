@@ -174,7 +174,7 @@ struct StatsView: View {
     private var accountPromptHighlights: [String] {
         var highlights: [String] = []
         if visitedCount > 0 {
-            highlights.append("Synk dine \(visitedCount) markerede stadionbesøg mellem app og web")
+            highlights.append("Gem dine \(visitedCount) markerede stadionbesøg på din konto")
         }
         if notesCount > 0 || totalPhotoCount > 0 || reviewedCount > 0 {
             highlights.append("Gem noter, anmeldelser og billeder sikkert på din konto")
@@ -183,7 +183,7 @@ struct StatsView: View {
             highlights.append("Få adgang til flere ligaer og stadionrejser i andre lande")
         }
         if highlights.isEmpty {
-            highlights.append("Synk dine data mellem app og web")
+            highlights.append("Gem dine data på din konto")
             highlights.append("Få adgang til flere ligaer og stadionrejser")
         }
         return Array(highlights.prefix(3))
@@ -329,7 +329,7 @@ struct StatsView: View {
         let accountPromptHighlights: [String] = {
             var highlights: [String] = []
             if visitedCount > 0 {
-                highlights.append("Synk dine \(visitedCount) markerede stadionbesøg mellem app og web")
+                highlights.append("Gem dine \(visitedCount) markerede stadionbesøg på din konto")
             }
             if notesCount > 0 || totalPhotoCount > 0 || reviewedCount > 0 {
                 highlights.append("Gem noter, anmeldelser og billeder sikkert på din konto")
@@ -338,7 +338,7 @@ struct StatsView: View {
                 highlights.append("Få adgang til flere ligaer og stadionrejser i andre lande")
             }
             if highlights.isEmpty {
-                highlights.append("Synk dine data mellem app og web")
+                highlights.append("Gem dine data på din konto")
                 highlights.append("Få adgang til flere ligaer og stadionrejser")
             }
             return Array(highlights.prefix(3))
@@ -417,7 +417,8 @@ struct StatsView: View {
         let achievements = journeyAchievements + homeCountryAchievements + internationalAchievements
         let unlockedAchievementIds = Set(achievements.filter(\.isUnlocked).map(\.id))
         let nextLockedAchievement = achievements.first(where: { !$0.isUnlocked })
-        let nextLeagueMilestone = visitedByDivision
+        let prioritizedMilestoneRows = (homeCountryVisitedByDivision.isEmpty ? visitedByDivision : homeCountryVisitedByDivision)
+        let nextLeagueMilestone = prioritizedMilestoneRows
             .filter { $0.total > 0 && $0.visited < $0.total }
             .sorted { lhs, rhs in
                 let lhsRemaining = lhs.total - lhs.visited
@@ -962,7 +963,7 @@ struct StatsView: View {
                 VStack(alignment: .leading, spacing: 10) {
                     Text("Flere lande")
                         .font(.headline)
-                    Text("Her kan du se hvilke lande der allerede er åbne for dig, og hvilke du stadig mangler.")
+                    Text("Her kan du se hvilke lande der er åbne for dig lige nu, og hvilke du stadig mangler.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
 
@@ -1099,7 +1100,7 @@ struct StatsView: View {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Login er midlertidigt utilgængeligt")
                             .font(.headline)
-                        Text("Du kan stadig bruge appen lokalt. Hvis du har brug for konto og synkronisering lige nu, kan du bruge web-versionen.")
+                        Text("Du kan stadig bruge appen lokalt. Konto er bare ikke klar i denne build endnu.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                         if let validationMessage = configuration.supabaseURLValidationMessage {
@@ -1241,7 +1242,7 @@ struct StatsView: View {
                             .foregroundStyle(.secondary)
                     }
 
-                    Text("Når appen åbner, bruger vi dit hjemland som udgangspunkt.")
+                    Text("Dit hjemland er dit faste udgangspunkt her.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -1278,7 +1279,7 @@ struct StatsView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("Mål uden for hjemlandet")
                                     .font(.headline)
-                                Text("De her mål følger med, når du har aktive lande uden for dit hjemland.")
+                                Text("De her mål bliver relevante, når du åbner lande uden for dit hjemland.")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
@@ -1314,7 +1315,7 @@ struct StatsView: View {
 
                 if !snapshot.relegatedOrHistoricalRows.isEmpty {
                     Section("Andre klubber") {
-                        Text("Klubber her tæller ikke med i din aktuelle fremdrift, men bliver stadig bevaret i appen.")
+                        Text("Klubber her tæller ikke med i din aktuelle fremdrift, men bliver stadig gemt i din historik.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
 
@@ -1469,12 +1470,12 @@ struct StatsView: View {
                 )
             }
         .sheet(isPresented: $showAuthSheet) {
-                NavigationStack {
-                    ScrollView {
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text("Brug samme konto som på web. Du kan logge ind, oprette en konto eller sende dig selv et link til at sætte eller nulstille adgangskoden.")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
+            NavigationStack {
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 16) {
+                        Text("Log ind eller opret en konto for at gemme dine data og låse flere lande op.")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
 
                             TextField("din@email.dk", text: $loginEmail)
                                 .keyboardType(.emailAddress)
@@ -1584,15 +1585,15 @@ struct StatsView: View {
             } message: {
                 Text("Du skal have en mailkonto sat op i Mail-app’en for at sende feedback herfra.")
             }
-            .alert("Brug appens nuvaerende besoeg som udgangspunkt?", isPresented: $showBootstrapAlert, presenting: pendingBootstrapStatus) { status in
+            .alert("Gem dine nuvaerende besoeg paa kontoen?", isPresented: $showBootstrapAlert, presenting: pendingBootstrapStatus) { status in
                 Button("Ikke nu", role: .cancel) {}
-                Button("Brug appens data") {
+                Button("Gem besoeg") {
                     Task {
                         await performBootstrap(using: status)
                     }
                 }
             } message: { status in
-                Text("Foerste gang du logger ind, bruger vi dine \(status.localVisitedCount) registreringer i appen til at oprette din samlede visited-status. Hvis du allerede har markeret noget paa web, bliver appens nuvaerende registreringer brugt som udgangspunkt.")
+                Text("Foerste gang du logger ind, kan du gemme dine \(status.localVisitedCount) nuvaerende markeringer paa kontoen som udgangspunkt.")
             }
             .onAppear {
                 refreshSnapshot()
@@ -1817,19 +1818,19 @@ struct StatsView: View {
             if status.shouldPromptUser {
                 pendingBootstrapStatus = status
                 showBootstrapAlert = true
-                loginInfoMessage = "Du er logget ind. Bekraeft nu om appens nuvaerende registreringer skal oprette din samlede visited-status."
+                loginInfoMessage = "Du er logget ind. Bekraeft nu om dine nuvaerende markeringer skal gemmes paa kontoen."
             } else if isNewAccount {
                 AppVisitedSyncRuntimeFlags.markBootstrapCompleted(for: authSession.snapshot.userEmail)
                 loginInfoMessage = "Konto oprettet og logget ind."
             } else {
                 AppVisitedSyncRuntimeFlags.markBootstrapCompleted(for: authSession.snapshot.userEmail)
-                loginInfoMessage = "Du er nu logget ind, og din konto bruger samme visited-status paa tværs af app og web."
+                loginInfoMessage = "Du er nu logget ind."
             }
         } catch {
             if isNewAccount {
                 loginInfoMessage = "Konto oprettet og logget ind."
             } else {
-                loginInfoMessage = "Du er nu logget ind i appen."
+                loginInfoMessage = "Du er nu logget ind."
             }
             loginErrorMessage = bootstrapStatusMessage(for: error)
         }
@@ -1844,7 +1845,7 @@ struct StatsView: View {
             let response = try await bootstrapCoordinator.performBootstrap(localRecords: visitedStore.records)
             AppVisitedSyncRuntimeFlags.markBootstrapCompleted(for: authSession.snapshot.userEmail)
             pendingBootstrapStatus = nil
-            loginInfoMessage = "Din samlede visited-status er nu oprettet ud fra appens registreringer. Vi gemte \(response.itemCount ?? status.localVisitedCount) poster. Luk og aabn appen igen, hvis denne enhed ikke opdaterer med det samme."
+            loginInfoMessage = "Dine markeringer er nu gemt paa kontoen. Vi gemte \(response.itemCount ?? status.localVisitedCount) poster. Luk og aabn appen igen, hvis denne enhed ikke opdaterer med det samme."
         } catch {
             loginErrorMessage = bootstrapExecutionMessage(for: error)
         }
@@ -1854,28 +1855,28 @@ struct StatsView: View {
     private func bootstrapStatusMessage(for error: Error) -> String {
         switch error {
         case SharedVisitedSyncBackendError.notConfigured:
-            return "Du er logget ind, men delt visited-sync er ikke sat helt op endnu."
+            return "Du er logget ind, men kontoen er ikke helt klar endnu."
         case SharedVisitedSyncBackendError.missingAuthToken:
-            return "Du er logget ind, men appen mangler en gyldig session til at hente din visited-status. Proev at logge ind igen."
+            return "Du er logget ind, men vi kunne ikke hente dine markeringer lige nu. Proev at logge ind igen."
         case SharedVisitedSyncBackendError.invalidHTTPStatus:
-            return "Du er logget ind, men vi kunne ikke hente status for din faelles visited-model lige nu. Proev igen om lidt."
+            return "Du er logget ind, men vi kunne ikke hente din kontostatus lige nu. Proev igen om lidt."
         default:
-            return "Du er logget ind, men vi kunne ikke hente status for din faelles visited-model lige nu."
+            return "Du er logget ind, men vi kunne ikke hente din kontostatus lige nu."
         }
     }
 
     private func bootstrapExecutionMessage(for error: Error) -> String {
         switch error {
         case SharedVisitedSyncBackendError.notConfigured:
-            return "Bootstrap kan ikke gennemfoeres endnu, fordi delt visited-sync ikke er sat helt op."
+            return "Dine markeringer kan ikke gemmes paa kontoen endnu."
         case SharedVisitedSyncBackendError.missingAuthToken:
-            return "Bootstrap kunne ikke starte, fordi appen mangler en gyldig session. Proev at logge ind igen."
+            return "Vi kunne ikke starte gemningen, fordi din session er udloeber. Proev at logge ind igen."
         case SharedVisitedSyncBackendError.bootstrapAlreadyCompleted:
-            return "Din konto har allerede en samlet visited-status. Luk og aabn appen igen, hvis status ikke vises korrekt endnu."
+            return "Din konto har allerede dine markeringer. Luk og aabn appen igen, hvis status ikke vises korrekt endnu."
         case SharedVisitedSyncBackendError.invalidHTTPStatus:
-            return "Bootstrap kunne ikke gennemfoeres lige nu paa grund af en serverfejl. Proev igen om lidt."
+            return "Vi kunne ikke gemme dine markeringer lige nu paa grund af en serverfejl. Proev igen om lidt."
         default:
-            return "Bootstrap kunne ikke gennemfoeres lige nu. Proev igen om lidt."
+            return "Vi kunne ikke gemme dine markeringer lige nu. Proev igen om lidt."
         }
     }
 
@@ -2002,7 +2003,7 @@ private struct AccountPromptCard: View {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Opret en konto og behold din fremdrift")
                         .font(.subheadline.weight(.semibold))
-                    Text("Så kan du gemme dine data og åbne flere lande i samme konto.")
+                    Text("Så kan du gemme dine data og åbne flere lande.")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
