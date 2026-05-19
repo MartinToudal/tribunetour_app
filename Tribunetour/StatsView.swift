@@ -1176,20 +1176,22 @@ struct StatsView: View {
                     accountAndSyncSection
                 }
 
-                Section("Næste milepæl") {
-                    VStack(alignment: .leading, spacing: 8) {
+                Section("Lige nu") {
+                    VStack(alignment: .leading, spacing: 14) {
                         Text(snapshot.nextMilestoneTitle)
                             .font(.headline)
                         Text(snapshot.nextMilestoneDescription)
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
-                    }
-                    .padding(.vertical, 4)
-                }
 
-                if let suggestedNextClub = snapshot.suggestedNextClub {
-                    Section("Næste stop") {
-                        NavigationLink {
+                        HStack(spacing: 8) {
+                            StatsStatusChip(title: "Hjemland", value: LeaguePresentation.countryLabel(snapshot.activeHomeCountryCode))
+                            StatsStatusChip(title: "Scope", value: snapshot.currentScopeLabel)
+                            StatsStatusChip(title: "Låst op", value: "\(snapshot.unlockedAchievementsCount)")
+                        }
+
+                        if let suggestedNextClub = snapshot.suggestedNextClub {
+                            NavigationLink {
                                 StadiumDetailView(
                                     club: suggestedNextClub,
                                     visitedStore: visitedStore,
@@ -1198,23 +1200,28 @@ struct StatsView: View {
                                     reviewsStore: reviewsStore,
                                     clubById: clubById
                                 )
-                        } label: {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(suggestedNextClub.name)
-                                    .font(.headline)
-                                Text("\(suggestedNextClub.stadium.name) • \(suggestedNextClub.stadium.city)")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                                Text(snapshot.suggestionDescription)
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
+                            } label: {
+                                VStack(alignment: .leading, spacing: 6) {
+                                    Text("Næste stop")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(.secondary)
+                                    Text(suggestedNextClub.name)
+                                        .font(.headline)
+                                    Text("\(suggestedNextClub.stadium.name) • \(suggestedNextClub.stadium.city)")
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                    Text(snapshot.suggestionDescription)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                                .padding(.vertical, 4)
                             }
-                            .padding(.vertical, 4)
                         }
                     }
+                    .padding(.vertical, 4)
                 }
 
-                Section("Din status") {
+                Section("Overblik") {
                     StatsOverviewRow(label: "Besøgte stadions", value: "\(snapshot.visitedCount) / \(snapshot.totalCount)")
                     StatsOverviewRow(label: "Ikke besøgt endnu", value: "\(snapshot.unvisitedCount)")
                     StatsOverviewRow(label: "Noter", value: "\(snapshot.notesCount)")
@@ -1247,7 +1254,7 @@ struct StatsView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                Section("Rejsemål") {
+                Section("Stadionrejse") {
                     HStack {
                         Text("Låst op")
                         Spacer()
@@ -1291,8 +1298,46 @@ struct StatsView: View {
                     }
                 }
 
+                // MARK: Recent visits
+                Section("Seneste besøg") {
+                    if snapshot.recentVisited.isEmpty {
+                        ContentUnavailableView(
+                            "Ingen besøg endnu",
+                            systemImage: "checkmark.circle",
+                            description: Text("Dine seneste besøg vises her, når du markerer stadions som besøgt.")
+                        )
+                        .padding(.vertical, 8)
+                    } else {
+                        ForEach(snapshot.recentVisited.prefix(10), id: \.club.id) { item in
+                            NavigationLink {
+                                StadiumDetailView(
+                                    club: item.club,
+                                    visitedStore: visitedStore,
+                                    photosStore: photosStore,
+                                    notesStore: notesStore,
+                                    reviewsStore: reviewsStore,
+                                    clubById: clubById
+                                )
+                            } label: {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(item.club.name)
+                                        .font(.headline)
+                                    Text("\(item.club.stadium.name) • \(item.club.stadium.city)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                    Text(item.date, style: .date)
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                                .accessibilityElement(children: .combine)
+                                .padding(.vertical, 4)
+                            }
+                        }
+                    }
+                }
+
                 // MARK: By division
-                Section("Fordelt på liga") {
+                Section("Så tæt er du på hver række") {
                     if snapshot.visitedByDivision.isEmpty {
                         Text("Ingen data.")
                             .foregroundStyle(.secondary)
@@ -1347,44 +1392,6 @@ struct StatsView: View {
                                     .foregroundStyle(.secondary)
                             }
                             .padding(.vertical, 4)
-                        }
-                    }
-                }
-
-                // MARK: Recent visits
-                Section("Seneste besøg") {
-                    if snapshot.recentVisited.isEmpty {
-                        ContentUnavailableView(
-                            "Ingen besøg endnu",
-                            systemImage: "checkmark.circle",
-                            description: Text("Dine seneste besøg vises her, når du markerer stadions som besøgt.")
-                        )
-                        .padding(.vertical, 8)
-                    } else {
-                        ForEach(snapshot.recentVisited.prefix(10), id: \.club.id) { item in
-                            NavigationLink {
-                                StadiumDetailView(
-                                    club: item.club,
-                                    visitedStore: visitedStore,
-                                    photosStore: photosStore,
-                                    notesStore: notesStore,
-                                    reviewsStore: reviewsStore,
-                                    clubById: clubById
-                                )
-                            } label: {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(item.club.name)
-                                        .font(.headline)
-                                    Text("\(item.club.stadium.name) • \(item.club.stadium.city)")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                    Text(item.date, style: .date)
-                                        .font(.caption2)
-                                        .foregroundStyle(.secondary)
-                                }
-                                .accessibilityElement(children: .combine)
-                                .padding(.vertical, 4)
-                            }
                         }
                     }
                 }
@@ -1942,6 +1949,27 @@ private struct StatsContextChip: View {
         .padding(.vertical, 6)
         .background(Color(.secondarySystemBackground))
         .clipShape(Capsule())
+    }
+}
+
+private struct StatsStatusChip: View {
+    let title: String
+    let value: String
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 4) {
+            Text(title)
+                .font(.caption2)
+                .foregroundStyle(.secondary)
+            Text(value)
+                .font(.caption.weight(.semibold))
+                .lineLimit(1)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, 10)
+        .padding(.vertical, 8)
+        .background(Color(.secondarySystemBackground))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 }
 
