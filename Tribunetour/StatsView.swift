@@ -11,6 +11,7 @@ struct StatsView: View {
     let isActive: Bool
     let clubs: [Club]
     let clubById: [String: Club]
+    let fixtures: [Fixture]
     @ObservedObject var visitedStore: VisitedStore
     @ObservedObject var photosStore: AppPhotosStore
     @ObservedObject var notesStore: AppNotesStore
@@ -435,7 +436,48 @@ struct StatsView: View {
             .map { LeagueMilestone(countryCode: $0.countryCode, division: $0.division, remaining: $0.total - $0.visited) }
             .first
 
+        let orderedMilestoneRows = prioritizedMilestoneRows
+            .filter { $0.total > 0 && $0.visited < $0.total }
+            .sorted { lhs, rhs in
+                let lhsRemaining = lhs.total - lhs.visited
+                let rhsRemaining = rhs.total - rhs.visited
+                if lhsRemaining != rhsRemaining { return lhsRemaining < rhsRemaining }
+                let lhsCountryRank = LeaguePresentation.countryRank(lhs.countryCode)
+                let rhsCountryRank = LeaguePresentation.countryRank(rhs.countryCode)
+                if lhsCountryRank != rhsCountryRank { return lhsCountryRank < rhsCountryRank }
+                let lhsRank = LeaguePresentation.divisionRank(lhs.division, countryCode: lhs.countryCode)
+                let rhsRank = LeaguePresentation.divisionRank(rhs.division, countryCode: rhs.countryCode)
+                if lhsRank != rhsRank { return lhsRank < rhsRank }
+                return lhs.division.localizedCaseInsensitiveCompare(rhs.division) == .orderedAscending
+            }
+
+        let upcomingFixtures = fixtures
+            .filter { $0.kickoff >= Date() && $0.status == .scheduled }
+            .sorted { $0.kickoff < $1.kickoff }
+
         let suggestedNextClub: Club? = {
+            for row in orderedMilestoneRows {
+                let clubsInRow = unvisitedClubs.filter { $0.division == row.division && $0.countryCode == row.countryCode }
+                let clubIds = Set(clubsInRow.map(\.id))
+                if let fixtureClubId = upcomingFixtures.first(where: { clubIds.contains($0.venueClubId) })?.venueClubId,
+                   let club = clubsInRow.first(where: { $0.id == fixtureClubId }) {
+                    return club
+                }
+            }
+
+            let homeCountryUnvisited = unvisitedClubs.filter { $0.countryCode == activeHomeCountryCode }
+            let homeCountryIds = Set(homeCountryUnvisited.map(\.id))
+            if let fixtureClubId = upcomingFixtures.first(where: { homeCountryIds.contains($0.venueClubId) })?.venueClubId,
+               let club = homeCountryUnvisited.first(where: { $0.id == fixtureClubId }) {
+                return club
+            }
+
+            let allUnvisitedIds = Set(unvisitedClubs.map(\.id))
+            if let fixtureClubId = upcomingFixtures.first(where: { allUnvisitedIds.contains($0.venueClubId) })?.venueClubId,
+               let club = unvisitedClubs.first(where: { $0.id == fixtureClubId }) {
+                return club
+            }
+
             if let nextLeagueMilestone {
                 let prioritized = unvisitedClubs
                     .filter { $0.division == nextLeagueMilestone.division && $0.countryCode == nextLeagueMilestone.countryCode }
@@ -447,6 +489,7 @@ struct StatsView: View {
                     }
                 if let first = prioritized.first { return first }
             }
+
             return unvisitedClubs.sorted { lhs, rhs in
                 if lhs.countryCode != rhs.countryCode {
                     return LeaguePresentation.countryRank(lhs.countryCode) < LeaguePresentation.countryRank(rhs.countryCode)
@@ -1235,6 +1278,43 @@ struct StatsView: View {
                     StatsOverviewRow(label: "Billeder i alt", value: "\(snapshot.totalPhotoCount)")
                 }
 
+                Section("Seneste besøg") {
+                    if snapshot.recentVisited.isEmpty {
+                        ContentUnavailableView(
+                            "Ingen besøg endnu",
+                            systemImage: "checkmark.circle",
+                            description: Text("Dine seneste besøg vises her, når du markerer stadions som besøgt.")
+                        )
+                        .padding(.vertical, 8)
+                    } else {
+                        ForEach(snapshot.recentVisited.prefix(10), id: \.club.id) { item in
+                            NavigationLink {
+                                StadiumDetailView(
+                                    club: item.club,
+                                    visitedStore: visitedStore,
+                                    photosStore: photosStore,
+                                    notesStore: notesStore,
+                                    reviewsStore: reviewsStore,
+                                    clubById: clubById
+                                )
+                            } label: {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(item.club.name)
+                                        .font(.headline)
+                                    Text("\(item.club.stadium.name) • \(item.club.stadium.city)")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                    Text(item.date, style: .date)
+                                        .font(.caption2)
+                                        .foregroundStyle(.secondary)
+                                }
+                                .accessibilityElement(children: .combine)
+                                .padding(.vertical, 4)
+                            }
+                        }
+                    }
+                }
+
                 Section("Hjemland og scope") {
                     Picker("Hjemland", selection: $preferredHomeCountryCode) {
                         ForEach(snapshot.countryOptions, id: \.self) { countryCode in
@@ -1294,44 +1374,6 @@ struct StatsView: View {
 
                         ForEach(snapshot.internationalAchievements) { achievement in
                             AchievementRow(achievement: achievement)
-                        }
-                    }
-                }
-
-                // MARK: Recent visits
-                Section("Seneste besøg") {
-                    if snapshot.recentVisited.isEmpty {
-                        ContentUnavailableView(
-                            "Ingen besøg endnu",
-                            systemImage: "checkmark.circle",
-                            description: Text("Dine seneste besøg vises her, når du markerer stadions som besøgt.")
-                        )
-                        .padding(.vertical, 8)
-                    } else {
-                        ForEach(snapshot.recentVisited.prefix(10), id: \.club.id) { item in
-                            NavigationLink {
-                                StadiumDetailView(
-                                    club: item.club,
-                                    visitedStore: visitedStore,
-                                    photosStore: photosStore,
-                                    notesStore: notesStore,
-                                    reviewsStore: reviewsStore,
-                                    clubById: clubById
-                                )
-                            } label: {
-                                VStack(alignment: .leading, spacing: 4) {
-                                    Text(item.club.name)
-                                        .font(.headline)
-                                    Text("\(item.club.stadium.name) • \(item.club.stadium.city)")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                    Text(item.date, style: .date)
-                                        .font(.caption2)
-                                        .foregroundStyle(.secondary)
-                                }
-                                .accessibilityElement(children: .combine)
-                                .padding(.vertical, 4)
-                            }
                         }
                     }
                 }

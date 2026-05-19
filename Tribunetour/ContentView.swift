@@ -74,6 +74,7 @@ struct ContentView: View {
                         isActive: selectedTab == .stats,
                         clubs: appState.clubs,
                         clubById: appState.clubById,
+                        fixtures: appState.fixtures,
                         visitedStore: appState.visitedStore,
                         photosStore: appState.photosStore,
                         notesStore: appState.notesStore,
