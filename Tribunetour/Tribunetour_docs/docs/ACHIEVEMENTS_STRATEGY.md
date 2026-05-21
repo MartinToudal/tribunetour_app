@@ -169,10 +169,20 @@ For at gøre systemet mere bevidst og skalerbart bør vi følge disse regler:
 - tilføj generiske række-achievements
 - brug samme model for alle lande
 
+Status:
+
+- generiske land-achievements er den første konkrete udbygning
+- generiske række-achievements er stadig næste lag og ikke bygget endnu
+
 ### Fase 3
 
 - byg separat achievements-flade
 - flyt den fulde liste ud af `Min tur`
+
+Status:
+
+- separat achievements-flade er bevidst udskudt
+- `Min tur` er stadig den aktive, lille motivationsflade indtil da
 
 ## Beslutning
 

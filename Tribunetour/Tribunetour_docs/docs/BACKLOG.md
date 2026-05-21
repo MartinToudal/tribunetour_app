@@ -25,6 +25,10 @@ Formål: samle de vigtigste udeståender, som ikke skal forstyrre den aktuelle 1
 - **Achievements som egen produktflade**
   - `Min tur` bør kun vise aktive og relevante achievements.
   - En separat achievements-flade bør samle land-, række-, rejse- og særlige achievements uden at gøre `Min tur` tung.
+  - Udskudt efter `land-achievements v1`:
+    - generiske række-achievements
+    - separat achievements-side
+    - dybere filtrering pr. land og række
 - **Onboarding flow for nye brugere**
   - Gør hjemland, scope, login og premium lettere at forstå fra første minut.
   - Særligt vigtigt når produktet skal forklares uden manuel hjælp.

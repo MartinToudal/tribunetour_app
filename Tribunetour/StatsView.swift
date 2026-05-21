@@ -28,6 +28,7 @@ struct StatsView: View {
     enum AchievementTrack {
         case journey
         case homeCountry
+        case countries
         case international
     }
 
@@ -93,6 +94,7 @@ struct StatsView: View {
         var relegatedOrHistoricalRows: [Club] = []
         var journeyAchievements: [Achievement] = []
         var homeCountryAchievements: [Achievement] = []
+        var countryAchievements: [Achievement] = []
         var internationalAchievements: [Achievement] = []
         var achievements: [Achievement] = []
         var unlockedAchievementIds: Set<String> = []
@@ -406,6 +408,80 @@ struct StatsView: View {
             return a.title.localizedCaseInsensitiveCompare(b.title) == .orderedAscending
         }
 
+        let countryAchievements: [Achievement] = {
+            let extraCountryCodes = countryOptions.filter { $0 != activeHomeCountryCode }
+
+            let achievements = extraCountryCodes.compactMap { countryCode -> Achievement? in
+                let clubsInCountry = progressionClubs.filter { $0.countryCode == countryCode }
+                let total = clubsInCountry.count
+                guard total > 0 else { return nil }
+
+                let visited = clubsInCountry.filter { visitedIds.contains($0.id) }.count
+                let countryLabel = LeaguePresentation.countryLabel(countryCode)
+
+                if visited == 0 {
+                    return Achievement(
+                        id: "country_first_\(countryCode)",
+                        title: "Første stadion i \(countryLabel)",
+                        description: "Tag det første stadionbesøg i \(countryLabel).",
+                        systemImage: "globe",
+                        isUnlocked: false,
+                        progressText: "0/1",
+                        track: .countries
+                    )
+                }
+
+                let threeTarget = min(3, total)
+                if visited < threeTarget {
+                    return Achievement(
+                        id: "country_three_\(countryCode)",
+                        title: "\(threeTarget) stadions i \(countryLabel)",
+                        description: "Besøg \(threeTarget) stadions i \(countryLabel).",
+                        systemImage: "globe.europe.africa",
+                        isUnlocked: false,
+                        progressText: "\(visited)/\(threeTarget)",
+                        track: .countries
+                    )
+                }
+
+                let halfwayTarget = max(1, Int(ceil(Double(total) * 0.5)))
+                if total >= 6 && visited < halfwayTarget {
+                    return Achievement(
+                        id: "country_halfway_\(countryCode)",
+                        title: "Halvvejs i \(countryLabel)",
+                        description: "Besøg halvdelen af stadions i \(countryLabel).",
+                        systemImage: "chart.bar.xaxis",
+                        isUnlocked: false,
+                        progressText: "\(visited)/\(halfwayTarget)",
+                        track: .countries
+                    )
+                }
+
+                if visited < total {
+                    return Achievement(
+                        id: "country_complete_\(countryCode)",
+                        title: "Fuldfør \(countryLabel)",
+                        description: "Besøg alle stadions i \(countryLabel).",
+                        systemImage: "flag.pattern.checkered",
+                        isUnlocked: false,
+                        progressText: "\(visited)/\(total)",
+                        track: .countries
+                    )
+                }
+
+                return nil
+            }
+
+            return achievements.sorted { lhs, rhs in
+                let lhsParts = lhs.progressText.split(separator: "/").compactMap { Int($0) }
+                let rhsParts = rhs.progressText.split(separator: "/").compactMap { Int($0) }
+                let lhsRemaining = lhsParts.count == 2 ? lhsParts[1] - lhsParts[0] : Int.max
+                let rhsRemaining = rhsParts.count == 2 ? rhsParts[1] - rhsParts[0] : Int.max
+                if lhsRemaining != rhsRemaining { return lhsRemaining < rhsRemaining }
+                return lhs.title.localizedCaseInsensitiveCompare(rhs.title) == .orderedAscending
+            }
+        }()
+
         let internationalAchievements: [Achievement] = {
             guard hasInternationalCountries else { return [] }
             let internationalVisitedByDivision = buildDivisionRows(from: internationalClubs, visitedIds: visitedIds)
@@ -427,24 +503,25 @@ struct StatsView: View {
         let nextLockedAchievement: Achievement? = {
             let lockedJourney = journeyAchievements.filter { !$0.isUnlocked }
             let lockedHome = homeCountryAchievements.filter { !$0.isUnlocked }
+            let lockedCountries = countryAchievements.filter { !$0.isUnlocked }
             let lockedInternational = internationalAchievements.filter { !$0.isUnlocked }
 
             if visitedCount == 0 {
-                return lockedJourney.first ?? lockedHome.first ?? lockedInternational.first
+                return lockedJourney.first ?? lockedHome.first ?? lockedCountries.first ?? lockedInternational.first
             }
 
             if homeCountryVisitedCount < homeCountryTotalCount {
-                return lockedHome.first ?? lockedJourney.first ?? lockedInternational.first
+                return lockedHome.first ?? lockedJourney.first ?? lockedCountries.first ?? lockedInternational.first
             }
 
             if hasInternationalCountries {
-                return lockedInternational.first ?? lockedJourney.first ?? lockedHome.first
+                return lockedCountries.first ?? lockedInternational.first ?? lockedJourney.first ?? lockedHome.first
             }
 
             return lockedJourney.first ?? lockedHome.first
         }()
 
-        let achievements = journeyAchievements + homeCountryAchievements + internationalAchievements
+        let achievements = journeyAchievements + homeCountryAchievements + countryAchievements + internationalAchievements
         let unlockedAchievementIds = Set(achievements.filter(\.isUnlocked).map(\.id))
         let prioritizedMilestoneRows = (homeCountryVisitedByDivision.isEmpty ? visitedByDivision : homeCountryVisitedByDivision)
         let nextLeagueMilestone = prioritizedMilestoneRows
@@ -594,6 +671,7 @@ struct StatsView: View {
             relegatedOrHistoricalRows: relegatedOrHistoricalRows,
             journeyAchievements: journeyAchievements,
             homeCountryAchievements: homeCountryAchievements,
+            countryAchievements: Array(countryAchievements.prefix(3)),
             internationalAchievements: internationalAchievements,
             achievements: achievements,
             unlockedAchievementIds: unlockedAchievementIds,
@@ -1444,6 +1522,18 @@ struct StatsView: View {
                     }
                 }
 
+                if !snapshot.countryAchievements.isEmpty {
+                    Section("Lande i gang") {
+                        Text("Her viser vi de lande, der er mest relevante for dig lige nu.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+
+                        ForEach(snapshot.countryAchievements) { achievement in
+                            AchievementRow(achievement: achievement)
+                        }
+                    }
+                }
+
                 if !snapshot.internationalAchievements.isEmpty {
                     Section("Flere lande") {
                         HStack(alignment: .top, spacing: 10) {
@@ -1778,6 +1868,8 @@ struct StatsView: View {
             return "Din rejse"
         case .homeCountry:
             return LeaguePresentation.countryLabel(snapshot.activeHomeCountryCode)
+        case .countries:
+            return "Lande"
         case .international:
             return "Flere lande"
         }
