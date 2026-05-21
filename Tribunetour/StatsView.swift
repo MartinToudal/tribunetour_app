@@ -1291,6 +1291,32 @@ struct StatsView: View {
                             StatsStatusChip(title: "Låst op", value: "\(snapshot.unlockedAchievementsCount)")
                         }
 
+                        if let nextAchievement = snapshot.nextLockedAchievement {
+                            VStack(alignment: .leading, spacing: 8) {
+                                HStack {
+                                    Text("Næste achievement")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(.secondary)
+                                    Spacer()
+                                    Text(achievementTrackLabel(nextAchievement))
+                                        .font(.caption2.weight(.semibold))
+                                        .foregroundStyle(.secondary)
+                                }
+
+                                Text(nextAchievement.title)
+                                    .font(.headline)
+
+                                Text(nextAchievement.description)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+
+                                Text("Fremdrift: \(nextAchievement.progressText)")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(.vertical, 4)
+                        }
+
                         if let suggestedNextClub = snapshot.suggestedNextClub {
                             NavigationLink {
                                 StadiumDetailView(
@@ -1743,6 +1769,17 @@ struct StatsView: View {
         }
         .task(id: authSession.snapshot.isAuthenticated) {
             await refreshPremiumRequestRows()
+        }
+    }
+
+    private func achievementTrackLabel(_ achievement: Achievement) -> String {
+        switch achievement.track {
+        case .journey:
+            return "Din rejse"
+        case .homeCountry:
+            return LeaguePresentation.countryLabel(snapshot.activeHomeCountryCode)
+        case .international:
+            return "Flere lande"
         }
     }
 
