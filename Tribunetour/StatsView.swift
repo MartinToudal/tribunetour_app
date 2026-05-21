@@ -25,6 +25,12 @@ struct StatsView: View {
     @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
     @AppStorage("stats.accountPromptDismissed") private var accountPromptDismissed: Bool = false
 
+    enum AchievementTrack {
+        case journey
+        case homeCountry
+        case international
+    }
+
     struct Achievement: Identifiable {
         let id: String
         let title: String
@@ -32,6 +38,7 @@ struct StatsView: View {
         let systemImage: String
         let isUnlocked: Bool
         let progressText: String
+        let track: AchievementTrack
     }
 
     private struct DivisionKey: Hashable {
@@ -78,6 +85,7 @@ struct StatsView: View {
         var currentScopeLabel: String = "Alle aktive lande"
         var countryOptions: [String] = []
         var hasInternationalCountries: Bool = false
+        var internationalCountryCount: Int = 0
         var shouldShowAccountPrompt: Bool = false
         var accountPromptHighlights: [String] = []
         var sortedVisitedClubs: [Club] = []
@@ -96,6 +104,7 @@ struct StatsView: View {
         var nextMilestoneTitle: String = "Fortsæt rejsen"
         var nextMilestoneDescription: String = "Hvert nyt besøg bringer dig tættere på næste kapitel."
         var suggestionDescription: String = "Et oplagt næste stadion at sætte på ønskelisten."
+        var internationalSectionDescription: String = ""
         var visitedByDivision: [DivisionProgressRow] = []
         var homeCountryVisitedByDivision: [DivisionProgressRow] = []
     }
@@ -369,17 +378,17 @@ struct StatsView: View {
         }
 
         let journeyAchievements = [
-            Achievement(id: "first_visit", title: "Første skridt", description: "Besøg dit første stadion.", systemImage: "figure.walk", isUnlocked: visitedCount >= 1, progressText: "\(min(visitedCount, 1))/1"),
-            Achievement(id: "five_stadiums", title: "Groundhopper I", description: "Besøg 5 stadions.", systemImage: "map", isUnlocked: visitedCount >= 5, progressText: "\(min(visitedCount, 5))/5"),
-            Achievement(id: "twelve_stadiums", title: "Groundhopper II", description: "Besøg 12 stadions.", systemImage: "map.fill", isUnlocked: visitedCount >= 12, progressText: "\(min(visitedCount, 12))/12"),
-            Achievement(id: "first_review", title: "Anmelder", description: "Lav din første stadion-anmeldelse.", systemImage: "text.bubble", isUnlocked: reviewedCount >= 1, progressText: "\(min(reviewedCount, 1))/1"),
-            Achievement(id: "reviewer_level_2", title: "Anmelder II", description: "Lav anmeldelser af 5 stadions.", systemImage: "text.bubble.fill", isUnlocked: reviewedCount >= 5, progressText: "\(min(reviewedCount, 5))/5"),
-            Achievement(id: "note_writer", title: "Noteskriver", description: "Skriv noter på 5 stadions.", systemImage: "note.text", isUnlocked: notesCount >= 5, progressText: "\(min(notesCount, 5))/5"),
-            Achievement(id: "first_photo", title: "Fotograf", description: "Tilføj dit første stadionbillede.", systemImage: "camera", isUnlocked: totalPhotoCount >= 1, progressText: "\(min(totalPhotoCount, 1))/1"),
-            Achievement(id: "photo_collector", title: "Fotojæger", description: "Tilføj 10 stadionbilleder i alt.", systemImage: "camera.fill", isUnlocked: totalPhotoCount >= 10, progressText: "\(min(totalPhotoCount, 10))/10"),
-            Achievement(id: "gallery_builder", title: "Galleri-bygger", description: "Tilføj billeder på 3 forskellige stadions.", systemImage: "photo.on.rectangle", isUnlocked: stadiumsWithPhotosCount >= 3, progressText: "\(min(stadiumsWithPhotosCount, 3))/3"),
-            Achievement(id: "city_hopper", title: "Byhopper", description: "Besøg stadions i 5 forskellige byer.", systemImage: "building.2", isUnlocked: visitedCitiesCount >= 5, progressText: "\(min(visitedCitiesCount, 5))/5"),
-            Achievement(id: "league_explorer", title: "Række-rejsende", description: "Besøg stadions i 3 forskellige ligaer.", systemImage: "point.3.connected.trianglepath.dotted", isUnlocked: visitedDivisionsCount >= 3, progressText: "\(min(visitedDivisionsCount, 3))/3"),
+            Achievement(id: "first_visit", title: "Første skridt", description: "Besøg dit første stadion.", systemImage: "figure.walk", isUnlocked: visitedCount >= 1, progressText: "\(min(visitedCount, 1))/1", track: .journey),
+            Achievement(id: "five_stadiums", title: "Groundhopper I", description: "Besøg 5 stadions.", systemImage: "map", isUnlocked: visitedCount >= 5, progressText: "\(min(visitedCount, 5))/5", track: .journey),
+            Achievement(id: "twelve_stadiums", title: "Groundhopper II", description: "Besøg 12 stadions.", systemImage: "map.fill", isUnlocked: visitedCount >= 12, progressText: "\(min(visitedCount, 12))/12", track: .journey),
+            Achievement(id: "first_review", title: "Anmelder", description: "Lav din første stadion-anmeldelse.", systemImage: "text.bubble", isUnlocked: reviewedCount >= 1, progressText: "\(min(reviewedCount, 1))/1", track: .journey),
+            Achievement(id: "reviewer_level_2", title: "Anmelder II", description: "Lav anmeldelser af 5 stadions.", systemImage: "text.bubble.fill", isUnlocked: reviewedCount >= 5, progressText: "\(min(reviewedCount, 5))/5", track: .journey),
+            Achievement(id: "note_writer", title: "Noteskriver", description: "Skriv noter på 5 stadions.", systemImage: "note.text", isUnlocked: notesCount >= 5, progressText: "\(min(notesCount, 5))/5", track: .journey),
+            Achievement(id: "first_photo", title: "Fotograf", description: "Tilføj dit første stadionbillede.", systemImage: "camera", isUnlocked: totalPhotoCount >= 1, progressText: "\(min(totalPhotoCount, 1))/1", track: .journey),
+            Achievement(id: "photo_collector", title: "Fotojæger", description: "Tilføj 10 stadionbilleder i alt.", systemImage: "camera.fill", isUnlocked: totalPhotoCount >= 10, progressText: "\(min(totalPhotoCount, 10))/10", track: .journey),
+            Achievement(id: "gallery_builder", title: "Galleri-bygger", description: "Tilføj billeder på 3 forskellige stadions.", systemImage: "photo.on.rectangle", isUnlocked: stadiumsWithPhotosCount >= 3, progressText: "\(min(stadiumsWithPhotosCount, 3))/3", track: .journey),
+            Achievement(id: "city_hopper", title: "Byhopper", description: "Besøg stadions i 5 forskellige byer.", systemImage: "building.2", isUnlocked: visitedCitiesCount >= 5, progressText: "\(min(visitedCitiesCount, 5))/5", track: .journey),
+            Achievement(id: "league_explorer", title: "Række-rejsende", description: "Besøg stadions i 3 forskellige ligaer.", systemImage: "point.3.connected.trianglepath.dotted", isUnlocked: visitedDivisionsCount >= 3, progressText: "\(min(visitedDivisionsCount, 3))/3", track: .journey),
         ].sorted { a, b in
             if a.isUnlocked != b.isUnlocked { return a.isUnlocked && !b.isUnlocked }
             return a.title.localizedCaseInsensitiveCompare(b.title) == .orderedAscending
@@ -389,9 +398,9 @@ struct StatsView: View {
         let completedHomeDivisions = homeCountryVisitedByDivision.filter { $0.total > 0 && $0.visited == $0.total }.count
         let halfThreshold = max(1, Int(ceil(Double(max(homeCountryTotalCount, 1)) * 0.5)))
         let homeCountryAchievements = [
-            Achievement(id: "home_country_halfway", title: "Halvvejs hjemme", description: "Besøg halvdelen af stadions i \(homeCountryLabel).", systemImage: "chart.bar.xaxis", isUnlocked: homeCountryVisitedCount >= halfThreshold, progressText: "\(min(homeCountryVisitedCount, halfThreshold))/\(halfThreshold)"),
-            Achievement(id: "home_country_league_complete", title: "Række-specialist", description: "Fuldfør alle stadions i én række i \(homeCountryLabel).", systemImage: "trophy", isUnlocked: completedHomeDivisions >= 1, progressText: "\(completedHomeDivisions)/1"),
-            Achievement(id: "home_country_complete", title: "Tribune Tour Master", description: "Besøg alle stadions i \(homeCountryLabel).", systemImage: "crown", isUnlocked: homeCountryTotalCount > 0 && homeCountryVisitedCount == homeCountryTotalCount, progressText: "\(homeCountryVisitedCount)/\(max(1, homeCountryTotalCount))"),
+            Achievement(id: "home_country_halfway", title: "Halvvejs hjemme", description: "Besøg halvdelen af stadions i \(homeCountryLabel).", systemImage: "chart.bar.xaxis", isUnlocked: homeCountryVisitedCount >= halfThreshold, progressText: "\(min(homeCountryVisitedCount, halfThreshold))/\(halfThreshold)", track: .homeCountry),
+            Achievement(id: "home_country_league_complete", title: "Række-specialist", description: "Fuldfør alle stadions i én række i \(homeCountryLabel).", systemImage: "trophy", isUnlocked: completedHomeDivisions >= 1, progressText: "\(completedHomeDivisions)/1", track: .homeCountry),
+            Achievement(id: "home_country_complete", title: "Tribune Tour Master", description: "Besøg alle stadions i \(homeCountryLabel).", systemImage: "crown", isUnlocked: homeCountryTotalCount > 0 && homeCountryVisitedCount == homeCountryTotalCount, progressText: "\(homeCountryVisitedCount)/\(max(1, homeCountryTotalCount))", track: .homeCountry),
         ].sorted { a, b in
             if a.isUnlocked != b.isUnlocked { return a.isUnlocked && !b.isUnlocked }
             return a.title.localizedCaseInsensitiveCompare(b.title) == .orderedAscending
@@ -405,19 +414,38 @@ struct StatsView: View {
             let visitedCountryCount = Set(visitedClubs.map(\.countryCode)).count
             let crossBorderTarget = min(activeCountryCount, 2)
             return [
-                Achievement(id: "international_first_visit", title: "Udebanestart", description: "Besøg dit første stadion uden for dit hjemland.", systemImage: "airplane.departure", isUnlocked: internationalVisitedCount >= 1, progressText: "\(min(internationalVisitedCount, 1))/1"),
-                Achievement(id: "international_explorer", title: "International groundhopper", description: "Besøg 5 stadions uden for dit hjemland.", systemImage: "globe.europe.africa", isUnlocked: internationalVisitedCount >= 5, progressText: "\(min(internationalVisitedCount, 5))/5"),
-                Achievement(id: "cross_border", title: "På tværs af grænser", description: "Besøg stadions i mindst 2 aktive lande.", systemImage: "point.topleft.down.curvedto.point.bottomright.up", isUnlocked: crossBorderTarget <= 1 || visitedCountryCount >= crossBorderTarget, progressText: "\(min(visitedCountryCount, crossBorderTarget))/\(crossBorderTarget)"),
-                Achievement(id: "international_league_complete", title: "Udebanespecialist", description: "Fuldfør alle stadions i én international række.", systemImage: "flag.pattern.checkered", isUnlocked: completedInternationalDivisions >= 1, progressText: "\(completedInternationalDivisions)/1"),
+                Achievement(id: "international_first_visit", title: "Udebanestart", description: "Besøg dit første stadion uden for \(homeCountryLabel).", systemImage: "airplane.departure", isUnlocked: internationalVisitedCount >= 1, progressText: "\(min(internationalVisitedCount, 1))/1", track: .international),
+                Achievement(id: "international_explorer", title: "International groundhopper", description: "Besøg 5 stadions uden for \(homeCountryLabel).", systemImage: "globe.europe.africa", isUnlocked: internationalVisitedCount >= 5, progressText: "\(min(internationalVisitedCount, 5))/5", track: .international),
+                Achievement(id: "cross_border", title: "På tværs af grænser", description: "Besøg stadions i mindst 2 åbne lande.", systemImage: "point.topleft.down.curvedto.point.bottomright.up", isUnlocked: crossBorderTarget <= 1 || visitedCountryCount >= crossBorderTarget, progressText: "\(min(visitedCountryCount, crossBorderTarget))/\(crossBorderTarget)", track: .international),
+                Achievement(id: "international_league_complete", title: "Udebanespecialist", description: "Fuldfør alle stadions i én række uden for \(homeCountryLabel).", systemImage: "flag.pattern.checkered", isUnlocked: completedInternationalDivisions >= 1, progressText: "\(completedInternationalDivisions)/1", track: .international),
             ].sorted { a, b in
                 if a.isUnlocked != b.isUnlocked { return a.isUnlocked && !b.isUnlocked }
                 return a.title.localizedCaseInsensitiveCompare(b.title) == .orderedAscending
             }
         }()
 
+        let nextLockedAchievement: Achievement? = {
+            let lockedJourney = journeyAchievements.filter { !$0.isUnlocked }
+            let lockedHome = homeCountryAchievements.filter { !$0.isUnlocked }
+            let lockedInternational = internationalAchievements.filter { !$0.isUnlocked }
+
+            if visitedCount == 0 {
+                return lockedJourney.first ?? lockedHome.first ?? lockedInternational.first
+            }
+
+            if homeCountryVisitedCount < homeCountryTotalCount {
+                return lockedHome.first ?? lockedJourney.first ?? lockedInternational.first
+            }
+
+            if hasInternationalCountries {
+                return lockedInternational.first ?? lockedJourney.first ?? lockedHome.first
+            }
+
+            return lockedJourney.first ?? lockedHome.first
+        }()
+
         let achievements = journeyAchievements + homeCountryAchievements + internationalAchievements
         let unlockedAchievementIds = Set(achievements.filter(\.isUnlocked).map(\.id))
-        let nextLockedAchievement = achievements.first(where: { !$0.isUnlocked })
         let prioritizedMilestoneRows = (homeCountryVisitedByDivision.isEmpty ? visitedByDivision : homeCountryVisitedByDivision)
         let nextLeagueMilestone = prioritizedMilestoneRows
             .filter { $0.total > 0 && $0.visited < $0.total }
@@ -532,6 +560,15 @@ struct StatsView: View {
             return "Et oplagt næste stadion at sætte på ønskelisten."
         }()
 
+        let internationalCountryCount = Set(internationalClubs.map(\.countryCode)).count
+        let internationalSectionDescription: String = {
+            let homeCountry = LeaguePresentation.countryLabel(activeHomeCountryCode)
+            if internationalCountryCount <= 1 {
+                return "De her mål tæller kun på åbne lande uden for \(homeCountry)."
+            }
+            return "De her mål tæller på dine \(internationalCountryCount) åbne lande uden for \(homeCountry)."
+        }()
+
         snapshot = Snapshot(
             visitedCount: visitedCount,
             totalCount: totalCount,
@@ -549,6 +586,7 @@ struct StatsView: View {
             currentScopeLabel: currentScopeLabel,
             countryOptions: countryOptions,
             hasInternationalCountries: hasInternationalCountries,
+            internationalCountryCount: internationalCountryCount,
             shouldShowAccountPrompt: shouldShowAccountPrompt,
             accountPromptHighlights: accountPromptHighlights,
             sortedVisitedClubs: visitedClubs.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending },
@@ -567,6 +605,7 @@ struct StatsView: View {
             nextMilestoneTitle: nextMilestoneTitle,
             nextMilestoneDescription: nextMilestoneDescription,
             suggestionDescription: suggestionDescription,
+            internationalSectionDescription: internationalSectionDescription,
             visitedByDivision: visitedByDivision,
             homeCountryVisitedByDivision: homeCountryVisitedByDivision
         )
@@ -665,7 +704,8 @@ struct StatsView: View {
                 description: "Besøg dit første stadion.",
                 systemImage: "figure.walk",
                 isUnlocked: visitedCount >= 1,
-                progressText: "\(min(visitedCount, 1))/1"
+                progressText: "\(min(visitedCount, 1))/1",
+                track: .journey
             ),
             Achievement(
                 id: "five_stadiums",
@@ -673,7 +713,8 @@ struct StatsView: View {
                 description: "Besøg 5 stadions.",
                 systemImage: "map",
                 isUnlocked: visitedCount >= 5,
-                progressText: "\(min(visitedCount, 5))/5"
+                progressText: "\(min(visitedCount, 5))/5",
+                track: .journey
             ),
             Achievement(
                 id: "twelve_stadiums",
@@ -681,7 +722,8 @@ struct StatsView: View {
                 description: "Besøg 12 stadions.",
                 systemImage: "map.fill",
                 isUnlocked: visitedCount >= 12,
-                progressText: "\(min(visitedCount, 12))/12"
+                progressText: "\(min(visitedCount, 12))/12",
+                track: .journey
             ),
             Achievement(
                 id: "first_review",
@@ -689,7 +731,8 @@ struct StatsView: View {
                 description: "Lav din første stadion-anmeldelse.",
                 systemImage: "text.bubble",
                 isUnlocked: reviewedCount >= 1,
-                progressText: "\(min(reviewedCount, 1))/1"
+                progressText: "\(min(reviewedCount, 1))/1",
+                track: .journey
             ),
             Achievement(
                 id: "reviewer_level_2",
@@ -697,7 +740,8 @@ struct StatsView: View {
                 description: "Lav anmeldelser af 5 stadions.",
                 systemImage: "text.bubble.fill",
                 isUnlocked: reviewedCount >= 5,
-                progressText: "\(min(reviewedCount, 5))/5"
+                progressText: "\(min(reviewedCount, 5))/5",
+                track: .journey
             ),
             Achievement(
                 id: "note_writer",
@@ -705,7 +749,8 @@ struct StatsView: View {
                 description: "Skriv noter på 5 stadions.",
                 systemImage: "note.text",
                 isUnlocked: notesCount >= 5,
-                progressText: "\(min(notesCount, 5))/5"
+                progressText: "\(min(notesCount, 5))/5",
+                track: .journey
             ),
             Achievement(
                 id: "first_photo",
@@ -713,7 +758,8 @@ struct StatsView: View {
                 description: "Tilføj dit første stadionbillede.",
                 systemImage: "camera",
                 isUnlocked: totalPhotoCount >= 1,
-                progressText: "\(min(totalPhotoCount, 1))/1"
+                progressText: "\(min(totalPhotoCount, 1))/1",
+                track: .journey
             ),
             Achievement(
                 id: "photo_collector",
@@ -721,7 +767,8 @@ struct StatsView: View {
                 description: "Tilføj 10 stadionbilleder i alt.",
                 systemImage: "camera.fill",
                 isUnlocked: totalPhotoCount >= 10,
-                progressText: "\(min(totalPhotoCount, 10))/10"
+                progressText: "\(min(totalPhotoCount, 10))/10",
+                track: .journey
             ),
             Achievement(
                 id: "gallery_builder",
@@ -729,7 +776,8 @@ struct StatsView: View {
                 description: "Tilføj billeder på 3 forskellige stadions.",
                 systemImage: "photo.on.rectangle",
                 isUnlocked: stadiumsWithPhotosCount >= 3,
-                progressText: "\(min(stadiumsWithPhotosCount, 3))/3"
+                progressText: "\(min(stadiumsWithPhotosCount, 3))/3",
+                track: .journey
             ),
             Achievement(
                 id: "city_hopper",
@@ -737,7 +785,8 @@ struct StatsView: View {
                 description: "Besøg stadions i 5 forskellige byer.",
                 systemImage: "building.2",
                 isUnlocked: visitedCitiesCount >= 5,
-                progressText: "\(min(visitedCitiesCount, 5))/5"
+                progressText: "\(min(visitedCitiesCount, 5))/5",
+                track: .journey
             ),
             Achievement(
                 id: "league_explorer",
@@ -745,7 +794,8 @@ struct StatsView: View {
                 description: "Besøg stadions i 3 forskellige ligaer.",
                 systemImage: "point.3.connected.trianglepath.dotted",
                 isUnlocked: visitedDivisionsCount >= 3,
-                progressText: "\(min(visitedDivisionsCount, 3))/3"
+                progressText: "\(min(visitedDivisionsCount, 3))/3",
+                track: .journey
             )
         ]
         .sorted { a, b in
@@ -766,7 +816,8 @@ struct StatsView: View {
                 description: "Besøg halvdelen af stadions i \(homeCountryLabel).",
                 systemImage: "chart.bar.xaxis",
                 isUnlocked: homeCountryVisitedCount >= halfThreshold,
-                progressText: "\(min(homeCountryVisitedCount, halfThreshold))/\(halfThreshold)"
+                progressText: "\(min(homeCountryVisitedCount, halfThreshold))/\(halfThreshold)",
+                track: .homeCountry
             ),
             Achievement(
                 id: "home_country_league_complete",
@@ -774,7 +825,8 @@ struct StatsView: View {
                 description: "Fuldfør alle stadions i én række i \(homeCountryLabel).",
                 systemImage: "trophy",
                 isUnlocked: completedHomeDivisions >= 1,
-                progressText: "\(completedHomeDivisions)/1"
+                progressText: "\(completedHomeDivisions)/1",
+                track: .homeCountry
             ),
             Achievement(
                 id: "home_country_complete",
@@ -782,7 +834,8 @@ struct StatsView: View {
                 description: "Besøg alle stadions i \(homeCountryLabel).",
                 systemImage: "crown",
                 isUnlocked: homeCountryTotalCount > 0 && homeCountryVisitedCount == homeCountryTotalCount,
-                progressText: "\(homeCountryVisitedCount)/\(max(1, homeCountryTotalCount))"
+                progressText: "\(homeCountryVisitedCount)/\(max(1, homeCountryTotalCount))",
+                track: .homeCountry
             )
         ]
         .sorted { a, b in
@@ -794,6 +847,7 @@ struct StatsView: View {
     private var internationalAchievements: [Achievement] {
         guard hasInternationalCountries else { return [] }
 
+        let homeCountryLabel = LeaguePresentation.countryLabel(activeHomeCountryCode)
         let internationalVisitedByDivision = divisionRows(from: internationalClubs)
         let completedInternationalDivisions = internationalVisitedByDivision.filter { $0.total > 0 && $0.visited == $0.total }.count
         let activeCountryCount = Set(progressionClubs.map(\.countryCode)).count
@@ -804,34 +858,38 @@ struct StatsView: View {
             Achievement(
                 id: "international_first_visit",
                 title: "Udebanestart",
-                description: "Besøg dit første stadion uden for dit hjemland.",
+                description: "Besøg dit første stadion uden for \(homeCountryLabel).",
                 systemImage: "airplane.departure",
                 isUnlocked: internationalVisitedCount >= 1,
-                progressText: "\(min(internationalVisitedCount, 1))/1"
+                progressText: "\(min(internationalVisitedCount, 1))/1",
+                track: .international
             ),
             Achievement(
                 id: "international_explorer",
                 title: "International groundhopper",
-                description: "Besøg 5 stadions uden for dit hjemland.",
+                description: "Besøg 5 stadions uden for \(homeCountryLabel).",
                 systemImage: "globe.europe.africa",
                 isUnlocked: internationalVisitedCount >= 5,
-                progressText: "\(min(internationalVisitedCount, 5))/5"
+                progressText: "\(min(internationalVisitedCount, 5))/5",
+                track: .international
             ),
             Achievement(
                 id: "cross_border",
                 title: "På tværs af grænser",
-                description: "Besøg stadions i mindst 2 aktive lande.",
+                description: "Besøg stadions i mindst 2 åbne lande.",
                 systemImage: "point.topleft.down.curvedto.point.bottomright.up",
                 isUnlocked: crossBorderTarget <= 1 || visitedCountryCount >= crossBorderTarget,
-                progressText: "\(min(visitedCountryCount, crossBorderTarget))/\(crossBorderTarget)"
+                progressText: "\(min(visitedCountryCount, crossBorderTarget))/\(crossBorderTarget)",
+                track: .international
             ),
             Achievement(
                 id: "international_league_complete",
                 title: "Udebanespecialist",
-                description: "Fuldfør alle stadions i én international række.",
+                description: "Fuldfør alle stadions i én række uden for \(homeCountryLabel).",
                 systemImage: "flag.pattern.checkered",
                 isUnlocked: completedInternationalDivisions >= 1,
-                progressText: "\(completedInternationalDivisions)/1"
+                progressText: "\(completedInternationalDivisions)/1",
+                track: .international
             )
         ]
         .sorted { a, b in
@@ -1334,7 +1392,7 @@ struct StatsView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                Section("Stadionrejse") {
+                Section("Din rejse") {
                     HStack {
                         Text("Låst op")
                         Spacer()
@@ -1347,7 +1405,7 @@ struct StatsView: View {
                     }
                 }
 
-                Section("Mål i \(LeaguePresentation.countryLabel(snapshot.activeHomeCountryCode))") {
+                Section("I \(LeaguePresentation.countryLabel(snapshot.activeHomeCountryCode))") {
                     HStack {
                         Text("Låst op")
                         Spacer()
@@ -1361,12 +1419,12 @@ struct StatsView: View {
                 }
 
                 if !snapshot.internationalAchievements.isEmpty {
-                    Section("Internationale mål") {
+                    Section("Flere lande") {
                         HStack(alignment: .top, spacing: 10) {
                             VStack(alignment: .leading, spacing: 4) {
-                                Text("Mål uden for hjemlandet")
+                                Text("Mål uden for \(LeaguePresentation.countryLabel(snapshot.activeHomeCountryCode))")
                                     .font(.headline)
-                                Text("De her mål bliver relevante, når du åbner lande uden for dit hjemland.")
+                                Text(snapshot.internationalSectionDescription)
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
