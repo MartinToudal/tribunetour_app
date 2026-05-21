@@ -22,6 +22,9 @@ Formål: samle de vigtigste udeståender, som ikke skal forstyrre den aktuelle 1
 - **Premium betaling via web**
   - Vi har gjort adgangsflowet tydeligere, men ikke bygget den rigtige vej fra interesse til køb.
   - Bør kobles til premium-logikken på web som næste naturlige kommercielle trin.
+- **Achievements som egen produktflade**
+  - `Min tur` bør kun vise aktive og relevante achievements.
+  - En separat achievements-flade bør samle land-, række-, rejse- og særlige achievements uden at gøre `Min tur` tung.
 - **Onboarding flow for nye brugere**
   - Gør hjemland, scope, login og premium lettere at forstå fra første minut.
   - Særligt vigtigt når produktet skal forklares uden manuel hjælp.
