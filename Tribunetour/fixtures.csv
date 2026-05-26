@@ -874,7 +874,6 @@ esl-r36-girona-real-sociedad,2026-05-14T20:00:00+02:00,La Liga - 36. runde,es-gi
 esl-r36-real-madrid-oviedo,2026-05-14T21:30:00+02:00,La Liga - 36. runde,es-real-madrid,es-oviedo,es-real-madrid,scheduled,,,,
 1d-r30-kol-lyn,2026-05-15T18:00:00+02:00,Runde 30,dk-kolding-if,dk-lyngby-boldklub,dk-kolding-if,scheduled,,,,2025-26
 1d-r30-b93-aab,2026-05-15T19:00:00+02:00,Runde 30,dk-b-93,dk-aab,dk-b-93,scheduled,,,,2025-26
-3d-r28-nyk-hør,2026-11-15T15:00:00+02:00,Runde 16,dk-nykobing-fc,dk-horsholm-usserod-ik,dk-nykobing-fc,scheduled,,,,2025-26
 fr3-r34-aubagne-caen,2026-05-15T19:30:00+02:00,National - 34. runde,fr-aubagne,fr-caen,fr-aubagne,scheduled,,,,
 fr3-r34-concarneau-villefranche,2026-05-15T19:30:00+02:00,National - 34. runde,fr-concarneau,fr-villefranche,fr-concarneau,scheduled,,,,
 fr3-r34-dijon-orleans,2026-05-15T19:30:00+02:00,National - 34. runde,fr-dijon,fr-orleans,fr-dijon,scheduled,,,,
@@ -910,7 +909,6 @@ bl-r34-svw-bvb,2026-05-16T15:30:00+02:00,Bundesliga - Runde 34,de-werder-bremen,
 2d-r29-hik-thi,2026-05-16T14:00:00+02:00,Runde 29,dk-hik,dk-thisted-fc,dk-hik,scheduled,,,,2025-26
 2d-r29-ros-nas,2026-05-16T14:00:00+02:00,Runde 29,dk-fc-roskilde,dk-naestved,dk-fc-roskilde,scheduled,,,,2025-26
 3d-r28-fa2-van,2026-05-16T14:00:00+02:00,Runde 28,dk-fa-2000,dk-vanlose,dk-fa-2000,scheduled,,,,2025-26
-3d-r28-fre-lys,2026-10-04T14:00:00+02:00,Runde 10,dk-frem,dk-if-lyseng,dk-frem,scheduled,,,,2025-26
 3d-r28-næs-brø,2026-05-16T14:00:00+02:00,Runde 28,dk-naesby-bk,dk-bronshoj,dk-naesby-bk,scheduled,,,,2025-26
 es2-r40-real-sociedad-b-mirandes,2026-05-16T14:00:00+02:00,Runde 40,es-real-sociedad-b,es-mirandes,es-real-sociedad-b,scheduled,,,,2025-26
 1d-r30-ach-hvi,2026-05-16T15:00:00+02:00,Runde 30,dk-ac-horsens,dk-hvidovre-if,dk-ac-horsens,scheduled,,,,2025-26
@@ -1026,9 +1024,7 @@ es2-r40-leganes-huesca,2026-05-18T20:30:00+02:00,Runde 40,es-leganes,es-huesca,e
 2d-r30-ish-hel,2026-05-23T13:00:00+02:00,Runde 30,dk-ishoj-if,dk-fc-helsingor,dk-ishoj-if,scheduled,,,,2025-26
 2d-r30-nas-thi,2026-05-23T13:00:00+02:00,Runde 30,dk-naestved,dk-thisted-fc,dk-naestved,scheduled,,,,2025-26
 3d-r29-odd-vej,2026-05-22T19:00:00+02:00,Runde 29,dk-odder-fodbold,dk-vejgaard-b,dk-odder-fodbold,scheduled,,,,2025-26
-2d-r30-vsk-faa,2026-11-08T13:30:00+02:00,2. division - Spillerunde 30,dk-vsk-aarhus,dk-fremad-amager,dk-vsk-aarhus,scheduled,,,,2025-26
 3d-r29-lys-sun,2026-05-23T13:30:00+02:00,Runde 29,dk-if-lyseng,dk-sundby-bk,dk-if-lyseng,scheduled,,,,2025-26
-1d-r31-mid-b93,2026-11-22T13:00:00+02:00,Runde 17,dk-middelfart,dk-b-93,dk-middelfart,scheduled,,,,2025-26
 3d-r29-fa2-nyk,2026-05-23T14:00:00+02:00,Runde 29,dk-fa-2000,dk-nykobing-fc,dk-fa-2000,scheduled,,,,2025-26
 3d-r29-fre-hol,2026-05-23T14:00:00+02:00,Runde 29,dk-frem,dk-holbaek-bi,dk-frem,scheduled,,,,2025-26
 2d-r30-ven-ros,2026-05-24T14:00:00+02:00,Runde 30,dk-vendsyssel-ff,dk-fc-roskilde,dk-vendsyssel-ff,scheduled,,,,2025-26
@@ -1099,22 +1095,15 @@ ita-r38-verona-roma,2026-05-24T15:00:00+02:00,Runde 38,it-verona,it-roma,it-vero
 1d-r31-hvi-efb,2026-05-25T15:00:00+02:00,Runde 31,dk-hvidovre-if,dk-esbjerg-fb,dk-hvidovre-if,scheduled,,,,2025-26
 1d-r31-lyn-ach,2026-05-25T18:00:00+02:00,Runde 31,dk-lyngby-boldklub,dk-ac-horsens,dk-lyngby-boldklub,scheduled,,,,2025-26
 2d-r31-thi-ros,2026-05-29T18:00:00+02:00,Runde 31,dk-thisted-fc,dk-fc-roskilde,dk-thisted-fc,scheduled,,,,2025-26
-3d-r30-brø-van,2026-10-10T18:30:00+02:00,Runde 11,dk-bronshoj,dk-vanlose,dk-bronshoj,scheduled,,,,2025-26
-2d-r31-faa-ski,2026-11-14T19:00:00+02:00,2. division - Spillerunde 31,dk-fremad-amager,dk-skive,dk-fremad-amager,scheduled,,,,2025-26
-2d-r31-nas-ab,2026-10-17T19:00:00+02:00,2. division - Spillerunde 31,dk-naestved,dk-ab,dk-naestved,scheduled,,,,2025-26
 3d-r30-hør-fa2,2026-05-29T19:00:00+02:00,Runde 30,dk-horsholm-usserod-ik,dk-fa-2000,dk-horsholm-usserod-ik,scheduled,,,,2025-26
 2d-r31-ish-vsk,2026-05-30T13:00:00+02:00,Runde 31,dk-ishoj-if,dk-vsk-aarhus,dk-ishoj-if,scheduled,,,,2025-26
 3d-r30-hol-lys,2026-05-30T13:00:00+02:00,Runde 30,dk-holbaek-bi,dk-if-lyseng,dk-holbaek-bi,scheduled,,,,2025-26
 3d-r30-sun-odd,2026-05-30T13:00:00+02:00,Runde 30,dk-sundby-bk,dk-odder-fodbold,dk-sundby-bk,scheduled,,,,2025-26
-3d-r30-vej-fre,2026-11-01T14:00:00+02:00,Runde 14,dk-vejgaard-b,dk-frem,dk-vejgaard-b,scheduled,,,,2025-26
-2d-r31-hik-ven,2026-11-14T18:00:00+02:00,2. division - Spillerunde 31,dk-hik,dk-vendsyssel-ff,dk-hik,scheduled,,,,2025-26
 1d-r32-aab-hbk,2026-05-30T15:00:00+02:00,Runde 32,dk-aab,dk-hb-koge,dk-aab,scheduled,,,,2025-26
 1d-r32-b93-aaf,2026-05-30T15:00:00+02:00,Runde 32,dk-b-93,dk-aarhus-fremad,dk-b-93,scheduled,,,,2025-26
 1d-r32-hob-mid,2026-05-30T15:00:00+02:00,Runde 32,dk-hobro-ik,dk-middelfart,dk-hobro-ik,scheduled,,,,2025-26
-3d-r30-nyk-næs,2026-10-25T15:00:00+02:00,Runde 13,dk-nykobing-fc,dk-naesby-bk,dk-nykobing-fc,scheduled,,,,2025-26
 1d-r32-ach-kol,2026-05-31T15:00:00+02:00,Runde 32,dk-ac-horsens,dk-kolding-if,dk-ac-horsens,scheduled,,,,2025-26
 1d-r32-efb-lyn,2026-05-31T15:00:00+02:00,Runde 32,dk-esbjerg-fb,dk-lyngby-boldklub,dk-esbjerg-fb,scheduled,,,,2025-26
-1d-r32-hil-hvi,2026-10-18T14:00:00+02:00,Runde 13,dk-hillerod-fodbold,dk-hvidovre-if,dk-hillerod-fodbold,scheduled,,,,2025-26
 es2-r42-almeria-valladolid,2026-05-31T18:00:00+02:00,Runde 42,es-almeria,es-valladolid,es-almeria,scheduled,,,,2025-26
 es2-r42-burgos-cf-andorra,2026-05-31T18:00:00+02:00,Runde 42,es-burgos-cf,es-andorra,es-burgos-cf,scheduled,,,,2025-26
 es2-r42-castellon-eibar,2026-05-31T18:00:00+02:00,Runde 42,es-castellon,es-eibar,es-castellon,scheduled,,,,2025-26
@@ -1138,10 +1127,8 @@ es2-r42-zaragoza-malaga,2026-05-31T18:00:00+02:00,Runde 42,es-zaragoza,es-malaga
 2d-r32-vsk-hel,2026-06-06T14:00:00+02:00,Runde 32,dk-vsk-aarhus,dk-fc-helsingor,dk-vsk-aarhus,scheduled,,,,2025-26
 3d-r31-brø-nyk,2026-06-06T14:00:00+02:00,Runde 31,dk-bronshoj,dk-nykobing-fc,dk-bronshoj,scheduled,,,,2025-26
 3d-r31-næs-fa2,2026-06-06T14:00:00+02:00,Runde 31,dk-naesby-bk,dk-fa-2000,dk-naesby-bk,scheduled,,,,2025-26
-3d-r31-van-hør,2026-10-04T14:00:00+02:00,Runde 10,dk-vanlose,dk-horsholm-usserod-ik,dk-vanlose,scheduled,,,,2025-26
 3d-r32-fa2-brø,2026-06-13T14:00:00+02:00,Runde 32,dk-fa-2000,dk-bronshoj,dk-fa-2000,scheduled,,,,2025-26
 3d-r32-fre-sun,2026-06-13T14:00:00+02:00,Runde 32,dk-frem,dk-sundby-bk,dk-frem,scheduled,,,,2025-26
-3d-r32-hol-vej,2026-10-11T13:00:00+02:00,Runde 11,dk-holbaek-bi,dk-vejgaard-b,dk-holbaek-bi,scheduled,,,,2025-26
 3d-r32-hør-næs,2026-06-13T14:00:00+02:00,Runde 32,dk-horsholm-usserod-ik,dk-naesby-bk,dk-horsholm-usserod-ik,scheduled,,,,2025-26
 3d-r32-lys-odd,2026-06-13T14:00:00+02:00,Runde 32,dk-if-lyseng,dk-odder-fodbold,dk-if-lyseng,scheduled,,,,2025-26
 3d-r32-nyk-van,2026-06-13T14:00:00+02:00,Runde 32,dk-nykobing-fc,dk-vanlose,dk-nykobing-fc,scheduled,,,,2025-26
@@ -1245,138 +1232,16 @@ be3a-03-sl16-fc-crossing-schaerbeek,2026-05-10T15:00:00+02:00,National Division 
 be3ap-01-renaissance-mons-meux,2026-05-10T15:00:00+02:00,National Division 1 ACFF - Oprykningsgruppe - Runde 10,be-renaissance-mons,be-meux,be-renaissance-mons,scheduled,,,be-national-division-1-acff-promotion-group,2025-26
 be3ap-02-tubize-braine-union-rochefortoise,2026-05-10T15:00:00+02:00,National Division 1 ACFF - Oprykningsgruppe - Runde 10,be-tubize-braine,be-union-rochefortoise,be-tubize-braine,scheduled,,,be-national-division-1-acff-promotion-group,2025-26
 be3ap-03-virton-habay-la-neuve,2026-05-10T15:00:00+02:00,National Division 1 ACFF - Oprykningsgruppe - Runde 10,be-virton,be-habay-la-neuve,be-virton,scheduled,,,be-national-division-1-acff-promotion-group,2025-26
-sl-20261201-br-ndby-if-fc-fredericia,2026-12-01T19:00:00+02:00,Runde 17,dk-brondby-if,dk-fc-fredericia,dk-brondby-if,scheduled,,,,2025-26
-sl-20261103-fc-midtjylland-agf,2026-11-03T19:00:00+02:00,Runde 14,dk-fc-midtjylland,dk-agf,dk-fc-midtjylland,scheduled,,,,2025-26
-sl-20261205-fc-fredericia-ob,2026-12-05T19:00:00+02:00,Runde 18,dk-fc-fredericia,dk-ob,dk-fc-fredericia,scheduled,,,,2025-26
-sl-20261107-ob-silkeborg-if,2026-11-07T19:00:00+02:00,Runde 15,dk-ob,dk-silkeborg-if,dk-ob,scheduled,,,,2025-26
-sl-20261207-fc-nordsj-lland-silkeborg-if,2026-12-07T14:00:00+02:00,Runde 18,dk-fc-nordsjaelland,dk-silkeborg-if,dk-fc-nordsjaelland,scheduled,,,,2025-26
-sl-20261207-viborg-ff-fc-midtjylland,2026-12-07T14:00:00+02:00,Runde 18,dk-viborg-ff,dk-fc-midtjylland,dk-viborg-ff,scheduled,,,,2025-26
-sl-20261207-randers-fc-agf,2026-12-07T16:00:00+02:00,Runde 18,dk-randers-fc,dk-agf,dk-randers-fc,scheduled,,,,2025-26
-sl-20261207-fc-k-benhavn-s-nderjyske,2026-12-07T18:00:00+02:00,Runde 18,dk-fc-kobenhavn,dk-sonderjyske,dk-fc-kobenhavn,scheduled,,,,2025-26
-sl-20261208-vejle-boldklub-br-ndby-if,2026-12-08T19:00:00+02:00,Runde 18,dk-vejle-boldklub,dk-brondby-if,dk-vejle-boldklub,scheduled,,,,2025-26
-sl-20261109-fc-fredericia-viborg-ff,2026-11-09T14:00:00+02:00,Runde 15,dk-fc-fredericia,dk-viborg-ff,dk-fc-fredericia,scheduled,,,,2025-26
-sl-20261109-vejle-boldklub-fc-k-benhavn,2026-11-09T14:00:00+02:00,Runde 15,dk-vejle-boldklub,dk-fc-kobenhavn,dk-vejle-boldklub,scheduled,,,,2025-26
-sl-20261109-randers-fc-fc-midtjylland,2026-11-09T16:00:00+02:00,Runde 15,dk-randers-fc,dk-fc-midtjylland,dk-randers-fc,scheduled,,,,2025-26
-sl-20261109-agf-s-nderjyske,2026-11-09T18:00:00+02:00,Runde 15,dk-agf,dk-sonderjyske,dk-agf,scheduled,,,,2025-26
-sl-20261109-br-ndby-if-fc-nordsj-lland,2026-11-09T20:00:00+02:00,Runde 15,dk-brondby-if,dk-fc-nordsjaelland,dk-brondby-if,scheduled,,,,2025-26
-sl-20261121-silkeborg-if-agf,2026-11-21T19:00:00+02:00,Runde 16,dk-silkeborg-if,dk-agf,dk-silkeborg-if,scheduled,,,,2025-26
-sl-20261123-fc-k-benhavn-br-ndby-if,2026-11-23T12:00:00+02:00,Runde 16,dk-fc-kobenhavn,dk-brondby-if,dk-fc-kobenhavn,scheduled,,,,2025-26
-sl-20261123-viborg-ff-vejle-boldklub,2026-11-23T14:00:00+02:00,Runde 16,dk-viborg-ff,dk-vejle-boldklub,dk-viborg-ff,scheduled,,,,2025-26
-sl-20261123-fc-nordsj-lland-fc-fredericia,2026-11-23T16:00:00+02:00,Runde 16,dk-fc-nordsjaelland,dk-fc-fredericia,dk-fc-nordsjaelland,scheduled,,,,2025-26
-sl-20261123-s-nderjyske-fc-midtjylland,2026-11-23T18:00:00+02:00,Runde 16,dk-sonderjyske,dk-fc-midtjylland,dk-sonderjyske,scheduled,,,,2025-26
-sl-20261124-randers-fc-ob,2026-11-24T19:00:00+02:00,Runde 16,dk-randers-fc,dk-ob,dk-randers-fc,scheduled,,,,2025-26
-sl-20261128-s-nderjyske-viborg-ff,2026-11-28T19:00:00+02:00,Runde 17,dk-sonderjyske,dk-viborg-ff,dk-sonderjyske,scheduled,,,,2025-26
-sl-20261130-agf-fc-k-benhavn,2026-11-30T14:00:00+02:00,Runde 17,dk-agf,dk-fc-kobenhavn,dk-agf,scheduled,,,,2025-26
-sl-20261130-silkeborg-if-randers-fc,2026-11-30T14:00:00+02:00,Runde 17,dk-silkeborg-if,dk-randers-fc,dk-silkeborg-if,scheduled,,,,2025-26
-sl-20261130-fc-midtjylland-fc-nordsj-lland,2026-11-30T16:00:00+02:00,Runde 17,dk-fc-midtjylland,dk-fc-nordsjaelland,dk-fc-midtjylland,scheduled,,,,2025-26
-sl-20261130-ob-vejle-boldklub,2026-11-30T18:00:00+02:00,Runde 17,dk-ob,dk-vejle-boldklub,dk-ob,scheduled,,,,2025-26
-1d-20261101-aarhus-fremad-hvidovre-if,2026-11-01T14:00:00+02:00,Runde 15,dk-aarhus-fremad,dk-hvidovre-if,dk-aarhus-fremad,scheduled,,,,2025-26
-1d-20261101-hiller-d-fodbold-kolding-if,2026-11-01T14:00:00+02:00,Runde 15,dk-hillerod-fodbold,dk-kolding-if,dk-hillerod-fodbold,scheduled,,,,2025-26
-1d-20261101-middelfart-aab,2026-11-01T14:00:00+02:00,Runde 15,dk-middelfart,dk-aab,dk-middelfart,scheduled,,,,2025-26
-1d-20261102-lyngby-hobro-ik,2026-11-02T15:00:00+02:00,Runde 15,dk-lyngby-boldklub,dk-hobro-ik,dk-lyngby-boldklub,scheduled,,,,2025-26
-1d-20261102-esbjerg-fb-b-93,2026-11-02T17:00:00+02:00,Runde 15,dk-esbjerg-fb,dk-b-93,dk-esbjerg-fb,scheduled,,,,2025-26
-1d-20261107-hobro-ik-aarhus-fremad,2026-11-07T18:00:00+02:00,Runde 16,dk-hobro-ik,dk-aarhus-fremad,dk-hobro-ik,scheduled,,,,2025-26
-1d-20261107-hb-k-ge-hiller-d-fodbold,2026-11-07T18:30:00+02:00,Runde 16,dk-hb-koge,dk-hillerod-fodbold,dk-hb-koge,scheduled,,,,2025-26
-1d-20261107-kolding-if-ac-horsens,2026-11-07T19:00:00+02:00,Runde 16,dk-kolding-if,dk-ac-horsens,dk-kolding-if,scheduled,,,,2025-26
-1d-20261108-b-93-lyngby,2026-11-08T14:00:00+02:00,Runde 16,dk-b-93,dk-lyngby-boldklub,dk-b-93,scheduled,,,,2025-26
-1d-20261109-hvidovre-if-aab,2026-11-09T13:00:00+02:00,Runde 16,dk-hvidovre-if,dk-aab,dk-hvidovre-if,scheduled,,,,2025-26
-1d-20261110-esbjerg-fb-middelfart,2026-11-10T19:00:00+02:00,Runde 16,dk-esbjerg-fb,dk-middelfart,dk-esbjerg-fb,scheduled,,,,2025-26
-1d-20261017-hb-k-ge-kolding-if,2026-10-17T18:30:00+02:00,Runde 13,dk-hb-koge,dk-kolding-if,dk-hb-koge,scheduled,,,,2025-26
-1d-20261017-b-93-aab,2026-10-17T19:00:00+02:00,Runde 13,dk-b-93,dk-aab,dk-b-93,scheduled,,,,2025-26
-1d-20261018-middelfart-ac-horsens,2026-10-18T14:00:00+02:00,Runde 13,dk-middelfart,dk-ac-horsens,dk-middelfart,scheduled,,,,2025-26
-1d-20261019-lyngby-aarhus-fremad,2026-10-19T15:00:00+02:00,Runde 13,dk-lyngby-boldklub,dk-aarhus-fremad,dk-lyngby-boldklub,scheduled,,,,2025-26
-1d-20261120-hobro-ik-hvidovre-if,2026-11-20T18:30:00+02:00,Runde 17,dk-hobro-ik,dk-hvidovre-if,dk-hobro-ik,scheduled,,,,2025-26
-1d-20261121-lyngby-esbjerg-fb,2026-11-21T19:00:00+02:00,Runde 17,dk-lyngby-boldklub,dk-esbjerg-fb,dk-lyngby-boldklub,scheduled,,,,2025-26
-1d-20261122-aab-kolding-if,2026-11-22T14:00:00+02:00,Runde 17,dk-aab,dk-kolding-if,dk-aab,scheduled,,,,2025-26
 1d-20260523-middelfart-b-93,2026-05-23T14:00:00+02:00,Runde 31,dk-middelfart,dk-b-93,dk-middelfart,scheduled,,,,2025-26
-1d-20261023-hvidovre-if-hb-k-ge,2026-10-23T18:30:00+02:00,Runde 14,dk-hvidovre-if,dk-hb-koge,dk-hvidovre-if,scheduled,,,,2025-26
-1d-20261123-aarhus-fremad-hb-k-ge,2026-11-23T14:00:00+02:00,Runde 17,dk-aarhus-fremad,dk-hb-koge,dk-aarhus-fremad,scheduled,,,,2025-26
-1d-20261123-ac-horsens-hiller-d-fodbold,2026-11-23T15:00:00+02:00,Runde 17,dk-ac-horsens,dk-hillerod-fodbold,dk-ac-horsens,scheduled,,,,2025-26
-1d-20261024-b-93-ac-horsens,2026-10-24T19:00:00+02:00,Runde 14,dk-b-93,dk-ac-horsens,dk-b-93,scheduled,,,,2025-26
-1d-20261024-kolding-if-middelfart,2026-10-24T19:00:00+02:00,Runde 14,dk-kolding-if,dk-middelfart,dk-kolding-if,scheduled,,,,2025-26
-1d-20261025-aab-lyngby,2026-10-25T14:00:00+02:00,Runde 14,dk-aab,dk-lyngby-boldklub,dk-aab,scheduled,,,,2025-26
-1d-20261025-aarhus-fremad-esbjerg-fb,2026-10-25T14:00:00+02:00,Runde 14,dk-aarhus-fremad,dk-esbjerg-fb,dk-aarhus-fremad,scheduled,,,,2025-26
-1d-20261025-hobro-ik-hiller-d-fodbold,2026-10-25T14:00:00+02:00,Runde 14,dk-hobro-ik,dk-hillerod-fodbold,dk-hobro-ik,scheduled,,,,2025-26
-1d-20261128-b-93-hobro-ik,2026-11-28T19:00:00+02:00,Runde 18,dk-b-93,dk-hobro-ik,dk-b-93,scheduled,,,,2025-26
-1d-20261128-hiller-d-fodbold-lyngby,2026-11-28T19:00:00+02:00,Runde 18,dk-hillerod-fodbold,dk-lyngby-boldklub,dk-hillerod-fodbold,scheduled,,,,2025-26
-1d-20261129-hvidovre-if-esbjerg-fb,2026-11-29T13:30:00+02:00,Runde 18,dk-hvidovre-if,dk-esbjerg-fb,dk-hvidovre-if,scheduled,,,,2025-26
-1d-20261129-hb-k-ge-middelfart,2026-11-29T15:00:00+02:00,Runde 18,dk-hb-koge,dk-middelfart,dk-hb-koge,scheduled,,,,2025-26
-1d-20261130-ac-horsens-aab,2026-11-30T15:00:00+02:00,Runde 18,dk-ac-horsens,dk-aab,dk-ac-horsens,scheduled,,,,2025-26
-1d-20261130-kolding-if-aarhus-fremad,2026-11-30T15:00:00+02:00,Runde 18,dk-kolding-if,dk-aarhus-fremad,dk-kolding-if,scheduled,,,,2025-26
 1d-20260531-hiller-d-fodbold-hvidovre-if,2026-05-31T15:00:00+02:00,Runde 32,dk-hillerod-fodbold,dk-hvidovre-if,dk-hillerod-fodbold,scheduled,,,,2025-26
-1d-20261031-ac-horsens-hb-k-ge,2026-10-31T19:00:00+02:00,Runde 15,dk-ac-horsens,dk-hb-koge,dk-ac-horsens,scheduled,,,,2025-26
-2d-20261101-brabrand-if-hik,2026-11-01T14:00:00+02:00,,dk-brabrand-if,dk-hik,dk-brabrand-if,scheduled,,,,2025-26
-2d-20261101-fc-roskilde-thisted-fc,2026-11-01T14:00:00+02:00,,dk-fc-roskilde,dk-thisted-fc,dk-fc-roskilde,scheduled,,,,2025-26
-2d-20261101-skive-vsk-aarhus,2026-11-01T14:00:00+02:00,,dk-skive,dk-vsk-aarhus,dk-skive,scheduled,,,,2025-26
-2d-20261101-vendsyssel-ff-ish-j-if,2026-11-01T15:00:00+02:00,,dk-vendsyssel-ff,dk-ishoj-if,dk-vendsyssel-ff,scheduled,,,,2025-26
-2d-20261102-n-stved-bk-fc-helsing-r,2026-11-02T13:00:00+02:00,,dk-naestved,dk-fc-helsingor,dk-naestved,scheduled,,,,2025-26
-2d-20261107-skive-fc-roskilde,2026-11-07T18:30:00+02:00,,dk-skive,dk-fc-roskilde,dk-skive,scheduled,,,,2025-26
-2d-20261107-hik-fc-helsing-r,2026-11-07T19:00:00+02:00,,dk-hik,dk-fc-helsingor,dk-hik,scheduled,,,,2025-26
-2d-20261108-ish-j-if-brabrand-if,2026-11-08T13:00:00+02:00,,dk-ishoj-if,dk-brabrand-if,dk-ishoj-if,scheduled,,,,2025-26
-2d-20261108-ab-vendsyssel-ff,2026-11-08T15:00:00+02:00,,dk-ab,dk-vendsyssel-ff,dk-ab,scheduled,,,,2025-26
-2d-20261109-thisted-fc-n-stved-bk,2026-11-09T13:00:00+02:00,,dk-thisted-fc,dk-naestved,dk-thisted-fc,scheduled,,,,2025-26
-2d-20261011-ish-j-if-thisted-fc,2026-10-11T13:00:00+02:00,,dk-ishoj-if,dk-thisted-fc,dk-ishoj-if,scheduled,,,,2025-26
-2d-20261011-fc-roskilde-brabrand-if,2026-10-11T14:00:00+02:00,,dk-fc-roskilde,dk-brabrand-if,dk-fc-roskilde,scheduled,,,,2025-26
-2d-20261011-hik-vsk-aarhus,2026-10-11T14:00:00+02:00,,dk-hik,dk-vsk-aarhus,dk-hik,scheduled,,,,2025-26
-2d-20261114-fc-helsing-r-ab,2026-11-14T19:00:00+02:00,,dk-fc-helsingor,dk-ab,dk-fc-helsingor,scheduled,,,,2025-26
-2d-20261115-brabrand-if-fc-roskilde,2026-11-15T14:00:00+02:00,,dk-brabrand-if,dk-fc-roskilde,dk-brabrand-if,scheduled,,,,2025-26
-2d-20261115-thisted-fc-ish-j-if,2026-11-15T15:00:00+02:00,,dk-thisted-fc,dk-ishoj-if,dk-thisted-fc,scheduled,,,,2025-26
-2d-20261116-n-stved-bk-vsk-aarhus,2026-11-16T13:00:00+02:00,,dk-naestved,dk-vsk-aarhus,dk-naestved,scheduled,,,,2025-26
-2d-20261017-fc-helsing-r-ish-j-if,2026-10-17T19:00:00+02:00,,dk-fc-helsingor,dk-ishoj-if,dk-fc-helsingor,scheduled,,,,2025-26
-2d-20261017-fc-roskilde-fremad-amager,2026-10-17T19:00:00+02:00,,dk-fc-roskilde,dk-fremad-amager,dk-fc-roskilde,scheduled,,,,2025-26
-2d-20261017-skive-vendsyssel-ff,2026-10-17T19:00:00+02:00,,dk-skive,dk-vendsyssel-ff,dk-skive,scheduled,,,,2025-26
-2d-20261018-brabrand-if-vsk-aarhus,2026-10-18T14:00:00+02:00,,dk-brabrand-if,dk-vsk-aarhus,dk-brabrand-if,scheduled,,,,2025-26
-2d-20261019-thisted-fc-hik,2026-10-19T14:00:00+02:00,,dk-thisted-fc,dk-hik,dk-thisted-fc,scheduled,,,,2025-26
 2d-20260523-vsk-aarhus-fremad-amager,2026-05-23T13:30:00+02:00,Runde 30,dk-vsk-aarhus,dk-fremad-amager,dk-vsk-aarhus,scheduled,,,,2025-26
-2d-20261024-fc-helsing-r-thisted-fc,2026-10-24T19:00:00+02:00,,dk-fc-helsingor,dk-thisted-fc,dk-fc-helsingor,scheduled,,,,2025-26
-2d-20261024-vendsyssel-ff-fremad-amager,2026-10-24T19:00:00+02:00,,dk-vendsyssel-ff,dk-fremad-amager,dk-vendsyssel-ff,scheduled,,,,2025-26
-2d-20261025-ish-j-if-n-stved-bk,2026-10-25T13:00:00+02:00,,dk-ishoj-if,dk-naestved,dk-ishoj-if,scheduled,,,,2025-26
-2d-20261025-vsk-aarhus-fc-roskilde,2026-10-25T13:30:00+02:00,,dk-vsk-aarhus,dk-fc-roskilde,dk-vsk-aarhus,scheduled,,,,2025-26
-2d-20261025-ab-brabrand-if,2026-10-25T14:00:00+02:00,,dk-ab,dk-brabrand-if,dk-ab,scheduled,,,,2025-26
-2d-20261025-hik-skive,2026-10-25T14:00:00+02:00,,dk-hik,dk-skive,dk-hik,scheduled,,,,2025-26
 2d-20260529-fremad-amager-skive,2026-05-29T19:00:00+02:00,Runde 31,dk-fremad-amager,dk-skive,dk-fremad-amager,scheduled,,,,2025-26
 2d-20260529-n-stved-bk-ab,2026-05-29T19:00:00+02:00,Runde 31,dk-naestved,dk-ab,dk-naestved,scheduled,,,,2025-26
 2d-20260530-hik-vendsyssel-ff,2026-05-30T14:00:00+02:00,Runde 31,dk-hik,dk-vendsyssel-ff,dk-hik,scheduled,,,,2025-26
-2d-20261031-fremad-amager-ab,2026-10-31T19:00:00+02:00,,dk-fremad-amager,dk-ab,dk-fremad-amager,scheduled,,,,2025-26
-3d-20261101-holb-k-h-rsholm-usser-d,2026-11-01T13:00:00+02:00,Runde 14,dk-holbaek-bi,dk-horsholm-usserod-ik,dk-holbaek-bi,scheduled,,,,2025-26
-3d-20261101-odder-fa-2000,2026-11-01T13:00:00+02:00,Runde 14,dk-odder-fodbold,dk-fa-2000,dk-odder-fodbold,scheduled,,,,2025-26
-3d-20261101-if-lyseng-nyk-bing-fc,2026-11-01T13:30:00+02:00,Runde 14,dk-if-lyseng,dk-nykobing-fc,dk-if-lyseng,scheduled,,,,2025-26
-3d-20261101-sundby-n-sby,2026-11-01T14:00:00+02:00,Runde 14,dk-sundby-bk,dk-naesby-bk,dk-sundby-bk,scheduled,,,,2025-26
-3d-20261101-vanl-se-br-nsh-j,2026-11-01T14:00:00+02:00,Runde 14,dk-vanlose,dk-bronshoj,dk-vanlose,scheduled,,,,2025-26
-3d-20261004-odder-br-nsh-j,2026-10-04T13:00:00+02:00,Runde 10,dk-odder-fodbold,dk-bronshoj,dk-odder-fodbold,scheduled,,,,2025-26
-3d-20261004-n-sby-holb-k,2026-10-04T14:00:00+02:00,Runde 10,dk-naesby-bk,dk-holbaek-bi,dk-naesby-bk,scheduled,,,,2025-26
-3d-20261004-sundby-fa-2000,2026-10-04T14:00:00+02:00,Runde 10,dk-sundby-bk,dk-fa-2000,dk-sundby-bk,scheduled,,,,2025-26
-3d-20261004-vejgaard-nyk-bing-fc,2026-10-04T15:00:00+02:00,Runde 10,dk-vejgaard-b,dk-nykobing-fc,dk-vejgaard-b,scheduled,,,,2025-26
 3d-20260606-vanl-se-h-rsholm-usser-d,2026-06-06T14:00:00+02:00,Runde 31,dk-vanlose,dk-horsholm-usserod-ik,dk-vanlose,scheduled,,,,2025-26
-3d-20261108-holb-k-vanl-se,2026-11-08T13:00:00+02:00,Runde 15,dk-holbaek-bi,dk-vanlose,dk-holbaek-bi,scheduled,,,,2025-26
-3d-20261108-h-rsholm-usser-d-vejgaard,2026-11-08T13:00:00+02:00,Runde 15,dk-horsholm-usserod-ik,dk-vejgaard-b,dk-horsholm-usserod-ik,scheduled,,,,2025-26
-3d-20261108-bk-frem-odder,2026-11-08T14:00:00+02:00,Runde 15,dk-frem,dk-odder-fodbold,dk-frem,scheduled,,,,2025-26
-3d-20261108-br-nsh-j-nyk-bing-fc,2026-11-08T14:00:00+02:00,Runde 15,dk-bronshoj,dk-nykobing-fc,dk-bronshoj,scheduled,,,,2025-26
-3d-20261108-fa-2000-sundby,2026-11-08T14:00:00+02:00,Runde 15,dk-fa-2000,dk-sundby-bk,dk-fa-2000,scheduled,,,,2025-26
-3d-20261108-n-sby-if-lyseng,2026-11-08T14:00:00+02:00,Runde 15,dk-naesby-bk,dk-if-lyseng,dk-naesby-bk,scheduled,,,,2025-26
-3d-20261011-h-rsholm-usser-d-sundby,2026-10-11T13:00:00+02:00,Runde 11,dk-horsholm-usserod-ik,dk-sundby-bk,dk-horsholm-usserod-ik,scheduled,,,,2025-26
-3d-20261011-if-lyseng-n-sby,2026-10-11T13:30:00+02:00,Runde 11,dk-if-lyseng,dk-naesby-bk,dk-if-lyseng,scheduled,,,,2025-26
-3d-20261011-fa-2000-odder,2026-10-11T14:00:00+02:00,Runde 11,dk-fa-2000,dk-odder-fodbold,dk-fa-2000,scheduled,,,,2025-26
-3d-20261011-nyk-bing-fc-bk-frem,2026-10-11T15:00:00+02:00,Runde 11,dk-nykobing-fc,dk-frem,dk-nykobing-fc,scheduled,,,,2025-26
 3d-20260613-holb-k-vejgaard,2026-06-13T14:00:00+02:00,Runde 32,dk-holbaek-bi,dk-vejgaard-b,dk-holbaek-bi,scheduled,,,,2025-26
-3d-20261115-vejgaard-holb-k,2026-11-15T13:00:00+02:00,Runde 16,dk-vejgaard-b,dk-holbaek-bi,dk-vejgaard-b,scheduled,,,,2025-26
-3d-20261115-if-lyseng-br-nsh-j,2026-11-15T13:30:00+02:00,Runde 16,dk-if-lyseng,dk-bronshoj,dk-if-lyseng,scheduled,,,,2025-26
-3d-20261115-n-sby-fa-2000,2026-11-15T14:00:00+02:00,Runde 16,dk-naesby-bk,dk-fa-2000,dk-naesby-bk,scheduled,,,,2025-26
-3d-20261115-sundby-bk-frem,2026-11-15T14:00:00+02:00,Runde 16,dk-sundby-bk,dk-frem,dk-sundby-bk,scheduled,,,,2025-26
-3d-20261115-vanl-se-odder,2026-11-15T14:00:00+02:00,Runde 16,dk-vanlose,dk-odder-fodbold,dk-vanlose,scheduled,,,,2025-26
 3d-20260516-bk-frem-if-lyseng,2026-05-16T14:00:00+02:00,Runde 28,dk-frem,dk-if-lyseng,dk-frem,scheduled,,,,2025-26
 3d-20260517-nyk-bing-fc-h-rsholm-usser-d,2026-05-17T14:00:00+02:00,Runde 28,dk-nykobing-fc,dk-horsholm-usserod-ik,dk-nykobing-fc,scheduled,,,,2025-26
-3d-20261018-odder-holb-k,2026-10-18T13:00:00+02:00,Runde 12,dk-odder-fodbold,dk-holbaek-bi,dk-odder-fodbold,scheduled,,,,2025-26
-3d-20261018-bk-frem-h-rsholm-usser-d,2026-10-18T14:00:00+02:00,Runde 12,dk-frem,dk-horsholm-usserod-ik,dk-frem,scheduled,,,,2025-26
-3d-20261018-n-sby-br-nsh-j,2026-10-18T14:00:00+02:00,Runde 12,dk-naesby-bk,dk-bronshoj,dk-naesby-bk,scheduled,,,,2025-26
-3d-20261018-sundby-nyk-bing-fc,2026-10-18T14:00:00+02:00,Runde 12,dk-sundby-bk,dk-nykobing-fc,dk-sundby-bk,scheduled,,,,2025-26
-3d-20261018-vanl-se-if-lyseng,2026-10-18T14:00:00+02:00,Runde 12,dk-vanlose,dk-if-lyseng,dk-vanlose,scheduled,,,,2025-26
-3d-20261018-vejgaard-fa-2000,2026-10-18T14:00:00+02:00,Runde 12,dk-vejgaard-b,dk-fa-2000,dk-vejgaard-b,scheduled,,,,2025-26
-3d-20261025-h-rsholm-usser-d-odder,2026-10-25T13:00:00+02:00,Runde 13,dk-horsholm-usserod-ik,dk-odder-fodbold,dk-horsholm-usserod-ik,scheduled,,,,2025-26
-3d-20261025-if-lyseng-sundby,2026-10-25T13:30:00+02:00,Runde 13,dk-if-lyseng,dk-sundby-bk,dk-if-lyseng,scheduled,,,,2025-26
-3d-20261025-bk-frem-holb-k,2026-10-25T14:00:00+02:00,Runde 13,dk-frem,dk-holbaek-bi,dk-frem,scheduled,,,,2025-26
-3d-20261025-br-nsh-j-vejgaard,2026-10-25T14:00:00+02:00,Runde 13,dk-bronshoj,dk-vejgaard-b,dk-bronshoj,scheduled,,,,2025-26
-3d-20261025-fa-2000-vanl-se,2026-10-25T14:00:00+02:00,Runde 13,dk-fa-2000,dk-vanlose,dk-fa-2000,scheduled,,,,2025-26
 3d-20260529-br-nsh-j-vanl-se,2026-05-29T18:30:00+02:00,Runde 30,dk-bronshoj,dk-vanlose,dk-bronshoj,scheduled,,,,2025-26
 3d-20260530-vejgaard-bk-frem,2026-05-30T13:00:00+02:00,Runde 30,dk-vejgaard-b,dk-frem,dk-vejgaard-b,scheduled,,,,2025-26
 3d-20260531-nyk-bing-fc-n-sby,2026-05-31T14:00:00+02:00,Runde 30,dk-nykobing-fc,dk-naesby-bk,dk-nykobing-fc,scheduled,,,,2025-26
@@ -1399,20 +1264,4 @@ itlp-20260520-catania-lecco,2026-05-20T20:30:00+02:00,Kvartfinalerne,it-catania,
 itlp-20260520-ravenna-salernitana,2026-05-20T20:45:00+02:00,Kvartfinalerne,it-ravenna,it-salernitana,it-ravenna,scheduled,,,it-lega-pro-promotion-playoffs,2025-26
 be-promotion-relegation-playoffs-20260517-lommel-sk-dender,2026-05-17T16:00:00+02:00,Finale,be-lommel-sk,be-dender,be-lommel-sk,scheduled,,,be-promotion-relegation-playoffs,2025-26
 be-promotion-relegation-playoffs-20260523-dender-lommel-sk,2026-05-23T18:15:00+02:00,Finale,be-dender,be-lommel-sk,be-dender,scheduled,,,be-promotion-relegation-playoffs,2025-26
-be-national-division-1-acff-20261206-tubize-braine-royal-union-sg-2,2026-12-06T20:00:00+02:00,Runde 16,be-tubize-braine,be-union-sg-b,be-tubize-braine,scheduled,,,be-national-division-1-acff,2025-26
-be-national-division-1-acff-20261206-union-rochefortoise-charleroi-b,2026-12-06T20:00:00+02:00,Runde 16,be-union-rochefortoise,be-zebra-elites,be-union-rochefortoise,scheduled,,,be-national-division-1-acff,2025-26
-be-national-division-1-acff-20261206-virton-st-liege-u23,2026-12-06T20:00:00+02:00,Runde 16,be-virton,be-sl16-fc,be-virton,scheduled,,,be-national-division-1-acff,2025-26
-be-national-division-1-acff-20261207-namur-meux,2026-12-07T14:30:00+02:00,Runde 16,be-union-namur,be-meux,be-union-namur,scheduled,,,be-national-division-1-acff,2025-26
-be-national-division-1-acff-20261207-stockay-warfusee-habay-la-neuve,2026-12-07T14:30:00+02:00,Runde 16,be-stockay-warfusee,be-habay-la-neuve,be-stockay-warfusee,scheduled,,,be-national-division-1-acff,2025-26
-be-national-division-1-acff-20261207-schaerbeek-evere-renaissance-mons,2026-12-07T15:00:00+02:00,Runde 16,be-crossing-schaerbeek,be-renaissance-mons,be-crossing-schaerbeek,scheduled,,,be-national-division-1-acff,2025-26
-be-national-division-1-acff-20261213-st-liege-u23-namur,2026-12-13T19:00:00+02:00,Runde 17,be-sl16-fc,be-union-namur,be-sl16-fc,scheduled,,,be-national-division-1-acff,2025-26
-be-national-division-1-acff-20261213-royal-union-sg-2-charleroi-b,2026-12-13T19:30:00+02:00,Runde 17,be-union-sg-b,be-zebra-elites,be-union-sg-b,scheduled,,,be-national-division-1-acff,2025-26
-be-national-division-1-acff-20261213-meux-union-rochefortoise,2026-12-13T20:00:00+02:00,Runde 17,be-meux,be-union-rochefortoise,be-meux,scheduled,,,be-national-division-1-acff,2025-26
-be-national-division-1-acff-20261213-renaissance-mons-virton,2026-12-13T20:00:00+02:00,Runde 17,be-renaissance-mons,be-virton,be-renaissance-mons,scheduled,,,be-national-division-1-acff,2025-26
-be-national-division-1-acff-20261214-habay-la-neuve-tubize-braine,2026-12-14T14:30:00+02:00,Runde 17,be-habay-la-neuve,be-tubize-braine,be-habay-la-neuve,scheduled,,,be-national-division-1-acff,2025-26
-be-national-division-1-acff-20261214-schaerbeek-evere-stockay-warfusee,2026-12-14T15:00:00+02:00,Runde 17,be-crossing-schaerbeek,be-stockay-warfusee,be-crossing-schaerbeek,scheduled,,,be-national-division-1-acff,2025-26
 itcpo-20260516-torres-bra,2026-05-16T20:30:00+02:00,Serie C - Play Out,it-torres,it-bra,it-torres,scheduled,,,it-serie-c-playouts,2025-26
-be-national-division-1-acff-20261130-habay-la-neuve-union-rochefortoise,2026-11-30T14:30:00+02:00,Runde 15,be-habay-la-neuve,be-union-rochefortoise,be-habay-la-neuve,scheduled,,,be-national-division-1-acff,2025-26
-be-national-division-1-acff-20261130-namur-schaerbeek-evere,2026-11-30T14:30:00+02:00,Runde 15,be-union-namur,be-crossing-schaerbeek,be-union-namur,scheduled,,,be-national-division-1-acff,2025-26
-be-national-division-1-acff-20261130-st-liege-u23-tubize-braine,2026-11-30T14:30:00+02:00,Runde 15,be-sl16-fc,be-tubize-braine,be-sl16-fc,scheduled,,,be-national-division-1-acff,2025-26
-be-national-division-1-acff-20261130-charleroi-b-stockay-warfusee,2026-11-30T15:00:00+02:00,Runde 15,be-zebra-elites,be-stockay-warfusee,be-zebra-elites,scheduled,,,be-national-division-1-acff,2025-26

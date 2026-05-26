@@ -121,8 +121,8 @@ struct FixturesCSVImporter {
             )
         }
 
-        fixtures.sort { $0.kickoff < $1.kickoff }
-        return fixtures
+        let sanitizedFixtures = fixtures.filter { FixtureSeasonGuard.contains($0) }
+        return sanitizedFixtures.sorted { $0.kickoff < $1.kickoff }
     }
 
     // MARK: - Bundle lookup (no noisy logs)

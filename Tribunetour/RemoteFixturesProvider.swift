@@ -65,7 +65,7 @@ struct RemoteFixturesProvider {
 
     func loadFixtures() async throws -> FixturesLoadResult {
         guard let remoteURL else {
-            let local = try localFallback()
+            let local = sanitizeFixtures(try localFallback(), source: .localFallback)
             return FixturesLoadResult(
                 fixtures: local,
                 source: .localFallback,
@@ -78,7 +78,10 @@ struct RemoteFixturesProvider {
         do {
             let raw = try await fetchData(remoteURL)
             let envelope = try decodeEnvelope(from: raw)
-            let mapped = try envelope.fixtures.map { try $0.toFixture() }.sorted { $0.kickoff < $1.kickoff }
+            let mapped = sanitizeFixtures(
+                try envelope.fixtures.map { try $0.toFixture() }.sorted { $0.kickoff < $1.kickoff },
+                source: .remote
+            )
             guard !mapped.isEmpty else { throw RemoteFixturesProviderError.invalidPayload }
             let merged = mergeWithLocalLeaguePackFixturesIfNeeded(remoteFixtures: mapped)
             return FixturesLoadResult(
@@ -90,7 +93,7 @@ struct RemoteFixturesProvider {
             )
         } catch {
             dlogFixturesLoad(source: .localFallback, version: nil, reason: error.localizedDescription)
-            let local = try localFallback()
+            let local = sanitizeFixtures(try localFallback(), source: .localFallback)
             return FixturesLoadResult(
                 fixtures: local,
                 source: .localFallback,
@@ -112,14 +115,25 @@ struct RemoteFixturesProvider {
             return remoteFixtures
         }
 
+        let sanitizedLocalFixtures = sanitizeFixtures(localFixtures, source: .localFallback)
+
         var mergedById = Dictionary(uniqueKeysWithValues: remoteFixtures.map { ($0.id, $0) })
-        for fixture in localFixtures {
+        for fixture in sanitizedLocalFixtures {
             if mergedById[fixture.id] == nil {
                 mergedById[fixture.id] = fixture
             }
         }
 
         return mergedById.values.sorted { $0.kickoff < $1.kickoff }
+    }
+
+    private func sanitizeFixtures(_ fixtures: [Fixture], source: FixturesLoadResult.Source) -> [Fixture] {
+        let sanitized = fixtures.filter { FixtureSeasonGuard.contains($0) }
+        let droppedCount = fixtures.count - sanitized.count
+        if droppedCount > 0 {
+            dlog("Fixtures load: fjernede \(droppedCount) strukturelt ugyldige kampe fra \(source.rawValue)")
+        }
+        return sanitized
     }
 
     private static func remoteURLFromDefaults() -> URL? {
