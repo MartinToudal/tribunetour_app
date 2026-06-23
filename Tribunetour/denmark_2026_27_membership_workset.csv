@@ -1,0 +1,19 @@
+migration_action,club_id,team,current_league_2025_26,current_competition_id,target_league_2026_27,target_competition_id,target_season_id,target_membership_status,canonical_data_status,notes
+move_existing,dk-lyngby-boldklub,Lyngby Boldklub,1. division,dk-1-division,Superliga,dk-superliga,2026-27,active,exists,Rykker op i Superligaen
+move_existing,dk-ac-horsens,AC Horsens,1. division,dk-1-division,Superliga,dk-superliga,2026-27,active,exists,Rykker op i Superligaen
+move_existing,dk-fc-fredericia,FC Fredericia,Superliga,dk-superliga,1. division,dk-1-division,2026-27,active,exists,Rykker ned fra Superligaen
+move_existing,dk-vejle-boldklub,Vejle Boldklub,Superliga,dk-superliga,1. division,dk-1-division,2026-27,active,exists,Rykker ned fra Superligaen
+move_existing,dk-ab,AB,2. division,dk-2-division,1. division,dk-1-division,2026-27,active,exists,Rykker op i 1. division
+move_existing,dk-vendsyssel-ff,Vendsyssel FF,2. division,dk-2-division,1. division,dk-1-division,2026-27,active,exists,Rykker op i 1. division
+move_existing,dk-b-93,B.93,1. division,dk-1-division,2. division,dk-2-division,2026-27,active,exists,Rykker ned i 2. division
+move_existing,dk-middelfart,Middelfart,1. division,dk-1-division,2. division,dk-2-division,2026-27,active,exists,Rykker ned i 2. division
+move_existing,dk-nykobing-fc,Nykøbing FC,3. division,dk-3-division,2. division,dk-2-division,2026-27,active,exists,Rykker op i 2. division
+move_existing,dk-fa-2000,FA 2000,3. division,dk-3-division,2. division,dk-2-division,2026-27,active,exists,Rykker op i 2. division
+move_existing,dk-ishoj-if,Ishøj IF,2. division,dk-2-division,3. division,dk-3-division,2026-27,active,exists,Rykker ned i 3. division
+move_existing,dk-fc-helsingor,FC Helsingør,2. division,dk-2-division,3. division,dk-3-division,2026-27,active,exists,Rykker ned i 3. division
+mark_relegated,dk-vejgaard-b,Vejgaard B,3. division,dk-3-division,Under 3. division,,2026-27,relegated,exists,Falder ud af tracked system; behold 2025-26 som historik
+mark_relegated,dk-odder-fodbold,Odder Fodbold,3. division,dk-3-division,Under 3. division,,2026-27,relegated,exists,Falder ud af tracked system; behold 2025-26 som historik
+mark_relegated,dk-if-lyseng,IF Lyseng,3. division,dk-3-division,Under 3. division,,2026-27,relegated,exists,Falder ud af tracked system; behold 2025-26 som historik
+add_new_club,,Ringsted IF,,,3. division,dk-3-division,2026-27,active,missing,Ny klubrecord skal oprettes for Ringsted IF
+add_new_club,,Holstebro,,,3. division,dk-3-division,2026-27,active,missing,Ny klubrecord skal oprettes for Holstebro
+add_new_club,dk-asa-aarhus,ASA Aarhus,,,3. division,dk-3-division,2026-27,active,created,Playoff afgjort. Klubrecord oprettet med Robotize Park i Aarhus.

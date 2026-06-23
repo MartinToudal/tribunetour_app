@@ -19,6 +19,19 @@ Opdateres løbende sammen med sprint-arbejdet.
 Formål: samle de vigtigste udeståender, som ikke skal forstyrre den aktuelle 14-dages plan, men som aktivt skal med ind i kommende sprints.
 
 ### Snart
+- **Sæsonmedlemskab for klubber og rækker**
+  - Vi skal skille `aktuel række`, `sidste sæson` og `nedrykkere/historik` tydeligt ad i reference-data.
+  - Klubber uden for det aktive ligasystem skal stadig kunne findes, men må ikke tælle med i land- og række-completion.
+  - Åbne afklaringer lige nu:
+    - endelig officiel fordeling af de 60 hold i Italiens Serie C-grupper
+    - endelig officiel fordeling af holdene i Spaniens to Primera Federación-grupper
+    - Frankrigs tredje niveau skal dobbelttjekkes igen, så Ligue 3-/National-laget følger den endelige sæsonstruktur korrekt
+    - Portugals Liga 3 gruppe A og B er foreløbige, indtil den officielle gruppesammensætning er bekræftet
+    - Portugals nuværende historiklag indeholder kun klubber, der stadig er i scope, så landet viser endnu ingen `Nedrykkere` i arkivet
+  - Se:
+  - `SEASON_MEMBERSHIP_V1.md`
+  - `SPAIN_SEASON_TRANSITION_2026_27.md`
+  - `PORTUGAL_SEASON_TRANSITION_2026_27.md`
 - **Premium betaling via web**
   - Vi har gjort adgangsflowet tydeligere, men ikke bygget den rigtige vej fra interesse til køb.
   - Bør kobles til premium-logikken på web som næste naturlige kommercielle trin.
