@@ -104,6 +104,9 @@ struct FixturesCSVImporter {
             let homeScore = Int(homeScoreStr.trimmingCharacters(in: .whitespacesAndNewlines))
             let awayScore = Int(awayScoreStr.trimmingCharacters(in: .whitespacesAndNewlines))
             let resolvedSeasonId = seasonId.isEmpty ? inferredSeasonId(from: kickoff) : seasonId
+            let resolvedCompetitionId = competitionId.isEmpty
+                ? inferredCompetitionId(from: id, round: roundStr)
+                : competitionId
 
             fixtures.append(
                 Fixture(
@@ -116,7 +119,7 @@ struct FixturesCSVImporter {
                     status: status,
                     homeScore: homeScore,
                     awayScore: awayScore,
-                    competitionId: competitionId.isEmpty ? nil : competitionId,
+                    competitionId: resolvedCompetitionId,
                     seasonId: resolvedSeasonId
                 )
             )
@@ -175,5 +178,21 @@ struct FixturesCSVImporter {
         let startYear = month >= 7 ? year : year - 1
         let endYearShort = String(format: "%02d", (startYear + 1) % 100)
         return "\(startYear)-\(endYearShort)"
+    }
+
+    private static func inferredCompetitionId(from fixtureId: String, round: String) -> String? {
+        if fixtureId.hasPrefix("sl-") || round.hasPrefix("Superliga - ") {
+            return "dk-superliga"
+        }
+        if fixtureId.hasPrefix("1d-") || round.hasPrefix("1. division - ") {
+            return "dk-1-division"
+        }
+        if fixtureId.hasPrefix("2d-") || round.hasPrefix("2. division - ") {
+            return "dk-2-division"
+        }
+        if fixtureId.hasPrefix("3d-") || round.hasPrefix("3. division - ") {
+            return "dk-3-division"
+        }
+        return nil
     }
 }
