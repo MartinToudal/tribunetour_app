@@ -11,6 +11,11 @@ enum AppLeaguePackId: String, CaseIterable {
     case netherlandsTop3 = "netherlands_top_3"
     case belgiumTop3 = "belgium_top_3"
     case turkeyTop3 = "turkey_top_3"
+    case czechTop3 = "czech_top_3"
+    case greeceTop2 = "greece_top_2"
+    case polandTop3 = "poland_top_3"
+    case swedenTop3 = "sweden_top_3"
+    case lithuaniaTop3 = "lithuania_top_3"
     case premiumFull = "premium_full"
 }
 
@@ -24,6 +29,11 @@ enum AppPremiumAdminPack: String, CaseIterable, Identifiable {
     case netherlandsTop3 = "netherlands_top_3"
     case belgiumTop3 = "belgium_top_3"
     case turkeyTop3 = "turkey_top_3"
+    case czechTop3 = "czech_top_3"
+    case greeceTop2 = "greece_top_2"
+    case polandTop3 = "poland_top_3"
+    case swedenTop3 = "sweden_top_3"
+    case lithuaniaTop3 = "lithuania_top_3"
     case premiumFull = "premium_full"
 
     var id: String { rawValue }
@@ -115,7 +125,7 @@ enum AppLeaguePackCatalog {
             isCore: false,
             isPremium: true,
             includedByPremiumFull: true,
-            requestDescription: "Ligue 1, Ligue 2 og National"
+            requestDescription: "Ligue 1, Ligue 2 og Ligue 3"
         ),
         AppLeaguePackCatalogEntry(
             id: .portugalTop3,
@@ -126,7 +136,7 @@ enum AppLeaguePackCatalog {
             isCore: false,
             isPremium: true,
             includedByPremiumFull: true,
-            requestDescription: "Liga Portugal, Liga Portugal 2 og Liga 3 - Oprykningsgruppe"
+            requestDescription: "Liga Portugal, Liga Portugal 2 og Liga 3"
         ),
         AppLeaguePackCatalogEntry(
             id: .netherlandsTop3,
@@ -160,6 +170,61 @@ enum AppLeaguePackCatalog {
             isPremium: true,
             includedByPremiumFull: true,
             requestDescription: "Süper Lig, 1. Lig og 2. Lig"
+        ),
+        AppLeaguePackCatalogEntry(
+            id: .czechTop3,
+            countryCode: "cz",
+            label: "Tjekkiet",
+            sortOrder: 100,
+            levels: 3,
+            isCore: false,
+            isPremium: true,
+            includedByPremiumFull: true,
+            requestDescription: "1. liga, 2. liga og Bohemian/Moravian-Silesian Football League"
+        ),
+        AppLeaguePackCatalogEntry(
+            id: .greeceTop2,
+            countryCode: "gr",
+            label: "Grækenland",
+            sortOrder: 105,
+            levels: 2,
+            isCore: false,
+            isPremium: true,
+            includedByPremiumFull: true,
+            requestDescription: "Super League og Super League 2"
+        ),
+        AppLeaguePackCatalogEntry(
+            id: .polandTop3,
+            countryCode: "pl",
+            label: "Polen",
+            sortOrder: 107,
+            levels: 3,
+            isCore: false,
+            isPremium: true,
+            includedByPremiumFull: true,
+            requestDescription: "Ekstraklasa, I liga og II liga"
+        ),
+        AppLeaguePackCatalogEntry(
+            id: .swedenTop3,
+            countryCode: "se",
+            label: "Sverige",
+            sortOrder: 110,
+            levels: 3,
+            isCore: false,
+            isPremium: true,
+            includedByPremiumFull: true,
+            requestDescription: "Allsvenskan, Superettan og Ettan Norra/Södra"
+        ),
+        AppLeaguePackCatalogEntry(
+            id: .lithuaniaTop3,
+            countryCode: "lt",
+            label: "Litauen",
+            sortOrder: 115,
+            levels: 3,
+            isCore: false,
+            isPremium: true,
+            includedByPremiumFull: true,
+            requestDescription: "TOPLYGA, I Lyga og II Lyga A/B"
         ),
         AppLeaguePackCatalogEntry(
             id: .premiumFull,

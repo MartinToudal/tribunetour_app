@@ -349,6 +349,21 @@ struct CSVClubImporter {
         if enabledLeaguePacks.contains(AppLeaguePackId.turkeyTop3.rawValue) {
             clubs.append(contentsOf: try loadClubsFromBundle(csvFileName: "turkey_top_3"))
         }
+        if enabledLeaguePacks.contains(AppLeaguePackId.czechTop3.rawValue) {
+            clubs.append(contentsOf: try loadClubsFromBundle(csvFileName: "czech_top_3"))
+        }
+        if enabledLeaguePacks.contains(AppLeaguePackId.greeceTop2.rawValue) {
+            clubs.append(contentsOf: try loadClubsFromBundle(csvFileName: "greece_top_2"))
+        }
+        if enabledLeaguePacks.contains(AppLeaguePackId.polandTop3.rawValue) {
+            clubs.append(contentsOf: try loadClubsFromBundle(csvFileName: "poland_top_3"))
+        }
+        if enabledLeaguePacks.contains(AppLeaguePackId.swedenTop3.rawValue) {
+            clubs.append(contentsOf: try loadClubsFromBundle(csvFileName: "sweden_top_3"))
+        }
+        if enabledLeaguePacks.contains(AppLeaguePackId.lithuaniaTop3.rawValue) {
+            clubs.append(contentsOf: try loadClubsFromBundle(csvFileName: "lithuania_top_3"))
+        }
 
         clubs = try mergeSupplementalMemberships(
             into: clubs,
@@ -389,6 +404,22 @@ struct CSVClubImporter {
         clubs = try mergeSupplementalMemberships(
             into: clubs,
             fromCSVText: germanyHistoricalMembershipsCSV
+        )
+        clubs = try mergeSupplementalMemberships(
+            into: clubs,
+            fromBundleCSVFileName: "czech_historical_memberships"
+        )
+        clubs = try mergeSupplementalMemberships(
+            into: clubs,
+            fromBundleCSVFileName: "greece_historical_memberships"
+        )
+        clubs = try mergeSupplementalMemberships(
+            into: clubs,
+            fromBundleCSVFileName: "poland_historical_memberships"
+        )
+        clubs = try mergeSupplementalMemberships(
+            into: clubs,
+            fromBundleCSVFileName: "sweden_historical_memberships"
         )
 
         return clubs

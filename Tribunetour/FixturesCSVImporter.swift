@@ -103,6 +103,7 @@ struct FixturesCSVImporter {
             // scores kan være tomme
             let homeScore = Int(homeScoreStr.trimmingCharacters(in: .whitespacesAndNewlines))
             let awayScore = Int(awayScoreStr.trimmingCharacters(in: .whitespacesAndNewlines))
+            let resolvedSeasonId = seasonId.isEmpty ? inferredSeasonId(from: kickoff) : seasonId
 
             fixtures.append(
                 Fixture(
@@ -116,7 +117,7 @@ struct FixturesCSVImporter {
                     homeScore: homeScore,
                     awayScore: awayScore,
                     competitionId: competitionId.isEmpty ? nil : competitionId,
-                    seasonId: seasonId.isEmpty ? nil : seasonId
+                    seasonId: resolvedSeasonId
                 )
             )
         }
@@ -163,5 +164,16 @@ struct FixturesCSVImporter {
 
         result.append(current)
         return result.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+    }
+
+    private static func inferredSeasonId(from kickoff: Date) -> String {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0) ?? .current
+        let components = calendar.dateComponents([.year, .month], from: kickoff)
+        let year = components.year ?? 0
+        let month = components.month ?? 1
+        let startYear = month >= 7 ? year : year - 1
+        let endYearShort = String(format: "%02d", (startYear + 1) % 100)
+        return "\(startYear)-\(endYearShort)"
     }
 }

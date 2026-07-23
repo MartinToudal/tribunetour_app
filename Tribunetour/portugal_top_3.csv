@@ -1,45 +1,57 @@
-id,name,team,league,city,lat,lon,country_code,league_code,league_pack,short_code
-pt-academica,Estádio Cidade de Coimbra,Academica,Liga 3 - Oprykningsgruppe,Coimbra,40.203191,-8.407657,pt,pt-liga-3-oprykningsgruppe,portugal_top_3,ACA
-pt-amarante,Estádio Municipal de Amarante,Amarante,Liga 3 - Oprykningsgruppe,Amarante,41.282055,-8.075774,pt,pt-liga-3-oprykningsgruppe,portugal_top_3,AMA
-pt-guimaraes-b,Academia Vitória Sport Clube,Guimaraes B,Liga 3 - Oprykningsgruppe,Guimarães,41.449477,-8.279077,pt,pt-liga-3-oprykningsgruppe,portugal_top_3,GBU
-pt-mafra,Estádio Municipal de Mafra,Mafra,Liga 3 - Oprykningsgruppe,Mafra,38.9408,-9.341598,pt,pt-liga-3-oprykningsgruppe,portugal_top_3,MAF
-pt-os-belenenses,Estádio do Restelo,Os Belenenses,Liga 3 - Oprykningsgruppe,Lisbon,38.702582,-9.207933,pt,pt-liga-3-oprykningsgruppe,portugal_top_3,OBS
-pt-santarem,Campo Chã das Padeiras,Santarem,Liga 3 - Oprykningsgruppe,Santarém,39.229584,-8.692703,pt,pt-liga-3-oprykningsgruppe,portugal_top_3,SAN
-pt-trofense,Estádio do Clube Desportivo Trofense,Trofense,Liga 3 - Oprykningsgruppe,Trofa,41.333118,-8.564469,pt,pt-liga-3-oprykningsgruppe,portugal_top_3,TRO
-pt-varzim,Estádio do Varzim Sport Club,Varzim,Liga 3 - Oprykningsgruppe,Póvoa de Varzim,41.387994,-8.773261,pt,pt-liga-3-oprykningsgruppe,portugal_top_3,VAR
-pt-afs,Estádio do Clube Desportivo das Aves,AFS,Liga Portugal,Vila das Aves,41.366757,-8.411704,pt,pt-liga-portugal,portugal_top_3,AFS
-pt-alverca,Complexo Desportivo FC Alverca,Alverca,Liga Portugal,Alverca do Ribatejo,38.893525,-9.039614,pt,pt-liga-portugal,portugal_top_3,ALV
-pt-arouca,Estádio Municipal de Arouca,Arouca,Liga Portugal,Arouca,40.932292,-8.250431,pt,pt-liga-portugal,portugal_top_3,ARO
-pt-benfica,Estádio da Luz,Benfica,Liga Portugal,Lisbon,38.752689,-9.18469,pt,pt-liga-portugal,portugal_top_3,BEN
-pt-braga,Estádio Municipal de Braga,Braga,Liga Portugal,Braga,41.5625,-8.429868,pt,pt-liga-portugal,portugal_top_3,BRA
-pt-casa-pia,Estádio Municipal de Rio Maior,Casa Pia,Liga Portugal,Rio Maior,39.344577,-8.934484,pt,pt-liga-portugal,portugal_top_3,CPA
-pt-estoril-praia,Estádio António Coimbra da Mota,Estoril Praia,Liga Portugal,Estoril,38.715862,-9.406409,pt,pt-liga-portugal,portugal_top_3,EPS
-pt-estrela,Estádio José Gomes,Estrela,Liga Portugal,Amadora,38.752156,-9.228001,pt,pt-liga-portugal,portugal_top_3,EST
-pt-famalicao,Estádio Municipal de Famalicão,Famalicao,Liga Portugal,Vila Nova de Famalicão,41.401253,-8.52244,pt,pt-liga-portugal,portugal_top_3,FAM
-pt-gil-vicente,Estádio Cidade de Barcelos,Gil Vicente,Liga Portugal,Barcelos,41.551096,-8.623086,pt,pt-liga-portugal,portugal_top_3,GVI
-pt-guimaraes,Estádio D. Afonso Henriques,Guimaraes,Liga Portugal,Guimarães,41.445848,-8.300992,pt,pt-liga-portugal,portugal_top_3,GUI
-pt-moreirense,Estádio Comendador Joaquim de Almeida Freitas,Moreirense,Liga Portugal,Guimarães,41.378032,-8.354995,pt,pt-liga-portugal,portugal_top_3,MOR
-pt-nacional,Estádio da Madeira,Nacional,Liga Portugal,Funchal,32.670623,-16.883564,pt,pt-liga-portugal,portugal_top_3,NAC
-pt-porto,Estádio do Dragão,Porto,Liga Portugal,Porto,41.161823,-8.583749,pt,pt-liga-portugal,portugal_top_3,POR
-pt-rio-ave,Estadio dos Arcos,Rio Ave,Liga Portugal,Vila do Conde,41.35404,-8.74354,pt,pt-liga-portugal,portugal_top_3,RAI
-pt-santa-clara,Estádio de São Miguel,Santa Clara,Liga Portugal,Ponta Delgada,37.763992,-25.622812,pt,pt-liga-portugal,portugal_top_3,SCA
-pt-sporting,Estádio José Alvalade,Sporting,Liga Portugal,Lisbon,38.761216,-9.160783,pt,pt-liga-portugal,portugal_top_3,SPO
-pt-tondela,Estádio João Cardoso,Tondela,Liga Portugal,Tondela,40.511999,-8.082794,pt,pt-liga-portugal,portugal_top_3,TON
-pt-academico-viseu,Estádio Municipal do Fontelo,Academico Viseu,Liga Portugal 2,Viseu,40.659542,-7.90045,pt,pt-liga-portugal-2,portugal_top_3,AVC
-pt-benfica-b,Benfica Campus - Campo n.° 1,Benfica B,Liga Portugal 2,Seixal,38.642225,-9.107266,pt,pt-liga-portugal-2,portugal_top_3,BBE
-pt-chaves,Estádio Municipal Eng.° Manuel Branco Teixeira,Chaves,Liga Portugal 2,Chaves,41.7399,-7.471521,pt,pt-liga-portugal-2,portugal_top_3,CHA
-pt-farense,Estádio de São Luís,Farense,Liga Portugal 2,Faro,37.022885,-7.928272,pt,pt-liga-portugal-2,portugal_top_3,FAR
-pt-feirense,Estádio Marcolino Castro,Feirense,Liga Portugal 2,Santa Maria da Feira,40.926632,-8.545921,pt,pt-liga-portugal-2,portugal_top_3,FEI
-pt-felgueiras,Estádio Dr. Machado de Matos,Felgueiras,Liga Portugal 2,Felgueiras,41.355939,-8.190798,pt,pt-liga-portugal-2,portugal_top_3,FEL
-pt-ferreira,Estádio Capital do Móvel,Ferreira,Liga Portugal 2,Paços de Ferreira,41.271478,-8.385382,pt,pt-liga-portugal-2,portugal_top_3,FER
-pt-leiria,Estádio Dr. Magalhães Pessoa,Leiria,Liga Portugal 2,Leiria,39.74883,-8.812928,pt,pt-liga-portugal-2,portugal_top_3,LEI
-pt-leixoes,Estádio do Mar,Leixoes,Liga Portugal 2,Matosinhos,41.184264,-8.666216,pt,pt-liga-portugal-2,portugal_top_3,LE2
-pt-lusitania-fc,Estádio do Lusitânia de Lourosa FC,Lusitania FC,Liga Portugal 2,Lourosa,40.983541,-8.549919,pt,pt-liga-portugal-2,portugal_top_3,LFU
-pt-maritimo,Estádio do Marítimo,Maritimo,Liga Portugal 2,Funchal,32.645574,-16.928386,pt,pt-liga-portugal-2,portugal_top_3,MAR
-pt-oliveirense,Estádio Carlos Osório,Oliveirense,Liga Portugal 2,Oliveira de Azeméis,40.841811,-8.470421,pt,pt-liga-portugal-2,portugal_top_3,OLI
-pt-penafiel,Estádio Municipal 25 de Abril,Penafiel,Liga Portugal 2,Penafiel,41.211805,-8.277222,pt,pt-liga-portugal-2,portugal_top_3,PEN
-pt-portimonense,Estádio Municipal de Portimão,Portimonense,Liga Portugal 2,Portimão,37.135694,-8.539831,pt,pt-liga-portugal-2,portugal_top_3,PO2
-pt-porto-b,Estádio Luís Filipe Menezes,Porto B,Liga Portugal 2,Vila Nova de Gaia,41.065914,-8.516953,pt,pt-liga-portugal-2,portugal_top_3,PBO
-pt-sporting-b,Estádio Aurélio Pereira,Sporting B,Liga Portugal 2,Alcochete,38.729726,-8.848866,pt,pt-liga-portugal-2,portugal_top_3,SBP
-pt-torreense,Estádio Manuel Marques,Torreense,Liga Portugal 2,Torres Vedras,39.094782,-9.256795,pt,pt-liga-portugal-2,portugal_top_3,TOR
-pt-vizela,Estádio do Futebol Clube de Vizela,Vizela,Liga Portugal 2,Vizela,41.376716,-8.308365,pt,pt-liga-portugal-2,portugal_top_3,VIZ
+id,name,team,league,city,lat,lon,country_code,league_code,league_pack,short_code,competition_id,season_id,membership_status,secondary_competition_ids
+pt-academico-viseu,Estádio Municipal do Fontelo,Academico Viseu,Liga Portugal,Viseu,40.6617,-7.9123,pt,pt-liga-portugal,portugal_top_3,AVC,pt-liga-portugal,2026-27,active,
+pt-alverca,Complexo Desportivo FC Alverca,Alverca,Liga Portugal,Alverca do Ribatejo,38.8912,-9.0389,pt,pt-liga-portugal,portugal_top_3,ALV,pt-liga-portugal,2026-27,active,
+pt-arouca,Estádio Municipal de Arouca,Arouca,Liga Portugal,Arouca,40.9277,-8.2455,pt,pt-liga-portugal,portugal_top_3,ARO,pt-liga-portugal,2026-27,active,
+pt-benfica,Estádio da Luz,Benfica,Liga Portugal,Lisbon,38.7528,-9.1847,pt,pt-liga-portugal,portugal_top_3,BEN,pt-liga-portugal,2026-27,active,
+pt-braga,Estádio Municipal de Braga,Braga,Liga Portugal,Braga,41.5620,-8.4306,pt,pt-liga-portugal,portugal_top_3,BRA,pt-liga-portugal,2026-27,active,
+pt-casa-pia,Estádio Municipal de Rio Maior,Casa Pia,Liga Portugal,Rio Maior,39.3370,-8.9390,pt,pt-liga-portugal,portugal_top_3,CPA,pt-liga-portugal,2026-27,active,
+pt-estoril-praia,Estádio António Coimbra da Mota,Estoril Praia,Liga Portugal,Estoril,38.7078,-9.3908,pt,pt-liga-portugal,portugal_top_3,EPS,pt-liga-portugal,2026-27,active,
+pt-estrela,Estádio José Gomes,Estrela,Liga Portugal,Amadora,38.7598,-9.2370,pt,pt-liga-portugal,portugal_top_3,EST,pt-liga-portugal,2026-27,active,
+pt-famalicao,Estádio Municipal de Famalicão,Famalicao,Liga Portugal,Vila Nova de Famalicão,41.4078,-8.5223,pt,pt-liga-portugal,portugal_top_3,FAM,pt-liga-portugal,2026-27,active,
+pt-gil-vicente,Estádio Cidade de Barcelos,Gil Vicente,Liga Portugal,Barcelos,41.5484,-8.6177,pt,pt-liga-portugal,portugal_top_3,GVI,pt-liga-portugal,2026-27,active,
+pt-maritimo,Estádio do Marítimo,Maritimo,Liga Portugal,Funchal,32.6488,-16.9292,pt,pt-liga-portugal,portugal_top_3,MAR,pt-liga-portugal,2026-27,active,
+pt-moreirense,Estádio Comendador Joaquim de Almeida Freitas,Moreirense,Liga Portugal,Guimarães,41.3809,-8.3553,pt,pt-liga-portugal,portugal_top_3,MOR,pt-liga-portugal,2026-27,active,
+pt-nacional,Estádio da Madeira,Nacional,Liga Portugal,Funchal,32.6686,-16.8837,pt,pt-liga-portugal,portugal_top_3,NAC,pt-liga-portugal,2026-27,active,
+pt-porto,Estádio do Dragão,Porto,Liga Portugal,Porto,41.1618,-8.5839,pt,pt-liga-portugal,portugal_top_3,POR,pt-liga-portugal,2026-27,active,
+pt-rio-ave,Estádio dos Arcos,Rio Ave,Liga Portugal,Vila do Conde,41.3636,-8.7407,pt,pt-liga-portugal,portugal_top_3,RAI,pt-liga-portugal,2026-27,active,
+pt-santa-clara,Estádio de São Miguel,Santa Clara,Liga Portugal,Ponta Delgada,37.7635,-25.6298,pt,pt-liga-portugal,portugal_top_3,SCA,pt-liga-portugal,2026-27,active,
+pt-sporting,Estádio José Alvalade,Sporting,Liga Portugal,Lisbon,38.7612,-9.1608,pt,pt-liga-portugal,portugal_top_3,SPO,pt-liga-portugal,2026-27,active,
+pt-guimaraes,Estádio D. Afonso Henriques,Guimaraes,Liga Portugal,Guimarães,41.4459,-8.3012,pt,pt-liga-portugal,portugal_top_3,GUI,pt-liga-portugal,2026-27,active,
+pt-academica,Estádio Cidade de Coimbra,Academica,Liga Portugal 2,Coimbra,40.2032,-8.4077,pt,pt-liga-portugal-2,portugal_top_3,ACA,pt-liga-portugal-2,2026-27,active,
+pt-afs,Estádio do Clube Desportivo das Aves,AFS,Liga Portugal 2,Vila das Aves,41.3676,-8.4106,pt,pt-liga-portugal-2,portugal_top_3,AFS,pt-liga-portugal-2,2026-27,active,
+pt-amarante,Estádio Municipal de Amarante,Amarante,Liga Portugal 2,Amarante,41.2725,-8.0783,pt,pt-liga-portugal-2,portugal_top_3,AMA,pt-liga-portugal-2,2026-27,active,
+pt-benfica-b,Benfica Campus - Campo n.º 1,Benfica B,Liga Portugal 2,Seixal,38.6325,-9.1001,pt,pt-liga-portugal-2,portugal_top_3,BBE,pt-liga-portugal-2,2026-27,active,
+pt-chaves,Estádio Municipal Eng. Manuel Branco Teixeira,Chaves,Liga Portugal 2,Chaves,41.7402,-7.4661,pt,pt-liga-portugal-2,portugal_top_3,CHA,pt-liga-portugal-2,2026-27,active,
+pt-farense,Estádio de São Luís,Farense,Liga Portugal 2,Faro,37.0163,-7.9347,pt,pt-liga-portugal-2,portugal_top_3,FAR,pt-liga-portugal-2,2026-27,active,
+pt-feirense,Estádio Marcolino Castro,Feirense,Liga Portugal 2,Santa Maria da Feira,40.9270,-8.5480,pt,pt-liga-portugal-2,portugal_top_3,FEI,pt-liga-portugal-2,2026-27,active,
+pt-felgueiras,Estádio Dr. Machado de Matos,Felgueiras,Liga Portugal 2,Felgueiras,41.3690,-8.1980,pt,pt-liga-portugal-2,portugal_top_3,FEL,pt-liga-portugal-2,2026-27,active,
+pt-leixoes,Estádio do Mar,Leixoes,Liga Portugal 2,Matosinhos,41.1841,-8.6914,pt,pt-liga-portugal-2,portugal_top_3,LE2,pt-liga-portugal-2,2026-27,active,
+pt-lusitania-fc,Estádio do Lusitânia de Lourosa FC,Lusitania FC,Liga Portugal 2,Lourosa,40.9837,-8.5507,pt,pt-liga-portugal-2,portugal_top_3,LFU,pt-liga-portugal-2,2026-27,active,
+pt-penafiel,Estádio Municipal 25 de Abril,Penafiel,Liga Portugal 2,Penafiel,41.2037,-8.2828,pt,pt-liga-portugal-2,portugal_top_3,PEN,pt-liga-portugal-2,2026-27,active,
+pt-portimonense,Estádio Municipal de Portimão,Portimonense,Liga Portugal 2,Portimão,37.1376,-8.5398,pt,pt-liga-portugal-2,portugal_top_3,PO2,pt-liga-portugal-2,2026-27,active,
+pt-porto-b,Estádio Luís Filipe Menezes,Porto B,Liga Portugal 2,Vila Nova de Gaia,41.0680,-8.5650,pt,pt-liga-portugal-2,portugal_top_3,PBO,pt-liga-portugal-2,2026-27,active,
+pt-sporting-b,Estádio Aurélio Pereira,Sporting B,Liga Portugal 2,Alcochete,38.7539,-8.9588,pt,pt-liga-portugal-2,portugal_top_3,SBP,pt-liga-portugal-2,2026-27,active,
+pt-tondela,Estádio João Cardoso,Tondela,Liga Portugal 2,Tondela,40.5179,-8.0805,pt,pt-liga-portugal-2,portugal_top_3,TON,pt-liga-portugal-2,2026-27,active,
+pt-torreense,Estádio Manuel Marques,Torreense,Liga Portugal 2,Torres Vedras,39.0856,-9.2624,pt,pt-liga-portugal-2,portugal_top_3,TOR,pt-liga-portugal-2,2026-27,active,
+pt-leiria,Estádio Dr. Magalhães Pessoa,Leiria,Liga Portugal 2,Leiria,39.7484,-8.8120,pt,pt-liga-portugal-2,portugal_top_3,LEI,pt-liga-portugal-2,2026-27,active,
+pt-vizela,Estádio do Futebol Clube de Vizela,Vizela,Liga Portugal 2,Vizela,41.3826,-8.3039,pt,pt-liga-portugal-2,portugal_top_3,VIZ,pt-liga-portugal-2,2026-27,active,
+pt-vianense,Estádio Dr. José de Matos,Vianense,Liga 3 - Gruppe A,Viana do Castelo,41.6932,-8.8268,pt,pt-liga-3-gruppe-a,portugal_top_3,VIA,pt-liga-3-gruppe-a,2026-27,active,
+pt-varzim,Estádio do Varzim Sport Club,Varzim,Liga 3 - Gruppe A,Póvoa de Varzim,41.3829,-8.7624,pt,pt-liga-3-gruppe-a,portugal_top_3,VAR,pt-liga-3-gruppe-a,2026-27,active,
+pt-trofense,Estádio do Clube Desportivo Trofense,Trofense,Liga 3 - Gruppe A,Trofa,41.3402,-8.5597,pt,pt-liga-3-gruppe-a,portugal_top_3,TRO,pt-liga-3-gruppe-a,2026-27,active,
+pt-guimaraes-b,Complexo Desportivo Dr. António Pimenta Machado,Guimaraes B,Liga 3 - Gruppe A,Guimarães,41.4450,-8.3020,pt,pt-liga-3-gruppe-a,portugal_top_3,GBU,pt-liga-3-gruppe-a,2026-27,active,
+pt-ad-fafe,Parque Municipal dos Desportos de Fafe,AD Fafe,Liga 3 - Gruppe A,Fafe,41.4507,-8.1739,pt,pt-liga-3-gruppe-a,portugal_top_3,FAF,pt-liga-3-gruppe-a,2026-27,active,
+pt-leca,Estádio do Leça FC,Leca,Liga 3 - Gruppe A,Leça da Palmeira,41.1926,-8.7017,pt,pt-liga-3-gruppe-a,portugal_top_3,LEC,pt-liga-3-gruppe-a,2026-27,active,
+pt-ferreira,Estádio Capital do Móvel,Ferreira,Liga 3 - Gruppe A,Paços de Ferreira,41.2764,-8.3763,pt,pt-liga-3-gruppe-a,portugal_top_3,FER,pt-liga-3-gruppe-a,2026-27,active,
+pt-paredes,Estádio Municipal das Laranjeiras,Paredes,Liga 3 - Gruppe A,Paredes,41.2050,-8.3327,pt,pt-liga-3-gruppe-a,portugal_top_3,PAR,pt-liga-3-gruppe-a,2026-27,active,
+pt-ad-marco-09,Estádio Municipal de Marco de Canaveses,AD Marco 09,Liga 3 - Gruppe A,Marco de Canaveses,41.1812,-8.1486,pt,pt-liga-3-gruppe-a,portugal_top_3,MAR09,pt-liga-3-gruppe-a,2026-27,active,
+pt-sao-joao-de-ver,Estádio Clube São João de Ver,Sao Joao de Ver,Liga 3 - Gruppe A,São João de Ver,40.9548,-8.5488,pt,pt-liga-3-gruppe-a,portugal_top_3,SJV,pt-liga-3-gruppe-a,2026-27,active,
+pt-oliveirense,Estádio Carlos Osório,Oliveirense,Liga 3 - Gruppe B,Oliveira de Azeméis,40.8381,-8.4771,pt,pt-liga-3-gruppe-b,portugal_top_3,OLI,pt-liga-3-gruppe-b,2026-27,active,
+pt-sporting-covilha,Estádio Municipal José Santos Pinto,Sporting da Covilha,Liga 3 - Gruppe B,Covilhã,40.2865,-7.5045,pt,pt-liga-3-gruppe-b,portugal_top_3,COV,pt-liga-3-gruppe-b,2026-27,active,
+pt-vitoria-sernache,Campo de Jogos Nuno Álvares Pereira,Vitoria de Sernache,Liga 3 - Gruppe B,Sernache do Bomjardim,39.8125,-7.9085,pt,pt-liga-3-gruppe-b,portugal_top_3,SER,pt-liga-3-gruppe-b,2026-27,active,
+pt-caldas,Campo da Mata,Caldas,Liga 3 - Gruppe B,Caldas da Rainha,39.4051,-9.1347,pt,pt-liga-3-gruppe-b,portugal_top_3,CAL,pt-liga-3-gruppe-b,2026-27,active,
+pt-mafra,Estádio Municipal de Mafra,Mafra,Liga 3 - Gruppe B,Mafra,38.9408,-9.3300,pt,pt-liga-3-gruppe-b,portugal_top_3,MAF,pt-liga-3-gruppe-b,2026-27,active,
+pt-santarem,Campo Chã das Padeiras,Santarem,Liga 3 - Gruppe B,Santarém,39.2367,-8.6851,pt,pt-liga-3-gruppe-b,portugal_top_3,SAN,pt-liga-3-gruppe-b,2026-27,active,
+pt-os-belenenses,Estádio do Restelo,Belenenses,Liga 3 - Gruppe B,Lisbon,38.7029,-9.2065,pt,pt-liga-3-gruppe-b,portugal_top_3,BEL,pt-liga-3-gruppe-b,2026-27,active,
+pt-atletico-cp,Estádio da Tapadinha,Atletico CP,Liga 3 - Gruppe B,Lisbon,38.7082,-9.1871,pt,pt-liga-3-gruppe-b,portugal_top_3,ATL,pt-liga-3-gruppe-b,2026-27,active,
+pt-lusitano-evora,Campo Estrela,Lusitano de Evora,Liga 3 - Gruppe B,Évora,38.5668,-7.9097,pt,pt-liga-3-gruppe-b,portugal_top_3,LUE,pt-liga-3-gruppe-b,2026-27,active,
+pt-louletano,Estádio Algarve,Louletano,Liga 3 - Gruppe B,Loulé,37.0887,-7.9747,pt,pt-liga-3-gruppe-b,portugal_top_3,LOU,pt-liga-3-gruppe-b,2026-27,active,
