@@ -195,35 +195,29 @@ final class AppState: ObservableObject {
                 let enabledLeaguePacks = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
                     isAuthenticated: authSession.snapshot.isAuthenticated
                 )
-                let clubs = try await withCheckedThrowingContinuation { (cont: CheckedContinuation<[Club], Error>) in
-                    DispatchQueue.global(qos: .userInitiated).async {
-                        do {
-                            let result = try CSVClubImporter.loadEnabledClubsFromBundle(
-                                csvFileName: "stadiums",
-                                enabledLeaguePacks: enabledLeaguePacks
-                            )
-                            cont.resume(returning: result)
-                        } catch {
-                            cont.resume(throwing: error)
-                        }
-                    }
-                }
-
-                let fixturesResult = try await RemoteFixturesProvider().loadFixtures()
+                let loadStartedAt = Date()
+                async let fixturesResultTask = RemoteFixturesProvider().loadFixtures()
+                let clubs = try await loadClubs(enabledLeaguePacks: enabledLeaguePacks)
                 let aliasMap = ClubIdentityResolver.aliasMap(
                     from: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
                 )
+                dlog("App load: klubber klar efter \(formatLoadDuration(since: loadStartedAt))")
+
+                self.clubs = clubs
+                self.clubById = aliasMap
+                self.applyPreferredHomeCountryIfNeeded(from: clubs)
+                self.loadError = nil
+
+                let fixturesResult = try await fixturesResultTask
                 let fixtures = fixturesResult.fixtures.filter { fixture in
                     aliasMap[fixture.homeTeamId] != nil &&
                     aliasMap[fixture.awayTeamId] != nil &&
                     aliasMap[fixture.venueClubId] != nil
                 }
                 dlogFixturesLoad(source: fixturesResult.source, version: fixturesResult.version)
+                dlog("App load: fixtures klar efter \(formatLoadDuration(since: loadStartedAt))")
 
-                self.clubs = clubs
-                self.clubById = aliasMap
                 self.fixtures = fixtures
-                self.applyPreferredHomeCountryIfNeeded(from: clubs)
                 self.fixturesLoadSource = fixturesResult.source
                 self.fixturesVersion = fixturesResult.version
                 self.fixturesRemoteURL = fixturesResult.remoteURL
@@ -239,6 +233,26 @@ final class AppState: ObservableObject {
                 self.loadError = error.localizedDescription
             }
         }
+    }
+
+    private func loadClubs(enabledLeaguePacks: Set<String>) async throws -> [Club] {
+        try await withCheckedThrowingContinuation { (cont: CheckedContinuation<[Club], Error>) in
+            DispatchQueue.global(qos: .userInitiated).async {
+                do {
+                    let result = try CSVClubImporter.loadEnabledClubsFromBundle(
+                        csvFileName: "stadiums",
+                        enabledLeaguePacks: enabledLeaguePacks
+                    )
+                    cont.resume(returning: result)
+                } catch {
+                    cont.resume(throwing: error)
+                }
+            }
+        }
+    }
+
+    private func formatLoadDuration(since start: Date) -> String {
+        String(format: "%.2fs", Date().timeIntervalSince(start))
     }
 
     func refreshLeaguePackAccess() async {

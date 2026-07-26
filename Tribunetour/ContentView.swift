@@ -546,12 +546,9 @@ struct StadiumsView: View {
                                     .foregroundStyle(.secondary)
                             }
 
-                            StadiumMapView(
+                            StadiumMapSnapshotPreview(
                                 clubs: snapshot.mapPreviewClubs,
-                                visitedStore: visitedStore,
-                                onSelect: { club in
-                                    selectedClub = club
-                                }
+                                visitedStore: visitedStore
                             )
                             .frame(height: 320)
                             .clipShape(RoundedRectangle(cornerRadius: 16))
@@ -639,8 +636,8 @@ struct StadiumsView: View {
                 }
 
                 if !snapshot.visibleNonProgressionClubs.isEmpty {
-                    Section("Andre klubber") {
-                        Text("Klubber her tæller ikke med i din aktuelle fremdrift, men bliver stadig bevaret i appen.")
+                    Section("Arkiv og nedrykkere") {
+                        Text("Klubber her er ikke en del af den aktive sæson i dit nuværende scope. De bliver stadig bevaret som historik i appen.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
 
@@ -1117,6 +1114,145 @@ private struct StadiumMapScreen: View {
 }
 
 // MARK: - Map
+
+private struct StadiumMapSnapshotPreview: View {
+    let clubs: [Club]
+    @ObservedObject var visitedStore: VisitedStore
+
+    @State private var image: UIImage?
+
+    private var visitedClubIds: Set<String> {
+        Set(visitedStore.records.lazy.filter(\.value.visited).map(\.key))
+    }
+
+    private var renderKey: String {
+        let ids = clubs.map(\.id).joined(separator: "|")
+        let visited = visitedClubIds.sorted().joined(separator: "|")
+        return "\(ids)#\(visited)"
+    }
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.secondarySystemBackground))
+
+            if let image {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
+            } else {
+                VStack(spacing: 10) {
+                    Image(systemName: "map")
+                        .font(.title3)
+                        .foregroundStyle(.secondary)
+                    Text("Kortet klargores...")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .clipped()
+        .task(id: renderKey) {
+            image = await MapPreviewSnapshotCache.shared.image(
+                key: renderKey,
+                clubs: clubs,
+                visitedClubIds: visitedClubIds
+            )
+        }
+    }
+}
+
+private actor MapPreviewSnapshotCache {
+    static let shared = MapPreviewSnapshotCache()
+
+    private var cache: [String: UIImage] = [:]
+
+    func image(
+        key: String,
+        clubs: [Club],
+        visitedClubIds: Set<String>
+    ) async -> UIImage? {
+        if let cached = cache[key] {
+            return cached
+        }
+
+        guard !clubs.isEmpty else { return nil }
+
+        let region = Self.snapshotRegion(for: clubs)
+        let options = MKMapSnapshotter.Options()
+        options.region = region
+        options.size = CGSize(width: 800, height: 420)
+        options.scale = 2
+        options.mapType = .standard
+        options.showsBuildings = false
+        options.pointOfInterestFilter = .excludingAll
+
+        let snapshotter = MKMapSnapshotter(options: options)
+
+        do {
+            let snapshot = try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<MKMapSnapshotter.Snapshot, Error>) in
+                snapshotter.start { snapshot, error in
+                    if let snapshot {
+                        continuation.resume(returning: snapshot)
+                    } else {
+                        continuation.resume(throwing: error ?? NSError(domain: "StadiumMapSnapshotPreview", code: 1))
+                    }
+                }
+            }
+
+            let renderer = UIGraphicsImageRenderer(size: options.size)
+            let image = renderer.image { _ in
+                snapshot.image.draw(at: .zero)
+
+                for club in clubs {
+                    let coordinate = CLLocationCoordinate2D(
+                        latitude: club.stadium.latitude,
+                        longitude: club.stadium.longitude
+                    )
+                    let point = snapshot.point(for: coordinate)
+
+                    let color = visitedClubIds.contains(club.id)
+                        ? UIColor.systemGreen
+                        : UIColor.label
+
+                    let outerRect = CGRect(x: point.x - 8, y: point.y - 8, width: 16, height: 16)
+                    UIColor.systemBackground.setFill()
+                    UIBezierPath(ovalIn: outerRect).fill()
+
+                    let circleRect = CGRect(x: point.x - 5, y: point.y - 5, width: 10, height: 10)
+                    UIColor.systemBackground.setFill()
+                    color.setFill()
+                    UIBezierPath(ovalIn: circleRect).fill()
+                }
+            }
+            cache[key] = image
+            return image
+        } catch {
+            return nil
+        }
+    }
+
+    private static func snapshotRegion(for clubs: [Club]) -> MKCoordinateRegion {
+        let lats = clubs.map { $0.stadium.latitude }
+        let lons = clubs.map { $0.stadium.longitude }
+
+        let minLat = lats.min() ?? 0
+        let maxLat = lats.max() ?? 0
+        let minLon = lons.min() ?? 0
+        let maxLon = lons.max() ?? 0
+
+        return MKCoordinateRegion(
+            center: CLLocationCoordinate2D(
+                latitude: (minLat + maxLat) / 2,
+                longitude: (minLon + maxLon) / 2
+            ),
+            span: MKCoordinateSpan(
+                latitudeDelta: max(0.05, (maxLat - minLat) * 1.4),
+                longitudeDelta: max(0.05, (maxLon - minLon) * 1.4)
+            )
+        )
+    }
+}
 
 struct StadiumMapView: View {
     let clubs: [Club]
