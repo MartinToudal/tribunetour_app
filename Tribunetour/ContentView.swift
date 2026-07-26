@@ -130,6 +130,28 @@ struct StadiumsView: View {
         var mapIsTruncated: Bool = false
     }
 
+    private struct StadiumSnapshotInput {
+        let accessibleClubs: [Club]
+        let visitedIds: Set<String>
+        let reviewedIds: Set<String>
+        let countryFilterRawValue: String
+        let searchText: String
+        let filter: VisitedFilter
+        let sort: SortOption
+        let visibleClubLimit: Int
+        let listPageSize: Int
+        let maxMapAnnotations: Int
+        let maxMapScopeWithoutCountrySelection: Int
+        let shouldShowCountryFilter: Bool
+        let countryOptions: [String]
+        let location: StadiumSnapshotLocation?
+    }
+
+    private struct StadiumSnapshotLocation {
+        let latitude: Double
+        let longitude: Double
+    }
+
     let isActive: Bool
     let clubs: [Club]
     let clubById: [String: Club]
@@ -147,6 +169,7 @@ struct StadiumsView: View {
     @State private var showFullscreenMap: Bool = false
     @State private var visibleClubLimit: Int = 80
     @State private var snapshot = Snapshot()
+    @State private var snapshotBuildID = UUID()
     #if DEBUG
     @State private var hiddenToolsTapCount: Int = 0
     @State private var showInternalTools: Bool = false
@@ -238,63 +261,6 @@ struct StadiumsView: View {
             .map(\.label)
     }
 
-    private func sortComparator(_ a: Club, _ b: Club) -> Bool {
-        let aVisited = visitedClubIds.contains(a.id)
-        let bVisited = visitedClubIds.contains(b.id)
-
-        switch sort {
-        case .leagueThenTeam:
-            let ca = LeaguePresentation.countryRank(a.countryCode)
-            let cb = LeaguePresentation.countryRank(b.countryCode)
-            if ca != cb { return ca < cb }
-
-            let ra = LeaguePresentation.divisionRank(a.division, countryCode: a.countryCode)
-            let rb = LeaguePresentation.divisionRank(b.division, countryCode: b.countryCode)
-            if ra != rb { return ra < rb }
-
-            // samme "rank" → fallback alfabetisk på division + klub
-            if a.division != b.division {
-                return a.division.localizedCaseInsensitiveCompare(b.division) == .orderedAscending
-            }
-            return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
-
-        case .teamAZ:
-            return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
-
-        case .stadiumAZ:
-            return a.stadium.name.localizedCaseInsensitiveCompare(b.stadium.name) == .orderedAscending
-
-        case .visitedFirst:
-            if aVisited != bVisited { return aVisited && !bVisited }
-            return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
-
-        case .notVisitedFirst:
-            if aVisited != bVisited { return !aVisited && bVisited }
-            return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
-
-        case .nearest:
-            guard let here = locationStore.location else {
-                let ra = LeaguePresentation.divisionRank(a.division, countryCode: a.countryCode)
-                let rb = LeaguePresentation.divisionRank(b.division, countryCode: b.countryCode)
-                if ra != rb { return ra < rb }
-                return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
-            }
-
-            let da = here.distance(from: CLLocation(latitude: a.stadium.latitude, longitude: a.stadium.longitude))
-            let db = here.distance(from: CLLocation(latitude: b.stadium.latitude, longitude: b.stadium.longitude))
-
-            if da != db { return da < db }
-            return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
-        }
-    }
-
-    private func distanceText(for club: Club) -> String? {
-        guard let here = locationStore.location else { return nil }
-        let d = here.distance(from: CLLocation(latitude: club.stadium.latitude, longitude: club.stadium.longitude))
-        if d < 1000 { return "\(Int(d)) m" }
-        return String(format: "%.1f km", d / 1000.0)
-    }
-
     private func openInAppleMaps(_ club: Club) {
         let location = CLLocation(latitude: club.stadium.latitude, longitude: club.stadium.longitude)
         let item = MKMapItem(location: location, address: nil)
@@ -323,33 +289,74 @@ struct StadiumsView: View {
     private func rebuildSnapshot() {
         guard isActive else { return }
 
-        let visitedIds = visitedClubIds
-        let reviewedIds = reviewedClubIds
-        let progressionClubs = accessibleClubs.filter(\.countsTowardTopSystemProgression)
-        let nonProgressionVisibleClubs = accessibleClubs.filter(\.shouldRemainVisibleOutsideTopSystem)
-        let sourceClubs = progressionClubs.isEmpty ? accessibleClubs : progressionClubs
+        let buildID = UUID()
+        snapshotBuildID = buildID
+
+        let input = StadiumSnapshotInput(
+            accessibleClubs: accessibleClubs,
+            visitedIds: visitedClubIds,
+            reviewedIds: reviewedClubIds,
+            countryFilterRawValue: countryFilterRawValue,
+            searchText: searchText,
+            filter: filter,
+            sort: sort,
+            visibleClubLimit: visibleClubLimit,
+            listPageSize: listPageSize,
+            maxMapAnnotations: maxMapAnnotations,
+            maxMapScopeWithoutCountrySelection: maxMapScopeWithoutCountrySelection,
+            shouldShowCountryFilter: shouldShowCountryFilter,
+            countryOptions: countryOptions,
+            location: locationStore.location.map {
+                StadiumSnapshotLocation(
+                    latitude: $0.coordinate.latitude,
+                    longitude: $0.coordinate.longitude
+                )
+            }
+        )
+
+        Task {
+            let builtSnapshot = await Self.buildSnapshotAsync(from: input)
+            guard buildID == snapshotBuildID else { return }
+            snapshot = builtSnapshot
+        }
+    }
+
+    private static func buildSnapshotAsync(from input: StadiumSnapshotInput) async -> Snapshot {
+        await withCheckedContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                continuation.resume(returning: buildSnapshot(from: input))
+            }
+        }
+    }
+
+    private static func buildSnapshot(from input: StadiumSnapshotInput) -> Snapshot {
+        let progressionClubs = input.accessibleClubs.filter(\.countsTowardTopSystemProgression)
+        let nonProgressionVisibleClubs = input.accessibleClubs.filter(\.shouldRemainVisibleOutsideTopSystem)
+        let sourceClubs = progressionClubs.isEmpty ? input.accessibleClubs : progressionClubs
+
         let countryFilteredClubs: [Club] = {
-            guard countryFilterRawValue != "all" else { return sourceClubs }
-            return sourceClubs.filter { $0.countryCode == countryFilterRawValue }
+            guard input.countryFilterRawValue != "all" else { return sourceClubs }
+            return sourceClubs.filter { $0.countryCode == input.countryFilterRawValue }
         }()
+
         let countryFilteredNonProgressionClubs: [Club] = {
-            guard countryFilterRawValue != "all" else { return nonProgressionVisibleClubs }
-            return nonProgressionVisibleClubs.filter { $0.countryCode == countryFilterRawValue }
+            guard input.countryFilterRawValue != "all" else { return nonProgressionVisibleClubs }
+            return nonProgressionVisibleClubs.filter { $0.countryCode == input.countryFilterRawValue }
         }()
 
         let baseClubs: [Club] = {
-            switch filter {
+            switch input.filter {
             case .all:
                 return countryFilteredClubs
             case .visited:
-                return countryFilteredClubs.filter { visitedIds.contains($0.id) }
+                return countryFilteredClubs.filter { input.visitedIds.contains($0.id) }
             case .notVisited:
-                return countryFilteredClubs.filter { !visitedIds.contains($0.id) }
+                return countryFilteredClubs.filter { !input.visitedIds.contains($0.id) }
             }
         }()
 
         let searchedClubs: [Club] = {
-            let query = searchText.trimmingCharacters(in: .whitespacesAndNewlines)
+            let query = input.searchText.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !query.isEmpty else { return baseClubs }
 
             let needle = query.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
@@ -367,10 +374,10 @@ struct StadiumsView: View {
         }()
 
         let sortComparator: (Club, Club) -> Bool = { a, b in
-            let aVisited = visitedIds.contains(a.id)
-            let bVisited = visitedIds.contains(b.id)
+            let aVisited = input.visitedIds.contains(a.id)
+            let bVisited = input.visitedIds.contains(b.id)
 
-            switch sort {
+            switch input.sort {
             case .leagueThenTeam:
                 let ca = LeaguePresentation.countryRank(a.countryCode)
                 let cb = LeaguePresentation.countryRank(b.countryCode)
@@ -399,15 +406,15 @@ struct StadiumsView: View {
                 return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
 
             case .nearest:
-                guard let here = locationStore.location else {
+                guard let here = input.location else {
                     let ra = LeaguePresentation.divisionRank(a.division, countryCode: a.countryCode)
                     let rb = LeaguePresentation.divisionRank(b.division, countryCode: b.countryCode)
                     if ra != rb { return ra < rb }
                     return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
                 }
 
-                let da = here.distance(from: CLLocation(latitude: a.stadium.latitude, longitude: a.stadium.longitude))
-                let db = here.distance(from: CLLocation(latitude: b.stadium.latitude, longitude: b.stadium.longitude))
+                let da = distanceMeters(from: here, to: a)
+                let db = distanceMeters(from: here, to: b)
                 if da != db { return da < db }
                 return a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
             }
@@ -415,39 +422,45 @@ struct StadiumsView: View {
 
         let visibleClubs = searchedClubs.sorted(by: sortComparator)
         let visibleNonProgressionClubs = countryFilteredNonProgressionClubs.sorted(by: sortComparator)
-        let shouldPaginateClubList = countryFilterRawValue == "all" && visibleClubs.count > listPageSize
-        let displayedClubs = shouldPaginateClubList ? Array(visibleClubs.prefix(visibleClubLimit)) : visibleClubs
-        let mapPreviewClubs = Array(visibleClubs.prefix(maxMapAnnotations))
-        let shouldRenderMapForCurrentScope = !(countryFilterRawValue == "all" && visibleClubs.count > maxMapScopeWithoutCountrySelection)
-        let activeScopeLabel = countryFilterRawValue == "all"
-            ? (shouldShowCountryFilter ? "Alle aktive lande" : LeaguePresentation.countryLabel(countryOptions.first ?? "dk"))
-            : LeaguePresentation.countryLabel(countryFilterRawValue)
+        let shouldPaginateClubList = input.countryFilterRawValue == "all" && visibleClubs.count > input.listPageSize
+        let displayedClubs = shouldPaginateClubList ? Array(visibleClubs.prefix(input.visibleClubLimit)) : visibleClubs
+        let mapPreviewClubs = Array(visibleClubs.prefix(input.maxMapAnnotations))
+        let shouldRenderMapForCurrentScope = !(input.countryFilterRawValue == "all" && visibleClubs.count > input.maxMapScopeWithoutCountrySelection)
+        let activeScopeLabel = input.countryFilterRawValue == "all"
+            ? (input.shouldShowCountryFilter ? "Alle aktive lande" : LeaguePresentation.countryLabel(input.countryOptions.first ?? "dk"))
+            : LeaguePresentation.countryLabel(input.countryFilterRawValue)
 
         var distanceTextByClubId: [String: String] = [:]
-        if sort == .nearest, let here = locationStore.location {
+        if input.sort == .nearest, let here = input.location {
             distanceTextByClubId = Dictionary(uniqueKeysWithValues: displayedClubs.map { club in
-                let distance = here.distance(from: CLLocation(latitude: club.stadium.latitude, longitude: club.stadium.longitude))
+                let distance = distanceMeters(from: here, to: club)
                 let text = distance < 1000 ? "\(Int(distance)) m" : String(format: "%.1f km", distance / 1000.0)
                 return (club.id, text)
             })
         }
 
-        snapshot = Snapshot(
+        return Snapshot(
             visibleClubs: visibleClubs,
             displayedClubs: displayedClubs,
             visibleNonProgressionClubs: visibleNonProgressionClubs,
             mapPreviewClubs: mapPreviewClubs,
             distanceTextByClubId: distanceTextByClubId,
             activeScopeLabel: activeScopeLabel,
-            mapSummary: "\(visibleClubs.count) stadions i scope • \(visibleClubs.filter { !visitedIds.contains($0.id) }.count) ubesøgte",
-            visitedCount: countryFilteredClubs.filter { visitedIds.contains($0.id) }.count,
+            mapSummary: "\(visibleClubs.count) stadions i scope • \(visibleClubs.filter { !input.visitedIds.contains($0.id) }.count) ubesøgte",
+            visitedCount: countryFilteredClubs.filter { input.visitedIds.contains($0.id) }.count,
             scopeTotalCount: countryFilteredClubs.count,
             remainingClubCount: max(0, visibleClubs.count - displayedClubs.count),
             shouldPaginateClubList: shouldPaginateClubList,
             shouldRenderMapForCurrentScope: shouldRenderMapForCurrentScope,
-            mapIsTruncated: visibleClubs.count > maxMapAnnotations
+            mapIsTruncated: visibleClubs.count > input.maxMapAnnotations
         )
-        _ = reviewedIds
+    }
+
+    private static func distanceMeters(from location: StadiumSnapshotLocation, to club: Club) -> Double {
+        let latDelta = (club.stadium.latitude - location.latitude) * 111_000
+        let lonScale = cos(location.latitude * .pi / 180) * 111_000
+        let lonDelta = (club.stadium.longitude - location.longitude) * lonScale
+        return sqrt((latDelta * latDelta) + (lonDelta * lonDelta))
     }
 
     var body: some View {
