@@ -8,6 +8,7 @@ final class AppState: ObservableObject {
     @Published private(set) var clubById: [String: Club] = [:]
     @Published var fixtures: [Fixture] = []
     @Published var loadError: String?
+    @Published private(set) var fixturesAreLoading: Bool = false
     @Published private(set) var syncRuntimeInfoMessage: String?
     @Published private(set) var fixturesLoadSource: FixturesLoadResult.Source?
     @Published private(set) var fixturesVersion: String?
@@ -30,6 +31,8 @@ final class AppState: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private let leaguePackAccessBackend: SharedLeaguePackAccessBackend
     private var previousAuthSnapshot: AppSessionSnapshot
+    private var fixturesLoadTask: Task<Void, Never>?
+    private var startupHasRun = false
     private var isUITesting: Bool {
         AppTestRuntime.isRunningAutomatedTests
     }
@@ -189,6 +192,12 @@ final class AppState: ObservableObject {
         applyUITestingStateIfNeeded()
     }
 
+    func startIfNeeded() {
+        guard !startupHasRun else { return }
+        startupHasRun = true
+        loadData()
+    }
+
     func loadData() {
         Task { // still on MainActor because AppState is @MainActor
             do {
@@ -196,7 +205,6 @@ final class AppState: ObservableObject {
                     isAuthenticated: authSession.snapshot.isAuthenticated
                 )
                 let loadStartedAt = Date()
-                async let fixturesResultTask = RemoteFixturesProvider().loadFixtures()
                 let clubs = try await loadClubs(enabledLeaguePacks: enabledLeaguePacks)
                 let aliasMap = ClubIdentityResolver.aliasMap(
                     from: Dictionary(uniqueKeysWithValues: clubs.map { ($0.id, $0) })
@@ -207,30 +215,60 @@ final class AppState: ObservableObject {
                 self.clubById = aliasMap
                 self.applyPreferredHomeCountryIfNeeded(from: clubs)
                 self.loadError = nil
+                self.loadFixturesInBackground(aliasMap: aliasMap, startedAt: loadStartedAt)
+            } catch {
+                self.clubById = [:]
+                self.clubs = []
+                self.fixtures = []
+                self.fixturesLoadSource = nil
+                self.fixturesVersion = nil
+                self.fixturesRemoteURL = nil
+                self.fixturesFallbackReason = nil
+                self.fixturesAreLoading = false
+                self.loadError = error.localizedDescription
+            }
+        }
+    }
 
-                let fixturesResult = try await fixturesResultTask
+    private func loadFixturesInBackground(aliasMap: [String: Club], startedAt: Date) {
+        fixturesLoadTask?.cancel()
+        fixturesAreLoading = true
+
+        fixturesLoadTask = Task { [weak self] in
+            guard let self else { return }
+
+            do {
+                let fixturesResult = try await RemoteFixturesProvider().loadFixtures()
+                guard !Task.isCancelled else { return }
+
                 let fixtures = fixturesResult.fixtures.filter { fixture in
                     aliasMap[fixture.homeTeamId] != nil &&
                     aliasMap[fixture.awayTeamId] != nil &&
                     aliasMap[fixture.venueClubId] != nil
                 }
-                dlogFixturesLoad(source: fixturesResult.source, version: fixturesResult.version)
-                dlog("App load: fixtures klar efter \(formatLoadDuration(since: loadStartedAt))")
 
-                self.fixtures = fixtures
-                self.fixturesLoadSource = fixturesResult.source
-                self.fixturesVersion = fixturesResult.version
-                self.fixturesRemoteURL = fixturesResult.remoteURL
-                self.fixturesFallbackReason = fixturesResult.fallbackReason
-                self.loadError = nil
-                self.refreshWeekendReminder()
+                await MainActor.run {
+                    dlogFixturesLoad(source: fixturesResult.source, version: fixturesResult.version)
+                    dlog("App load: fixtures klar efter \(self.formatLoadDuration(since: startedAt))")
+                    self.fixtures = fixtures
+                    self.fixturesLoadSource = fixturesResult.source
+                    self.fixturesVersion = fixturesResult.version
+                    self.fixturesRemoteURL = fixturesResult.remoteURL
+                    self.fixturesFallbackReason = fixturesResult.fallbackReason
+                    self.fixturesAreLoading = false
+                    self.refreshWeekendReminder()
+                }
             } catch {
-                self.clubById = [:]
-                self.fixturesLoadSource = nil
-                self.fixturesVersion = nil
-                self.fixturesRemoteURL = nil
-                self.fixturesFallbackReason = nil
-                self.loadError = error.localizedDescription
+                guard !Task.isCancelled else { return }
+
+                await MainActor.run {
+                    self.fixturesLoadSource = nil
+                    self.fixturesVersion = nil
+                    self.fixturesRemoteURL = nil
+                    self.fixturesFallbackReason = error.localizedDescription
+                    self.fixturesAreLoading = false
+                    dlog("Fixtures load fejlede i baggrunden: \(error.localizedDescription)")
+                }
             }
         }
     }

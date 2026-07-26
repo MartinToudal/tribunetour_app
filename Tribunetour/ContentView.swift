@@ -95,7 +95,7 @@ struct ContentView: View {
             }
         }
         .onAppear {
-            appState.loadData()
+            appState.startIfNeeded()
         }
         .onOpenURL { url in
             appState.handleOpenURL(url)
