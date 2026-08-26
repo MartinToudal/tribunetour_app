@@ -6,7 +6,6 @@ struct ContentView: View {
     private enum AppTab: Hashable {
         case stadiums
         case matches
-        case planner
         case stats
     }
 
@@ -58,17 +57,6 @@ struct ContentView: View {
                     )
                         .tabItem { Label("Kampe", systemImage: "sportscourt") }
                         .tag(AppTab.matches)
-
-                    WeekendPlannerView(
-                        isActive: selectedTab == .planner,
-                        clubs: appState.clubs,
-                        clubById: appState.clubById,
-                        fixtures: appState.fixtures,
-                        visitedStore: appState.visitedStore,
-                        planStore: appState.weekendPlanStore
-                    )
-                        .tabItem { Label("Plan", systemImage: "calendar") }
-                        .tag(AppTab.planner)
 
                     StatsView(
                         isActive: selectedTab == .stats,

@@ -1,14 +1,35 @@
 # Current State
 
-Senest opdateret: 2026-04-14
+Senest opdateret: 2026-08-26
 
-Dette dokument er den hurtigste indgang til den nuværende sandhed i Tribunetour.
+Dette dokument er den hurtigste indgang til produktets nuværende retning i Tribunetour.
 
-Hvis noget andet dokument siger noget lidt andet, så er dette dokument den praktiske reference først.
+Hvis du har brug for driftssandhed om repoer, source of truth og leveranceflow, så brug i stedet:
+- `[SYSTEM_OWNERSHIP_AND_OPERATING_MODEL.md](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Tribunetour/Tribunetour_docs/docs/SYSTEM_OWNERSHIP_AND_OPERATING_MODEL.md)`
 
-## Produktet lige nu
+Hvis noget andet dokument siger noget lidt andet, så gælder:
+- produktretning: dette dokument
+- drifts- og systemejerskab: `SYSTEM_OWNERSHIP_AND_OPERATING_MODEL.md`
 
-Tribunetour er ét produkt med to flader:
+## Ny låst produktretning
+
+Tribunetour omlægges til et Danmark-først iOS-produkt.
+
+De styrende beslutninger og migrationsfaser står i:
+- `[DENMARK_FIRST_PRODUCT_RESET.md](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Tribunetour/Tribunetour_docs/docs/DENMARK_FIRST_PRODUCT_RESET.md)`
+
+Kort fortalt:
+- iOS bliver eneste fremtidige produktflade
+- login og sync bevares
+- premium udfases, og alle stadionlande bliver gratis
+- kun Danmark skal have kampprogram
+- Danmark indlæses ved opstart, mens andre lande indlæses efter valg
+- `Plan` fjernes
+- `Min tur` og achievements bliver Danmark-først med internationalt indhold som tilvalg
+
+## Produktet før migrationen
+
+Den nuværende kodebase er stadig ét produkt med to flader:
 - iOS-app
 - web på `tribunetour.dk`
 
@@ -36,9 +57,9 @@ Disse ting er nu bygget som fælles brugeroplevelse eller fælles datamodeller:
 - nye lande kræver stadig kode/dataarbejde og ikke kun backend-oprettelse
 - tværflade-sync er fokus-/aktiveringsbaseret og ikke realtime
 
-## Premium og league packs
+## Premium og league packs under udfasning
 
-Den nuværende model er:
+Den tekniske model er stadig:
 - `core_denmark` er grundpakken
 - `germany_top_3` er første premium-pakke
 
@@ -47,9 +68,7 @@ Adgang styres centralt i Supabase-tabellen:
 
 Pakken bliver synlig når brugeren har adgang til den konkrete `pack_key`.
 
-Næste anbefalede udviklingstrin er:
-- støtte både `premium_full`
-- og adgang til enkelte landepakker
+Denne model skal ikke udvides. Den udfases kontrolleret, når land-on-demand-indlæsningen er på plads.
 
 ## Hjemland og scope
 
@@ -109,10 +128,22 @@ Supabase:
 
 ## Kort konklusion
 
-Tribunetour er ikke længere to separate spor.
+Tribunetour skal opleves som ét produkt, men er i drift stadig bygget over flere tekniske spor.
 
-Det er nu reelt ét produkt, hvor:
-- appen stadig er den mest modne flade
-- web er blevet en rigtig produktflade
-- premium league packs er introduceret i første version
-- dokumentationen har brug for én tydelig nutids-reference
+Det betyder i praksis:
+- brugeren skal møde én samlet løsning
+- men vi arbejder stadig med særskilt app-repo, web-repo og delt backend/dataflow
+
+Det er derfor ikke tilstrækkeligt at sige, at noget er “på plads”, uden også at sige:
+- i hvilket repo
+- på hvilken branch
+- om det er pushed
+- om det er deployed
+- om det kræver ny app-build
+
+Produktretningen er nu:
+- Danmark er kerneproduktet
+- iOS er den eneste fremtidige produktflade
+- webprodukt og premium udfases
+- login/sync bevares
+- internationalt indhold bliver et gratis stadionarkiv, som indlæses efter behov

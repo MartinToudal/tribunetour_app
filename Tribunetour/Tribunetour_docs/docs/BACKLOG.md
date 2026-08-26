@@ -3,6 +3,8 @@
 Dette dokument er den løbende, samlede backlog for appen.  
 Opdateres løbende sammen med sprint-arbejdet.
 
+> Historisk backlog: Nye aktive prioriteringer styres i `WORKING_BACKLOG.md`, og den låste produktretning står i `DENMARK_FIRST_PRODUCT_RESET.md`. Punkter her må ikke startes uden at blive flyttet til den operative backlog først.
+
 ---
 
 ## Status Snapshot
@@ -101,6 +103,7 @@ Formål: samle de vigtigste udeståender, som ikke skal forstyrre den aktuelle 1
 ---
 
 ## In Progress (Sprint 5.x)
+- Systemoverblik, repo-ejerskab og source-of-truth-stramning mellem app og web
 - Backlog-konsolidering og prioritering frem mod næste sprint
 - App Store launch-spor afgrænset som separat leverance
 - Facebook-plan dokumenteret som fast kanalspor for post-launch synlighed
