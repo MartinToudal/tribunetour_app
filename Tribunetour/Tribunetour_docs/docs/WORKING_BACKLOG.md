@@ -36,11 +36,12 @@ Låste beslutninger:
   - Status: gennemført lokalt. Crash-sikring og regressionstest verificeret 2026-08-28.
 
 - **Fase 2: Gratis adgang og land-on-demand**
-  - Fjern premium-copy, gates og anmodningsflow fra brugerfladen.
-  - Gør alle stadionlande tilgængelige uden login.
-  - Indlæs kun Danmark ved opstart.
-  - Indlæs valgt internationalt land efter brugerhandling og cache det lokalt.
-  - Accept: gæst og logget ind har samme landescope, uden at opstarten indlæser Europa.
+  - [x] Fjern premium-copy, gates og anmodningsflow fra brugerfladen.
+  - [x] Gør alle stadionlande tilgængelige uden login.
+  - [x] Indlæs kun Danmark ved opstart.
+  - [x] Indlæs valgt internationalt land efter brugerhandling og behold det i sessionscache.
+  - [x] Accept: gæst og logget ind har samme landescope, uden at opstarten indlæser Europa.
+  - Status: gennemført lokalt 2026-08-28. Build og enhedstests er grønne. Den automatiske UI-test er blokeret af en accessibility-/renderer-fejl i iOS 27-betaens simulator, ikke af produktlogikken.
 
 - **Fase 3: Kun danske kampe**
   - Fjern internationale fixtures fra produktet.

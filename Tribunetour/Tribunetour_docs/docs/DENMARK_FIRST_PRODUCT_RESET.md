@@ -1,6 +1,6 @@
 # Danmark-først: produktmål og migrationsplan
 
-Senest opdateret: 2026-08-26
+Senest opdateret: 2026-08-28
 
 Dette dokument er den styrende beslutning for den næste version af Tribunetour.
 
@@ -217,6 +217,17 @@ Færdigt når:
 - gæst og logget ind ser samme lande
 - opstart indlæser Danmark uden internationale pakker
 - landeskift henter og viser det valgte land stabilt
+
+Status 2026-08-28:
+
+- premium-copy, adgangsgates og anmodningsflow er fjernet fra produktfladerne
+- alle stadionlande er tilgængelige uafhængigt af login
+- login og sync af brugerdata er bevaret
+- kun Danmark indlæses ved opstart
+- et valgt internationalt land indlæses først ved brugerens valg og bevares i hukommelsen resten af sessionen
+- den gamle premium-backend er midlertidigt bevaret som ubrugt rollback-lag
+- iOS-build og enhedstests er grønne
+- UI-automationen kan ikke afsluttes på iOS 27-betaen, fordi simulatorens accessibility-/WidgetRenderer-lag fejler; det er registreret som en værktøjsbegrænsning
 
 ### Fase 3: Kun danske fixtures
 

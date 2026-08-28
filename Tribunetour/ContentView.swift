@@ -150,7 +150,7 @@ struct StadiumsView: View {
     @ObservedObject var reviewsStore: AppReviewsStore
 
     @EnvironmentObject private var locationStore: LocationStore
-    @EnvironmentObject private var authSession: AppAuthSession
+    @EnvironmentObject private var appState: AppState
 
     @State private var selectedClub: Club?
     @State private var detailSheetClub: Club?
@@ -202,14 +202,8 @@ struct StadiumsView: View {
         Set(visitedStore.records.lazy.filter(\.value.visited).map(\.key))
     }
 
-    private var enabledPackIds: Set<String> {
-        AppLeaguePackSettings.effectiveEnabledLeaguePacks(
-            isAuthenticated: authSession.snapshot.isAuthenticated
-        )
-    }
-
     private var accessibleClubs: [Club] {
-        clubs.filter { enabledPackIds.contains($0.leaguePack) }
+        clubs
     }
 
     private var reviewedClubIds: Set<String> {
@@ -217,14 +211,7 @@ struct StadiumsView: View {
     }
 
     private var countryOptions: [String] {
-        let progressionClubs = accessibleClubs.filter(\.countsTowardTopSystemProgression)
-        let source = progressionClubs.isEmpty ? accessibleClubs : progressionClubs
-        return Array(Set(source.map(\.countryCode))).sorted { left, right in
-            if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
-                return LeaguePresentation.countryRank(left) < LeaguePresentation.countryRank(right)
-            }
-            return LeaguePresentation.countryLabel(left).localizedCaseInsensitiveCompare(LeaguePresentation.countryLabel(right)) == .orderedAscending
-        }
+        AppLeaguePackCatalog.availableCountryCodes
     }
 
     private var shouldShowCountryFilter: Bool {
@@ -235,18 +222,12 @@ struct StadiumsView: View {
         !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    private var unlockedPremiumTitles: [String] {
-        return AppLeaguePackCatalog.entries
-            .filter { $0.isPremium && $0.id != .premiumFull && enabledPackIds.contains($0.id.rawValue) }
-            .sorted { $0.sortOrder < $1.sortOrder }
-            .map(\.label)
+    private var selectedCountryIsLoading: Bool {
+        appState.loadingCountryCodes.contains(countryFilterRawValue)
     }
 
-    private var lockedPremiumTitles: [String] {
-        return AppLeaguePackCatalog.entries
-            .filter { $0.isPremium && $0.id != .premiumFull && !enabledPackIds.contains($0.id.rawValue) }
-            .sorted { $0.sortOrder < $1.sortOrder }
-            .map(\.label)
+    private var selectedCountryLoadError: String? {
+        appState.countryLoadErrors[countryFilterRawValue]
     }
 
     private func openInAppleMaps(_ club: Club) {
@@ -502,32 +483,54 @@ struct StadiumsView: View {
                         .font(.caption2)
 
                         if shouldShowCountryFilter {
-                            let homeCountryCode = LeaguePresentation.resolvedHomeCountryCode(
-                                availableCountryCodes: Set(countryOptions)
-                            )
-
-                            ScrollView(.horizontal, showsIndicators: false) {
-                                HStack(spacing: 8) {
-                                    CountryScopeButton(
-                                        title: LeaguePresentation.countryLabel(homeCountryCode),
-                                        isSelected: countryFilterRawValue == homeCountryCode,
-                                        action: { countryFilterRawValue = homeCountryCode }
-                                    )
-
-                                    CountryScopeButton(
-                                        title: "Alle lande",
-                                        isSelected: countryFilterRawValue == "all",
-                                        action: { countryFilterRawValue = "all" }
-                                    )
-
-                                    ForEach(countryOptions.filter { $0 != homeCountryCode }, id: \.self) { countryCode in
-                                        CountryScopeButton(
-                                            title: LeaguePresentation.countryLabel(countryCode),
-                                            isSelected: countryFilterRawValue == countryCode,
-                                            action: { countryFilterRawValue = countryCode }
-                                        )
+                            Menu {
+                                ForEach(countryOptions, id: \.self) { countryCode in
+                                    Button {
+                                        countryFilterRawValue = countryCode
+                                    } label: {
+                                        if countryFilterRawValue == countryCode {
+                                            Label(LeaguePresentation.countryLabel(countryCode), systemImage: "checkmark")
+                                        } else {
+                                            Text(LeaguePresentation.countryLabel(countryCode))
+                                        }
                                     }
                                 }
+                            } label: {
+                                HStack {
+                                    Label(
+                                        LeaguePresentation.countryLabel(countryFilterRawValue),
+                                        systemImage: "globe.europe.africa"
+                                    )
+                                    Spacer()
+                                    Text("Skift land")
+                                    Image(systemName: "chevron.up.chevron.down")
+                                }
+                                .font(.subheadline.weight(.semibold))
+                                .frame(maxWidth: .infinity)
+                                .padding(.horizontal, 14)
+                                .padding(.vertical, 11)
+                                .background(Color(.secondarySystemBackground))
+                                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                            }
+                            .buttonStyle(.plain)
+                        }
+
+                        if selectedCountryIsLoading {
+                            HStack(spacing: 10) {
+                                ProgressView()
+                                Text("Henter stadions i \(LeaguePresentation.countryLabel(countryFilterRawValue))...")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                        } else if let selectedCountryLoadError {
+                            VStack(alignment: .leading, spacing: 6) {
+                                Text(selectedCountryLoadError)
+                                    .font(.caption)
+                                    .foregroundStyle(.red)
+                                Button("Prøv igen") {
+                                    appState.loadCountryIfNeeded(countryFilterRawValue)
+                                }
+                                .font(.caption.weight(.semibold))
                             }
                         }
 
@@ -568,18 +571,6 @@ struct StadiumsView: View {
                     .padding(.vertical, 8)
                 }
                 .listRowInsets(EdgeInsets())
-
-                Section {
-                    PremiumAccessStatusCard(
-                        isLoggedIn: authSession.snapshot.isAuthenticated,
-                        unlockedPremiumTitles: unlockedPremiumTitles,
-                        lockedPremiumTitles: lockedPremiumTitles,
-                        title: "Adgang til stadions",
-                        subtitle: authSession.snapshot.isAuthenticated
-                            ? "Her ser du de lande, der er åbne på din konto lige nu."
-                            : "Som gæst ser du de danske rækker. Log ind for at se flere lande."
-                    )
-                }
 
                 if snapshot.visibleClubs.isEmpty {
                     Section {
@@ -714,6 +705,7 @@ struct StadiumsView: View {
             if !countryOptions.contains(countryFilterRawValue) {
                 countryFilterRawValue = resolvedHomeCountry
             }
+            appState.loadCountryIfNeeded(countryFilterRawValue)
             rebuildSnapshot()
         }
         .onChange(of: sort) { _, newValue in
@@ -728,7 +720,8 @@ struct StadiumsView: View {
                 rebuildSnapshot()
             }
         }
-        .onChange(of: countryFilterRawValue) { _, _ in
+        .onChange(of: countryFilterRawValue) { _, newValue in
+            appState.loadCountryIfNeeded(newValue)
             resetVisibleClubLimit()
             rebuildSnapshot()
         }
@@ -919,26 +912,6 @@ private struct Badge: View {
             .padding(.vertical, 4)
             .background(Color(.tertiarySystemFill))
             .clipShape(Capsule())
-    }
-}
-
-private struct CountryScopeButton: View {
-    let title: String
-    let isSelected: Bool
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            Text(title)
-                .font(.caption.weight(.semibold))
-                .foregroundStyle(isSelected ? Color.white : Color.secondary)
-                .lineLimit(1)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(isSelected ? Color.primary : Color(.tertiarySystemFill))
-                .clipShape(Capsule())
-        }
-        .buttonStyle(.plain)
     }
 }
 

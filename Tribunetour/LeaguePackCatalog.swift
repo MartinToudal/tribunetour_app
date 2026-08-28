@@ -242,6 +242,20 @@ enum AppLeaguePackCatalog {
     private static let entryById = Dictionary(uniqueKeysWithValues: entries.map { ($0.id.rawValue, $0) })
     private static let countryEntries = entries.filter { $0.countryCode != nil }
 
+    static var availableCountryCodes: [String] {
+        countryEntries
+            .sorted { $0.sortOrder < $1.sortOrder }
+            .compactMap(\.countryCode)
+    }
+
+    static var allCountryPackIds: Set<String> {
+        Set(countryEntries.map { $0.id.rawValue })
+    }
+
+    static func packId(forCountryCode countryCode: String) -> String? {
+        countryEntries.first(where: { $0.countryCode == countryCode })?.id.rawValue
+    }
+
     static var premiumFullIncludedPackIds: [String] {
         entries
             .filter { $0.includedByPremiumFull }
@@ -289,17 +303,7 @@ enum AppLeaguePackSettings {
     }
 
     static func effectiveEnabledLeaguePacks(isAuthenticated: Bool) -> Set<String> {
-        var ids: Set<String> = [AppLeaguePackId.coreDenmark.rawValue]
-
-        if isAuthenticated {
-            ids.formUnion(debugEnabledLeaguePacks)
-            ids.formUnion(remoteEnabledLeaguePacks)
-        }
-
-        if ids.contains(AppLeaguePackId.premiumFull.rawValue) {
-            ids.formUnion(AppLeaguePackCatalog.premiumFullIncludedPackIds)
-        }
-        return ids
+        AppLeaguePackCatalog.allCountryPackIds
     }
 
     static var effectiveEnabledLeaguePacks: Set<String> {

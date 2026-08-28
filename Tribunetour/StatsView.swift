@@ -123,13 +123,6 @@ struct StatsView: View {
     @State private var pendingBootstrapStatus: AppVisitedBootstrapStatus?
     @State private var showBootstrapAlert: Bool = false
     @State private var showAuthSheet: Bool = false
-    @State private var premiumRequestPack: AppPremiumAdminPack = .premiumFull
-    @State private var premiumRequestMessage: String = ""
-    @State private var premiumRequestInfoMessage: String?
-    @State private var premiumRequestErrorMessage: String?
-    @State private var premiumRequestLoading: Bool = false
-    @State private var premiumRequestRows: [PremiumAccessRequestUserRow] = []
-    @State private var premiumRequestRowsLoading: Bool = false
     @State private var snapshot = Snapshot()
     @FocusState private var focusedAuthField: AuthField?
 
@@ -143,14 +136,8 @@ struct StatsView: View {
         visitedClubs.sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
 
-    private var enabledPackIds: Set<String> {
-        AppLeaguePackSettings.effectiveEnabledLeaguePacks(
-            isAuthenticated: authSession.snapshot.isAuthenticated
-        )
-    }
-
     private var accessibleClubs: [Club] {
-        clubs.filter { enabledPackIds.contains($0.leaguePack) }
+        clubs
     }
 
     private var visitedClubs: [Club] {
@@ -191,30 +178,11 @@ struct StatsView: View {
         if notesCount > 0 || totalPhotoCount > 0 || reviewedCount > 0 {
             highlights.append("Gem noter, anmeldelser og billeder sikkert på din konto")
         }
-        if hasInternationalCountries {
-            highlights.append("Få adgang til flere ligaer og stadionrejser i andre lande")
-        }
         if highlights.isEmpty {
             highlights.append("Gem dine data på din konto")
-            highlights.append("Få adgang til flere ligaer og stadionrejser")
+            highlights.append("Behold din stadionhistorik på tværs af enheder")
         }
         return Array(highlights.prefix(3))
-    }
-    private var openPremiumRequestRows: [PremiumAccessRequestUserRow] { premiumRequestRows.filter(\.isOpen) }
-    private var selectedPackOpenRequest: PremiumAccessRequestUserRow? {
-        openPremiumRequestRows.first(where: { $0.packKey == premiumRequestPack.rawValue })
-    }
-    private var unlockedPremiumPackTitles: [String] {
-        return AppLeaguePackCatalog.entries
-            .filter { $0.isPremium && $0.id != .premiumFull && enabledPackIds.contains($0.id.rawValue) }
-            .sorted { $0.sortOrder < $1.sortOrder }
-            .map(\.label)
-    }
-    private var lockedPremiumPackTitles: [String] {
-        return AppLeaguePackCatalog.entries
-            .filter { $0.isPremium && $0.id != .premiumFull && !enabledPackIds.contains($0.id.rawValue) }
-            .sorted { $0.sortOrder < $1.sortOrder }
-            .map(\.label)
     }
 
     private var progress: Double {
@@ -1139,93 +1107,11 @@ struct StatsView: View {
                         .foregroundStyle(.red)
                 }
 
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Flere lande")
-                        .font(.headline)
-                    Text("Her kan du se hvilke lande der er åbne for dig lige nu, og hvilke du stadig mangler.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
-                    PremiumAccessStatusCard(
-                        isLoggedIn: true,
-                        unlockedPremiumTitles: unlockedPremiumPackTitles,
-                        lockedPremiumTitles: lockedPremiumPackTitles,
-                        title: "Dine lande",
-                        subtitle: "Her ser du hvad du allerede kan bruge, og hvad der stadig er lukket."
-                    )
-
-                    Text("Vil du videre end Danmark, kan du bede om adgang til flere lande her.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-
-                    if premiumRequestRowsLoading {
-                        Text("Henter dine anmodninger...")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    } else if let selectedPackOpenRequest {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Du har allerede en åben anmodning om \(selectedPackOpenRequest.packTitle).")
-                                .font(.caption.weight(.semibold))
-                            if let createdAt = selectedPackOpenRequest.createdAt {
-                                Text("Sendt \(createdAt.formatted(date: .abbreviated, time: .shortened)).")
-                                    .font(.caption2)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        .foregroundStyle(.secondary)
-                    } else if !openPremiumRequestRows.isEmpty {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Åbne anmodninger")
-                                .font(.caption.weight(.semibold))
-                            ForEach(openPremiumRequestRows.prefix(3)) { request in
-                                Text("• \(request.packTitle)")
-                                    .font(.caption2)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                    }
-
-                    Picker("Land", selection: $premiumRequestPack) {
-                        ForEach(AppPremiumAdminPack.allCases) { pack in
-                            Text(pack.title).tag(pack)
-                        }
-                    }
-
-                    TextField("Besked, valgfri", text: $premiumRequestMessage, axis: .vertical)
-                        .textInputAutocapitalization(.sentences)
-                        .lineLimit(2...4)
-
-                    Button {
-                        Task { await submitPremiumAccessRequest() }
-                    } label: {
-                        StatsActionButtonLabel(
-                            title: premiumRequestLoading ? "Sender..." : selectedPackOpenRequest == nil ? "Anmod om adgang" : "Anmodning allerede sendt",
-                            isActive: !premiumRequestLoading && selectedPackOpenRequest == nil
-                        )
-                    }
-                    .buttonStyle(.plain)
-                    .disabled(premiumRequestLoading || selectedPackOpenRequest != nil)
-
-                    if let premiumRequestInfoMessage {
-                        Text(premiumRequestInfoMessage)
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    if let premiumRequestErrorMessage {
-                        Text(premiumRequestErrorMessage)
-                            .font(.caption)
-                            .foregroundStyle(.red)
-                    }
-                }
-
                 Button("Log ud", role: .destructive) {
                     authSession.clearSession()
                     loginInfoMessage = nil
                     loginErrorMessage = nil
                     pendingBootstrapStatus = nil
-                    premiumRequestInfoMessage = nil
-                    premiumRequestErrorMessage = nil
                 }
             } else {
                 let configuration = authClient.currentConfiguration()
@@ -1234,7 +1120,7 @@ struct StatsView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text("Log ind")
                             .font(.headline)
-                        Text("Log ind for at gemme dine data og åbne resten af Tribunetour på din konto.")
+                        Text("Log ind for at gemme og synkronisere dine besøg, noter, billeder og anmeldelser.")
                             .font(.caption)
                             .foregroundStyle(.secondary)
 
@@ -1244,14 +1130,6 @@ struct StatsView: View {
                                 onDismiss: { accountPromptDismissed = true }
                             )
                         }
-
-                        PremiumAccessStatusCard(
-                            isLoggedIn: false,
-                            unlockedPremiumTitles: [],
-                            lockedPremiumTitles: lockedPremiumPackTitles,
-                            title: "Det kan du se lige nu",
-                            subtitle: "Som gæst ser du de danske rækker. Log ind for at se flere lande."
-                        )
 
                         Button {
                             showAuthSheet = true
@@ -1857,9 +1735,6 @@ struct StatsView: View {
                 refreshSnapshot()
             }
         }
-        .task(id: authSession.snapshot.isAuthenticated) {
-            await refreshPremiumRequestRows()
-        }
     }
 
     private func achievementTrackLabel(_ achievement: Achievement) -> String {
@@ -1981,70 +1856,6 @@ struct StatsView: View {
             loginErrorMessage = error.localizedDescription
         }
         loginLoading = false
-    }
-
-    @MainActor
-    private func submitPremiumAccessRequest() async {
-        guard !premiumRequestLoading else { return }
-
-        premiumRequestLoading = true
-        premiumRequestInfoMessage = nil
-        premiumRequestErrorMessage = nil
-        defer { premiumRequestLoading = false }
-
-        do {
-            let authConfiguration = AppAuthConfiguration.load()
-            let backend = SharedPremiumAdminBackend(
-                configuration: SharedLeaguePackAccessConfiguration(
-                    baseURL: authConfiguration.supabaseURL,
-                    apiKey: authConfiguration.supabaseAnonKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                        ? nil
-                        : authConfiguration.supabaseAnonKey,
-                    authTokenProvider: authSession.authTokenProvider(using: authClient),
-                    urlSession: .shared
-                )
-            )
-            try await backend.submitAccessRequest(
-                pack: premiumRequestPack,
-                message: premiumRequestMessage,
-                submissionURL: authConfiguration.premiumAccessRequestSubmissionURL,
-                notificationURL: authConfiguration.premiumAccessRequestNotificationURL
-            )
-            premiumRequestInfoMessage = "Din anmodning om \(premiumRequestPack.title) er sendt."
-            premiumRequestMessage = ""
-            premiumRequestRows = try await backend.listCurrentUserAccessRequests()
-        } catch {
-            premiumRequestErrorMessage = error.localizedDescription
-        }
-    }
-
-    @MainActor
-    private func refreshPremiumRequestRows() async {
-        guard authSession.snapshot.isAuthenticated else {
-            premiumRequestRows = []
-            premiumRequestRowsLoading = false
-            return
-        }
-
-        premiumRequestRowsLoading = true
-        defer { premiumRequestRowsLoading = false }
-
-        do {
-            let authConfiguration = AppAuthConfiguration.load()
-            let backend = SharedPremiumAdminBackend(
-                configuration: SharedLeaguePackAccessConfiguration(
-                    baseURL: authConfiguration.supabaseURL,
-                    apiKey: authConfiguration.supabaseAnonKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                        ? nil
-                        : authConfiguration.supabaseAnonKey,
-                    authTokenProvider: authSession.authTokenProvider(using: authClient),
-                    urlSession: .shared
-                )
-            )
-            premiumRequestRows = try await backend.listCurrentUserAccessRequests()
-        } catch {
-            premiumRequestRows = []
-        }
     }
 
     @MainActor

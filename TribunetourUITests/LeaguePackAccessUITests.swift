@@ -1,8 +1,7 @@
 import XCTest
 
 final class LeaguePackAccessUITests: XCTestCase {
-    private let germanyMatchRowId = "match-row-b2-r29-scp-fcm"
-    private let matchesSearchPlaceholder = "Søg klub, stadion, by, runde…"
+    private let hamburgerSVRowId = "stadium-row-de-hamburger-sv"
 
     private func launchApp(extraArguments: [String] = []) -> XCUIApplication {
         let app = XCUIApplication()
@@ -32,37 +31,15 @@ final class LeaguePackAccessUITests: XCTestCase {
     }
 
     @MainActor
-    func testGermanyPackEnabledShowsGermanContentAcrossTabs() throws {
-        let app = launchApp(extraArguments: ["--uitesting-enable-germany", "--uitesting-country-de", "--uitesting-plan-weekend"])
+    func testGermanyCanBeLoadedWithoutAuthentication() throws {
+        let app = launchApp(extraArguments: ["--uitesting-country-de"])
 
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
-
-        let tabBar = app.tabBars.firstMatch
-        XCTAssertTrue(tabBar.waitForExistence(timeout: 10))
-
-        tabBar.buttons["Kampe"].tap()
-        XCTAssertTrue(app.searchFields[matchesSearchPlaceholder].waitForExistence(timeout: 10))
-        XCTAssertTrue(element(germanyMatchRowId, in: app).waitForExistence(timeout: 10))
-
-        app.tabBars.firstMatch.buttons["Plan"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        XCTAssertTrue(element("weekend-planner-root", in: app).waitForExistence(timeout: 10))
-        XCTAssertTrue(element("weekend-set-range", in: app).waitForExistence(timeout: 10))
-    }
-
-    @MainActor
-    func testGermanyPackDisabledHidesGermanContentAcrossTabs() throws {
-        let app = launchApp(extraArguments: ["--uitesting-disable-germany", "--uitesting-country-de", "--uitesting-plan-weekend"])
-
-        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
-
-        let tabBar = app.tabBars.firstMatch
-
-        tabBar.buttons["Kampe"].tap()
-        XCTAssertTrue(app.searchFields[matchesSearchPlaceholder].waitForExistence(timeout: 10))
-        XCTAssertFalse(element(germanyMatchRowId, in: app).waitForExistence(timeout: 2))
-
-        app.tabBars.firstMatch.buttons["Plan"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        XCTAssertTrue(element("weekend-planner-root", in: app).waitForExistence(timeout: 10))
-        XCTAssertTrue(element("weekend-set-range", in: app).waitForExistence(timeout: 10))
+        let searchField = app.searchFields.firstMatch
+        XCTAssertTrue(searchField.waitForExistence(timeout: 10))
+        searchField.tap()
+        searchField.typeText("Hamburger")
+        XCTAssertTrue(element(hamburgerSVRowId, in: app).waitForExistence(timeout: 15))
+        XCTAssertFalse(app.staticTexts["Anmod om adgang"].exists)
     }
 }

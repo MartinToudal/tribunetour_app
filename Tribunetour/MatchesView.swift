@@ -69,7 +69,6 @@ struct MatchesView: View {
     @AppStorage("matches.reverseDistanceSort") private var reverseDistanceSort = false
 
     @EnvironmentObject private var locationStore: LocationStore
-    @EnvironmentObject private var authSession: AppAuthSession
     private let maxShownFixtures = 200
     private let matchCalendar: Calendar = {
         var cal = Calendar(identifier: .gregorian)
@@ -122,14 +121,8 @@ struct MatchesView: View {
         accessibleClubs.filter(\.countsTowardTopSystemProgression)
     }
 
-    private var enabledPackIds: Set<String> {
-        AppLeaguePackSettings.effectiveEnabledLeaguePacks(
-            isAuthenticated: authSession.snapshot.isAuthenticated
-        )
-    }
-
     private var accessibleClubs: [Club] {
-        clubs.filter { enabledPackIds.contains($0.leaguePack) }
+        clubs
     }
 
     private var accessibleClubById: [String: Club] {
@@ -156,20 +149,6 @@ struct MatchesView: View {
 
     private var scopeLabel: String {
         countryFilterRawValue == "all" ? "Alle aktive lande" : LeaguePresentation.countryLabel(countryFilterRawValue)
-    }
-
-    private var unlockedPremiumTitles: [String] {
-        return AppLeaguePackCatalog.entries
-            .filter { $0.isPremium && $0.id != .premiumFull && enabledPackIds.contains($0.id.rawValue) }
-            .sorted { $0.sortOrder < $1.sortOrder }
-            .map(\.label)
-    }
-
-    private var lockedPremiumTitles: [String] {
-        return AppLeaguePackCatalog.entries
-            .filter { $0.isPremium && $0.id != .premiumFull && !enabledPackIds.contains($0.id.rawValue) }
-            .sorted { $0.sortOrder < $1.sortOrder }
-            .map(\.label)
     }
 
     private func rebuildSnapshot() {
@@ -376,18 +355,6 @@ struct MatchesView: View {
                             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
                         }
                     }
-                }
-
-                Section {
-                    PremiumAccessStatusCard(
-                        isLoggedIn: authSession.snapshot.isAuthenticated,
-                        unlockedPremiumTitles: unlockedPremiumTitles,
-                        lockedPremiumTitles: lockedPremiumTitles,
-                        title: "Adgang til kampe",
-                        subtitle: authSession.snapshot.isAuthenticated
-                            ? "Du ser kampe fra de lande, der allerede er åbne på din konto."
-                            : "Som gæst ser du kun kampe fra de danske rækker. Log ind for at se flere lande."
-                    )
                 }
 
                 Section {

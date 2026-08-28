@@ -16,6 +16,9 @@ final class AppState: ObservableObject {
     @Published private(set) var fixturesFallbackReason: String?
     @Published private(set) var notesSyncIssue: String?
     @Published private(set) var reviewsSyncIssue: String?
+    @Published private(set) var loadedCountryCodes: Set<String> = []
+    @Published private(set) var loadingCountryCodes: Set<String> = []
+    @Published private(set) var countryLoadErrors: [String: String] = [:]
 
     let visitedStore: VisitedStore
     let photosStore: AppPhotosStore
@@ -29,7 +32,6 @@ final class AppState: ObservableObject {
     let visitedBootstrapCoordinator: AppVisitedBootstrapCoordinator
     let locationStore = LocationStore()
     private var cancellables = Set<AnyCancellable>()
-    private let leaguePackAccessBackend: SharedLeaguePackAccessBackend
     private var previousAuthSnapshot: AppSessionSnapshot
     private var fixturesLoadTask: Task<Void, Never>?
     private var startupHasRun = false
@@ -88,18 +90,6 @@ final class AppState: ObservableObject {
             syncBackend: AppWeekendPlanSyncFactory.makeSharedBackend(authSession: authSession, authClient: authClient),
             authSession: self.authSession
         )
-        let authConfiguration = AppAuthConfiguration.load()
-        self.leaguePackAccessBackend = SharedLeaguePackAccessBackend(
-            configuration: SharedLeaguePackAccessConfiguration(
-                baseURL: authConfiguration.supabaseURL,
-                apiKey: authConfiguration.supabaseAnonKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                    ? nil
-                    : authConfiguration.supabaseAnonKey,
-                authTokenProvider: authSession.authTokenProvider(using: authClient),
-                urlSession: .shared
-            )
-        )
-
         visitedStore.$records
             .dropFirst()
             .debounce(for: .seconds(1.0), scheduler: DispatchQueue.main)
@@ -131,9 +121,6 @@ final class AppState: ObservableObject {
                 self.previousAuthSnapshot = snapshot
                 if snapshot.isAuthenticated {
                     Task {
-                        await self.refreshLeaguePackAccess()
-                    }
-                    Task {
                         await self.adminNotificationsManager.refreshForCurrentSession()
                     }
                     self.visitedStore.clearSyncIssue()
@@ -152,8 +139,6 @@ final class AppState: ObservableObject {
                     Task {
                         await self.adminNotificationsManager.handleSignedOut(previousSnapshot: previousSnapshot)
                     }
-                    AppLeaguePackSettings.clearRemoteEnabledLeaguePacks()
-                    self.loadData()
                     self.syncRuntimeInfoMessage = nil
                     self.notesSyncIssue = nil
                     self.reviewsSyncIssue = nil
@@ -178,10 +163,6 @@ final class AppState: ObservableObject {
             }
             .store(in: &cancellables)
 
-        if !authSession.snapshot.isAuthenticated {
-            AppLeaguePackSettings.clearRemoteEnabledLeaguePacks()
-        }
-
         if authSession.snapshot.isAuthenticated {
             Task {
                 await reconcileSharedSyncModeAfterSessionRestore(snapshot: authSession.snapshot)
@@ -201,9 +182,7 @@ final class AppState: ObservableObject {
     func loadData() {
         Task { // still on MainActor because AppState is @MainActor
             do {
-                let enabledLeaguePacks = AppLeaguePackSettings.effectiveEnabledLeaguePacks(
-                    isAuthenticated: authSession.snapshot.isAuthenticated
-                )
+                let enabledLeaguePacks: Set<String> = [AppLeaguePackId.coreDenmark.rawValue]
                 let loadStartedAt = Date()
                 let clubs = try await loadClubs(enabledLeaguePacks: enabledLeaguePacks)
                 let aliasMap = ClubIdentityResolver.aliasMap(
@@ -213,6 +192,9 @@ final class AppState: ObservableObject {
 
                 self.clubs = clubs
                 self.clubById = aliasMap
+                self.loadedCountryCodes = ["dk"]
+                self.loadingCountryCodes = []
+                self.countryLoadErrors = [:]
                 self.applyPreferredHomeCountryIfNeeded(from: clubs)
                 self.loadError = nil
                 self.loadFixturesInBackground(aliasMap: aliasMap, startedAt: loadStartedAt)
@@ -226,6 +208,52 @@ final class AppState: ObservableObject {
                 self.fixturesFallbackReason = nil
                 self.fixturesAreLoading = false
                 self.loadError = error.localizedDescription
+            }
+        }
+    }
+
+    func loadCountryIfNeeded(_ countryCode: String) {
+        guard countryCode != "all",
+              !loadedCountryCodes.contains(countryCode),
+              !loadingCountryCodes.contains(countryCode),
+              let packId = AppLeaguePackCatalog.packId(forCountryCode: countryCode) else {
+            return
+        }
+
+        loadingCountryCodes.insert(countryCode)
+        countryLoadErrors[countryCode] = nil
+
+        Task {
+            do {
+                let loaded = try await loadClubs(
+                    enabledLeaguePacks: [AppLeaguePackId.coreDenmark.rawValue, packId]
+                )
+                let countryClubs = loaded.filter { $0.countryCode == countryCode }
+                guard !countryClubs.isEmpty else {
+                    throw CountryLoadError.noClubs(countryCode)
+                }
+
+                var merged = clubs.filter { $0.countryCode != countryCode }
+                merged.append(contentsOf: countryClubs)
+                merged.sort { left, right in
+                    if LeaguePresentation.countryRank(left.countryCode) != LeaguePresentation.countryRank(right.countryCode) {
+                        return LeaguePresentation.countryRank(left.countryCode) < LeaguePresentation.countryRank(right.countryCode)
+                    }
+                    return left.name.localizedCaseInsensitiveCompare(right.name) == .orderedAscending
+                }
+
+                clubs = merged
+                clubById = ClubIdentityResolver.aliasMap(
+                    from: Dictionary(uniqueKeysWithValues: merged.map { ($0.id, $0) })
+                )
+                loadedCountryCodes.insert(countryCode)
+                loadingCountryCodes.remove(countryCode)
+                countryLoadErrors[countryCode] = nil
+                dlog("Landepakke indlæst efter valg: \(countryCode) (\(countryClubs.count) klubber)")
+            } catch {
+                loadingCountryCodes.remove(countryCode)
+                countryLoadErrors[countryCode] = error.localizedDescription
+                dlog("Landepakke kunne ikke indlæses for \(countryCode): \(error.localizedDescription)")
             }
         }
     }
@@ -291,24 +319,6 @@ final class AppState: ObservableObject {
 
     private func formatLoadDuration(since start: Date) -> String {
         String(format: "%.2fs", Date().timeIntervalSince(start))
-    }
-
-    func refreshLeaguePackAccess() async {
-        guard authSession.snapshot.isAuthenticated else {
-            AppLeaguePackSettings.clearRemoteEnabledLeaguePacks()
-            return
-        }
-
-        do {
-            let enabledPacks = try await leaguePackAccessBackend.fetchEnabledLeaguePacks()
-            let current = AppLeaguePackSettings.remoteEnabledLeaguePacks
-            if current != enabledPacks {
-                AppLeaguePackSettings.setRemoteEnabledLeaguePacks(enabledPacks)
-                loadData()
-            }
-        } catch {
-            dlog("League pack access kunne ikke hentes: \(error.localizedDescription)")
-        }
     }
 
     func refreshWeekendReminder() {
@@ -406,16 +416,6 @@ final class AppState: ObservableObject {
         UserDefaults.standard.set(false, forKey: NotificationPreferenceKeys.midweekReminderEnabled)
         UserDefaults.standard.set(false, forKey: NotificationPreferenceKeys.nextMissingStadiumReminderEnabled)
 
-        if arguments.contains("--uitesting-enable-germany") {
-            AppLeaguePackSettings.setRemoteEnabledLeaguePacks([AppLeaguePackId.germanyTop3.rawValue])
-            UserDefaults.standard.set(false, forKey: AppLeaguePackSettings.germanyTop3EnabledKey)
-        }
-
-        if arguments.contains("--uitesting-disable-germany") {
-            AppLeaguePackSettings.clearRemoteEnabledLeaguePacks()
-            UserDefaults.standard.set(false, forKey: AppLeaguePackSettings.germanyTop3EnabledKey)
-        }
-
         if arguments.contains("--uitesting-country-de") {
             UserDefaults.standard.set("de", forKey: "stadiums.countryFilter")
         } else if arguments.contains("--uitesting-country-dk") {
@@ -480,5 +480,16 @@ final class AppState: ObservableObject {
         }
 
         return image.jpegData(compressionQuality: 0.85)
+    }
+}
+
+private enum CountryLoadError: LocalizedError {
+    case noClubs(String)
+
+    var errorDescription: String? {
+        switch self {
+        case .noClubs(let countryCode):
+            return "Ingen stadiondata blev fundet for \(LeaguePresentation.countryLabel(countryCode))."
+        }
     }
 }

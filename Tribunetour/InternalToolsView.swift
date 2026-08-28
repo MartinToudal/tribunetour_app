@@ -6,7 +6,6 @@ struct InternalToolsView: View {
     let clubs: [Club]
     let fixtures: [Fixture]
     @EnvironmentObject private var appState: AppState
-    @EnvironmentObject private var adminNotificationsManager: AppAdminNotificationsManager
 
     @AppStorage("achievements.seenUnlockedIds") private var seenUnlockedIdsRaw: String = ""
     @AppStorage(NotificationPreferenceKeys.weekendReminderEnabled) private var weekendReminderEnabled: Bool = true
@@ -19,22 +18,12 @@ struct InternalToolsView: View {
     @AppStorage(AppAuthConfiguration.redirectSchemeKey) private var redirectScheme: String = AppAuthConfiguration.default.redirectScheme
     @AppStorage(AppAuthConfiguration.redirectHostKey) private var redirectHost: String = AppAuthConfiguration.default.redirectHost
     @AppStorage(RemoteFixturesProvider.remoteURLKey) private var fixturesRemoteURLOverride: String = ""
-    @AppStorage(AppLeaguePackSettings.germanyTop3EnabledKey) private var germanyTop3Enabled: Bool = false
 
     @State private var showExportToast = false
     @State private var showImportSheet = false
     @State private var importText: String = ""
     @State private var importError: String?
     @State private var showImportSuccess = false
-    @State private var premiumAdminEmail: String = ""
-    @State private var premiumAdminSelectedPack: AppPremiumAdminPack = .premiumFull
-    @State private var premiumAdminRows: [PremiumAccessAdminRow] = []
-    @State private var premiumAdminRequestRows: [PremiumAccessRequestAdminRow] = []
-    @State private var premiumAdminNotificationRows: [AdminNotificationRow] = []
-    @State private var premiumAdminIsAdmin: Bool?
-    @State private var premiumAdminMessage: String?
-    @State private var premiumAdminIsLoading = false
-    @State private var premiumAdminActiveRequestId: String?
 
     var body: some View {
         List {
@@ -203,214 +192,7 @@ struct InternalToolsView: View {
                     .foregroundStyle(.secondary)
             }
 
-            Section("Premium admin") {
-                if appState.authSession.snapshot.isAuthenticated {
-                    if premiumAdminIsAdmin == true {
-                        let openRequests = premiumAdminRequestRows.filter(\.isOpen)
-                        let handledRequests = premiumAdminRequestRows.filter { !$0.isOpen }
-                        let openNotifications = premiumAdminNotificationRows.filter { !$0.isActioned }
-                        let handledNotifications = premiumAdminNotificationRows.filter(\.isActioned)
-
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Overblik")
-                                .font(.caption.weight(.semibold))
-                            Text("\(openRequests.count) åbne · \(handledRequests.count) behandlede")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            if adminNotificationsManager.badgeCount > 0 {
-                                Text("Badge count: \(adminNotificationsManager.badgeCount)")
-                                    .font(.caption2)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-
-                        if !openNotifications.isEmpty {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text("Åbne admin-notifikationer")
-                                    .font(.caption.weight(.semibold))
-                                ForEach(openNotifications.prefix(5)) { notification in
-                                    VStack(alignment: .leading, spacing: 3) {
-                                        Text(notification.title)
-                                            .font(.caption.weight(.semibold))
-                                        Text(notification.body)
-                                            .font(.caption2)
-                                            .foregroundStyle(.secondary)
-                                        if let createdAt = notification.createdAt {
-                                            Text(createdAt.formatted(date: .abbreviated, time: .shortened))
-                                                .font(.caption2)
-                                                .foregroundStyle(.tertiary)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if openRequests.isEmpty {
-                            Text("Ingen åbne premium-anmodninger.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        } else {
-                            ForEach(openRequests) { request in
-                                VStack(alignment: .leading, spacing: 6) {
-                                    Text(request.email)
-                                        .font(.subheadline.weight(.semibold))
-                                    Text(request.packTitle)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                    if let message = request.message,
-                                       !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                                        Text(message)
-                                            .font(.caption)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                    if let createdAt = request.createdAt {
-                                        Text(createdAt.formatted(date: .abbreviated, time: .shortened))
-                                            .font(.caption2)
-                                            .foregroundStyle(.tertiary)
-                                    }
-                                    Button {
-                                        Task { await approvePremiumAccessRequest(request) }
-                                    } label: {
-                                        if premiumAdminActiveRequestId == request.requestId {
-                                            Label("Godkender...", systemImage: "hourglass")
-                                        } else {
-                                            Label("Godkend anmodning", systemImage: "checkmark.circle")
-                                        }
-                                    }
-                                    .disabled(premiumAdminIsLoading || premiumAdminActiveRequestId != nil)
-                                }
-                            }
-                        }
-
-                        if !handledRequests.isEmpty {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text("Senest behandlede")
-                                    .font(.caption.weight(.semibold))
-                                ForEach(Array(handledRequests.prefix(5))) { request in
-                                    VStack(alignment: .leading, spacing: 3) {
-                                        Text(request.email)
-                                            .font(.caption.weight(.semibold))
-                                        Text("\(request.packTitle) · \(request.status == "handled" ? "Godkendt" : request.status)")
-                                            .font(.caption2)
-                                            .foregroundStyle(.secondary)
-                                        if let updatedAt = request.updatedAt {
-                                            Text(updatedAt.formatted(date: .abbreviated, time: .shortened))
-                                                .font(.caption2)
-                                                .foregroundStyle(.tertiary)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if !handledNotifications.isEmpty {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text("Senest håndterede notifikationer")
-                                    .font(.caption.weight(.semibold))
-                                ForEach(Array(handledNotifications.prefix(3))) { notification in
-                                    VStack(alignment: .leading, spacing: 3) {
-                                        Text(notification.title)
-                                            .font(.caption.weight(.semibold))
-                                        Text(notification.body)
-                                            .font(.caption2)
-                                            .foregroundStyle(.secondary)
-                                    }
-                                }
-                            }
-                        }
-
-                        VStack(alignment: .leading, spacing: 6) {
-                            Text("Brugerens e-mail")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                            TextField("bruger@email.dk", text: $premiumAdminEmail)
-                                .textInputAutocapitalization(.never)
-                                .autocorrectionDisabled()
-                                .keyboardType(.emailAddress)
-                        }
-
-                        Picker("Pakke", selection: $premiumAdminSelectedPack) {
-                            ForEach(AppPremiumAdminPack.allCases) { pack in
-                                Text(pack.title).tag(pack)
-                            }
-                        }
-
-                        Button {
-                            Task { await mutatePremiumAccess(grant: true) }
-                        } label: {
-                            Label("Tildel adgang", systemImage: "checkmark.seal")
-                        }
-                        .disabled(premiumAdminIsLoading || premiumAdminEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-
-                        Button(role: .destructive) {
-                            Task { await mutatePremiumAccess(grant: false) }
-                        } label: {
-                            Label("Fjern adgang", systemImage: "xmark.seal")
-                        }
-                        .disabled(premiumAdminIsLoading || premiumAdminEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-
-                        if premiumAdminRows.isEmpty {
-                            Text("Ingen aktive premium-adgange hentet endnu.")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        } else {
-                            ForEach(premiumAdminRows.filter(\.enabled)) { row in
-                                VStack(alignment: .leading, spacing: 3) {
-                                    Text(row.email)
-                                        .font(.subheadline.weight(.semibold))
-                                    Text(row.packTitle)
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
-                            }
-                        }
-                    } else if premiumAdminIsAdmin == false {
-                        Text("Den aktuelle bruger har ikke admin-adgang.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    } else {
-                        Text("Tjekker admin-adgang...")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    Button {
-                        Task { await loadPremiumAdminState() }
-                    } label: {
-                        if premiumAdminIsLoading {
-                            Label("Henter...", systemImage: "hourglass")
-                        } else {
-                            Label("Opdater premium admin", systemImage: "arrow.clockwise")
-                        }
-                    }
-                    .disabled(premiumAdminIsLoading)
-                } else {
-                    Text("Log ind under Min tur for at bruge premium admin.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-
-                if let premiumAdminMessage {
-                    Text(premiumAdminMessage)
-                        .font(.caption)
-                        .foregroundStyle(premiumAdminMessage.contains("Fejl") ? .red : .green)
-                }
-
-                Text("Panelet er skjult i Interne værktøjer, men Supabase tjekker stadig, at den loggede bruger er admin.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
             Section("Reference-data") {
-                Toggle("Tyskland top 3 (eksperimentel)", isOn: $germanyTop3Enabled)
-                    .onChange(of: germanyTop3Enabled) { _, _ in
-                        appState.loadData()
-                    }
-
-                Text("Slår Bundesliga, 2. Bundesliga og 3. Liga til i stadionlisten på denne enhed. Sync-data bruger stadig klub-id'er med landeprefix, fx de-bayern-munchen.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
                 VStack(alignment: .leading, spacing: 6) {
                     Text("Fixtures feed override (valgfri)")
                         .font(.caption)
@@ -468,17 +250,6 @@ struct InternalToolsView: View {
             }
         }
         .navigationTitle("Interne værktøjer")
-        .task(id: appState.authSession.snapshot.isAuthenticated) {
-            if appState.authSession.snapshot.isAuthenticated {
-                await loadPremiumAdminState()
-            } else {
-                premiumAdminIsAdmin = nil
-                premiumAdminRows = []
-                premiumAdminRequestRows = []
-                premiumAdminNotificationRows = []
-                premiumAdminMessage = nil
-            }
-        }
         .overlay(alignment: .top) {
             if showExportToast {
                 Text("Backup kopieret")
@@ -590,92 +361,4 @@ struct InternalToolsView: View {
         }
     }
 
-    private func loadPremiumAdminState() async {
-        guard !premiumAdminIsLoading else { return }
-        premiumAdminIsLoading = true
-        defer { premiumAdminIsLoading = false }
-
-        do {
-            let backend = makePremiumAdminBackend()
-            let isAdmin = try await backend.isCurrentUserAdmin()
-            premiumAdminIsAdmin = isAdmin
-            guard isAdmin else {
-                premiumAdminRows = []
-                premiumAdminRequestRows = []
-                premiumAdminNotificationRows = []
-                premiumAdminMessage = nil
-                return
-            }
-            premiumAdminRows = try await backend.listPremiumAccess()
-            premiumAdminRequestRows = try await backend.listPremiumAccessRequests()
-            premiumAdminNotificationRows = try await backend.listAdminNotifications(includeActioned: true)
-            premiumAdminMessage = nil
-        } catch {
-            premiumAdminIsAdmin = false
-            premiumAdminRows = []
-            premiumAdminRequestRows = []
-            premiumAdminNotificationRows = []
-            premiumAdminMessage = "Fejl: \(error.localizedDescription)"
-        }
-    }
-
-    private func mutatePremiumAccess(grant: Bool) async {
-        let trimmedEmail = premiumAdminEmail.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedEmail.isEmpty, !premiumAdminIsLoading else { return }
-
-        premiumAdminIsLoading = true
-        defer { premiumAdminIsLoading = false }
-
-        do {
-            let backend = makePremiumAdminBackend()
-            _ = grant
-                ? try await backend.grant(email: trimmedEmail, pack: premiumAdminSelectedPack)
-                : try await backend.revoke(email: trimmedEmail, pack: premiumAdminSelectedPack)
-            premiumAdminRows = try await backend.listPremiumAccess()
-            await appState.refreshLeaguePackAccess()
-            premiumAdminMessage = grant
-                ? "Adgang tildelt til \(trimmedEmail)."
-                : "Adgang fjernet fra \(trimmedEmail)."
-        } catch {
-            premiumAdminMessage = "Fejl: \(error.localizedDescription)"
-        }
-    }
-
-    private func approvePremiumAccessRequest(_ requestRow: PremiumAccessRequestAdminRow) async {
-        guard !premiumAdminIsLoading, premiumAdminActiveRequestId == nil else { return }
-
-        premiumAdminIsLoading = true
-        premiumAdminActiveRequestId = requestRow.requestId
-        defer {
-            premiumAdminIsLoading = false
-            premiumAdminActiveRequestId = nil
-        }
-
-        do {
-            let backend = makePremiumAdminBackend()
-            _ = try await backend.approveAccessRequest(requestId: requestRow.requestId)
-            premiumAdminRows = try await backend.listPremiumAccess()
-            premiumAdminRequestRows = try await backend.listPremiumAccessRequests()
-            premiumAdminNotificationRows = try await backend.listAdminNotifications(includeActioned: true)
-            await appState.refreshLeaguePackAccess()
-            await adminNotificationsManager.markNeedsRefresh()
-            premiumAdminMessage = "\(requestRow.email) har nu adgang til \(requestRow.packTitle)."
-        } catch {
-            premiumAdminMessage = "Fejl: \(error.localizedDescription)"
-        }
-    }
-
-    private func makePremiumAdminBackend() -> SharedPremiumAdminBackend {
-        let authConfiguration = AppAuthConfiguration.load()
-        return SharedPremiumAdminBackend(
-            configuration: SharedLeaguePackAccessConfiguration(
-                baseURL: authConfiguration.supabaseURL,
-                apiKey: authConfiguration.supabaseAnonKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-                    ? nil
-                    : authConfiguration.supabaseAnonKey,
-                authTokenProvider: appState.authSession.authTokenProvider(using: appState.authClient),
-                urlSession: .shared
-            )
-        )
-    }
 }
