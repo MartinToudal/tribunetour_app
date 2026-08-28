@@ -1,6 +1,6 @@
 # Working Backlog
 
-Senest opdateret: 2026-08-26
+Senest opdateret: 2026-08-28
 
 Dette dokument er den operative backlog.
 
@@ -31,8 +31,9 @@ Låste beslutninger:
 - **Fase 1: Enkel navigation**
   - [x] Fjern `Plan` fra fanebaren.
   - [x] Behold plandata og synckode midlertidigt for sikker rollback.
+  - [x] Gør fixture-indlæsningen robust over for dublerede kamp-ID'er.
   - [x] Accept: tre hovedfaner og grønt iOS-build.
-  - Status: gennemført lokalt 2026-08-26. Kræver ny TestFlight-build for at kunne ses på en enhed.
+  - Status: gennemført lokalt. Crash-sikring og regressionstest verificeret 2026-08-28.
 
 - **Fase 2: Gratis adgang og land-on-demand**
   - Fjern premium-copy, gates og anmodningsflow fra brugerfladen.
@@ -45,6 +46,7 @@ Låste beslutninger:
   - Fjern internationale fixtures fra produktet.
   - Gennemfør API-prøve for danske rækker.
   - Indfør centralt, versionsstyret dansk fixture-feed med cache og fallback.
+  - Fjern dublerede kamp-ID'er i feedets produktionsled; det offentlige feed havde 17 identiske dubletter ved kontrollen 2026-08-28.
   - Accept: `Kampe` viser kun Danmark og overlever fejl hos datakilden.
 
 - **Fase 4: Danmark-først Min tur og achievements**

@@ -79,7 +79,7 @@ struct RemoteFixturesProvider {
             let raw = try await fetchData(remoteURL)
             let envelope = try decodeEnvelope(from: raw)
             let mapped = sanitizeFixtures(
-                try envelope.fixtures.map { try $0.toFixture() }.sorted { $0.kickoff < $1.kickoff },
+                try envelope.fixtures.map { try $0.toFixture() },
                 source: .remote
             )
             guard !mapped.isEmpty else { throw RemoteFixturesProviderError.invalidPayload }
@@ -117,7 +117,10 @@ struct RemoteFixturesProvider {
 
         let sanitizedLocalFixtures = sanitizeFixtures(localFixtures, source: .localFallback)
 
-        var mergedById = Dictionary(uniqueKeysWithValues: remoteFixtures.map { ($0.id, $0) })
+        var mergedById: [String: Fixture] = [:]
+        for fixture in remoteFixtures {
+            mergedById[fixture.id] = fixture
+        }
         for fixture in sanitizedLocalFixtures {
             if mergedById[fixture.id] == nil {
                 mergedById[fixture.id] = fixture
@@ -128,12 +131,35 @@ struct RemoteFixturesProvider {
     }
 
     private func sanitizeFixtures(_ fixtures: [Fixture], source: FixturesLoadResult.Source) -> [Fixture] {
-        let sanitized = fixtures.filter { FixtureSeasonGuard.contains($0) }
-        let droppedCount = fixtures.count - sanitized.count
+        let seasonValidFixtures = fixtures.filter { FixtureSeasonGuard.contains($0) }
+        let droppedCount = fixtures.count - seasonValidFixtures.count
         if droppedCount > 0 {
             dlog("Fixtures load: fjernede \(droppedCount) strukturelt ugyldige kampe fra \(source.rawValue)")
         }
-        return sanitized
+
+        var fixturesById: [String: Fixture] = [:]
+        var duplicateIds = Set<String>()
+        for fixture in seasonValidFixtures {
+            if fixturesById[fixture.id] == nil {
+                fixturesById[fixture.id] = fixture
+            } else {
+                duplicateIds.insert(fixture.id)
+            }
+        }
+
+        if !duplicateIds.isEmpty {
+            dlog(
+                "Fixtures load: ignorerede \(duplicateIds.count) dublerede fixture-ID'er fra "
+                    + "\(source.rawValue): \(duplicateIds.sorted().joined(separator: ", "))"
+            )
+        }
+
+        return fixturesById.values.sorted {
+            if $0.kickoff != $1.kickoff {
+                return $0.kickoff < $1.kickoff
+            }
+            return $0.id < $1.id
+        }
     }
 
     private static func remoteURLFromDefaults() -> URL? {

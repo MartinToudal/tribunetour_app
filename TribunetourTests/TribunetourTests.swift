@@ -51,7 +51,9 @@ struct TribunetourTests {
             venueClubId: "fcm",
             status: "scheduled",
             homeScore: nil,
-            awayScore: nil
+            awayScore: nil,
+            competitionId: nil,
+            seasonId: nil
         )
 
         let fixture = try dto.toFixture()
@@ -92,6 +94,48 @@ struct TribunetourTests {
         #expect(result.fixtures.count == 1)
         let firstFixtureId = result.fixtures.first?.id
         #expect(firstFixtureId == "local_1")
+    }
+
+    @MainActor
+    @Test func remoteProviderIgnoresDuplicateFixtureIdsWithoutCrashing() async throws {
+        let payload = Data(
+            """
+            {
+              "fixtures": [
+                {
+                  "id": "duplicate_1",
+                  "kickoff": "2026-09-01T19:00:00+02:00",
+                  "round": "Første kildepost",
+                  "homeTeamId": "home",
+                  "awayTeamId": "away",
+                  "venueClubId": "home",
+                  "status": "scheduled"
+                },
+                {
+                  "id": "duplicate_1",
+                  "kickoff": "2026-09-02T19:00:00+02:00",
+                  "round": "Dublet",
+                  "homeTeamId": "home",
+                  "awayTeamId": "away",
+                  "venueClubId": "home",
+                  "status": "scheduled"
+                }
+              ]
+            }
+            """.utf8
+        )
+        let provider = RemoteFixturesProvider(
+            remoteURL: URL(string: "https://example.com/fixtures.json"),
+            fetchData: { _ in payload },
+            localFallback: { [] }
+        )
+
+        let result = try await provider.loadFixtures()
+
+        #expect(result.source == .remote)
+        #expect(result.fixtures.count == 1)
+        #expect(result.fixtures.first?.id == "duplicate_1")
+        #expect(result.fixtures.first?.round == "Første kildepost")
     }
 
     @MainActor
@@ -209,6 +253,8 @@ struct TribunetourTests {
         let count = WeekendOpportunityNotifier.countUnvisitedVenues(
             fixtures: fixtures,
             visitedVenueClubIds: ["ob"],
+            clubById: [:],
+            preferredCountryCode: nil,
             start: now,
             end: now.addingTimeInterval(12 * 3600)
         )
