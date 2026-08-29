@@ -1,6 +1,6 @@
 # Tribunetour System Ownership And Operating Model
 
-Senest opdateret: 2026-08-26
+Senest opdateret: 2026-08-29
 
 Formålet med dette dokument er at være den praktiske sandhed, når vi arbejder i Tribunetour.
 
@@ -217,6 +217,13 @@ Vi tester det relevante sted:
 - app-test for appfejl
 - web-test for webfejl
 - audit/daily-check for driftsfejl
+
+For layoutkritiske ændringer i iOS gælder desuden:
+- eksistens eller klikbarhed er ikke tilstrækkelig som UI-test
+- centrale elementers geometri skal ligge inden for app-vinduets venstre og højre kant
+- portrait skal som minimum testes ved kompakt, Pro og Pro Max-bredde
+- den primære Pro-størrelse skal også kontrolleres visuelt
+- faste skærmbredder undgås; layout bygges med systemets størrelsesforslag, adaptive rækker og `ViewThatFits`, hvor indhold kan kræve en kompakt variant
 
 ### Trin 7: Drift/leverance
 Vi gør eksplicit klart:

@@ -155,7 +155,6 @@ struct StadiumsView: View {
     @State private var selectedClub: Club?
     @State private var detailSheetClub: Club?
     @State private var showFullscreenMap: Bool = false
-    @State private var showCountryPicker: Bool = false
     @State private var visibleClubLimit: Int = 80
     @State private var snapshot = Snapshot()
     @State private var snapshotBuildID = UUID()
@@ -476,23 +475,26 @@ struct StadiumsView: View {
                 }
 
                 Section {
-                    VStack(alignment: .leading, spacing: 12) {
-                        HStack(spacing: 8) {
-                            Image(systemName: "map")
-                                .foregroundStyle(.secondary)
-                            Text(snapshot.mapSummary)
-                                .lineLimit(1)
-                                .minimumScaleFactor(0.8)
-                            Spacer(minLength: 0)
-                        }
+                    Label(snapshot.mapSummary, systemImage: "map")
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.75)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel(snapshot.mapSummary)
+                        .accessibilityIdentifier("stadium-scope-summary")
 
-                        if shouldShowCountryFilter {
-                            Button {
-                                showCountryPicker = true
-                            } label: {
+                    if shouldShowCountryFilter {
+                        NavigationLink {
+                            CountryPickerScreen(
+                                countryCodes: countryOptions,
+                                selectedCountryCode: countryFilterRawValue
+                            ) { countryCode in
+                                countryFilterRawValue = countryCode
+                            }
+                        } label: {
+                            ViewThatFits(in: .horizontal) {
                                 HStack(spacing: 10) {
                                     Image(systemName: "globe.europe.africa")
                                     Text(LeaguePresentation.countryLabel(countryFilterRawValue))
@@ -504,88 +506,94 @@ struct StadiumsView: View {
                                         .font(.caption.weight(.semibold))
                                         .foregroundStyle(.secondary)
                                 }
-                                .font(.subheadline.weight(.semibold))
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 11)
-                                .background(Color(.secondarySystemBackground))
-                                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-                                .contentShape(Rectangle())
-                            }
-                            .buttonStyle(.plain)
-                            .accessibilityIdentifier("country-selector")
-                            .accessibilityLabel("Valgt land")
-                            .accessibilityValue(
-                                "\(LeaguePresentation.countryLabel(countryFilterRawValue)), \(snapshot.scopeTotalCount) stadions"
-                            )
-                            .sheet(isPresented: $showCountryPicker) {
-                                CountryPickerSheet(
-                                    countryCodes: countryOptions,
-                                    selectedCountryCode: countryFilterRawValue
-                                ) { countryCode in
-                                    countryFilterRawValue = countryCode
+
+                                HStack(spacing: 10) {
+                                    Image(systemName: "globe.europe.africa")
+                                    Text(LeaguePresentation.countryLabel(countryFilterRawValue))
+                                        .lineLimit(1)
+                                    Spacer(minLength: 8)
+                                    Image(systemName: "chevron.up.chevron.down")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(.secondary)
                                 }
-                                .presentationDetents([.medium, .large])
-                                .presentationDragIndicator(.visible)
                             }
                         }
-
-                        if selectedCountryIsLoading {
-                            HStack(spacing: 10) {
-                                ProgressView()
-                                Text("Henter stadions i \(LeaguePresentation.countryLabel(countryFilterRawValue))...")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-                        } else if let selectedCountryLoadError {
-                            VStack(alignment: .leading, spacing: 6) {
-                                Text(selectedCountryLoadError)
-                                    .font(.caption)
-                                    .foregroundStyle(.red)
-                                Button("Prøv igen") {
-                                    appState.loadCountryIfNeeded(countryFilterRawValue)
-                                }
-                                .font(.caption.weight(.semibold))
-                            }
-                        }
-
-                        Button {
-                            showFullscreenMap = true
-                        } label: {
-                            Label("Vis kort i fuldskærm", systemImage: "map")
-                                .font(.subheadline.weight(.semibold))
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.bordered)
-
-                        if snapshot.shouldRenderMapForCurrentScope {
-                            if snapshot.mapIsTruncated {
-                                Text("Kortet viser de første \(maxMapAnnotations) stadions i dit nuværende filter for at holde appen hurtig.")
-                                    .font(.caption)
-                                    .foregroundStyle(.secondary)
-                            }
-
-                            StadiumMapSnapshotPreview(
-                                clubs: snapshot.mapPreviewClubs,
-                                visitedStore: visitedStore
-                            )
-                            .frame(height: 320)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
-                        } else {
-                            ContentUnavailableView(
-                                "Kortet er bedst pr. land",
-                                systemImage: "map",
-                                description: Text("Vælg et enkelt land eller åbn kortet i fuldskærm for en lettere og mere brugbar visning.")
-                            )
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 220)
-                            .background(Color(.secondarySystemBackground))
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
-                        }
+                        .font(.subheadline.weight(.semibold))
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 11)
+                        .background(Color(.secondarySystemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        .contentShape(Rectangle())
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("country-selector")
+                        .accessibilityLabel("Valgt land")
+                        .accessibilityValue(
+                            "\(LeaguePresentation.countryLabel(countryFilterRawValue)), \(snapshot.scopeTotalCount) stadions"
+                        )
                     }
-                    .padding(.vertical, 8)
+
+                    if selectedCountryIsLoading {
+                        HStack(spacing: 10) {
+                            ProgressView()
+                            Text("Henter stadions i \(LeaguePresentation.countryLabel(countryFilterRawValue))...")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    } else if let selectedCountryLoadError {
+                        VStack(alignment: .leading, spacing: 6) {
+                            Text(selectedCountryLoadError)
+                                .font(.caption)
+                                .foregroundStyle(.red)
+                            Button("Prøv igen") {
+                                appState.loadCountryIfNeeded(countryFilterRawValue)
+                            }
+                            .font(.caption.weight(.semibold))
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+
+                    Button {
+                        showFullscreenMap = true
+                    } label: {
+                        Label("Vis kort i fuldskærm", systemImage: "map")
+                            .font(.subheadline.weight(.semibold))
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                    .accessibilityIdentifier("stadium-fullscreen-map")
+
+                    if snapshot.shouldRenderMapForCurrentScope {
+                        if snapshot.mapIsTruncated {
+                            Text("Kortet viser de første \(maxMapAnnotations) stadions i dit nuværende filter for at holde appen hurtig.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+
+                        StadiumMapSnapshotPreview(
+                            clubs: snapshot.mapPreviewClubs,
+                            visitedStore: visitedStore
+                        )
+                        .aspectRatio(1.15, contentMode: .fit)
+                        .frame(maxWidth: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                        .accessibilityElement(children: .ignore)
+                        .accessibilityLabel("Kort med stadions")
+                        .accessibilityIdentifier("stadium-map-preview")
+                    } else {
+                        ContentUnavailableView(
+                            "Kortet er bedst pr. land",
+                            systemImage: "map",
+                            description: Text("Vælg et enkelt land eller åbn kortet i fuldskærm for en lettere og mere brugbar visning.")
+                        )
+                        .frame(maxWidth: .infinity)
+                        .frame(minHeight: 180)
+                        .background(Color(.secondarySystemBackground))
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                    }
                 }
-                .listRowInsets(EdgeInsets())
 
                 if snapshot.visibleClubs.isEmpty {
                     Section {
@@ -820,7 +828,7 @@ struct StadiumsView: View {
     }
 }
 
-private struct CountryPickerSheet: View {
+private struct CountryPickerScreen: View {
     let countryCodes: [String]
     let selectedCountryCode: String
     let onSelect: (String) -> Void
@@ -828,37 +836,28 @@ private struct CountryPickerSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationStack {
-            List(countryCodes, id: \.self) { countryCode in
-                Button {
-                    onSelect(countryCode)
-                    dismiss()
-                } label: {
-                    HStack(spacing: 12) {
-                        Text(LeaguePresentation.countryLabel(countryCode))
+        List(countryCodes, id: \.self) { countryCode in
+            Button {
+                onSelect(countryCode)
+                dismiss()
+            } label: {
+                HStack(spacing: 12) {
+                    Text(LeaguePresentation.countryLabel(countryCode))
+                        .foregroundStyle(.primary)
+                    Spacer(minLength: 12)
+                    if countryCode == selectedCountryCode {
+                        Image(systemName: "checkmark")
+                            .font(.body.weight(.semibold))
                             .foregroundStyle(.primary)
-                        Spacer(minLength: 12)
-                        if countryCode == selectedCountryCode {
-                            Image(systemName: "checkmark")
-                                .font(.body.weight(.semibold))
-                                .foregroundStyle(.primary)
-                        }
-                    }
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .accessibilityIdentifier("country-option-\(countryCode)")
-            }
-            .navigationTitle("Vælg land")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Luk") {
-                        dismiss()
                     }
                 }
+                .contentShape(Rectangle())
             }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("country-option-\(countryCode)")
         }
+        .navigationTitle("Vælg land")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }
 

@@ -13,6 +13,40 @@ final class LeaguePackAccessUITests: XCTestCase {
         continueAfterFailure = false
     }
 
+    private func element(_ identifier: String, in app: XCUIApplication) -> XCUIElement {
+        app.descendants(matching: .any)[identifier]
+    }
+
+    private func assertHorizontallyContained(
+        _ element: XCUIElement,
+        in window: XCUIElement,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        XCTAssertTrue(element.waitForExistence(timeout: 10), file: file, line: line)
+
+        let elementFrame = element.frame
+        let windowFrame = window.frame
+        XCTAssertGreaterThan(elementFrame.width, 0, file: file, line: line)
+        XCTAssertGreaterThanOrEqual(elementFrame.minX, windowFrame.minX - 1, file: file, line: line)
+        XCTAssertLessThanOrEqual(elementFrame.maxX, windowFrame.maxX + 1, file: file, line: line)
+    }
+
+    @MainActor
+    func testStadiumOverviewFitsPortraitWidth() throws {
+        let app = launchApp(extraArguments: ["--uitesting-country-dk"])
+
+        XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
+        let window = app.windows.firstMatch
+        XCTAssertTrue(window.waitForExistence(timeout: 10))
+
+        assertHorizontallyContained(element("stadium-scope-summary", in: app), in: window)
+        let countrySelector = app.buttons["country-selector"]
+        assertHorizontallyContained(countrySelector, in: window)
+        assertHorizontallyContained(app.buttons["stadium-fullscreen-map"], in: window)
+        assertHorizontallyContained(element("stadium-map-preview", in: app), in: window)
+    }
+
     @MainActor
     func testGermanyCanBeLoadedWithoutAuthentication() throws {
         let app = launchApp(extraArguments: ["--uitesting-country-dk"])
@@ -20,10 +54,11 @@ final class LeaguePackAccessUITests: XCTestCase {
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
         let countrySelector = app.buttons["country-selector"]
         XCTAssertTrue(countrySelector.waitForExistence(timeout: 10))
+
         countrySelector.tap()
 
         let germany = app.buttons["country-option-de"]
-        XCTAssertTrue(germany.waitForExistence(timeout: 5))
+        XCTAssertTrue(germany.waitForExistence(timeout: 10))
         germany.tap()
 
         let loadedGermany = NSPredicate(

@@ -41,7 +41,7 @@ Låste beslutninger:
   - [x] Indlæs kun Danmark ved opstart.
   - [x] Indlæs valgt internationalt land efter brugerhandling og behold det i sessionscache.
   - [x] Accept: gæst og logget ind har samme landescope, uden at opstarten indlæser Europa.
-  - Status: gennemført lokalt og regressionssikret 2026-08-29. Landvælgeren bruger en kontrolleret sheet, portrait-layoutet har stabil bredde, et tidligt landeskift kan ikke længere overskrives af den indledende Danmark-load, og build, enhedstest samt automatisk UI-test er grønne.
+  - Status: gennemført lokalt og regressionssikret 2026-08-29. Landvælgeren bruger en dedikeret navigationsskærm, kort og kontroller måles som separate responsive rækker, og et tidligt landeskift kan ikke længere overskrives af den indledende Danmark-load. Build og funktionstest er grønne. Portrait-geometrien er automatisk verificeret ved 390, 402 og 440 punkters bredde.
 
 - **Fase 3: Kun danske kampe**
   - Fjern internationale fixtures fra produktet.

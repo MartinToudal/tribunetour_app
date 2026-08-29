@@ -226,10 +226,12 @@ Status 2026-08-29:
 - kun Danmark indlæses ved opstart
 - et valgt internationalt land indlæses først ved brugerens valg og bevares i hukommelsen resten af sessionen
 - den gamle premium-backend er midlertidigt bevaret som ubrugt rollback-lag
-- landvælgeren har en fast, scroll-bar sheet, der ikke kan udvide hovedlayoutet ud over portrait-skærmens bredde
+- landvælgeren har en dedikeret navigationsskærm og påvirker ikke hovedlayoutets bredde
+- oversigt, landvælger, kortknap og kort er separate responsive rækker; kortets højde følger den tilgængelige bredde
 - et land valgt under den indledende Danmark-load køres efterfølgende og kan ikke blive overskrevet af opstarten
 - iOS-build og enhedstests er grønne
 - UI-automationen gennemfører valg og indlæsning af et internationalt land uden login
+- portrait-layoutet er geometrisk verificeret inden for viewporten ved 390, 402 og 440 punkters bredde
 
 ### Fase 3: Kun danske fixtures
 
