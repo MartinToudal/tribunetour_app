@@ -42,6 +42,7 @@ Låste beslutninger:
   - [x] Indlæs valgt internationalt land efter brugerhandling og behold det i sessionscache.
   - [x] Accept: gæst og logget ind har samme landescope, uden at opstarten indlæser Europa.
   - Status: gennemført lokalt og regressionssikret 2026-08-29. Landvælgeren bruger en dedikeret navigationsskærm, kort og kontroller måles som separate responsive rækker, og et tidligt landeskift kan ikke længere overskrives af den indledende Danmark-load. Build og funktionstest er grønne. Portrait-geometrien er automatisk verificeret ved 390, 402 og 440 punkters bredde.
+  - Release-checkpoint: TestFlight-kandidat `1.0.3 (23)` er klargjort. Fase 3 starter først, når buildet er uploadet og accepteret som fase 2-baseline.
 
 - **Fase 3: Kun danske kampe**
   - Fjern internationale fixtures fra produktet.

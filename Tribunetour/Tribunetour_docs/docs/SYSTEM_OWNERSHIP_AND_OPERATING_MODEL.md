@@ -233,6 +233,16 @@ Vi gør eksplicit klart:
 - kræver det ny app-build?
 - kræver det ny TestFlight/App Store-release?
 
+### Fast fase-gate
+
+Hver produktfase afsluttes fremover med et TestFlight-checkpoint:
+- fasens acceptkriterier og regressionstest skal være grønne
+- arbejdsgrenen skal være committed, pushed og ren
+- buildnummeret skal være højere end seneste uploadede build
+- TestFlight-buildet skal afprøves på en fysisk iPhone
+- fasen markeres først endeligt lukket, når produktejeren har accepteret buildet
+- næste fase må ikke blandes ind i checkpoint-buildet
+
 ## 6. Konkret sandhed pr. ændringstype
 
 ### Hvis problemet er i app-UI
