@@ -1,6 +1,6 @@
 # Working Backlog
 
-Senest opdateret: 2026-08-28
+Senest opdateret: 2026-08-29
 
 Dette dokument er den operative backlog.
 
@@ -41,7 +41,7 @@ Låste beslutninger:
   - [x] Indlæs kun Danmark ved opstart.
   - [x] Indlæs valgt internationalt land efter brugerhandling og behold det i sessionscache.
   - [x] Accept: gæst og logget ind har samme landescope, uden at opstarten indlæser Europa.
-  - Status: gennemført lokalt 2026-08-28. Build og enhedstests er grønne. Den automatiske UI-test er blokeret af en accessibility-/renderer-fejl i iOS 27-betaens simulator, ikke af produktlogikken.
+  - Status: gennemført lokalt og regressionssikret 2026-08-29. Landvælgeren bruger en kontrolleret sheet, portrait-layoutet har stabil bredde, et tidligt landeskift kan ikke længere overskrives af den indledende Danmark-load, og build, enhedstest samt automatisk UI-test er grønne.
 
 - **Fase 3: Kun danske kampe**
   - Fjern internationale fixtures fra produktet.

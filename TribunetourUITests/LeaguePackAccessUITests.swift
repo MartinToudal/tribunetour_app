@@ -1,8 +1,6 @@
 import XCTest
 
 final class LeaguePackAccessUITests: XCTestCase {
-    private let hamburgerSVRowId = "stadium-row-de-hamburger-sv"
-
     private func launchApp(extraArguments: [String] = []) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchArguments.append("--uitesting")
@@ -11,35 +9,29 @@ final class LeaguePackAccessUITests: XCTestCase {
         return app
     }
 
-    private func element(_ identifier: String, in app: XCUIApplication) -> XCUIElement {
-        app.descendants(matching: .any)[identifier]
-    }
-
-    private func revealElement(
-        _ element: XCUIElement,
-        in app: XCUIApplication,
-        maxSwipes: Int = 8
-    ) {
-        for _ in 0..<maxSwipes where !(element.exists && element.isHittable) {
-            app.swipeUp()
-            RunLoop.current.run(until: Date().addingTimeInterval(0.35))
-        }
-    }
-
     override func setUpWithError() throws {
         continueAfterFailure = false
     }
 
     @MainActor
     func testGermanyCanBeLoadedWithoutAuthentication() throws {
-        let app = launchApp(extraArguments: ["--uitesting-country-de"])
+        let app = launchApp(extraArguments: ["--uitesting-country-dk"])
 
         XCTAssertTrue(app.tabBars.firstMatch.waitForExistence(timeout: 10))
-        let searchField = app.searchFields.firstMatch
-        XCTAssertTrue(searchField.waitForExistence(timeout: 10))
-        searchField.tap()
-        searchField.typeText("Hamburger")
-        XCTAssertTrue(element(hamburgerSVRowId, in: app).waitForExistence(timeout: 15))
+        let countrySelector = app.buttons["country-selector"]
+        XCTAssertTrue(countrySelector.waitForExistence(timeout: 10))
+        countrySelector.tap()
+
+        let germany = app.buttons["country-option-de"]
+        XCTAssertTrue(germany.waitForExistence(timeout: 5))
+        germany.tap()
+
+        let loadedGermany = NSPredicate(
+            format: "value MATCHES %@",
+            "Tyskland, [1-9][0-9]* stadions"
+        )
+        expectation(for: loadedGermany, evaluatedWith: countrySelector)
+        waitForExpectations(timeout: 15)
         XCTAssertFalse(app.staticTexts["Anmod om adgang"].exists)
     }
 }

@@ -35,6 +35,8 @@ final class AppState: ObservableObject {
     private var previousAuthSnapshot: AppSessionSnapshot
     private var fixturesLoadTask: Task<Void, Never>?
     private var startupHasRun = false
+    private var initialDataIsLoaded = false
+    private var pendingCountryCodes: Set<String> = []
     private var isUITesting: Bool {
         AppTestRuntime.isRunningAutomatedTests
     }
@@ -180,6 +182,7 @@ final class AppState: ObservableObject {
     }
 
     func loadData() {
+        initialDataIsLoaded = false
         Task { // still on MainActor because AppState is @MainActor
             do {
                 let enabledLeaguePacks: Set<String> = [AppLeaguePackId.coreDenmark.rawValue]
@@ -193,12 +196,21 @@ final class AppState: ObservableObject {
                 self.clubs = clubs
                 self.clubById = aliasMap
                 self.loadedCountryCodes = ["dk"]
-                self.loadingCountryCodes = []
-                self.countryLoadErrors = [:]
+                self.initialDataIsLoaded = true
                 self.applyPreferredHomeCountryIfNeeded(from: clubs)
                 self.loadError = nil
                 self.loadFixturesInBackground(aliasMap: aliasMap, startedAt: loadStartedAt)
+
+                let pendingCountries = self.pendingCountryCodes
+                self.pendingCountryCodes = []
+                for countryCode in pendingCountries {
+                    self.loadingCountryCodes.remove(countryCode)
+                    self.loadCountryIfNeeded(countryCode)
+                }
             } catch {
+                self.initialDataIsLoaded = false
+                self.pendingCountryCodes = []
+                self.loadingCountryCodes = []
                 self.clubById = [:]
                 self.clubs = []
                 self.fixtures = []
@@ -214,9 +226,20 @@ final class AppState: ObservableObject {
 
     func loadCountryIfNeeded(_ countryCode: String) {
         guard countryCode != "all",
-              !loadedCountryCodes.contains(countryCode),
-              !loadingCountryCodes.contains(countryCode),
               let packId = AppLeaguePackCatalog.packId(forCountryCode: countryCode) else {
+            return
+        }
+
+        guard initialDataIsLoaded else {
+            pendingCountryCodes.insert(countryCode)
+            loadingCountryCodes.insert(countryCode)
+            countryLoadErrors[countryCode] = nil
+            return
+        }
+
+        guard
+              !loadedCountryCodes.contains(countryCode),
+              !loadingCountryCodes.contains(countryCode) else {
             return
         }
 

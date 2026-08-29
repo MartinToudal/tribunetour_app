@@ -155,6 +155,7 @@ struct StadiumsView: View {
     @State private var selectedClub: Club?
     @State private var detailSheetClub: Club?
     @State private var showFullscreenMap: Bool = false
+    @State private var showCountryPicker: Bool = false
     @State private var visibleClubLimit: Int = 80
     @State private var snapshot = Snapshot()
     @State private var snapshotBuildID = UUID()
@@ -475,44 +476,58 @@ struct StadiumsView: View {
                 }
 
                 Section {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 12) {
                         HStack(spacing: 8) {
-                            Badge(text: snapshot.activeScopeLabel, icon: "globe.europe.africa")
-                            Badge(text: snapshot.mapSummary, icon: "map")
+                            Image(systemName: "map")
+                                .foregroundStyle(.secondary)
+                            Text(snapshot.mapSummary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                            Spacer(minLength: 0)
                         }
-                        .font(.caption2)
+                        .font(.caption.weight(.semibold))
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
                         if shouldShowCountryFilter {
-                            Menu {
-                                ForEach(countryOptions, id: \.self) { countryCode in
-                                    Button {
-                                        countryFilterRawValue = countryCode
-                                    } label: {
-                                        if countryFilterRawValue == countryCode {
-                                            Label(LeaguePresentation.countryLabel(countryCode), systemImage: "checkmark")
-                                        } else {
-                                            Text(LeaguePresentation.countryLabel(countryCode))
-                                        }
-                                    }
-                                }
+                            Button {
+                                showCountryPicker = true
                             } label: {
-                                HStack {
-                                    Label(
-                                        LeaguePresentation.countryLabel(countryFilterRawValue),
-                                        systemImage: "globe.europe.africa"
-                                    )
-                                    Spacer()
+                                HStack(spacing: 10) {
+                                    Image(systemName: "globe.europe.africa")
+                                    Text(LeaguePresentation.countryLabel(countryFilterRawValue))
+                                        .lineLimit(1)
+                                    Spacer(minLength: 12)
                                     Text("Skift land")
+                                        .foregroundStyle(.secondary)
                                     Image(systemName: "chevron.up.chevron.down")
+                                        .font(.caption.weight(.semibold))
+                                        .foregroundStyle(.secondary)
                                 }
                                 .font(.subheadline.weight(.semibold))
-                                .frame(maxWidth: .infinity)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 11)
                                 .background(Color(.secondarySystemBackground))
                                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+                                .contentShape(Rectangle())
                             }
                             .buttonStyle(.plain)
+                            .accessibilityIdentifier("country-selector")
+                            .accessibilityLabel("Valgt land")
+                            .accessibilityValue(
+                                "\(LeaguePresentation.countryLabel(countryFilterRawValue)), \(snapshot.scopeTotalCount) stadions"
+                            )
+                            .sheet(isPresented: $showCountryPicker) {
+                                CountryPickerSheet(
+                                    countryCodes: countryOptions,
+                                    selectedCountryCode: countryFilterRawValue
+                                ) { countryCode in
+                                    countryFilterRawValue = countryCode
+                                }
+                                .presentationDetents([.medium, .large])
+                                .presentationDragIndicator(.visible)
+                            }
                         }
 
                         if selectedCountryIsLoading {
@@ -802,6 +817,48 @@ struct StadiumsView: View {
             }
         }
         #endif
+    }
+}
+
+private struct CountryPickerSheet: View {
+    let countryCodes: [String]
+    let selectedCountryCode: String
+    let onSelect: (String) -> Void
+
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        NavigationStack {
+            List(countryCodes, id: \.self) { countryCode in
+                Button {
+                    onSelect(countryCode)
+                    dismiss()
+                } label: {
+                    HStack(spacing: 12) {
+                        Text(LeaguePresentation.countryLabel(countryCode))
+                            .foregroundStyle(.primary)
+                        Spacer(minLength: 12)
+                        if countryCode == selectedCountryCode {
+                            Image(systemName: "checkmark")
+                                .font(.body.weight(.semibold))
+                                .foregroundStyle(.primary)
+                        }
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("country-option-\(countryCode)")
+            }
+            .navigationTitle("Vælg land")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Luk") {
+                        dismiss()
+                    }
+                }
+            }
+        }
     }
 }
 
