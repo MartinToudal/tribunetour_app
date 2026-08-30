@@ -49,11 +49,11 @@ Låste beslutninger:
   - [x] Fjern landevalg fra `Kampe` og gør dansk scope synligt.
   - [x] Gennemfør API-prøve for danske rækker.
   - [x] Indfør validering, deduplikering, senest-kendt-god cache og dansk bundle-fallback i appen.
-  - [ ] Publicer et separat, versionsstyret dansk remote-feed; appen filtrerer indtil da den delte overgangskilde.
-  - [ ] Fjern dublerede kamp-ID'er i feedets produktionsled; det offentlige feed havde 17 identiske dubletter ved kontrollen 2026-08-28.
+  - [x] Publicer et separat, versionsstyret dansk remote-feed.
+  - [x] Fjern dublerede kamp-ID'er i feedets produktionsled; de 17 identiske dubletter er håndteret strukturelt.
   - [x] Accept, app: `Kampe` viser kun Danmark og overlever fejl hos datakilden.
-  - [ ] Accept, drift: appen modtager et rent dansk feed uden afhængighed af det europæiske feed.
-  - Status: appdelen er implementeret og regressionssikret 2026-08-30. API-prøven fandt ingen gratis, lovlig og komplet kilde til dansk niveau 1-4. Den eksisterende Tribunetour-kæde fortsætter derfor som overgang, indtil det dedikerede danske feed er publiceret.
+  - [x] Accept, drift: appen modtager et rent dansk feed uden afhængighed af det europæiske feed.
+  - Status: fase 3 er afsluttet 2026-08-30. API-prøven fandt ingen gratis, lovlig og komplet kilde til dansk niveau 1-4, så den eksisterende generator-kæde er bevaret som overgang. Det nye danske feed er live, appkoblingen er testet, og en ny TestFlight-build er næste leverancetrin.
 
 - **Fase 4: Danmark-først Min tur og achievements**
   - Dansk statistik og progression er standard.

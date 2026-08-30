@@ -79,7 +79,7 @@ struct AppAuthConfiguration: Equatable {
     }
 
     var fixturesRemoteURL: URL? {
-        referenceDataBaseURL?.appendingPathComponent("reference-data/fixtures.remote.json")
+        referenceDataBaseURL?.appendingPathComponent("reference-data/fixtures.denmark.remote.json")
     }
 
     var passwordResetURL: URL? {
