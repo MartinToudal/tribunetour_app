@@ -289,7 +289,10 @@ final class AppState: ObservableObject {
             guard let self else { return }
 
             do {
-                let fixturesResult = try await RemoteFixturesProvider().loadFixtures()
+                let fixturesResult = try await RemoteFixturesProvider(
+                    remoteURL: RemoteFixturesProvider.resolvedRemoteURL,
+                    scope: .denmark(allowedClubIds: Set(aliasMap.keys))
+                ).loadFixtures()
                 guard !Task.isCancelled else { return }
 
                 let fixtures = fixturesResult.fixtures.filter { fixture in

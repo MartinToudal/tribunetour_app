@@ -356,6 +356,8 @@ struct InternalToolsView: View {
         switch source {
         case .remote:
             return "remote"
+        case .cachedRemote:
+            return "seneste gemte remote"
         case .localFallback:
             return "local fallback"
         }

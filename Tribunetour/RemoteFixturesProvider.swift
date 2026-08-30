@@ -3,6 +3,7 @@ import Foundation
 struct FixturesLoadResult {
     enum Source: String {
         case remote
+        case cachedRemote
         case localFallback
     }
 
@@ -28,39 +29,77 @@ enum RemoteFixturesProviderError: LocalizedError {
 }
 
 struct RemoteFixturesProvider {
+    struct Scope {
+        let contains: (_ homeTeamId: String, _ awayTeamId: String, _ venueClubId: String) -> Bool
+
+        static let all = Scope { _, _, _ in true }
+
+        static func denmark(allowedClubIds: Set<String>? = nil) -> Scope {
+            Scope { homeTeamId, awayTeamId, venueClubId in
+                let ids = [homeTeamId, awayTeamId, venueClubId]
+                if let allowedClubIds {
+                    return ids.allSatisfy(allowedClubIds.contains)
+                }
+                return ids.allSatisfy { clubId in
+                    clubId.hasPrefix("dk-") || ClubIdentityResolver.legacyToCanonical[clubId] != nil
+                }
+            }
+        }
+    }
+
     typealias FetchData = (URL) async throws -> Data
     typealias LocalFallback = () throws -> [Fixture]
+    typealias LoadCache = () throws -> FixtureCacheSnapshot?
+    typealias SaveCache = (FixtureCacheSnapshot) throws -> Void
 
     static let remoteURLKey = "fixtures.remote.url"
+    static var resolvedRemoteURL: URL? { remoteURLFromDefaults() }
 
     private let remoteURL: URL?
     private let fetchData: FetchData
     private let localFallback: LocalFallback
+    private let loadCache: LoadCache
+    private let saveCache: SaveCache
+    private let scope: Scope
 
     init() {
+        let cacheStore = FixtureCacheStore()
         self.remoteURL = RemoteFixturesProvider.remoteURLFromDefaults()
         self.fetchData = RemoteFixturesProvider.defaultFetch
         self.localFallback = {
-            try FixturesCSVImporter.loadFixturesFromBundle(csvFileName: "fixtures")
+            try FixturesCSVImporter.loadFixturesFromBundle(csvFileName: "fixtures_denmark")
         }
+        self.loadCache = cacheStore.load
+        self.saveCache = cacheStore.save
+        self.scope = .denmark()
     }
 
-    init(remoteURL: URL?) {
+    init(remoteURL: URL?, scope: Scope = .denmark()) {
+        let cacheStore = FixtureCacheStore()
         self.remoteURL = remoteURL
         self.fetchData = RemoteFixturesProvider.defaultFetch
         self.localFallback = {
-            try FixturesCSVImporter.loadFixturesFromBundle(csvFileName: "fixtures")
+            try FixturesCSVImporter.loadFixturesFromBundle(csvFileName: "fixtures_denmark")
         }
+        self.loadCache = cacheStore.load
+        self.saveCache = cacheStore.save
+        self.scope = scope
     }
 
     init(
         remoteURL: URL?,
         fetchData: @escaping FetchData,
-        localFallback: @escaping LocalFallback
+        localFallback: @escaping LocalFallback,
+        loadCache: @escaping LoadCache = { nil },
+        saveCache: @escaping SaveCache = { _ in },
+        scope: Scope = .denmark()
     ) {
         self.remoteURL = remoteURL
         self.fetchData = fetchData
         self.localFallback = localFallback
+        self.loadCache = loadCache
+        self.saveCache = saveCache
+        self.scope = scope
     }
 
     func loadFixtures() async throws -> FixturesLoadResult {
@@ -79,19 +118,38 @@ struct RemoteFixturesProvider {
             let raw = try await fetchData(remoteURL)
             let envelope = try decodeEnvelope(from: raw)
             let mapped = sanitizeFixtures(
-                try envelope.fixtures.map { try $0.toFixture() },
+                try envelope.fixtures
+                    .filter { scope.contains($0.homeTeamId, $0.awayTeamId, $0.venueClubId) }
+                    .map { try $0.toFixture() },
                 source: .remote
             )
             guard !mapped.isEmpty else { throw RemoteFixturesProviderError.invalidPayload }
-            let merged = mergeWithLocalLeaguePackFixturesIfNeeded(remoteFixtures: mapped)
+
+            do {
+                try saveCache(FixtureCacheSnapshot(version: envelope.metadata?.version, fixtures: mapped))
+            } catch {
+                dlog("Fixtures cache kunne ikke gemmes: \(error.localizedDescription)")
+            }
+
             return FixturesLoadResult(
-                fixtures: merged,
+                fixtures: mapped,
                 source: .remote,
                 version: envelope.metadata?.version,
                 remoteURL: remoteURL,
                 fallbackReason: nil
             )
         } catch {
+            if let cached = loadValidCachedFixtures() {
+                dlogFixturesLoad(source: .cachedRemote, version: cached.version, reason: error.localizedDescription)
+                return FixturesLoadResult(
+                    fixtures: cached.fixtures,
+                    source: .cachedRemote,
+                    version: cached.version,
+                    remoteURL: remoteURL,
+                    fallbackReason: error.localizedDescription
+                )
+            }
+
             dlogFixturesLoad(source: .localFallback, version: nil, reason: error.localizedDescription)
             let local = sanitizeFixtures(try localFallback(), source: .localFallback)
             return FixturesLoadResult(
@@ -110,28 +168,27 @@ struct RemoteFixturesProvider {
         return try decoder.decode(RemoteDatasetEnvelope.self, from: data)
     }
 
-    private func mergeWithLocalLeaguePackFixturesIfNeeded(remoteFixtures: [Fixture]) -> [Fixture] {
-        guard let localFixtures = try? localFallback(), !localFixtures.isEmpty else {
-            return remoteFixtures
+    private func loadValidCachedFixtures() -> FixtureCacheSnapshot? {
+        do {
+            guard let snapshot = try loadCache() else { return nil }
+            let fixtures = sanitizeFixtures(snapshot.fixtures, source: .cachedRemote)
+            guard !fixtures.isEmpty else { return nil }
+            return FixtureCacheSnapshot(
+                version: snapshot.version,
+                savedAt: snapshot.savedAt,
+                fixtures: fixtures
+            )
+        } catch {
+            dlog("Fixtures cache kunne ikke læses: \(error.localizedDescription)")
+            return nil
         }
-
-        let sanitizedLocalFixtures = sanitizeFixtures(localFixtures, source: .localFallback)
-
-        var mergedById: [String: Fixture] = [:]
-        for fixture in remoteFixtures {
-            mergedById[fixture.id] = fixture
-        }
-        for fixture in sanitizedLocalFixtures {
-            if mergedById[fixture.id] == nil {
-                mergedById[fixture.id] = fixture
-            }
-        }
-
-        return mergedById.values.sorted { $0.kickoff < $1.kickoff }
     }
 
     private func sanitizeFixtures(_ fixtures: [Fixture], source: FixturesLoadResult.Source) -> [Fixture] {
-        let seasonValidFixtures = fixtures.filter { FixtureSeasonGuard.contains($0) }
+        let scopedFixtures = fixtures.filter {
+            scope.contains($0.homeTeamId, $0.awayTeamId, $0.venueClubId)
+        }
+        let seasonValidFixtures = scopedFixtures.filter { FixtureSeasonGuard.contains($0) }
         let droppedCount = fixtures.count - seasonValidFixtures.count
         if droppedCount > 0 {
             dlog("Fixtures load: fjernede \(droppedCount) strukturelt ugyldige kampe fra \(source.rawValue)")

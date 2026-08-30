@@ -1,6 +1,6 @@
 # Danmark-først: produktmål og migrationsplan
 
-Senest opdateret: 2026-08-29
+Senest opdateret: 2026-08-30
 
 Dette dokument er den styrende beslutning for den næste version af Tribunetour.
 
@@ -165,7 +165,26 @@ Før vi vælger en leverandør, skal en teknisk prøve bevise:
 - rimelige brugs- og visningsrettigheder
 - en gratis kvote der kan bruges til en central daglig drift
 
-`football-data.org` er en relevant første prøve for Superligaen, men er ikke godkendt som samlet løsning, før dækningen af lavere danske rækker er undersøgt.
+API-prøven 2026-08-30 gav følgende resultat:
+
+- `football-data.org` dækker Superligaen, men ikke de lavere danske rækker, og Superligaen er ikke blandt turneringerne i den gratis plan
+- `TheSportsDB` har dansk ligadata og en gratis API, men vilkårene tillader ikke brug af gratis API-data i en app udgivet gennem App Store
+- der er derfor ikke fundet en gratis, lovlig og tilstrækkeligt komplet produktions-API til dansk niveau 1-4
+
+Kilder til beslutningen:
+
+- https://www.football-data.org/coverage
+- https://www.football-data.org/pricing
+- https://www.thesportsdb.com/docs_api_guide
+- https://www.thesportsdb.com/docs_terms_of_use.php
+
+Den nuværende produktionsbeslutning er derfor:
+
+- behold den eksisterende Tribunetour-genererede danske fixturekæde som overgang
+- udstil på sigt et separat, versionsstyret dansk feed frem for det fælles europæiske feed
+- lad appen validere dansk scope og kamp-id'er før brug
+- gem seneste valide danske feed lokalt og brug en dansk bundle som sidste fallback
+- behold kildeadapteren, så en senere betalt eller bedre licenseret API kan indføres uden at ændre produktfladen
 
 Hvis ingen gratis API dækker hele det danske scope, skal vi vælge mellem:
 
@@ -245,6 +264,18 @@ Færdigt når:
 - `Kampe` viser Danmark og intet andet
 - internationale stadions kan bruges uden fixtures
 - en datakildefejl efterlader seneste valide kampprogram i appen
+
+Status 2026-08-30:
+
+- `Kampe` viser kun Danmark, uanset hvilket stadionland brugeren har valgt
+- landefilteret er fjernet fra `Kampe`, og dansk scope er synligt i brugerfladen
+- remote-, cache- og bundledata valideres mod det danske klubscope og deduplikeres før brug
+- en vellykket remote-opdatering gemmes som seneste kendte valide danske version
+- ved remote-fejl bruges først den gemte version og derefter en separat dansk bundle med 782 fixtures
+- den tidligere sammenblanding af remote-data og potentielt forældede bundlekampe er fjernet
+- API-prøven er afsluttet uden en egnet gratis produktionsleverandør til niveau 1-4
+- enheds- og UI-regressionstests er grønne
+- åbent: publicer et separat dansk remote-feed og fjern dubletter i produktionsgeneratoren
 
 ### Fase 4: Danmark-først progression
 

@@ -1,6 +1,6 @@
 # Working Backlog
 
-Senest opdateret: 2026-08-29
+Senest opdateret: 2026-08-30
 
 Dette dokument er den operative backlog.
 
@@ -45,11 +45,15 @@ Låste beslutninger:
   - Release-checkpoint: TestFlight-kandidat `1.0.3 (23)` er klargjort. Fase 3 starter først, når buildet er uploadet og accepteret som fase 2-baseline.
 
 - **Fase 3: Kun danske kampe**
-  - Fjern internationale fixtures fra produktet.
-  - Gennemfør API-prøve for danske rækker.
-  - Indfør centralt, versionsstyret dansk fixture-feed med cache og fallback.
-  - Fjern dublerede kamp-ID'er i feedets produktionsled; det offentlige feed havde 17 identiske dubletter ved kontrollen 2026-08-28.
-  - Accept: `Kampe` viser kun Danmark og overlever fejl hos datakilden.
+  - [x] Fjern internationale fixtures fra produktet og fra den lokale fallback.
+  - [x] Fjern landevalg fra `Kampe` og gør dansk scope synligt.
+  - [x] Gennemfør API-prøve for danske rækker.
+  - [x] Indfør validering, deduplikering, senest-kendt-god cache og dansk bundle-fallback i appen.
+  - [ ] Publicer et separat, versionsstyret dansk remote-feed; appen filtrerer indtil da den delte overgangskilde.
+  - [ ] Fjern dublerede kamp-ID'er i feedets produktionsled; det offentlige feed havde 17 identiske dubletter ved kontrollen 2026-08-28.
+  - [x] Accept, app: `Kampe` viser kun Danmark og overlever fejl hos datakilden.
+  - [ ] Accept, drift: appen modtager et rent dansk feed uden afhængighed af det europæiske feed.
+  - Status: appdelen er implementeret og regressionssikret 2026-08-30. API-prøven fandt ingen gratis, lovlig og komplet kilde til dansk niveau 1-4. Den eksisterende Tribunetour-kæde fortsætter derfor som overgang, indtil det dedikerede danske feed er publiceret.
 
 - **Fase 4: Danmark-først Min tur og achievements**
   - Dansk statistik og progression er standard.

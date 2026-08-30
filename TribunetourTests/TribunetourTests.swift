@@ -86,7 +86,8 @@ struct TribunetourTests {
                         awayScore: nil
                     )
                 ]
-            }
+            },
+            scope: .all
         )
 
         let result = try await provider.loadFixtures()
@@ -127,7 +128,8 @@ struct TribunetourTests {
         let provider = RemoteFixturesProvider(
             remoteURL: URL(string: "https://example.com/fixtures.json"),
             fetchData: { _ in payload },
-            localFallback: { [] }
+            localFallback: { [] },
+            scope: .all
         )
 
         let result = try await provider.loadFixtures()
@@ -136,6 +138,127 @@ struct TribunetourTests {
         #expect(result.fixtures.count == 1)
         #expect(result.fixtures.first?.id == "duplicate_1")
         #expect(result.fixtures.first?.round == "Første kildepost")
+    }
+
+    @MainActor
+    @Test func remoteProviderKeepsOnlyDanishFixtures() async throws {
+        let payload = Data(
+            """
+            {
+              "metadata": { "version": "dk-2026-08-30" },
+              "fixtures": [
+                {
+                  "id": "dk_1",
+                  "kickoff": "2026-09-01T19:00:00+02:00",
+                  "homeTeamId": "dk-agf",
+                  "awayTeamId": "dk-fc-kobenhavn",
+                  "venueClubId": "dk-agf",
+                  "status": "scheduled",
+                  "competitionId": "dk-superliga",
+                  "seasonId": "2026-27"
+                },
+                {
+                  "id": "de_1",
+                  "kickoff": "2026-09-01T20:30:00+02:00",
+                  "homeTeamId": "de-hamburger-sv",
+                  "awayTeamId": "de-bayern-munich",
+                  "venueClubId": "de-hamburger-sv",
+                  "status": "scheduled",
+                  "competitionId": "de-bundesliga",
+                  "seasonId": "2026-27"
+                }
+              ]
+            }
+            """.utf8
+        )
+        let provider = RemoteFixturesProvider(
+            remoteURL: URL(string: "https://example.com/fixtures.json"),
+            fetchData: { _ in payload },
+            localFallback: { [] }
+        )
+
+        let result = try await provider.loadFixtures()
+
+        #expect(result.source == .remote)
+        #expect(result.version == "dk-2026-08-30")
+        #expect(result.fixtures.map(\.id) == ["dk_1"])
+    }
+
+    @MainActor
+    @Test func successfulRemoteLoadCachesOnlyValidatedDanishFixtures() async throws {
+        let payload = Data(
+            """
+            {
+              "metadata": { "version": "dk-cache-v1" },
+              "fixtures": [
+                {
+                  "id": "dk_cache_1",
+                  "kickoff": "2026-09-01T19:00:00+02:00",
+                  "homeTeamId": "dk-agf",
+                  "awayTeamId": "dk-fc-kobenhavn",
+                  "venueClubId": "dk-agf",
+                  "status": "scheduled",
+                  "competitionId": "dk-superliga",
+                  "seasonId": "2026-27"
+                },
+                {
+                  "id": "de_cache_1",
+                  "kickoff": "2026-09-01T20:30:00+02:00",
+                  "homeTeamId": "de-hamburger-sv",
+                  "awayTeamId": "de-bayern-munich",
+                  "venueClubId": "de-hamburger-sv",
+                  "status": "scheduled",
+                  "competitionId": "de-bundesliga",
+                  "seasonId": "2026-27"
+                }
+              ]
+            }
+            """.utf8
+        )
+        var savedSnapshot: FixtureCacheSnapshot?
+        let provider = RemoteFixturesProvider(
+            remoteURL: URL(string: "https://example.com/fixtures.json"),
+            fetchData: { _ in payload },
+            localFallback: { [] },
+            saveCache: { savedSnapshot = $0 }
+        )
+
+        _ = try await provider.loadFixtures()
+
+        #expect(savedSnapshot?.version == "dk-cache-v1")
+        #expect(savedSnapshot?.fixtures.map(\.id) == ["dk_cache_1"])
+    }
+
+    @MainActor
+    @Test func remoteProviderUsesLastKnownGoodCacheBeforeBundleFallback() async throws {
+        let cachedFixture = Fixture(
+            id: "cached_dk_1",
+            kickoff: ISO8601DateFormatter().date(from: "2026-09-01T19:00:00+02:00")!,
+            round: "Runde 1",
+            homeTeamId: "dk-agf",
+            awayTeamId: "dk-fc-kobenhavn",
+            venueClubId: "dk-agf",
+            status: .scheduled,
+            homeScore: nil,
+            awayScore: nil,
+            competitionId: "dk-superliga",
+            seasonId: "2026-27"
+        )
+        let provider = RemoteFixturesProvider(
+            remoteURL: URL(string: "https://example.com/fixtures.json"),
+            fetchData: { _ in throw RemoteFixturesProviderError.invalidHTTPStatus(503) },
+            localFallback: { [] },
+            loadCache: {
+                FixtureCacheSnapshot(version: "cached-v1", fixtures: [cachedFixture])
+            }
+        )
+
+        let result = try await provider.loadFixtures()
+
+        #expect(result.source == .cachedRemote)
+        #expect(result.version == "cached-v1")
+        #expect(result.fixtures.map(\.id) == ["cached_dk_1"])
+        #expect(result.fallbackReason?.contains("503") == true)
     }
 
     @MainActor

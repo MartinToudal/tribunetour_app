@@ -169,22 +169,21 @@ final class TribunetourUITests: XCTestCase {
 
         XCTAssertTrue(stadiumsTab.exists)
         XCTAssertTrue(matchesTab.exists)
-        XCTAssertTrue(planTab.exists)
+        XCTAssertFalse(planTab.exists)
         XCTAssertTrue(myTripTab.exists)
 
-        XCTAssertTrue(findSearchField(in: app, placeholder: "Søg klub, stadion, by eller liga").waitForExistence(timeout: 10))
+        XCTAssertTrue(app.descendants(matching: .any)["stadium-scope-summary"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["country-selector"].exists)
 
         matchesTab.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        XCTAssertTrue(findSearchField(in: app, placeholder: "Søg klub, stadion, by, runde...").waitForExistence(timeout: 10))
-
-        planTab.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        XCTAssertTrue(app.descendants(matching: .any)["weekend-set-range"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.navigationBars["Kampe"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.descendants(matching: .any)["matches-country-scope"].waitForExistence(timeout: 10))
 
         app.tabBars.firstMatch.buttons["Min tur"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         XCTAssertTrue(app.navigationBars["Min tur"].waitForExistence(timeout: 10))
 
         app.tabBars.firstMatch.buttons["Stadions"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        XCTAssertTrue(findSearchField(in: app, placeholder: "Søg klub, stadion, by eller liga").waitForExistence(timeout: 10))
+        XCTAssertTrue(app.descendants(matching: .any)["stadium-scope-summary"].waitForExistence(timeout: 10))
     }
 
     @MainActor
@@ -214,34 +213,6 @@ final class TribunetourUITests: XCTestCase {
         )
 
         XCTAssertEqual(restoredValue, initialValue)
-    }
-
-    @MainActor
-    func testCanAddAndRemoveFixtureFromWeekendPlan() throws {
-        let app = launchApp()
-
-        let tabBar = app.tabBars.firstMatch
-        XCTAssertTrue(tabBar.waitForExistence(timeout: 10))
-
-        tabBar.buttons["Plan"].tap()
-
-        let weekendButton = app.descendants(matching: .any)["weekend-set-range"]
-        XCTAssertTrue(weekendButton.waitForExistence(timeout: 10))
-        weekendButton.tap()
-
-        let fixtureButton = app.descendants(matching: .any)
-            .matching(NSPredicate(format: "identifier BEGINSWITH %@", "weekend-fixture-"))
-            .firstMatch
-        XCTAssertTrue(fixtureButton.waitForExistence(timeout: 10))
-
-        let initialSelectionValue = elementStringValue(fixtureButton)
-        fixtureButton.tap()
-        let selectedValue = waitForElementValueChange(for: fixtureButton, from: initialSelectionValue)
-        XCTAssertEqual(selectedValue, "valgt")
-
-        fixtureButton.tap()
-        let restoredValue = waitForElementValueChange(for: fixtureButton, from: selectedValue)
-        XCTAssertEqual(restoredValue, initialSelectionValue)
     }
 
     @MainActor

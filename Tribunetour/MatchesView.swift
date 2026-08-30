@@ -56,10 +56,8 @@ struct MatchesView: View {
         var id: String { rawValue }
     }
 
-    @AppStorage(AppLeaguePackSettings.preferredHomeCountryCodeKey) private var preferredHomeCountryCode: String = "dk"
     @AppStorage("matches.timeFilter") private var timeFilterRawValue: String = TimeFilter.week.rawValue
     @AppStorage("matches.onlyUnvisitedVenues") private var onlyUnvisitedVenues: Bool = true
-    @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
     @State private var searchText = ""
     @State private var isShowingFilters = false
     @State private var snapshot = Snapshot()
@@ -107,16 +105,6 @@ struct MatchesView: View {
         return "\(roundedLatitude)|\(roundedLongitude)|\(roundedTimestamp)"
     }
 
-    private var countryOptions: [String] {
-        let source = progressionClubs.isEmpty ? accessibleClubs : progressionClubs
-        return Array(Set(source.map(\.countryCode))).sorted { left, right in
-            if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
-                return LeaguePresentation.countryRank(left) < LeaguePresentation.countryRank(right)
-            }
-            return LeaguePresentation.countryLabel(left).localizedCaseInsensitiveCompare(LeaguePresentation.countryLabel(right)) == .orderedAscending
-        }
-    }
-
     private var progressionClubs: [Club] {
         accessibleClubs.filter(\.countsTowardTopSystemProgression)
     }
@@ -135,21 +123,14 @@ struct MatchesView: View {
         Set(visitedStore.records.lazy.filter(\.value.visited).map(\.key))
     }
 
-    private var shouldShowCountryFilter: Bool {
-        countryOptions.count > 1
-    }
-
     private var activeFilterCount: Int {
         var count = 0
         if onlyUnvisitedVenues { count += 1 }
-        if countryFilterRawValue != "all" { count += 1 }
         if sortMode == .byDistance { count += 1 }
         return count
     }
 
-    private var scopeLabel: String {
-        countryFilterRawValue == "all" ? "Alle aktive lande" : LeaguePresentation.countryLabel(countryFilterRawValue)
-    }
+    private let scopeLabel = "Danmark"
 
     private func rebuildSnapshot() {
         guard isActive else { return }
@@ -191,11 +172,10 @@ struct MatchesView: View {
                 && progressionClubIds.contains(fixture.awayTeamId)
         }
 
-        let countryMatches: (Fixture) -> Bool = { fixture in
-            if countryFilterRawValue == "all" {
-                return true
+        let isDanishFixture: (Fixture) -> Bool = { fixture in
+            [fixture.homeTeamId, fixture.awayTeamId, fixture.venueClubId].allSatisfy { clubId in
+                activeClubById[clubId]?.countryCode == "dk"
             }
-            return activeClubById[fixture.venueClubId]?.countryCode == countryFilterRawValue
         }
 
         let searchedMatches: (Fixture) -> Bool = { fixture in
@@ -228,9 +208,9 @@ struct MatchesView: View {
 
         let scopedUpcomingFixtures = fixtures.filter { $0.kickoff >= todayStart }
         var visibleFixtures = scopedUpcomingFixtures
+            .filter(isDanishFixture)
             .filter { fixtureCountsTowardTopSystem($0) }
             .filter { $0.kickoff < endExclusive }
-            .filter(countryMatches)
             .filter(searchedMatches)
 
         if onlyUnvisitedVenues {
@@ -238,8 +218,8 @@ struct MatchesView: View {
         }
 
         let visibleNonTopSystemFixtures = scopedUpcomingFixtures
+            .filter(isDanishFixture)
             .filter { !fixtureCountsTowardTopSystem($0) }
-            .filter(countryMatches)
             .filter(searchedMatches)
             .sorted { $0.kickoff < $1.kickoff }
 
@@ -324,6 +304,9 @@ struct MatchesView: View {
 
                             VStack(alignment: .trailing, spacing: 6) {
                                 MatchesContextChip(text: scopeLabel, systemImage: "globe.europe.africa")
+                                    .accessibilityElement(children: .ignore)
+                                    .accessibilityLabel(scopeLabel)
+                                    .accessibilityIdentifier("matches-country-scope")
                                 if onlyUnvisitedVenues {
                                     MatchesContextChip(text: "Kun ubesøgte", systemImage: "checkmark.circle")
                                 }
@@ -411,10 +394,6 @@ struct MatchesView: View {
                     sortMode: Binding(get: { sortMode }, set: { sortMode = $0 }),
                     reverseDistanceSort: $reverseDistanceSort,
                     onlyUnvisitedVenues: $onlyUnvisitedVenues,
-                    countryFilterRawValue: $countryFilterRawValue,
-                    shouldShowCountryFilter: shouldShowCountryFilter,
-                    countryOptions: countryOptions,
-                    countryLabel: { LeaguePresentation.countryLabel($0) },
                     locationHintText: locationHintText,
                     hasLocation: locationStore.location != nil,
                     requestLocation: {
@@ -440,17 +419,6 @@ struct MatchesView: View {
             }
             rebuildSnapshot()
         }
-        .onAppear {
-            let resolvedHomeCountry = countryOptions.contains(preferredHomeCountryCode)
-                ? preferredHomeCountryCode
-                : LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(countryOptions))
-            if countryFilterRawValue == "all" && countryOptions.contains(resolvedHomeCountry) {
-                countryFilterRawValue = resolvedHomeCountry
-            } else if !countryOptions.contains(countryFilterRawValue) {
-                countryFilterRawValue = resolvedHomeCountry
-            }
-            rebuildSnapshot()
-        }
         .onChange(of: isActive) { _, isActive in
             if isActive {
                 rebuildSnapshot()
@@ -460,9 +428,6 @@ struct MatchesView: View {
             rebuildSnapshot()
         }
         .onChange(of: onlyUnvisitedVenues) { _, _ in
-            rebuildSnapshot()
-        }
-        .onChange(of: countryFilterRawValue) { _, _ in
             rebuildSnapshot()
         }
         .onChange(of: searchText) { _, _ in
@@ -563,11 +528,7 @@ private struct MatchesFilterSheet: View {
     @Binding var sortMode: MatchesView.SortMode
     @Binding var reverseDistanceSort: Bool
     @Binding var onlyUnvisitedVenues: Bool
-    @Binding var countryFilterRawValue: String
 
-    let shouldShowCountryFilter: Bool
-    let countryOptions: [String]
-    let countryLabel: (String) -> String
     let locationHintText: String
     let hasLocation: Bool
     let requestLocation: () -> Void
@@ -603,21 +564,6 @@ private struct MatchesFilterSheet: View {
                     }
                 }
 
-                if shouldShowCountryFilter {
-                    Section("Scope") {
-                        Picker("Land", selection: $countryFilterRawValue) {
-                            Text("Alle aktive lande").tag("all")
-                            ForEach(countryOptions, id: \.self) { countryCode in
-                                Text(countryLabel(countryCode)).tag(countryCode)
-                            }
-                        }
-                        .pickerStyle(.inline)
-
-                        Text("Dit hjemland bruges som standard-scope, når appen åbner.")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
             }
             .navigationTitle("Filtre")
             .navigationBarTitleDisplayMode(.inline)

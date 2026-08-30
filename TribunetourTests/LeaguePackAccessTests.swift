@@ -48,7 +48,7 @@ struct LeaguePackAccessTests {
     }
 
     @MainActor
-    @Test func remoteFixturesProviderMergesFallbackWithoutDuplicateIds() async throws {
+    @Test func successfulRemoteFixturesReplaceBundleFallback() async throws {
         let provider = RemoteFixturesProvider(
             remoteURL: URL(string: "https://example.com/fixtures.json"),
             fetchData: { _ in
@@ -88,8 +88,8 @@ struct LeaguePackAccessTests {
         )
 
         let result = try await provider.loadFixtures()
-        #expect(result.fixtures.count == 2)
+        #expect(result.fixtures.count == 1)
         #expect(result.fixtures.contains(where: { $0.id == "sl-r26-sif-ob" }))
-        #expect(result.fixtures.contains(where: { $0.id == "bl-r29-vfb-hsv" }))
+        #expect(!result.fixtures.contains(where: { $0.id == "bl-r29-vfb-hsv" }))
     }
 }

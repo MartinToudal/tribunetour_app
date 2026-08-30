@@ -69,4 +69,22 @@ final class LeaguePackAccessUITests: XCTestCase {
         waitForExpectations(timeout: 15)
         XCTAssertFalse(app.staticTexts["Anmod om adgang"].exists)
     }
+
+    @MainActor
+    func testMatchesAreExplicitlyScopedToDenmark() throws {
+        let app = launchApp(extraArguments: ["--uitesting-country-de"])
+
+        let tabBar = app.tabBars.firstMatch
+        XCTAssertTrue(tabBar.waitForExistence(timeout: 10))
+        tabBar.buttons["Kampe"].tap()
+
+        let countryScope = element("matches-country-scope", in: app)
+        XCTAssertTrue(countryScope.waitForExistence(timeout: 10))
+        XCTAssertEqual(countryScope.label, "Danmark")
+
+        app.buttons["Åbn filtre"].tap()
+        XCTAssertTrue(app.navigationBars["Filtre"].waitForExistence(timeout: 10))
+        XCTAssertFalse(app.staticTexts["Alle aktive lande"].exists)
+        XCTAssertFalse(app.staticTexts["Land"].exists)
+    }
 }
