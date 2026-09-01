@@ -1,6 +1,6 @@
 # Working Backlog
 
-Senest opdateret: 2026-08-30
+Senest opdateret: 2026-09-01
 
 Dette dokument er den operative backlog.
 
@@ -56,9 +56,13 @@ Låste beslutninger:
   - Status: fase 3 er afsluttet 2026-08-30. API-prøven fandt ingen gratis, lovlig og komplet kilde til dansk niveau 1-4, så den eksisterende generator-kæde er bevaret som overgang. Det nye danske feed er live, appkoblingen er testet, og en ny TestFlight-build er næste leverancetrin.
 
 - **Fase 4: Danmark-først Min tur og achievements**
-  - Dansk statistik og progression er standard.
-  - International statistik og achievements flyttes til aktivt tilvalg.
-  - Accept: internationale tal blandes ikke ind i dansk hovedprogression.
+  - [x] Dansk statistik, progression og anbefalinger er standard i `Min tur`.
+  - [x] International statistik er flyttet til et eksplicit scopevalg.
+  - [x] Noter, anmeldelser og billeder følger det valgte scope.
+  - [x] Achievements og næste mål beregnes ud fra det aktive scope, uden at internationalt scope ændrer dansk scope.
+  - [x] Accept: internationale tal blandes ikke ind i dansk hovedprogression.
+  - Status: første leverance gennemført og UI-/unit-testet 2026-09-01. Danmark er standard; internationalt indhold kan åbnes via `Danmark`/`Internationalt` i `Min tur`.
+  - [ ] Gennemgå achievement-navne, milepæle og rækkefølge med product owner før næste udbygning.
 
 - **Fase 5: Afvikl web som produkt**
   - Kortlæg og flyt nødvendige jobs før offentlig webfunktionalitet fjernes.

@@ -279,14 +279,23 @@ Status 2026-08-30:
 
 ### Fase 4: Danmark-først progression
 
-- ombyg `Min tur` til dansk standardvisning
-- flyt international statistik til en sekundær visning
-- del achievements op i danske og internationale spor
+- [x] ombyg `Min tur` til dansk standardvisning
+- [x] flyt international statistik til en sekundær visning
+- [x] del achievements op i danske og internationale spor
 
 Færdigt når:
 
-- hovedprogression aldrig blandes med internationalt scope
-- internationale resultater stadig kan findes bevidst
+- [x] hovedprogression aldrig blandes med internationalt scope
+- [x] internationale resultater stadig kan findes bevidst
+
+Status 2026-09-01:
+
+- Danmark er fast hovedscope ved åbning af `Min tur`
+- international statistik åbnes via et eksplicit `Danmark`/`Internationalt`-valg
+- noter, anmeldelser, billeder, progression og næste mål følger det aktive scope
+- achievements er adskilt i rejse-, Danmark- og internationalt spor
+- unit- og UI-regressionstests er grønne
+- næste produktbeslutning er kvalitetstjek af achievement-navne, milepæle og prioritering
 
 ### Fase 5: Kontrolleret afvikling af webproduktet
 

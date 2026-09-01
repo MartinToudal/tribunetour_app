@@ -181,6 +181,8 @@ final class TribunetourUITests: XCTestCase {
 
         app.tabBars.firstMatch.buttons["Min tur"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         XCTAssertTrue(app.navigationBars["Min tur"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.descendants(matching: .any)["stats-scope-picker"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["Danmark"].exists)
 
         app.tabBars.firstMatch.buttons["Stadions"].coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
         XCTAssertTrue(app.descendants(matching: .any)["stadium-scope-summary"].waitForExistence(timeout: 10))

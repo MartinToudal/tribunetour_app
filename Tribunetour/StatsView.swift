@@ -23,6 +23,7 @@ struct StatsView: View {
     @AppStorage("achievements.seenUnlockedIds") private var seenUnlockedIdsRaw: String = ""
     @AppStorage(AppLeaguePackSettings.preferredHomeCountryCodeKey) private var preferredHomeCountryCode: String = "dk"
     @AppStorage("stadiums.countryFilter") private var countryFilterRawValue: String = "all"
+    @AppStorage("stats.scope") private var statsScopeRawValue: String = "denmark"
     @AppStorage("stats.accountPromptDismissed") private var accountPromptDismissed: Bool = false
 
     enum AchievementTrack {
@@ -259,8 +260,14 @@ struct StatsView: View {
 
     private func refreshSnapshot() {
         let visitedIds = Set(visitedStore.records.lazy.filter(\.value.visited).map(\.key))
-        let progressionClubs = accessibleClubs.filter(\.countsTowardTopSystemProgression)
-        let nonProgressionVisibleClubs = accessibleClubs.filter(\.shouldRemainVisibleOutsideTopSystem)
+        let allProgressionClubs = accessibleClubs.filter(\.countsTowardTopSystemProgression)
+        let activeHomeCountryCode = allProgressionClubs.contains(where: { $0.countryCode == "dk" }) ? "dk" : LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(allProgressionClubs.map(\.countryCode)))
+        let showingInternationalScope = statsScopeRawValue == "international"
+        let progressionClubs = allProgressionClubs.filter { showingInternationalScope ? $0.countryCode != activeHomeCountryCode : $0.countryCode == activeHomeCountryCode }
+        let nonProgressionVisibleClubs = accessibleClubs.filter { club in
+            guard club.shouldRemainVisibleOutsideTopSystem else { return false }
+            return showingInternationalScope ? club.countryCode != activeHomeCountryCode : club.countryCode == activeHomeCountryCode
+        }
         let visitedClubs = progressionClubs.filter { visitedIds.contains($0.id) }
         let unvisitedClubs = progressionClubs.filter { !visitedIds.contains($0.id) }
         let visitedCount = visitedClubs.count
@@ -268,37 +275,37 @@ struct StatsView: View {
         let unvisitedCount = unvisitedClubs.count
         let progress = totalCount > 0 ? Double(visitedCount) / Double(totalCount) : 0
         let progressPercentText = "\(Int((progress * 100.0).rounded()))%"
-        let sourceClubs = progressionClubs.isEmpty ? accessibleClubs : progressionClubs
+        let sourceClubs = allProgressionClubs.isEmpty ? accessibleClubs : allProgressionClubs
         let countryOptions = Array(Set(sourceClubs.map(\.countryCode))).sorted { left, right in
             if LeaguePresentation.countryRank(left) != LeaguePresentation.countryRank(right) {
                 return LeaguePresentation.countryRank(left) < LeaguePresentation.countryRank(right)
             }
             return LeaguePresentation.countryLabel(left).localizedCaseInsensitiveCompare(LeaguePresentation.countryLabel(right)) == .orderedAscending
         }
-        let activeHomeCountryCode = LeaguePresentation.resolvedHomeCountryCode(availableCountryCodes: Set(sourceClubs.map(\.countryCode)))
-        let currentScopeLabel = countryFilterRawValue == "all" ? "Alle aktive lande" : LeaguePresentation.countryLabel(countryFilterRawValue)
-        let homeCountryClubs = progressionClubs.filter { $0.countryCode == activeHomeCountryCode }
-        let internationalClubs = progressionClubs.filter { $0.countryCode != activeHomeCountryCode }
+        let currentScopeLabel = showingInternationalScope ? "Internationalt" : LeaguePresentation.countryLabel(activeHomeCountryCode)
+        let homeCountryClubs = allProgressionClubs.filter { $0.countryCode == activeHomeCountryCode }
+        let internationalClubs = allProgressionClubs.filter { $0.countryCode != activeHomeCountryCode }
         let homeCountryVisitedCount = homeCountryClubs.filter { visitedIds.contains($0.id) }.count
         let homeCountryTotalCount = homeCountryClubs.count
         let internationalVisitedCount = internationalClubs.filter { visitedIds.contains($0.id) }.count
         let hasInternationalCountries = !internationalClubs.isEmpty
-        let notesCount = visitedStore.records.values.reduce(0) { acc, r in
+        let scopedClubIds = Set(progressionClubs.map(\.id))
+        let notesCount = visitedStore.records.filter { scopedClubIds.contains($0.key) }.values.reduce(0) { acc, r in
             let trimmed = r.notes.trimmingCharacters(in: .whitespacesAndNewlines)
             return acc + (trimmed.isEmpty ? 0 : 1)
         }
-        let reviewedCount = reviewsStore.reviewsByClubId.count
+        let reviewedCount = reviewsStore.reviewsByClubId.filter { scopedClubIds.contains($0.key) }.count
         let averageReviewScoreText: String? = {
-            let averages = reviewsStore.reviewsByClubId.values.compactMap { $0.averageScore }
+            let averages = reviewsStore.reviewsByClubId.filter { scopedClubIds.contains($0.key) }.values.compactMap { $0.averageScore }
             guard !averages.isEmpty else { return nil }
             let total = averages.reduce(0, +)
             let overall = total / Double(averages.count)
             return String(format: "%.1f", overall)
         }()
-        let totalPhotoCount = visitedStore.records.values.reduce(0) { acc, record in
+        let totalPhotoCount = visitedStore.records.filter { scopedClubIds.contains($0.key) }.values.reduce(0) { acc, record in
             acc + record.photoFileNames.count
         }
-        let stadiumsWithPhotosCount = visitedStore.records.values.reduce(0) { acc, record in
+        let stadiumsWithPhotosCount = visitedStore.records.filter { scopedClubIds.contains($0.key) }.values.reduce(0) { acc, record in
             acc + (record.photoFileNames.isEmpty ? 0 : 1)
         }
         let visitedCitiesCount = Set(visitedClubs.map { $0.stadium.city.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }).count
@@ -377,6 +384,7 @@ struct StatsView: View {
         }
 
         let countryAchievements: [Achievement] = {
+            guard showingInternationalScope else { return [] }
             let extraCountryCodes = countryOptions.filter { $0 != activeHomeCountryCode }
 
             let achievements = extraCountryCodes.compactMap { countryCode -> Achievement? in
@@ -451,7 +459,7 @@ struct StatsView: View {
         }()
 
         let internationalAchievements: [Achievement] = {
-            guard hasInternationalCountries else { return [] }
+            guard showingInternationalScope, hasInternationalCountries else { return [] }
             let internationalVisitedByDivision = buildDivisionRows(from: internationalClubs, visitedIds: visitedIds)
             let completedInternationalDivisions = internationalVisitedByDivision.filter { $0.total > 0 && $0.visited == $0.total }.count
             let activeCountryCount = Set(progressionClubs.map(\.countryCode)).count
@@ -474,6 +482,10 @@ struct StatsView: View {
             let lockedCountries = countryAchievements.filter { !$0.isUnlocked }
             let lockedInternational = internationalAchievements.filter { !$0.isUnlocked }
 
+            if showingInternationalScope {
+                return lockedInternational.first ?? lockedCountries.first ?? lockedJourney.first
+            }
+
             if visitedCount == 0 {
                 return lockedJourney.first ?? lockedHome.first ?? lockedCountries.first ?? lockedInternational.first
             }
@@ -489,7 +501,9 @@ struct StatsView: View {
             return lockedJourney.first ?? lockedHome.first
         }()
 
-        let achievements = journeyAchievements + homeCountryAchievements + countryAchievements + internationalAchievements
+        let achievements = showingInternationalScope
+            ? journeyAchievements + countryAchievements + internationalAchievements
+            : journeyAchievements + homeCountryAchievements
         let unlockedAchievementIds = Set(achievements.filter(\.isUnlocked).map(\.id))
         let prioritizedMilestoneRows = (homeCountryVisitedByDivision.isEmpty ? visitedByDivision : homeCountryVisitedByDivision)
         let nextLeagueMilestone = prioritizedMilestoneRows
@@ -1355,23 +1369,21 @@ struct StatsView: View {
                     }
                 }
 
-                Section("Hjemland og scope") {
-                    Picker("Hjemland", selection: $preferredHomeCountryCode) {
-                        ForEach(snapshot.countryOptions, id: \.self) { countryCode in
-                            Text(LeaguePresentation.countryLabel(countryCode)).tag(countryCode)
-                        }
+                Section("Statistikscope") {
+                    Picker("Statistikscope", selection: $statsScopeRawValue) {
+                        Text("Danmark").tag("denmark")
+                        Text("Internationalt").tag("international")
                     }
+                    .pickerStyle(.segmented)
+                    .accessibilityIdentifier("stats-scope-picker")
 
-                    HStack {
-                        Text("Aktivt scope")
-                        Spacer()
-                        Text(snapshot.currentScopeLabel)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    Text("Dit hjemland er dit faste udgangspunkt her.")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+                    Text(
+                        statsScopeRawValue == "international"
+                            ? "Viser dine internationale stadions og mål. Danmark påvirkes ikke af disse tal."
+                            : "Danmark er dit hovedscope. Internationale stadions og mål ligger som et separat tilvalg."
+                    )
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 }
 
                 Section("Din rejse") {
@@ -1387,7 +1399,8 @@ struct StatsView: View {
                     }
                 }
 
-                Section("I \(LeaguePresentation.countryLabel(snapshot.activeHomeCountryCode))") {
+                if statsScopeRawValue != "international" {
+                    Section("I \(LeaguePresentation.countryLabel(snapshot.activeHomeCountryCode))") {
                     HStack {
                         Text("Låst op")
                         Spacer()
@@ -1397,6 +1410,7 @@ struct StatsView: View {
 
                     ForEach(snapshot.homeCountryAchievements) { achievement in
                         AchievementRow(achievement: achievement)
+                    }
                     }
                 }
 
@@ -1733,6 +1747,10 @@ struct StatsView: View {
             }
             .onChange(of: countryFilterRawValue) { _, _ in
                 refreshSnapshot()
+            }
+            .onChange(of: statsScopeRawValue) { _, _ in
+                refreshSnapshot()
+                syncSeenUnlockedIds()
             }
         }
     }
