@@ -70,7 +70,7 @@ Låste beslutninger:
   - Accept: ingen app-, sync- eller fixturefunktion afhænger af webproduktet.
 
 - **Fase 6: API-baseret dansk kampprogram**
-  - [ ] Opret en isoleret API-Football prøve med server-side API-nøgle.
+  - [x] Opret en isoleret API-Football prøve med server-side API-nøgle; read-only GitHub Actions-probe er pushed 2026-09-02.
   - [ ] Verificer dækning for de danske rækker, vi faktisk viser, inklusive 2026/27-sæsonen.
   - [ ] Sammenlign hold-id'er, kamp-id'er, kickoff, flytninger, aflysninger og manglende kampe med det nuværende feed.
   - [ ] Afklar brugs- og publiceringsrettigheder for appens visning af data.
@@ -79,7 +79,7 @@ Låste beslutninger:
   - [ ] Kør API-feed og nuværende feed parallelt i en observationsperiode.
   - [ ] Udfas dagligt fixture-check og fuld fixture-audit først efter stabil observationsperiode; behold alarmer ved fetch-fejl og schemaændringer.
   - Accept: dansk kampprogram opdateres automatisk, kan falde tilbage til seneste valide version, og kilden kan udskiftes uden appændring.
-  - Status: Danmark-only scope er implementeret i daily check og fuld audit 2026-09-02. De kører nu kun de 4 danske audits; internationale fejl påvirker ikke længere den danske fixture-drift. API-Football er kandidat, men den tekniske, juridiske og sæsonmæssige validering mangler.
+  - Status: Danmark-only scope er implementeret i daily check og fuld audit 2026-09-02. De kører nu kun de 4 danske audits; internationale fejl påvirker ikke længere den danske fixture-drift. En read-only API-Football-probe er pushed 2026-09-02 og afventer manuel workflow-kørsel med secret samt teknisk, juridisk og sæsonmæssig validering.
 ## P0 – Drift og arkitektur
 
 - **Systemoverblik og source of truth**
