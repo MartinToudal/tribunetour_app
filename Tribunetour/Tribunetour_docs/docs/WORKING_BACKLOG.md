@@ -79,7 +79,7 @@ Låste beslutninger:
   - [ ] Kør API-feed og nuværende feed parallelt i en observationsperiode.
   - [ ] Udfas dagligt fixture-check og fuld fixture-audit først efter stabil observationsperiode; behold alarmer ved fetch-fejl og schemaændringer.
   - Accept: dansk kampprogram opdateres automatisk, kan falde tilbage til seneste valide version, og kilden kan udskiftes uden appændring.
-  - Status: ny kandidat identificeret 2026-09-02. API-Football angiver dansk dækning og 100 gratis requests pr. dag, men den tekniske, juridiske og sæsonmæssige validering mangler.
+  - Status: Danmark-only scope er implementeret i daily check og fuld audit 2026-09-02. De kører nu kun de 4 danske audits; internationale fejl påvirker ikke længere den danske fixture-drift. API-Football er kandidat, men den tekniske, juridiske og sæsonmæssige validering mangler.
 
 ## P0 – Drift og arkitektur
 
