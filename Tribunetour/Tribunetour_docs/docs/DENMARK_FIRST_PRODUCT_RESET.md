@@ -171,6 +171,13 @@ API-prøven 2026-08-30 gav følgende resultat:
 - `TheSportsDB` har dansk ligadata og en gratis API, men vilkårene tillader ikke brug af gratis API-data i en app udgivet gennem App Store
 - der er derfor ikke fundet en gratis, lovlig og tilstrækkeligt komplet produktions-API til dansk niveau 1-4
 
+Ny kandidat identificeret 2026-09-02:
+
+- API-Football viser dansk dækning for Superliga, 1. Division, 2. Division og 3. Division på deres coverage-side
+- gratisplanen angiver 100 requests pr. dag og adgang til fixtures-endpointet
+- kandidaten skal stadig testes mod den aktuelle danske 2026/27-sæson, kampflytninger, aflysninger, id-stabilitet og vilkår for publicering i appen
+- API-nøglen skal holdes server-side; appen skal fortsat hente et valideret dansk feed fra vores eget cachelag
+
 Kilder til beslutningen:
 
 - https://www.football-data.org/coverage
@@ -185,6 +192,7 @@ Den nuværende produktionsbeslutning er derfor:
 - lad appen validere dansk scope og kamp-id'er før brug
 - gem seneste valide danske feed lokalt og brug en dansk bundle som sidste fallback
 - behold kildeadapteren, så en senere betalt eller bedre licenseret API kan indføres uden at ændre produktfladen
+- udfas ikke fixture-checks, før en ny kilde har kørt parallelt og stabilt i en dokumenteret observationsperiode
 
 Hvis ingen gratis API dækker hele det danske scope, skal vi vælge mellem:
 

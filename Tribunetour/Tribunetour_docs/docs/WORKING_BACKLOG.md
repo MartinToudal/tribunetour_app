@@ -1,6 +1,6 @@
 # Working Backlog
 
-Senest opdateret: 2026-09-01
+Senest opdateret: 2026-09-02
 
 Dette dokument er den operative backlog.
 
@@ -69,6 +69,18 @@ Låste beslutninger:
   - Bevar login/sync i Supabase.
   - Accept: ingen app-, sync- eller fixturefunktion afhænger af webproduktet.
 
+- **Fase 6: API-baseret dansk kampprogram**
+  - [ ] Opret en isoleret API-Football prøve med server-side API-nøgle.
+  - [ ] Verificer dækning for de danske rækker, vi faktisk viser, inklusive 2026/27-sæsonen.
+  - [ ] Sammenlign hold-id'er, kamp-id'er, kickoff, flytninger, aflysninger og manglende kampe med det nuværende feed.
+  - [ ] Afklar brugs- og publiceringsrettigheder for appens visning af data.
+  - [ ] Mål request-forbruget mod gratisplanens 100 requests pr. dag og dokumenter om en central backend-sync er tilstrækkelig.
+  - [ ] Indfør API-Football som udskiftelig backend-kilde bag det eksisterende danske feed-/cachelag, ikke som direkte appkald.
+  - [ ] Kør API-feed og nuværende feed parallelt i en observationsperiode.
+  - [ ] Udfas dagligt fixture-check og fuld fixture-audit først efter stabil observationsperiode; behold alarmer ved fetch-fejl og schemaændringer.
+  - Accept: dansk kampprogram opdateres automatisk, kan falde tilbage til seneste valide version, og kilden kan udskiftes uden appændring.
+  - Status: ny kandidat identificeret 2026-09-02. API-Football angiver dansk dækning og 100 gratis requests pr. dag, men den tekniske, juridiske og sæsonmæssige validering mangler.
+
 ## P0 – Drift og arkitektur
 
 - **Systemoverblik og source of truth**
@@ -87,6 +99,7 @@ Låste beslutninger:
 - **Driftssikker fixture-pipeline**
   - Daily check og audits skal være stabile, forklarlige og lette at fejlfinde.
   - Fejl skal forstås som driftssignaler, ikke bare dataafvigelser.
+  - Fremtidig retning: erstattes af API-feedets validering og alarmer, men først efter parallel drift og dokumenteret stabilitet.
 
 ## P0 – Kendte aktive driftsproblemer
 
@@ -111,6 +124,12 @@ Låste beslutninger:
   - Åben beslutning: internt iOS-område eller separat driftsværktøj.
 
 ## P1 – Data og sæsonskifte
+
+- **API-Football kandidat skal valideres før kildevalg**
+  - Coverage viser danske Superliga, 1. Division, 2. Division og 3. Division.
+  - Gratisplanen angiver 100 requests pr. dag og fixtures-endpoint.
+  - API'et må ikke kaldes direkte fra appen; API-nøglen skal blive på backend.
+  - Kilde og rettigheder er ikke godkendt til produktion endnu.
 
 - **Serie C og Portugal niveau 3 skal holdes ajour**
   - Endelige gruppestrukturer og sæsonskifter skal løbende opdateres.
