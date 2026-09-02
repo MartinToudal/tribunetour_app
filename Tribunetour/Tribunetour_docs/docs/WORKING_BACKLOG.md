@@ -80,7 +80,6 @@ Låste beslutninger:
   - [ ] Udfas dagligt fixture-check og fuld fixture-audit først efter stabil observationsperiode; behold alarmer ved fetch-fejl og schemaændringer.
   - Accept: dansk kampprogram opdateres automatisk, kan falde tilbage til seneste valide version, og kilden kan udskiftes uden appændring.
   - Status: Danmark-only scope er implementeret i daily check og fuld audit 2026-09-02. De kører nu kun de 4 danske audits; internationale fejl påvirker ikke længere den danske fixture-drift. API-Football er kandidat, men den tekniske, juridiske og sæsonmæssige validering mangler.
-
 ## P0 – Drift og arkitektur
 
 - **Systemoverblik og source of truth**
