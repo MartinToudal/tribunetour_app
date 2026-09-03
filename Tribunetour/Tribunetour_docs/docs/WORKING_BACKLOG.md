@@ -68,6 +68,7 @@ Låste beslutninger:
   - Kortlæg og flyt nødvendige jobs før offentlig webfunktionalitet fjernes.
   - Bevar login/sync i Supabase.
   - Accept: ingen app-, sync- eller fixturefunktion afhænger af webproduktet.
+  - Status: bevidst udskudt. Web-repositoriet fungerer fortsat som driftslag for fixture-jobs, feeds, audits og deploy. Fase 6 prioriteres først; fase 5 genoptages, når disse backend-funktioner er flyttet eller der er truffet en dokumenteret beslutning om deres fremtid.
 
 - **Fase 6: Ugentlig dansk fixture-kilde**
   - [x] Afprøv API-Football som kandidat; gratisplanen afviser 2026-sæsonen, så kilden er fravalgt uden produktionskobling.
