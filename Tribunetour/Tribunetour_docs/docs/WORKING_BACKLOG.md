@@ -69,17 +69,18 @@ Låste beslutninger:
   - Bevar login/sync i Supabase.
   - Accept: ingen app-, sync- eller fixturefunktion afhænger af webproduktet.
 
-- **Fase 6: API-baseret dansk kampprogram**
-  - [x] Opret en isoleret API-Football prøve med server-side API-nøgle; read-only GitHub Actions-probe er pushed 2026-09-02.
-  - [ ] Verificer dækning for de danske rækker, vi faktisk viser, inklusive 2026/27-sæsonen.
-  - [ ] Sammenlign hold-id'er, kamp-id'er, kickoff, flytninger, aflysninger og manglende kampe med det nuværende feed.
-  - [ ] Afklar brugs- og publiceringsrettigheder for appens visning af data.
-  - [ ] Mål request-forbruget mod gratisplanens 100 requests pr. dag og dokumenter om en central backend-sync er tilstrækkelig.
-  - [ ] Indfør API-Football som udskiftelig backend-kilde bag det eksisterende danske feed-/cachelag, ikke som direkte appkald.
-  - [ ] Kør API-feed og nuværende feed parallelt i en observationsperiode.
-  - [ ] Udfas dagligt fixture-check og fuld fixture-audit først efter stabil observationsperiode; behold alarmer ved fetch-fejl og schemaændringer.
-  - Accept: dansk kampprogram opdateres automatisk, kan falde tilbage til seneste valide version, og kilden kan udskiftes uden appændring.
-  - Status: Danmark-only scope er implementeret i daily check og fuld audit 2026-09-02. De kører nu kun de 4 danske audits; internationale fejl påvirker ikke længere den danske fixture-drift. En read-only API-Football-probe er pushed 2026-09-02 og afventer manuel workflow-kørsel med secret samt teknisk, juridisk og sæsonmæssig validering.
+- **Fase 6: Ugentlig dansk fixture-kilde**
+  - [x] Afprøv API-Football som kandidat; gratisplanen afviser 2026-sæsonen, så kilden er fravalgt uden produktionskobling.
+  - [ ] Byg en isoleret read-only adapter til de officielle sider for Superliga, 1. division, 2. division og 3. division.
+  - [ ] Verificer at adapteren henter hele sæsonen, ikke kun synlige eller paginerede kampe.
+  - [ ] Indfør eksplicit sæsonår, datofilter, deduplikering og stop ved ufuldstændigt kildesvar.
+  - [ ] Sammenlign hold, kamp-ID'er, kickoff, flytninger, aflysninger og manglende kampe med det nuværende danske feed.
+  - [ ] Afklar brugs- og publiceringsrettigheder samt rimelig belastning af de officielle sider.
+  - [ ] Kør ny kilde og nuværende feed parallelt i en observationsperiode.
+  - [ ] Behold senest-kendt-god feed som fallback og alarmer ved fetch-, schema- eller komplethedsfejl.
+  - [ ] Udfas først de nuværende Flashscore-baserede danske checks efter stabil observationsperiode.
+  - Accept: dansk kampprogram opdateres ugentligt fra en gratis, dokumenteret kilde uden direkte appkald.
+  - Status: officielle danske sider er undersøgt 2026-09-03. De viser hver 132 kamp-links for den aktuelle sæson og er kandidat til ny kilde. Implementering af adapter og komplethedsvalidering mangler.
 ## P0 – Drift og arkitektur
 
 - **Systemoverblik og source of truth**
@@ -124,11 +125,10 @@ Låste beslutninger:
 
 ## P1 – Data og sæsonskifte
 
-- **API-Football kandidat skal valideres før kildevalg**
-  - Coverage viser danske Superliga, 1. Division, 2. Division og 3. Division.
-  - Gratisplanen angiver 100 requests pr. dag og fixtures-endpoint.
-  - API'et må ikke kaldes direkte fra appen; API-nøglen skal blive på backend.
-  - Kilde og rettigheder er ikke godkendt til produktion endnu.
+- **Officielle danske fixture-sider skal valideres før kildevalg**
+  - De fire sider viser aktuelt 132 kamp-links hver.
+  - Det skal dokumenteres, hvordan kampdata leveres, og om en ugentlig automatiseret hentning er tilladt.
+  - Kilden må ikke kobles direkte til appen; den skal ligge bag eksisterende feed/cache/fallback.
 
 - **Serie C og Portugal niveau 3 skal holdes ajour**
   - Endelige gruppestrukturer og sæsonskifter skal løbende opdateres.
