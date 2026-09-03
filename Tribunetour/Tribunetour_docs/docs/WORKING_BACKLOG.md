@@ -72,7 +72,7 @@ Låste beslutninger:
 
 - **Fase 6: Ugentlig dansk fixture-kilde**
   - [x] Afprøv API-Football som kandidat; gratisplanen afviser 2026-sæsonen, så kilden er fravalgt uden produktionskobling.
-  - [x] Byg en isoleret read-only adapter til de officielle sider for Superliga, 1. division, 2. division og 3. division; probe-workflow er pushed 2026-09-03.
+  - [ ] Byg en isoleret read-only adapter til de officielle sider for Superliga, 1. division, 2. division og 3. division.
   - [ ] Verificer at adapteren henter hele sæsonen, ikke kun synlige eller paginerede kampe.
   - [ ] Indfør eksplicit sæsonår, datofilter, deduplikering og stop ved ufuldstændigt kildesvar.
   - [ ] Sammenlign hold, kamp-ID'er, kickoff, flytninger, aflysninger og manglende kampe med det nuværende danske feed.
@@ -81,7 +81,7 @@ Låste beslutninger:
   - [ ] Behold senest-kendt-god feed som fallback og alarmer ved fetch-, schema- eller komplethedsfejl.
   - [ ] Udfas først de nuværende Flashscore-baserede danske checks efter stabil observationsperiode.
   - Accept: dansk kampprogram opdateres ugentligt fra en gratis, dokumenteret kilde uden direkte appkald.
-  - Status: officielle danske sider er undersøgt 2026-09-03. De viser hver 132 kamp-links for den aktuelle sæson. En read-only adapter og manuel GitHub Actions-probe er pushed 2026-09-03; produktionskobling afventer kompletheds-, årstals- og parserverifikation.
+  - Status: officielle danske sider er undersøgt 2026-09-03. De viser hver 132 kamp-links i browseren, men en almindelig serverhentning får en JavaScript-skal og 0 kamp-links. Den første parserprototype er fjernet igen 2026-09-03; næste trin er at identificere Sports Innovation-widgetets offentlige dataendpoint eller eksportformat, før en ny probe bygges.
 ## P0 – Drift og arkitektur
 
 - **Systemoverblik og source of truth**
