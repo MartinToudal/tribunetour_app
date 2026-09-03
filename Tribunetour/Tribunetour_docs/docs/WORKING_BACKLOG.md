@@ -72,16 +72,16 @@ Låste beslutninger:
 
 - **Fase 6: Ugentlig dansk fixture-kilde**
   - [x] Afprøv API-Football som kandidat; gratisplanen afviser 2026-sæsonen, så kilden er fravalgt uden produktionskobling.
-  - [ ] Byg en isoleret read-only adapter til de officielle sider for Superliga, 1. division, 2. division og 3. division.
-  - [ ] Verificer at adapteren henter hele sæsonen, ikke kun synlige eller paginerede kampe.
-  - [ ] Indfør eksplicit sæsonår, datofilter, deduplikering og stop ved ufuldstændigt kildesvar.
+  - [x] Byg en isoleret read-only adapter til den offentlige Sports Innovation-kilde bag de officielle sider for Superliga, 1. division, 2. division og 3. division.
+  - [x] Verificer at adapteren henter hele sæsonen, ikke kun synlige eller paginerede kampe.
+  - [x] Indfør eksplicit sæsonår, datofilter, deduplikering og stop ved ufuldstændigt kildesvar.
   - [ ] Sammenlign hold, kamp-ID'er, kickoff, flytninger, aflysninger og manglende kampe med det nuværende danske feed.
   - [ ] Afklar brugs- og publiceringsrettigheder samt rimelig belastning af de officielle sider.
   - [ ] Kør ny kilde og nuværende feed parallelt i en observationsperiode.
   - [ ] Behold senest-kendt-god feed som fallback og alarmer ved fetch-, schema- eller komplethedsfejl.
   - [ ] Udfas først de nuværende Flashscore-baserede danske checks efter stabil observationsperiode.
   - Accept: dansk kampprogram opdateres ugentligt fra en gratis, dokumenteret kilde uden direkte appkald.
-  - Status: officielle danske sider er undersøgt 2026-09-03. De viser hver 132 kamp-links i browseren, men en almindelig serverhentning får en JavaScript-skal og 0 kamp-links. Den første parserprototype er fjernet igen 2026-09-03; næste trin er at identificere Sports Innovation-widgetets offentlige dataendpoint eller eksportformat, før en ny probe bygges.
+  - Status: 2026-09-03 er den offentlige Sports Innovation-widget-kilde identificeret. Sæsonmetadata returnerer 2026/2027 og et konkret sæson-id for alle fire turneringer; fixture-endpointet returnerer 132 kampe pr. række. Adapteren er valideret read-only mod alle 528 kampe, inklusive lokale tidszoner og eksisterende klub-id/aliaslag. Fire generiske officielle navne er tilføjet som aliases (`AB Gladsaxe`, `Middelfart Boldklub`, `Skive IK`, `Vanløse IF`). Produktionsjobs bruger fortsat Flashscore, indtil rettigheder, parallel observationsperiode og fallback er afklaret.
 ## P0 – Drift og arkitektur
 
 - **Systemoverblik og source of truth**
