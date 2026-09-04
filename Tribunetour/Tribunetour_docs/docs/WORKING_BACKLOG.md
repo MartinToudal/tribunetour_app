@@ -76,7 +76,7 @@ Låste beslutninger:
   - [x] Verificer at adapteren henter hele sæsonen, ikke kun synlige eller paginerede kampe.
   - [x] Indfør eksplicit sæsonår, datofilter, deduplikering og stop ved ufuldstændigt kildesvar.
   - [x] Sammenlign hold, kamp-ID'er, kickoff, flytninger, aflysninger og manglende kampe med det nuværende danske feed.
-  - [ ] Afklar brugs- og publiceringsrettigheder samt rimelig belastning af de officielle sider.
+  - [x] Beslut brug af den officielle kilde som ikke-kommerciel, lavfrekvent serverhentning; stop og revurder hvis adgangen begrænses.
   - [ ] Kør ny kilde og nuværende feed parallelt i en observationsperiode.
   - [x] Behold Flashscore-feedet som midlertidig fallback og log fejl ved fetch-, schema- eller komplethedsfejl.
   - [ ] Udfas først de nuværende Flashscore-baserede danske checks efter stabil observationsperiode.
@@ -116,13 +116,22 @@ Låste beslutninger:
 
 ## P1 – Datakvalitet og kontrol
 
-- **Dedikeret side til manuel klubkontrol**
-  - Brug for en intern flade med:
-    - klub korrekt
-    - kampprogram korrekt
-    - lokation korrekt
-    - historik for seneste kontrol
-  - Åben beslutning: internt iOS-område eller separat driftsværktøj.
+- **Dedikeret værktøj til manuel klubkontrol**
+  - Prioritet: høj.
+  - Første version må være et lokalt værktøj eller en lokal filbaseret UI; det behøver ikke være en del af appen.
+  - Værktøjet skal generere en daglig liste med 3 tilfældige klubber fra hele databasen og tydeligt vise, hvilke data der skal kontrolleres.
+  - Hver klub skal have tre uafhængige kontrolpunkter:
+    - kampprogram for de fire danske øverste rækker
+    - stadionplacering og koordinater
+    - rækketilhør og sæson
+  - Hvert kontrolpunkt skal kunne markeres som korrekt eller afvist.
+  - Afviste koordinater skal kunne rettes direkte.
+  - Afvist rækketilhør skal kunne rettes ved valg af korrekt land, række og sæson.
+  - Kontrollen skal gemme bruger, tidspunkt, resultat, gammel værdi og ny værdi ved ændringer.
+  - Historikken skal kunne vises pr. stadion og pr. kontroltype, inklusive dato for seneste kontrol.
+  - Kontrolværktøjet skal skelne mellem danske fixture-kontroller og stadion-/rækkekontroller for alle lande.
+  - Accept: en daglig kørsel kan gennemføres uden manuel klargøring, og ingen klubdataændring sker uden en eksplicit bekræftelse.
+  - Næste designbeslutning: lokal web-UI som driftsværktøj versus en intern iOS-flade; første version bør vælge den hurtigste testbare løsning.
 
 ## P1 – Data og sæsonskifte
 
