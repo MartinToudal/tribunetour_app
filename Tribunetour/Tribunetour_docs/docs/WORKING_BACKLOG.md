@@ -75,13 +75,13 @@ Låste beslutninger:
   - [x] Byg en isoleret read-only adapter til den offentlige Sports Innovation-kilde bag de officielle sider for Superliga, 1. division, 2. division og 3. division.
   - [x] Verificer at adapteren henter hele sæsonen, ikke kun synlige eller paginerede kampe.
   - [x] Indfør eksplicit sæsonår, datofilter, deduplikering og stop ved ufuldstændigt kildesvar.
-  - [ ] Sammenlign hold, kamp-ID'er, kickoff, flytninger, aflysninger og manglende kampe med det nuværende danske feed.
+  - [x] Sammenlign hold, kamp-ID'er, kickoff, flytninger, aflysninger og manglende kampe med det nuværende danske feed.
   - [ ] Afklar brugs- og publiceringsrettigheder samt rimelig belastning af de officielle sider.
   - [ ] Kør ny kilde og nuværende feed parallelt i en observationsperiode.
-  - [ ] Behold senest-kendt-god feed som fallback og alarmer ved fetch-, schema- eller komplethedsfejl.
+  - [x] Behold Flashscore-feedet som midlertidig fallback og log fejl ved fetch-, schema- eller komplethedsfejl.
   - [ ] Udfas først de nuværende Flashscore-baserede danske checks efter stabil observationsperiode.
   - Accept: dansk kampprogram opdateres ugentligt fra en gratis, dokumenteret kilde uden direkte appkald.
-  - Status: 2026-09-03 er den offentlige Sports Innovation-widget-kilde identificeret. Sæsonmetadata returnerer 2026/2027 og et konkret sæson-id for alle fire turneringer; fixture-endpointet returnerer 132 kampe pr. række. Adapteren er valideret read-only mod alle 528 kampe, inklusive lokale tidszoner og eksisterende klub-id/aliaslag. Fire generiske officielle navne er tilføjet som aliases (`AB Gladsaxe`, `Middelfart Boldklub`, `Skive IK`, `Vanløse IF`). Produktionsjobs bruger fortsat Flashscore, indtil rettigheder, parallel observationsperiode og fallback er afklaret.
+  - Status: 2026-09-04 er kildeovergangen gennemført. Den automatiske sammenligning matcher alle 528 kampe på holdpar og dato; kickoff-forskelle logges som officielle opdateringer. Den ugentlige sammenligningsworkflow er aktiv, og de danske audits bruger nu den officielle kilde med Flashscore som midlertidig fallback. Rettighedsafklaring og oprydning af fallbacken efter to uger står fortsat åbent.
 ## P0 – Drift og arkitektur
 
 - **Systemoverblik og source of truth**
