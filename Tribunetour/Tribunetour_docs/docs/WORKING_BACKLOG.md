@@ -1,174 +1,243 @@
-# Working Backlog
+# Tribunetour Backlog
 
-Senest opdateret: 2026-09-02
+Senest opdateret: 2026-09-05
 
-Dette dokument er den operative backlog.
+Dette er den operative backlog og den fælles arbejdssandhed for projektet. Arbejdet registreres som:
 
-Det er her vi samler:
-- det der aktivt blokerer drift
-- det der aktivt skaber forskel mellem app og web
-- det der aktivt truer arkitektur eller produktkvalitet
+- **Epic**: et større produkt- eller arkitekturområde.
+- **Story**: en konkret leverance, der kan planlægges og afsluttes.
+- **Subtask**: en afgrænset opgave, der kan markeres med flueben.
 
-Hvis et punkt er vigtigt i daglig drift, skal det stå her før det står andre steder.
+Status bruges konsekvent:
 
-## Aktiv produktretning
+- `Åben`: ikke startet.
+- `I gang`: aktivt arbejde.
+- `Afventer`: kræver en ekstern beslutning eller datakilde.
+- `Færdig`: implementeret, testet og dokumenteret.
+- `Udskudt`: bevidst parkeret.
 
-Styrende dokument:
-- `[DENMARK_FIRST_PRODUCT_RESET.md](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Tribunetour/Tribunetour_docs/docs/DENMARK_FIRST_PRODUCT_RESET.md)`
+## Produktbeslutninger
 
-Låste beslutninger:
-- iOS er den fremtidige produktflade
-- Danmark er kerneproduktet
-- login/sync bevares
-- premium udfases
-- alle lande bliver gratis
-- kun Danmark har kampprogram
-- internationale lande indlæses efter valg og indeholder kun stadions
-- `Plan` fjernes
+Disse beslutninger er gældende, indtil de ændres eksplicit:
 
-## P0 – Danmark-først migration
+- iOS er den primære produktflade.
+- Danmark er kerneproduktet.
+- Login og sync bevares.
+- Premium udfases, og funktioner er gratis.
+- Kampprogrammet omfatter kun danske kampe.
+- Internationale lande omfatter primært stadions og indlæses efter valg.
+- `Plan` er fjernet fra produktet.
+- Web beholdes midlertidigt som drifts- og administrationslag, men er ikke den offentlige produktflade.
 
-- **Fase 1: Enkel navigation**
-  - [x] Fjern `Plan` fra fanebaren.
-  - [x] Behold plandata og synckode midlertidigt for sikker rollback.
-  - [x] Gør fixture-indlæsningen robust over for dublerede kamp-ID'er.
-  - [x] Accept: tre hovedfaner og grønt iOS-build.
-  - Status: gennemført lokalt. Crash-sikring og regressionstest verificeret 2026-08-28.
+## EPIC 1 – Danmark-først produkt
 
-- **Fase 2: Gratis adgang og land-on-demand**
-  - [x] Fjern premium-copy, gates og anmodningsflow fra brugerfladen.
-  - [x] Gør alle stadionlande tilgængelige uden login.
-  - [x] Indlæs kun Danmark ved opstart.
-  - [x] Indlæs valgt internationalt land efter brugerhandling og behold det i sessionscache.
-  - [x] Accept: gæst og logget ind har samme landescope, uden at opstarten indlæser Europa.
-  - Status: gennemført lokalt og regressionssikret 2026-08-29. Landvælgeren bruger en dedikeret navigationsskærm, kort og kontroller måles som separate responsive rækker, og et tidligt landeskift kan ikke længere overskrives af den indledende Danmark-load. Build og funktionstest er grønne. Portrait-geometrien er automatisk verificeret ved 390, 402 og 440 punkters bredde.
-  - Release-checkpoint: TestFlight-kandidat `1.0.3 (23)` er klargjort. Fase 3 starter først, når buildet er uploadet og accepteret som fase 2-baseline.
+### Story 1.1 – Enkel navigation
 
-- **Fase 3: Kun danske kampe**
-  - [x] Fjern internationale fixtures fra produktet og fra den lokale fallback.
-  - [x] Fjern landevalg fra `Kampe` og gør dansk scope synligt.
-  - [x] Gennemfør API-prøve for danske rækker.
-  - [x] Indfør validering, deduplikering, senest-kendt-god cache og dansk bundle-fallback i appen.
-  - [x] Publicer et separat, versionsstyret dansk remote-feed.
-  - [x] Fjern dublerede kamp-ID'er i feedets produktionsled; de 17 identiske dubletter er håndteret strukturelt.
-  - [x] Accept, app: `Kampe` viser kun Danmark og overlever fejl hos datakilden.
-  - [x] Accept, drift: appen modtager et rent dansk feed uden afhængighed af det europæiske feed.
-  - Status: fase 3 er afsluttet 2026-08-30. API-prøven fandt ingen gratis, lovlig og komplet kilde til dansk niveau 1-4, så den eksisterende generator-kæde er bevaret som overgang. Det nye danske feed er live, appkoblingen er testet, og en ny TestFlight-build er næste leverancetrin.
+**Status: Færdig**
 
-- **Fase 4: Danmark-først Min tur og achievements**
-  - [x] Dansk statistik, progression og anbefalinger er standard i `Min tur`.
-  - [x] International statistik er flyttet til et eksplicit scopevalg.
-  - [x] Noter, anmeldelser og billeder følger det valgte scope.
-  - [x] Achievements og næste mål beregnes ud fra det aktive scope, uden at internationalt scope ændrer dansk scope.
-  - [x] Accept: internationale tal blandes ikke ind i dansk hovedprogression.
-  - Status: første leverance gennemført og UI-/unit-testet 2026-09-01. Danmark er standard; internationalt indhold kan åbnes via `Danmark`/`Internationalt` i `Min tur`.
-  - [ ] Gennemgå achievement-navne, milepæle og rækkefølge med product owner før næste udbygning.
+- [x] Fjern `Plan` fra fanebaren.
+- [x] Behold plandata og sync midlertidigt af hensyn til rollback.
+- [x] Gør fixture-indlæsningen robust over for dublerede kamp-ID'er.
+- [x] Verificer tre hovedfaner og grønt iOS-build.
 
-- **Fase 5: Afvikl web som produkt**
-  - Kortlæg og flyt nødvendige jobs før offentlig webfunktionalitet fjernes.
-  - Bevar login/sync i Supabase.
-  - Accept: ingen app-, sync- eller fixturefunktion afhænger af webproduktet.
-  - Status: bevidst udskudt. Web-repositoriet fungerer fortsat som driftslag for fixture-jobs, feeds, audits og deploy. Fase 6 prioriteres først; fase 5 genoptages, når disse backend-funktioner er flyttet eller der er truffet en dokumenteret beslutning om deres fremtid.
+**Accept:** Appen har tre hovedfaner og starter uden fixture-relateret crash.
 
-- **Fase 6: Ugentlig dansk fixture-kilde**
-  - [x] Afprøv API-Football som kandidat; gratisplanen afviser 2026-sæsonen, så kilden er fravalgt uden produktionskobling.
-  - [x] Byg en isoleret read-only adapter til den offentlige Sports Innovation-kilde bag de officielle sider for Superliga, 1. division, 2. division og 3. division.
-  - [x] Verificer at adapteren henter hele sæsonen, ikke kun synlige eller paginerede kampe.
-  - [x] Indfør eksplicit sæsonår, datofilter, deduplikering og stop ved ufuldstændigt kildesvar.
-  - [x] Sammenlign hold, kamp-ID'er, kickoff, flytninger, aflysninger og manglende kampe med det nuværende danske feed.
-  - [x] Beslut brug af den officielle kilde som ikke-kommerciel, lavfrekvent serverhentning; stop og revurder hvis adgangen begrænses.
-  - [ ] Kør ny kilde og nuværende feed parallelt i en observationsperiode.
-  - [x] Behold Flashscore-feedet som midlertidig fallback og log fejl ved fetch-, schema- eller komplethedsfejl.
-  - [ ] Udfas først de nuværende Flashscore-baserede danske checks efter stabil observationsperiode.
-  - Accept: dansk kampprogram opdateres ugentligt fra en gratis, dokumenteret kilde uden direkte appkald.
-  - Status: 2026-09-04 er kildeovergangen gennemført. Den automatiske sammenligning matcher alle 528 kampe på holdpar og dato; kickoff-forskelle logges som officielle opdateringer. Den ugentlige sammenligningsworkflow er aktiv, og de danske audits bruger nu den officielle kilde med Flashscore som midlertidig fallback. Rettighedsafklaring og oprydning af fallbacken efter to uger står fortsat åbent.
-## P0 – Drift og arkitektur
+### Story 1.2 – Gratis adgang og land-on-demand
 
-- **Systemoverblik og source of truth**
-  - Vi har to produktkritiske repoer i samme arbejdsmappe: app og web.
-  - Vi mangler én fast driftsreference for ejerskab, dataflow og leveranceflow.
-  - Løst delvist via:
-    - `[SYSTEM_OWNERSHIP_AND_OPERATING_MODEL.md](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Tribunetour/Tribunetour_docs/docs/SYSTEM_OWNERSHIP_AND_OPERATING_MODEL.md)`
-  - Åbent indtil vi også har:
-    - en fast ændringsprotokol indbygget i backlog/process
-    - et mere samlet dataflow mellem app og web
+**Status: Færdig**
 
-- **Én app-sandhed for stadions og danske fixtures**
-  - Appens danske kernedata og internationale landepakker skal have tydelige, separate ejere.
-  - Web-repoets datajobs er overgangsdrift og må ikke forveksles med den fremtidige produktflade.
+- [x] Fjern premium-copy, gates og anmodningsflow fra brugerfladen.
+- [x] Gør alle stadionlande tilgængelige uden login.
+- [x] Indlæs kun Danmark ved opstart.
+- [x] Indlæs valgt internationalt land efter brugerhandling.
+- [x] Beskyt Danmark-load mod at blive overskrevet af et tidligt landeskift.
+- [x] Verificer portrait-geometri ved 390, 402 og 440 punkters bredde.
 
-- **Driftssikker fixture-pipeline**
-  - Daily check og audits skal være stabile, forklarlige og lette at fejlfinde.
-  - Fejl skal forstås som driftssignaler, ikke bare dataafvigelser.
-  - Fremtidig retning: erstattes af API-feedets validering og alarmer, men først efter parallel drift og dokumenteret stabilitet.
+**Accept:** Gæst og logget ind bruger har samme landescope, og opstarten indlæser ikke hele Europa.
 
-## P0 – Kendte aktive driftsproblemer
+### Story 1.3 – Kun danske kampe
 
-- **Litauen – II Lyga A/B**
-  - Tidligere `fetch-failed` skyldtes LFF-parseren.
-  - Parserfix findes lokalt, men er ikke sikkert integreret ovenpå den aktuelle web-hovedlinje endnu.
-  - Status:
-    - root cause er identificeret
-    - endelig ren integration på web-hovedlinjen mangler stadig
+**Status: Færdig**
 
-- **Repo-disciplin mellem app og web**
-  - Vi skal undgå igen at sige “alt lokalt er på plads”, når kun ét repo er grønt.
+- [x] Fjern internationale fixtures fra produktet og lokal fallback.
+- [x] Fjern landevalg fra `Kampe` og gør dansk scope synligt.
+- [x] Gennemfør API-prøve uden produktionskobling.
+- [x] Indfør validering, deduplikering, senest-kendt-god cache og dansk fallback.
+- [x] Publicer separat versionsstyret dansk remote-feed.
+- [x] Håndter dublerede kamp-ID'er strukturelt.
 
-## P1 – Datakvalitet og kontrol
+**Accept:** `Kampe` viser kun Danmark og overlever fejl hos datakilden.
 
-- **Dedikeret værktøj til manuel klubkontrol**
-  - Prioritet: høj.
-  - Første version må være et lokalt værktøj eller en lokal filbaseret UI; det behøver ikke være en del af appen.
-  - Værktøjet skal generere en daglig liste med 3 tilfældige klubber fra hele databasen og tydeligt vise, hvilke data der skal kontrolleres.
-  - Hver klub skal have tre uafhængige kontrolpunkter:
-    - kampprogram for de fire danske øverste rækker
-    - stadionplacering og koordinater
-    - rækketilhør og sæson
-  - Hvert kontrolpunkt skal kunne markeres som korrekt eller afvist.
-  - Afviste koordinater skal kunne rettes direkte.
-  - Afvist rækketilhør skal kunne rettes ved valg af korrekt land, række og sæson.
-  - Kontrollen skal gemme bruger, tidspunkt, resultat, gammel værdi og ny værdi ved ændringer.
-  - Historikken skal kunne vises pr. stadion og pr. kontroltype, inklusive dato for seneste kontrol.
-  - Kontrolværktøjet skal skelne mellem danske fixture-kontroller og stadion-/rækkekontroller for alle lande.
-  - Accept: en daglig kørsel kan gennemføres uden manuel klargøring, og ingen klubdataændring sker uden en eksplicit bekræftelse.
-  - Næste designbeslutning: lokal web-UI som driftsværktøj versus en intern iOS-flade; første version bør vælge den hurtigste testbare løsning.
-  - Status: første UI-version er bygget, build-verificeret og deployed 2026-09-05. `/club-check` er kontrolleret live med HTTP 200. Data gemmes foreløbig lokalt i browseren og kan eksporteres.
-  - Adgangskontrol er på plads: Klubtjek-linket vises kun for den loggede administrator, og direkte adgang afvises for andre. Den aktuelle allowlist er `martin@toudal.dk`, valideret sammen med Supabase-funktionen `is_current_user_admin`.
-  - Næste forbedring: flyt kontrolhistorik og ændringer fra browserens lokale lager til en central, auditerbar løsning, når modulet skal bruges af flere administratorer.
+### Story 1.4 – Danmark-først Min tur og achievements
 
-- **Central behandling af klubkontroller og rettelser**
-  - Prioritet: høj.
-  - Kontroller skal gemmes centralt med bruger, tidspunkt, klub, kontroltype, resultat og eventuelle noter.
-  - Ændringer af koordinater og rækketilhør skal oprettes som eksplicitte ændringsforslag med gammel værdi, ny værdi og status.
-  - Ingen rettelse må overskrive de centrale stamdata uden en tydelig godkendelse.
-  - Godkendte rettelser skal kunne publiceres til den fælles datakilde, som appen bruger.
-  - Historikken skal vise hvem der kontrollerede, hvad der blev ændret, hvornår det blev godkendt, og hvornår det slog igennem.
-  - Fejl eller afviste rettelser skal kunne sendes tilbage til opfølgning uden at miste den oprindelige kontrol.
-  - Første leverance: Supabase-tabeller og admin-API med sikker skriveadgang; derefter UI til godkendelse og publicering.
-  - Accept: en gennemført kontrol kan gemmes centralt, en koordinat- eller rækkeændring kan godkendes eksplicit, og den godkendte værdi kan verificeres i appens datakilde.
+**Status: Færdig med mindre PO-opfølgning**
 
-## P1 – Data og sæsonskifte
+- [x] Gør dansk statistik, progression og anbefalinger til standard.
+- [x] Flyt international statistik til et eksplicit scopevalg.
+- [x] Lad noter, anmeldelser og billeder følge valgt scope.
+- [x] Beregn achievements ud fra aktivt scope.
+- [ ] Gennemgå achievement-navne, milepæle og rækkefølge med product owner.
 
-- **Officielle danske fixture-sider skal valideres før kildevalg**
-  - De fire sider viser aktuelt 132 kamp-links hver.
-  - Det skal dokumenteres, hvordan kampdata leveres, og om en ugentlig automatiseret hentning er tilladt.
-  - Kilden må ikke kobles direkte til appen; den skal ligge bag eksisterende feed/cache/fallback.
+**Accept:** Internationale tal blandes ikke ind i dansk hovedprogression.
 
-- **Serie C og Portugal niveau 3 skal holdes ajour**
-  - Endelige gruppestrukturer og sæsonskifter skal løbende opdateres.
+## EPIC 2 – Fixture-drift og danske datakilder
 
-- **Ukendte holdnavne i daily checks skal reduceres systematisk**
-  - Vi skal løbende rydde alias- og turneringsstøj væk.
+### Story 2.1 – Officiel dansk fixture-kilde
 
-## P2 – Strukturelle forbedringer
+**Status: I gang**
 
-- **Systemkort**
-  - Vi mangler et simpelt diagram over:
-    - app
-    - web
-    - Supabase
-    - fixture-pipeline
-    - release/deploy-flow
+- [x] Afprøv API-Football og fravælg den gratis plan, fordi 2026-sæsonen ikke er tilgængelig.
+- [x] Byg read-only adapter til den offentlige kilde bag de officielle danske sider.
+- [x] Hent hele sæsonen, ikke kun synlige eller paginerede kampe.
+- [x] Indfør sæsonår, datofilter, deduplikering og stop ved ufuldstændigt svar.
+- [x] Sammenlign hold, kamp-ID, kickoff, flytninger, aflysninger og manglende kampe.
+- [x] Log fetch-, schema- og komplethedsfejl.
+- [x] Kør officiel kilde og nuværende feed parallelt i observationsperioden.
+- [x] Behold Flashscore som midlertidig fallback.
+- [ ] Afslut observationsperioden efter dokumenteret stabil drift.
+- [ ] Fjern Flashscore-fallback og gamle danske checks efter godkendt observationsperiode.
 
-- **Én genereringskæde for reference-data**
-  - På sigt bør app og web konsumere samme genererede sandhed.
+**Accept:** Et komplet dansk kampprogram kan opdateres ugentligt fra den officielle kilde uden direkte appkald.
+
+### Story 2.2 – Stabil fixture-monitorering
+
+**Status: I gang**
+
+- [ ] Begræns dagligt fixture-check til danske rækker.
+- [ ] Skeln tydeligt mellem `added`, `changed`, `removed` og uændret data.
+- [ ] Afvis gamle sæsoner og kampe uden for det aktuelle datovindue.
+- [ ] Håndter slutspil og sæsonskifte uden at genindføre gamle kampe.
+- [ ] Gør rapporter korte og handlingsorienterede.
+- [ ] Dokumenter root cause, når en række fejler.
+
+**Accept:** En daglig rapport viser kun relevante danske afvigelser og skaber ikke falske fejl på gamle eller foreløbige kampe.
+
+## EPIC 3 – Stadions, lande og sæsonhistorik
+
+### Story 3.1 – Korrekte stadiondata
+
+**Status: I gang**
+
+- [ ] Gennemgå land og række én ad gangen.
+- [ ] Verificer koordinater for hvert stadion.
+- [ ] Verificer klubnavn, stadionnavn og by.
+- [ ] Verificer rækketilhør pr. sæson.
+- [ ] Registrer ændringer med kilde og kontroltidspunkt.
+
+**Accept:** Hvert aktivt stadion har verificerede koordinater og dokumenteret klub-/rækketilhør.
+
+### Story 3.2 – Sæsonskifte og historik
+
+**Status: I gang**
+
+- [ ] Bevar historisk rækketilhør pr. klub og sæson.
+- [ ] Adskil aktuelle rækker fra historiske og nedlagte/udtrådte rækker.
+- [ ] Placer hold, der forlader ligasystemet, i en arkivrække.
+- [ ] Understøt mange sæsoner uden at ændre tidligere historik.
+- [ ] Verificer, at kort og aktive scopes ikke viser arkiverede hold.
+
+**Accept:** En klub kan vises med alle kendte rækker siden Tribunetour startede, mens kun aktuelle hold tæller i aktive landescope.
+
+### Story 3.3 – Landepakker og foreløbige grupper
+
+**Status: Afventer**
+
+- [ ] Afslut endelig Serie C-fordeling i Italien.
+- [ ] Afslut eller dokumenter foreløbige grupper i Portugal niveau 3.
+- [ ] Afslut eller dokumenter foreløbige grupper i Spanien Primera Federación.
+- [ ] Kvalitetstjek Frankrigs niveau 3.
+- [ ] Hold alle nye landepakker adskilt pr. land, niveau og sæson.
+
+**Accept:** Foreløbige grupper er tydeligt markeret og kan udskiftes uden at beskadige historik eller stadiondata.
+
+## EPIC 4 – Manuel klubkontrol
+
+### Story 4.1 – Daglig klubkontrol
+
+**Status: Færdig, første version**
+
+- [x] Generér tre tilfældige klubber dagligt.
+- [x] Vis kontrol af danske kampprogrammer.
+- [x] Vis kontrol af stadionplacering og koordinater for alle lande.
+- [x] Vis kontrol af rækketilhør og sæson.
+- [x] Gør koordinater og række redigerbare.
+- [x] Gem lokal historik og understøt eksport.
+- [x] Begræns værktøjet til logget admin.
+- [x] Begræns den aktuelle admin-allowlist til `martin@toudal.dk` og Supabase-adminstatus.
+
+**Accept:** Admin kan gennemføre en daglig stikprøve uden klargøring, og kontrolindholdet er ikke synligt for andre brugere.
+
+### Story 4.2 – Central behandling af kontroller og rettelser
+
+**Status: Åben, prioritet høj**
+
+- [ ] Gem kontroller centralt med bruger, tidspunkt, klub, kontroltype, resultat og noter.
+- [ ] Opret koordinat- og rækkeændringer som ændringsforslag.
+- [ ] Gem gammel værdi, ny værdi, kilde og status for hvert forslag.
+- [ ] Kræv eksplicit admin-godkendelse før stamdata ændres.
+- [ ] Publicér godkendte rettelser til appens fælles datakilde.
+- [ ] Vis komplet historik pr. stadion og kontroltype.
+- [ ] Understøt afvisning og opfølgning uden at miste oprindelig kontrol.
+
+**Accept:** En kontrol kan gemmes centralt, en rettelse kan godkendes eksplicit, og den godkendte værdi kan verificeres i appen.
+
+## EPIC 5 – Backlog og intern drift
+
+### Story 5.1 – Jira-lignende admin-backlog
+
+**Status: Åben, prioritet middel**
+
+- [ ] Genbrug admin-login og samme admin-allowlist som Klubtjek.
+- [ ] Vis epics, stories og subtasks i en samlet oversigt.
+- [ ] Understøt status, prioritet, ansvarlig og seneste ændring.
+- [ ] Gør subtasks afkrydsbare direkte i UI.
+- [ ] Vis åbne, igangværende, afventende, færdige og udskudte items.
+- [ ] Link backlog-items til dokumentation, kontrolhistorik og relevante deploys.
+- [ ] Gem ændringer centralt, så UI og Markdown ikke udvikler sig til to sandheder.
+- [ ] Bevar Markdown som eksport, backup og versionshistorik.
+
+**Arkitektur:** Backloggen skal være et adminværktøj i web-driftslaget, ikke en offentlig del af iOS-appen. Supabase bør være den autoritative lagring, mens Markdown genereres eller eksporteres derfra.
+
+**Accept:** Admin kan planlægge, opdatere og afslutte arbejde fra én side uden at miste historik eller skabe en parallel backlog.
+
+### Story 5.2 – Systemoverblik og ændringsprotokol
+
+**Status: I gang**
+
+- [ ] Vedligehold systemkort for iOS-app, web-driftslag, Supabase og fixture-pipeline.
+- [ ] Dokumentér source of truth for stadiondata, fixtures, kontroller og backlog.
+- [ ] Kræv UX-afklaring, arkitekturgennemgang, PO-beslutning, udvikling, dokumentation og test for større ændringer.
+- [ ] Registrér repo, commit, deploy og verifikation for hver leverance.
+- [ ] Undgå at beskrive app- og web-status som én samlet status, før begge er verificeret.
+
+**Accept:** En ny session kan forstå arkitekturen, aktive risici og seneste leverancer uden at rekonstruere historikken fra chatten.
+
+## EPIC 6 – Web som midlertidigt driftslag
+
+### Story 6.1 – Afvikling af offentlig webproduktflade
+
+**Status: Udskudt**
+
+- [ ] Kortlæg jobs, feeds, audits og adminværktøjer, der fortsat kræver web-repositoriet.
+- [ ] Bevar login/sync i Supabase.
+- [ ] Flyt nødvendige backend-funktioner til en dokumenteret permanent driftsplacering.
+- [ ] Beslut endelig host- og deploymodel.
+- [ ] Fjern offentlig produktfunktionalitet først, når iOS og driftslaget er uafhængige.
+
+**Accept:** Web er ikke nødvendig som offentlig produktflade, men alle nødvendige jobs og adminfunktioner fungerer fortsat.
+
+## Aktive risici
+
+- App og web er fortsat to repositories. Der skal altid angives, hvilket repo en ændring vedrører.
+- Klubtjek gemmer endnu kun lokalt i browseren; rettelser slår ikke automatisk igennem i appens stamdata.
+- Fixture-kildeovergangen er endnu i observationsperiode med Flashscore som fallback.
+- Flere landes grupper er foreløbige eller mangler endelig kvalitetssikring.
+- Web-deploy bygger mange statiske sider og kan derfor tage betydelig tid.
+
+## Næste anbefalede rækkefølge
+
+1. Færdiggør central lagring og godkendelse for Klubtjek.
+2. Stabiliser og afslut observationsperioden for danske fixtures.
+3. Gennemgå stadiondata land for land.
+4. Byg admin-backloggen oven på samme centrale datamodel.
+5. Genoptag afvikling af webproduktfladen, når driftslaget er flyttet eller fastlagt.
