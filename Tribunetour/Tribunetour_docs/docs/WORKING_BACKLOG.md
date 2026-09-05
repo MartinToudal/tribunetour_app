@@ -84,6 +84,8 @@ Disse beslutninger er gældende, indtil de ændres eksplicit:
 
 ## EPIC 2 – Fixture-drift og danske datakilder
 
+Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub Actions. Det er adskilt fra det manuelle Klubtjek i Epic 4.
+
 ### Story 2.1 – Officiel dansk fixture-kilde
 
 **Status: I gang**
@@ -170,7 +172,7 @@ Disse beslutninger er gældende, indtil de ændres eksplicit:
 
 **Accept:** Admin kan gennemføre en daglig stikprøve uden klargøring, og kontrolindholdet er ikke synligt for andre brugere.
 
-### Story 4.2 – Central behandling af kontroller og rettelser
+### Story 4.2 – Central lagring og godkendelse af klubtjek
 
 **Status: Åben, prioritet høj**
 
@@ -178,11 +180,13 @@ Disse beslutninger er gældende, indtil de ændres eksplicit:
 - [ ] Opret koordinat- og rækkeændringer som ændringsforslag.
 - [ ] Gem gammel værdi, ny værdi, kilde og status for hvert forslag.
 - [ ] Kræv eksplicit admin-godkendelse før stamdata ændres.
-- [ ] Publicér godkendte rettelser til appens fælles datakilde.
+- [ ] Lad admin godkende en rettelse direkte i Klubtjek.
+- [ ] Skriv godkendte koordinat- og rækkeændringer til den centrale database.
+- [ ] Publicér eller synkronisér godkendte rettelser til appens fælles datakilde.
 - [ ] Vis komplet historik pr. stadion og kontroltype.
 - [ ] Understøt afvisning og opfølgning uden at miste oprindelig kontrol.
 
-**Accept:** En kontrol kan gemmes centralt, en rettelse kan godkendes eksplicit, og den godkendte værdi kan verificeres i appen.
+**Accept:** Når admin retter og godkender koordinat eller rækketilhør i Klubtjek, gemmes ændringen i den centrale database med audit-log og kan efterfølgende verificeres i appen.
 
 ## EPIC 5 – Backlog og intern drift
 
@@ -236,6 +240,7 @@ Disse beslutninger er gældende, indtil de ændres eksplicit:
 
 - App og web er fortsat to repositories. Der skal altid angives, hvilket repo en ændring vedrører.
 - Klubtjek gemmer endnu kun lokalt i browseren; rettelser slår ikke automatisk igennem i appens stamdata.
+- Det automatiske Fixture Check er en separat GitHub-kørsel og må ikke blandes sammen med adminens manuelle Klubtjek.
 - Web-backendets samlede fixture-feed indeholder fortsat internationale kampe, og Klubtjek bruger endnu denne samlede fil i stedet for det danske fixture-feed.
 - Fixture-kildeovergangen er endnu i observationsperiode med Flashscore som fallback.
 - Flere landes grupper er foreløbige eller mangler endelig kvalitetssikring.
