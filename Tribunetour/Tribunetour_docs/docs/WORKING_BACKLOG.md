@@ -132,7 +132,9 @@ Låste beslutninger:
   - Kontrolværktøjet skal skelne mellem danske fixture-kontroller og stadion-/rækkekontroller for alle lande.
   - Accept: en daglig kørsel kan gennemføres uden manuel klargøring, og ingen klubdataændring sker uden en eksplicit bekræftelse.
   - Næste designbeslutning: lokal web-UI som driftsværktøj versus en intern iOS-flade; første version bør vælge den hurtigste testbare løsning.
-  - Status: første lokale UI-version er bygget, build-verificeret og deployed 2026-09-05. `/club-check` er kontrolleret live med HTTP 200. Data gemmes foreløbig lokalt i browseren og kan eksporteres.
+  - Status: første UI-version er bygget, build-verificeret og deployed 2026-09-05. `/club-check` er kontrolleret live med HTTP 200. Data gemmes foreløbig lokalt i browseren og kan eksporteres.
+  - Adgangskontrol er på plads: Klubtjek-linket vises kun for den loggede administrator, og direkte adgang afvises for andre. Den aktuelle allowlist er `martin@toudal.dk`, valideret sammen med Supabase-funktionen `is_current_user_admin`.
+  - Næste forbedring: flyt kontrolhistorik og ændringer fra browserens lokale lager til en central, auditerbar løsning, når modulet skal bruges af flere administratorer.
 
 ## P1 – Data og sæsonskifte
 
