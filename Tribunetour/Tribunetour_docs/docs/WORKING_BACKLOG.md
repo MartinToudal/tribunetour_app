@@ -136,6 +136,17 @@ Låste beslutninger:
   - Adgangskontrol er på plads: Klubtjek-linket vises kun for den loggede administrator, og direkte adgang afvises for andre. Den aktuelle allowlist er `martin@toudal.dk`, valideret sammen med Supabase-funktionen `is_current_user_admin`.
   - Næste forbedring: flyt kontrolhistorik og ændringer fra browserens lokale lager til en central, auditerbar løsning, når modulet skal bruges af flere administratorer.
 
+- **Central behandling af klubkontroller og rettelser**
+  - Prioritet: høj.
+  - Kontroller skal gemmes centralt med bruger, tidspunkt, klub, kontroltype, resultat og eventuelle noter.
+  - Ændringer af koordinater og rækketilhør skal oprettes som eksplicitte ændringsforslag med gammel værdi, ny værdi og status.
+  - Ingen rettelse må overskrive de centrale stamdata uden en tydelig godkendelse.
+  - Godkendte rettelser skal kunne publiceres til den fælles datakilde, som appen bruger.
+  - Historikken skal vise hvem der kontrollerede, hvad der blev ændret, hvornår det blev godkendt, og hvornår det slog igennem.
+  - Fejl eller afviste rettelser skal kunne sendes tilbage til opfølgning uden at miste den oprindelige kontrol.
+  - Første leverance: Supabase-tabeller og admin-API med sikker skriveadgang; derefter UI til godkendelse og publicering.
+  - Accept: en gennemført kontrol kan gemmes centralt, en koordinat- eller rækkeændring kan godkendes eksplicit, og den godkendte værdi kan verificeres i appens datakilde.
+
 ## P1 – Data og sæsonskifte
 
 - **Officielle danske fixture-sider skal valideres før kildevalg**
