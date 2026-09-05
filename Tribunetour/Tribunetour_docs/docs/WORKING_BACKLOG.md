@@ -132,7 +132,7 @@ Låste beslutninger:
   - Kontrolværktøjet skal skelne mellem danske fixture-kontroller og stadion-/rækkekontroller for alle lande.
   - Accept: en daglig kørsel kan gennemføres uden manuel klargøring, og ingen klubdataændring sker uden en eksplicit bekræftelse.
   - Næste designbeslutning: lokal web-UI som driftsværktøj versus en intern iOS-flade; første version bør vælge den hurtigste testbare løsning.
-  - Status: første lokale UI-version er bygget og build-verificeret 2026-09-04. Koden er pushed til web-repositoriet, men live deployment mangler, fordi Vercel-sessionen ikke har aktive credentials. Data gemmes foreløbig lokalt i browseren og kan eksporteres.
+  - Status: første lokale UI-version er bygget, build-verificeret og deployed 2026-09-05. `/club-check` er kontrolleret live med HTTP 200. Data gemmes foreløbig lokalt i browseren og kan eksporteres.
 
 ## P1 – Data og sæsonskifte
 
