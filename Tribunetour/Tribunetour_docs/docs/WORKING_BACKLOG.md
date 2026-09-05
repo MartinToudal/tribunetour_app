@@ -166,6 +166,7 @@ Disse beslutninger er gældende, indtil de ændres eksplicit:
 - [x] Gem lokal historik og understøt eksport.
 - [x] Begræns værktøjet til logget admin.
 - [x] Begræns den aktuelle admin-allowlist til `martin@toudal.dk` og Supabase-adminstatus.
+- [ ] Begræns fixture-visningen i Klubtjek til danske kampe; internationale fixtures må ikke vises som kontrolgrundlag.
 
 **Accept:** Admin kan gennemføre en daglig stikprøve uden klargøring, og kontrolindholdet er ikke synligt for andre brugere.
 
@@ -235,6 +236,7 @@ Disse beslutninger er gældende, indtil de ændres eksplicit:
 
 - App og web er fortsat to repositories. Der skal altid angives, hvilket repo en ændring vedrører.
 - Klubtjek gemmer endnu kun lokalt i browseren; rettelser slår ikke automatisk igennem i appens stamdata.
+- Web-backendets samlede fixture-feed indeholder fortsat internationale kampe, og Klubtjek bruger endnu denne samlede fil i stedet for det danske fixture-feed.
 - Fixture-kildeovergangen er endnu i observationsperiode med Flashscore som fallback.
 - Flere landes grupper er foreløbige eller mangler endelig kvalitetssikring.
 - Web-deploy bygger mange statiske sider og kan derfor tage betydelig tid; det skal reduceres, når offentlig webvisning fjernes.
