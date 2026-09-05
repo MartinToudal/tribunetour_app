@@ -27,7 +27,9 @@ Disse beslutninger er gældende, indtil de ændres eksplicit:
 - Kampprogrammet omfatter kun danske kampe.
 - Internationale lande omfatter primært stadions og indlæses efter valg.
 - `Plan` er fjernet fra produktet.
-- Web beholdes midlertidigt som drifts- og administrationslag, men er ikke den offentlige produktflade.
+- Web er ikke en brugervendt produktflade.
+- Web må kun bruges internt til admin- og driftsværktøjer som Klubtjek og backlog.
+- Nødvendige backend-jobs, feeds, audits og API'er bevares, uanset om de ligger i web-repositoriet.
 
 ## EPIC 1 – Danmark-først produkt
 
@@ -70,13 +72,13 @@ Disse beslutninger er gældende, indtil de ændres eksplicit:
 
 ### Story 1.4 – Danmark-først Min tur og achievements
 
-**Status: Færdig med mindre PO-opfølgning**
+**Status: Færdig**
 
 - [x] Gør dansk statistik, progression og anbefalinger til standard.
 - [x] Flyt international statistik til et eksplicit scopevalg.
 - [x] Lad noter, anmeldelser og billeder følge valgt scope.
 - [x] Beregn achievements ud fra aktivt scope.
-- [ ] Gennemgå achievement-navne, milepæle og rækkefølge med product owner.
+- [x] Gennemgå achievement-navne, milepæle og rækkefølge med product owner.
 
 **Accept:** Internationale tal blandes ikke ind i dansk hovedprogression.
 
@@ -212,19 +214,22 @@ Disse beslutninger er gældende, indtil de ændres eksplicit:
 
 **Accept:** En ny session kan forstå arkitekturen, aktive risici og seneste leverancer uden at rekonstruere historikken fra chatten.
 
-## EPIC 6 – Web som midlertidigt driftslag
+## EPIC 6 – Internt web- og driftslag
 
-### Story 6.1 – Afvikling af offentlig webproduktflade
+### Story 6.1 – Lukket admin- og driftsweb
 
-**Status: Udskudt**
+**Status: I gang**
 
+- [x] Beslut at web ikke skal være en brugervendt visningsflade.
+- [x] Begræns Klubtjek til logget admin.
 - [ ] Kortlæg jobs, feeds, audits og adminværktøjer, der fortsat kræver web-repositoriet.
 - [ ] Bevar login/sync i Supabase.
-- [ ] Flyt nødvendige backend-funktioner til en dokumenteret permanent driftsplacering.
+- [ ] Adskil interne adminruter fra eventuelle resterende offentlige ruter.
+- [ ] Flyt eller behold nødvendige backend-funktioner i en dokumenteret permanent driftsplacering.
 - [ ] Beslut endelig host- og deploymodel.
-- [ ] Fjern offentlig produktfunktionalitet først, når iOS og driftslaget er uafhængige.
+- [ ] Fjern offentlig webvisning, når iOS og driftslaget er uafhængige.
 
-**Accept:** Web er ikke nødvendig som offentlig produktflade, men alle nødvendige jobs og adminfunktioner fungerer fortsat.
+**Accept:** Brugere møder ingen webbaseret produktvisning, mens admin kan bruge nødvendige kontrol- og driftsværktøjer sikkert.
 
 ## Aktive risici
 
@@ -232,7 +237,7 @@ Disse beslutninger er gældende, indtil de ændres eksplicit:
 - Klubtjek gemmer endnu kun lokalt i browseren; rettelser slår ikke automatisk igennem i appens stamdata.
 - Fixture-kildeovergangen er endnu i observationsperiode med Flashscore som fallback.
 - Flere landes grupper er foreløbige eller mangler endelig kvalitetssikring.
-- Web-deploy bygger mange statiske sider og kan derfor tage betydelig tid.
+- Web-deploy bygger mange statiske sider og kan derfor tage betydelig tid; det skal reduceres, når offentlig webvisning fjernes.
 
 ## Næste anbefalede rækkefølge
 
@@ -240,4 +245,4 @@ Disse beslutninger er gældende, indtil de ændres eksplicit:
 2. Stabiliser og afslut observationsperioden for danske fixtures.
 3. Gennemgå stadiondata land for land.
 4. Byg admin-backloggen oven på samme centrale datamodel.
-5. Genoptag afvikling af webproduktfladen, når driftslaget er flyttet eller fastlagt.
+5. Luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
