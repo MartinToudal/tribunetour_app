@@ -180,6 +180,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [x] Implementér sikker RPC til at gemme en kontrol og oprette ændringsforslag.
 - [x] Implementér sikker RPC til eksplicit godkendelse og opdatering af central `stadiums`-data.
 - [x] Kobl Klubtjek på den centrale save-kæde i web-koden.
+- [x] Kør Supabase-migrationen på produktionsprojektet.
 - [x] Gem kontroller centralt med bruger, tidspunkt, klub, kontroltype, resultat og noter i review-modellen.
 - [x] Opret koordinat- og rækkeændringer som ændringsforslag.
 - [x] Gem gammel værdi, ny værdi, kilde og status for hvert forslag.
@@ -189,8 +190,8 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [ ] Publicér eller synkronisér godkendte rettelser til appens fælles datakilde.
 - [ ] Vis komplet historik pr. stadion og kontroltype.
 - [ ] Understøt afvisning og opfølgning uden at miste oprindelig kontrol.
-- [ ] Kør `supabase/club_check.sql` på produktionsprojektet og verificer RPC-adgang med `martin@toudal.dk`.
-- [ ] Deploy web-koden og gennemfør en ægte test med en koordinat- eller rækkeændring.
+- [x] Deploy web-koden med den centrale save-kæde.
+- [ ] Verificer RPC-adgang med `martin@toudal.dk` gennem en ægte test med en koordinat- eller rækkeændring.
 
 **Accept:** Når admin retter og godkender koordinat eller rækketilhør i Klubtjek, gemmes ændringen i den centrale database med audit-log og kan efterfølgende verificeres i appen.
 
