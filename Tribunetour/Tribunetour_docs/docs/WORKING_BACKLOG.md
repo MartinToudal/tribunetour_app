@@ -192,7 +192,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [ ] Understøt afvisning og opfølgning uden at miste oprindelig kontrol.
 - [x] Deploy web-koden med den centrale save-kæde.
 - [x] Verificér at en central kontrol kan gemmes for en udenlandsk klub fra en league-pack; Westerlo blev gemt succesfuldt centralt og lokalt.
-- [ ] Verificer RPC-adgang med `martin@toudal.dk` gennem en ægte test med en koordinat- eller rækkeændring.
+- [x] Verificér RPC-adgang med `martin@toudal.dk` gennem en ægte koordinatændring på Westerlo; review og begge forslag blev godkendt centralt.
 
 **Accept:** Når admin retter og godkender koordinat eller rækketilhør i Klubtjek, gemmes ændringen i den centrale database med audit-log og kan efterfølgende verificeres i appen.
 
