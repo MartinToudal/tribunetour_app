@@ -55,6 +55,8 @@ De eksisterende stories nedenfor bevares, men vurderes fremover inden for disse 
 
 **Værdi:** Rettelser skal kunne gennemføres én gang, kontrolleres, spores og slå igennem konsekvent i appen uden gentagne manuelle lapninger.
 
+**PO-beslutning:** Førsteprioritet er, at godkendte rettelser fra Klubtjek slår igennem i appen. Næsteprioritet er én fælles sandhed på tværs af app, backend og landepakker. Datamodellen skal gøres synlig, så vi kan se hvor diskrepanser kan opstå. Sporbarhed er nødvendig for egne rettelser og for fremtidig automatik eller brugerindberetninger.
+
 **Indhold:** Story 3.3-3.4, Story 4.2-4.4 og den tekniske del af Story 8.1-8.2.
 
 ### Værdiepic D – Gør drift og feedback håndterbar
@@ -284,10 +286,13 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 ### Story 4.3 – Central distribution af godkendte stamdata
 
-**Status: Afventer, prioritet høj**
+**Status: Åben, prioritet høj**
 
 - [ ] Fastlæg én autoritativ model for klubidentitet, stadion, aktiv række, sæson og historiske medlemskaber.
 - [ ] Definér precedence mellem bundne landepakker, centrale stamdata og godkendte Klubtjek-overrides.
+- [ ] Dokumentér den aktuelle dataflytning fra landepakker og centrale data til appens visning.
+- [ ] Kortlæg hvor dubletter, gamle sæsoner eller forskellige klub-ID'er kan skabe diskrepans.
+- [ ] Lav en enkel datamodeloversigt, der kan bruges ved fremtidige arkitektur- og PO-gennemgange.
 - [ ] Publicér godkendte koordinat- og rækkeændringer i en versioneret, central datakilde.
 - [ ] Lad godkendte ændringer udløse en kontrolleret publicerings- eller synkroniseringsproces automatisk.
 - [ ] Sørg for at en godkendt rækkefejl opdaterer klubbens aktive række uden at slette historikken.
@@ -298,7 +303,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [ ] Understøt rollback, hvis en godkendt rettelse viser sig at være forkert.
 - [ ] Test end-to-end med Carpi: forkert Serie C-række rettes i Klubtjek, godkendes centralt og vises korrekt i appen.
 
-**Accept:** En admin-godkendt ændring af koordinater eller aktiv række bliver automatisk valideret, publiceret og synlig i appen uden en ny TestFlight-release, mens klubbens historik bevares.
+**Accept:** Datamodellen og alle relevante kilder er dokumenteret, og en admin-godkendt ændring af koordinater eller aktiv række bliver automatisk valideret, publiceret og synlig i appen uden en ny TestFlight-release, mens klubbens historik bevares.
 
 ### Story 4.4 – Automatisk komplet rækkegennemgang
 
