@@ -31,6 +31,59 @@ Disse beslutninger er gældende, indtil de ændres eksplicit:
 - Web må kun bruges internt til admin- og driftsværktøjer som Klubtjek og backlog.
 - Nødvendige backend-jobs, feeds, audits og API'er bevares, uanset om de ligger i web-repositoriet.
 
+## Værdibaseret epic-struktur
+
+De eksisterende stories nedenfor bevares, men vurderes fremover inden for disse overordnede værdiepics. Formålet er at prioritere efter den effekt, Tribunetour skal skabe, ikke efter mængden af kode eller dataarbejde.
+
+### Værdiepic A – Gør stadionturen bedre
+
+**Værdi:** Brugeren skal hurtigt kunne finde relevante stadions, forstå sit scope og få lyst til at tage næste tur.
+
+**Indhold:** Story 1.1, Story 1.2, Story 1.4 og den brugerrettede del af Story 8.1-8.2.
+
+### Værdiepic B – Gør Danmark komplet og brugbart
+
+**Værdi:** Danmark skal være et troværdigt hovedprodukt, hvor brugeren kan udforske hele pyramiden og stole på klub-, række- og stadiondata.
+
+**Indhold:** Story 1.3, Story 2.1-2.2, Story 3.1-3.2 og Story 9.1.
+
+### Værdiepic C – Skab en troværdig datamotor
+
+**Værdi:** Rettelser skal kunne gennemføres én gang, kontrolleres, spores og slå igennem konsekvent i appen uden gentagne manuelle lapninger.
+
+**Indhold:** Story 3.3-3.4, Story 4.2-4.4 og den tekniske del af Story 8.1-8.2.
+
+### Værdiepic D – Gør drift og feedback håndterbar
+
+**Værdi:** Vi skal kunne opdage fejl, behandle forslag og holde systemet sundt uden at være afhængige af chat-hukommelse eller ad hoc-arbejde.
+
+**Indhold:** Story 5.1-5.2, Story 6.1-6.3 og Story 7.1.
+
+### Værdiepic E – Udvid rækkevidden kontrolleret
+
+**Værdi:** Flere lande, UEFA-turneringer og danske niveauer skal øge oplevelsen uden at gøre data, performance eller drift ustabil.
+
+**Indhold:** Story 8.1-8.2 og Story 9.1, efter at datamotoren og scope-modellen er robuste.
+
+### Værdiepic F – Udgiv en stabil løsning
+
+**Værdi:** Brugeren skal opleve en stabil app, og vi skal kunne udgive ændringer med forudsigelig risiko.
+
+**Indhold:** Story 10.1 samt release-, performance- og platformspunkter fra Story 1.1, Story 2.1-2.2 og Story 6.3.
+
+### PO-vurdering før næste større leverance
+
+For hvert åbent item skal vi dokumentere:
+
+- Hvilket brugerproblem løser det?
+- Hvem får værdien?
+- Hvad bliver konkret bedre i brugerens oplevelse eller i driften?
+- Hvordan kan vi se, at værdien er opnået?
+- Hvad er den mindste løsning, der kan teste værdien?
+- Hvilke eksisterende problemer eller gamle backlogpunkter afhænger det af?
+
+Ingen nye større epics startes, før de åbne punkter er vurderet efter denne model.
+
 ## EPIC 1 – Danmark-først produkt
 
 ### Story 1.1 – Enkel navigation
@@ -418,15 +471,15 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 ## Næste anbefalede rækkefølge
 
-1. Færdiggør central distribution af godkendte stamdata til appen.
-2. Udløs komplet rækkegennemgang automatisk efter godkendte rækkeændringer.
-3. Gennemfør App Store-release, når Mac’en er tilbage på stabil macOS/Xcode.
-4. Stabiliser og afslut observationsperioden for danske fixtures.
-5. Gennemgå stadiondata land for land.
-6. Byg feedbackindbakke og admin-backlog oven på samme centrale driftsmodel.
-7. Udvid stadion-scope med UEFA-turneringer og europæiske hold.
-8. Udvid Danmark med valgbare niveau 5-12 og hele Danmark.
-9. Byg sikker indsendelse og godkendelse af manglende stadions.
-10. Ryd op i Supabase efter fixture- og scope-reduktionen.
-11. Ryd op i GitHub-branches, workflows og lokale arbejdsrester.
+1. Gennemfør PO-vurdering af alle åbne items efter værdimodellen.
+2. Gennemfør App Store-release, når Mac’en er tilbage på stabil macOS/Xcode.
+3. Færdiggør central distribution af godkendte stamdata til appen.
+4. Udløs komplet rækkegennemgang automatisk efter godkendte rækkeændringer.
+5. Stabiliser og afslut observationsperioden for danske fixtures.
+6. Ryd op i Supabase og GitHub efter den besluttede scope-reduktion.
+7. Gennemgå stadiondata land for land.
+8. Byg feedbackindbakke og admin-backlog oven på samme centrale driftsmodel.
+9. Udvid Danmark med valgbare niveau 5-12 og hele Danmark.
+10. Udvid stadion-scope med UEFA-turneringer og europæiske hold.
+11. Byg sikker indsendelse og godkendelse af manglende stadions.
 12. Luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
