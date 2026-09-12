@@ -1,6 +1,6 @@
 # Tribunetour Backlog
 
-Senest opdateret: 2026-09-05
+Senest opdateret: 2026-09-12
 
 Dette er den operative backlog og den fælles arbejdssandhed for projektet. Arbejdet registreres som:
 
@@ -295,6 +295,66 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 **Accept:** Brugere møder ingen webbaseret produktvisning, mens admin kan bruge nødvendige kontrol- og driftsværktøjer sikkert.
 
+## EPIC 8 – Europæiske turneringer og stadion-scope
+
+### Story 8.1 – UEFA-turneringer som valgbart scope
+
+**Status: Afventer, prioritet middel**
+
+- [ ] Tilføj `Champions League` som valgbart stadion-scope.
+- [ ] Tilføj `Europa League` som valgbart stadion-scope.
+- [ ] Tilføj `Conference League` som valgbart stadion-scope.
+- [ ] Definér om scope viser klubber med deltagelse i den aktuelle sæson eller historisk deltagelse.
+- [ ] Vis kun stadiondata i scope; internationale kampe skal ikke genindføres i produktets kampprogram.
+- [ ] Håndtér kvalifikation, gruppespil og ændringer i turneringsdeltagere uden at miste historik.
+- [ ] Gør scope-valget eksplicit og adskilt fra brugerens danske hovedscope.
+
+**Accept:** Brugeren kan vælge en UEFA-turnering og få et korrekt, rent stadionoverblik uden at internationale fixtures blandes ind i Kampe.
+
+### Story 8.2 – Europæiske hold som stadion-scope
+
+**Status: Afventer, prioritet middel**
+
+- [ ] Tilføj et samlet scope for europæiske hold og stadions.
+- [ ] Definér hvilke UEFA-lande og aktive sæsoner der indgår.
+- [ ] Bevar landefiltre, så det samlede scope kan afgrænses uden at ændre stamdata.
+- [ ] Indlæs scope efter brugerens valg og behold Danmark som hurtig standard.
+- [ ] Undgå at arkiverede eller udtrådte hold tæller som aktive i scope-statistik.
+
+**Accept:** Brugeren kan udforske europæiske stadions samlet, mens Danmark fortsat er standard og aktive/arkiverede hold behandles korrekt.
+
+## EPIC 9 – Udvidet dansk fodboldpyramide
+
+### Story 9.1 – Valgbare danske niveauer
+
+**Status: Afventer, prioritet middel**
+
+- [ ] Udvid Danmark med niveau 5.
+- [ ] Udvid Danmark med niveau 6.
+- [ ] Udvid Danmark med niveau 7.
+- [ ] Tilføj et samlet valg for hele Danmark.
+- [ ] Lad brugeren vælge ét eller flere niveauer uden at ændre det danske standard-scope.
+- [ ] Dokumentér datakilder, klubantal, stadionkvalitet og sæson for hvert nyt niveau.
+- [ ] Håndtér klubber uden verificerede koordinater tydeligt uden at blokere resten af Danmark.
+- [ ] Kontrollér at niveauvalg påvirker kort, stadionliste, statistik og achievements ensartet.
+
+**Accept:** Brugeren kan vælge niveau 1-4, niveau 5, niveau 6, niveau 7 eller hele Danmark, og alle visninger bruger samme valgte scope.
+
+## EPIC 10 – App Store-release
+
+### Story 10.1 – Release efter macOS-beta-afhængighed
+
+**Status: Afventer, prioritet høj**
+
+- [ ] Vent med upload, indtil Mac’en er tilbage på stabil macOS/Xcode.
+- [ ] Verificér stabilt archive- og signing-flow uden beta-SDK.
+- [ ] Kør regressionstest af opstart, landescope, kort, Klubtjek-relateret sync og Kampe.
+- [ ] Bekræft versionsnummer, buildnummer og App Store-release notes.
+- [ ] Upload til App Store Connect og gennemfør den endelige releasekontrol.
+- [ ] Dokumentér release-version, dato og testresultat i systemoverblikket.
+
+**Accept:** Den samlede iOS-løsning kan uploades og godkendes til App Store fra stabil macOS/Xcode uden beta-relaterede uploadfejl.
+
 ## Aktive risici
 
 - App og web er fortsat to repositories. Der skal altid angives, hvilket repo en ændring vedrører.
@@ -309,7 +369,10 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 1. Færdiggør central distribution af godkendte stamdata til appen.
 2. Udløs komplet rækkegennemgang automatisk efter godkendte rækkeændringer.
-3. Stabiliser og afslut observationsperioden for danske fixtures.
-4. Gennemgå stadiondata land for land.
-5. Byg feedbackindbakke og admin-backlog oven på samme centrale driftsmodel.
-6. Luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
+3. Gennemfør App Store-release, når Mac’en er tilbage på stabil macOS/Xcode.
+4. Stabiliser og afslut observationsperioden for danske fixtures.
+5. Gennemgå stadiondata land for land.
+6. Byg feedbackindbakke og admin-backlog oven på samme centrale driftsmodel.
+7. Udvid stadion-scope med UEFA-turneringer og europæiske hold.
+8. Udvid Danmark med valgbare niveau 5-7 og hele Danmark.
+9. Luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
