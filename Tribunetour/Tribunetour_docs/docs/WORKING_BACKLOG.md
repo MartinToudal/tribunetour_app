@@ -325,6 +325,22 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 **Accept:** Supabase indeholder kun aktive og historisk nødvendige dele af løsningen, uden at login, sync, danske fixtures eller Klubtjek brydes.
 
+### Story 6.3 – GitHub- og repository-hygiejne
+
+**Status: Afventer, prioritet middel**
+
+- [ ] Lav et samlet inventar over app- og web-repositories, branches, workflows, secrets og production-forbindelser.
+- [ ] Identificér branches, der er merged, forældede eller kun indeholder midlertidige snapshots.
+- [ ] Kontrollér lokale branches og utrackede filer, før de fjernes eller arkiveres.
+- [ ] Gennemgå workflows for overlap mellem daily fixture-check, fixture-audit og manuelle admin-kontroller.
+- [ ] Bevar kun workflows, der har en dokumenteret funktion i den aktuelle arkitektur.
+- [ ] Opdatér actions til understøttede runtime-versioner, når kompatible versioner findes.
+- [ ] Ryd op i midlertidige branches og arbejdsfiler efter eksplicit verifikation.
+- [ ] Dokumentér production-branch, deploykilde og rollback-procedure.
+- [ ] Bekræft at oprydning ikke ændrer `main`, Supabase, Vercel eller App Store-buildflowet.
+
+**Accept:** Begge repositories har en dokumenteret, minimal og forståelig branch-/workflowstruktur, mens production og rollback fortsat kan verificeres.
+
 ## EPIC 8 – Europæiske turneringer og stadion-scope
 
 ### Story 8.1 – UEFA-turneringer som valgbart scope
@@ -412,4 +428,5 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 8. Udvid Danmark med valgbare niveau 5-12 og hele Danmark.
 9. Byg sikker indsendelse og godkendelse af manglende stadions.
 10. Ryd op i Supabase efter fixture- og scope-reduktionen.
-11. Luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
+11. Ryd op i GitHub-branches, workflows og lokale arbejdsrester.
+12. Luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
