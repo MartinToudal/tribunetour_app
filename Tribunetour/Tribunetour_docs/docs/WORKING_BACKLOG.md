@@ -41,6 +41,8 @@ De eksisterende stories nedenfor bevares, men vurderes fremover inden for disse 
 
 **Indhold:** Story 1.1, Story 1.2, Story 1.4 og den brugerrettede del af Story 8.1-8.2.
 
+**PO-beslutning:** Appens primære formål er at understøtte rundrejsen til de 48 danske divisionsstadions. Det skal være nemt og motiverende at finde, besøge og følge fremdriften på de danske stadions. Internationale stadions og hold er et bonuslag til inspiration og sportsturisme.
+
 ### Værdiepic B – Gør Danmark komplet og brugbart
 
 **Værdi:** Danmark skal være et troværdigt hovedprodukt, hvor brugeren kan udforske hele pyramiden og stole på klub-, række- og stadiondata.
@@ -398,7 +400,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 ### Story 8.1 – UEFA-turneringer som valgbart scope
 
-**Status: Afventer, prioritet middel**
+**Status: Afventer, prioritet høj**
 
 - [ ] Tilføj `Champions League` som valgbart stadion-scope.
 - [ ] Tilføj `Europa League` som valgbart stadion-scope.
@@ -410,15 +412,18 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 **Accept:** Brugeren kan vælge en UEFA-turnering og få et korrekt, rent stadionoverblik uden at internationale fixtures blandes ind i Kampe.
 
-### Story 8.2 – Europæiske hold som stadion-scope
+### Story 8.2 – Alle europæiske medlemslande som stadion-scope
 
-**Status: Afventer, prioritet middel**
+**Status: Afventer, prioritet høj**
 
-- [ ] Tilføj et samlet scope for europæiske hold og stadions.
-- [ ] Definér hvilke UEFA-lande og aktive sæsoner der indgår.
+- [ ] Tilføj et samlet inspirationsscope for europæiske hold og stadions.
+- [ ] Dæk alle relevante europæiske medlemslande.
+- [ ] Definér hvilke aktive sæsoner og niveauer der indgår pr. land.
 - [ ] Bevar landefiltre, så det samlede scope kan afgrænses uden at ændre stamdata.
 - [ ] Indlæs scope efter brugerens valg og behold Danmark som hurtig standard.
 - [ ] Undgå at arkiverede eller udtrådte hold tæller som aktive i scope-statistik.
+
+**Produktrolle:** Internationalt indhold er inspiration og sportsturisme, ikke en del af den danske hovedprogression.
 
 **Accept:** Brugeren kan udforske europæiske stadions samlet, mens Danmark fortsat er standard og aktive/arkiverede hold behandles korrekt.
 
@@ -479,7 +484,8 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 6. Ryd op i Supabase og GitHub efter den besluttede scope-reduktion.
 7. Gennemgå stadiondata land for land.
 8. Byg feedbackindbakke og admin-backlog oven på samme centrale driftsmodel.
-9. Udvid Danmark med valgbare niveau 5-12 og hele Danmark.
-10. Udvid stadion-scope med UEFA-turneringer og europæiske hold.
-11. Byg sikker indsendelse og godkendelse af manglende stadions.
-12. Luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
+9. Udvid stadion-scope med UEFA-turneringer.
+10. Udvid stadion-scope til alle europæiske medlemslande.
+11. Udvid Danmark med valgbare niveau 5-12 og hele Danmark.
+12. Byg sikker indsendelse og godkendelse af manglende stadions.
+13. Luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
