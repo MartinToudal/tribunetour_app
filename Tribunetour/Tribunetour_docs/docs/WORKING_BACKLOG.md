@@ -154,6 +154,21 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 **Accept:** Foreløbige grupper er tydeligt markeret og kan udskiftes uden at beskadige historik eller stadiondata.
 
+### Story 3.4 – Brugerindsendte manglende stadions
+
+**Status: Afventer, prioritet middel**
+
+- [ ] Giv en logget bruger mulighed for at indsende et manglende stadion.
+- [ ] Kræv klub, række, by, koordinater og en kort beskrivelse af grundlaget.
+- [ ] Markér indsendelsen som forslag, indtil den er kontrolleret.
+- [ ] Understøt billede eller link som dokumentation uden at gøre det til automatisk sandhed.
+- [ ] Lad admin godkende, afvise eller bede om flere oplysninger.
+- [ ] Opret en historik over indsender, tidspunkt, beslutning og eventuelle rettelser.
+- [ ] Publicér først godkendte stadions i den relevante landepakke og det centrale scope.
+- [ ] Beskyt mod dubletter, ugyldige koordinater, spam og uautoriserede rækkevalg.
+
+**Accept:** En bruger kan foreslå et manglende stadion, men det bliver først en del af den aktive stadionoversigt efter sporbar admin-godkendelse.
+
 ## EPIC 4 – Manuel klubkontrol
 
 ### Story 4.1 – Daglig klubkontrol
@@ -295,6 +310,21 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 **Accept:** Brugere møder ingen webbaseret produktvisning, mens admin kan bruge nødvendige kontrol- og driftsværktøjer sikkert.
 
+### Story 6.2 – Oprydning i Supabase efter scope-reduktion
+
+**Status: Afventer, prioritet høj**
+
+- [ ] Kortlæg tabeller, views, RPC’er, jobs, secrets og policies, der vedrører internationale fixtures og udfasede premium-/webflows.
+- [ ] Skeln mellem data, der skal slettes, arkiveres eller bevares af hensyn til historik og login/sync.
+- [ ] Fjern eller deaktiver gamle fixture-tabeller, funktioner og jobs, der ikke længere er i scope.
+- [ ] Bevar danske fixturedata og nødvendige audit-/Klubtjekdata.
+- [ ] Ryd op i forældede RLS-politikker og serviceadgange efter ændringerne.
+- [ ] Tag dokumenteret backup eller eksport før destruktive ændringer.
+- [ ] Kør efterkontrol af app-sync, Klubtjek, danske fixtures og login efter oprydningen.
+- [ ] Dokumentér den endelige Supabase-struktur som source of truth.
+
+**Accept:** Supabase indeholder kun aktive og historisk nødvendige dele af løsningen, uden at login, sync, danske fixtures eller Klubtjek brydes.
+
 ## EPIC 8 – Europæiske turneringer og stadion-scope
 
 ### Story 8.1 – UEFA-turneringer som valgbart scope
@@ -332,13 +362,18 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [ ] Udvid Danmark med niveau 5.
 - [ ] Udvid Danmark med niveau 6.
 - [ ] Udvid Danmark med niveau 7.
+- [ ] Udvid Danmark med niveau 8.
+- [ ] Udvid Danmark med niveau 9.
+- [ ] Udvid Danmark med niveau 10.
+- [ ] Udvid Danmark med niveau 11.
+- [ ] Udvid Danmark med niveau 12.
 - [ ] Tilføj et samlet valg for hele Danmark.
 - [ ] Lad brugeren vælge ét eller flere niveauer uden at ændre det danske standard-scope.
 - [ ] Dokumentér datakilder, klubantal, stadionkvalitet og sæson for hvert nyt niveau.
 - [ ] Håndtér klubber uden verificerede koordinater tydeligt uden at blokere resten af Danmark.
 - [ ] Kontrollér at niveauvalg påvirker kort, stadionliste, statistik og achievements ensartet.
 
-**Accept:** Brugeren kan vælge niveau 1-4, niveau 5, niveau 6, niveau 7 eller hele Danmark, og alle visninger bruger samme valgte scope.
+**Accept:** Brugeren kan vælge niveau 1-12 eller hele Danmark, og alle visninger bruger samme valgte scope.
 
 ## EPIC 10 – App Store-release
 
@@ -374,5 +409,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 5. Gennemgå stadiondata land for land.
 6. Byg feedbackindbakke og admin-backlog oven på samme centrale driftsmodel.
 7. Udvid stadion-scope med UEFA-turneringer og europæiske hold.
-8. Udvid Danmark med valgbare niveau 5-7 og hele Danmark.
-9. Luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
+8. Udvid Danmark med valgbare niveau 5-12 og hele Danmark.
+9. Byg sikker indsendelse og godkendelse af manglende stadions.
+10. Ryd op i Supabase efter fixture- og scope-reduktionen.
+11. Luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
