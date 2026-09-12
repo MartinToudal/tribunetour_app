@@ -39,13 +39,15 @@ De eksisterende stories nedenfor bevares, men vurderes fremover inden for disse 
 
 **Værdi:** Brugeren skal hurtigt kunne finde relevante stadions, forstå sit scope og få lyst til at tage næste tur.
 
-**Indhold:** Story 1.1, Story 1.2, Story 1.4 og den brugerrettede del af Story 8.1-8.2.
+**Indhold:** Story 1.1, Story 1.2, Story 1.4, Story 3.5 og den brugerrettede del af Story 8.1-8.2.
 
 **PO-beslutning:** Appens primære formål er at understøtte rundrejsen til de 48 danske divisionsstadions. Det skal være nemt og motiverende at finde, besøge og følge fremdriften på de danske stadions. Internationale stadions og hold er et bonuslag til inspiration og sportsturisme.
 
 ### Værdiepic B – Gør Danmark komplet og brugbart
 
-**Værdi:** Danmark skal være et troværdigt hovedprodukt, hvor brugeren kan udforske hele pyramiden og stole på klub-, række- og stadiondata.
+**Værdi:** Danmark skal være et troværdigt hovedprodukt, hvor brugeren kan udforske Klub 48 med korrekte kampprogrammer og resten af pyramiden som et pålideligt klub- og stadionkatalog.
+
+**PO-beslutning:** Korrekte kampprogrammer er kun nødvendige for Klub 48. De øvrige danske niveauer skal som udgangspunkt indeholde korrekte hold-, række- og stadionoplysninger, men ikke fixtures.
 
 **Indhold:** Story 1.3, Story 2.1-2.2, Story 3.1-3.2 og Story 9.1.
 
@@ -223,6 +225,20 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [ ] Beskyt mod dubletter, ugyldige koordinater, spam og uautoriserede rækkevalg.
 
 **Accept:** En bruger kan foreslå et manglende stadion, men det bliver først en del af den aktive stadionoversigt efter sporbar admin-godkendelse.
+
+### Story 3.5 – Stadionprofiler med verificeret indhold
+
+**Status: Afventer, prioritet middel**
+
+- [ ] Definér en fælles skabelon for stadiondetaljer, herunder navn, by, kapacitet, historik og særlige kendetegn.
+- [ ] Vis relevante billeder med tydelig kildeangivelse og sporbar registrering.
+- [ ] Adskil verificerede fakta fra redaktionel tekst og brugerbidrag.
+- [ ] Lad manglende eller ikke-verificerede felter fremgå tydeligt uden at blokere stadionprofilen.
+- [ ] Undersøg en valgfri, AI-genereret lydfortælling pr. stadion.
+- [ ] Kræv at en lydfortælling udelukkende bygger på verificerede fakta og kan spores tilbage til kildedata.
+- [ ] Gør stadionprofilen til et supplement til den hurtige stadionoversigt, ikke en forudsætning for at finde et stadion.
+
+**Accept:** Brugeren kan åbne en konsistent stadionprofil med verificerede fakta, kildeangivne billeder og eventuelt en faktabaseret lydfortælling.
 
 ## EPIC 4 – Manuel klubkontrol
 
