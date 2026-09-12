@@ -214,6 +214,20 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 **Accept:** En admin-godkendt ændring af koordinater eller aktiv række bliver automatisk valideret, publiceret og synlig i appen uden en ny TestFlight-release, mens klubbens historik bevares.
 
+### Story 4.4 – Automatisk komplet rækkegennemgang
+
+**Status: Afventer, prioritet høj**
+
+- [ ] Registrér når en godkendt ændring påvirker en klubs aktive række.
+- [ ] Udløs automatisk en komplet audit af den berørte række, ikke kun af den rettede klub.
+- [ ] Kontrollér holdliste, række, sæson, stadiondata og relevante fixtures i samme audit.
+- [ ] Saml auditresultatet med den oprindelige Klubtjek-kontrol og den udløsende ændring.
+- [ ] Gør auditten idempotent, så samme ændring ikke starter gentagne kørsler.
+- [ ] Send kun en notifikation ved fejl, nye afvigelser eller behov for adminbeslutning.
+- [ ] Understøt genkørsel efter manuel rettelse eller ændret kildedata.
+
+**Accept:** En godkendt rækkefejl starter automatisk én komplet, sporbar audit af den berørte række, og resultatet kan følges fra Klubtjek.
+
 ## EPIC 5 – Backlog og intern drift
 
 ### Story 5.1 – Jira-lignende admin-backlog
@@ -245,6 +259,25 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 **Accept:** En ny session kan forstå arkitekturen, aktive risici og seneste leverancer uden at rekonstruere historikken fra chatten.
 
+## EPIC 7 – Feedback og forslag
+
+### Story 7.1 – Feedbackindbakke og triage
+
+**Status: Afventer, prioritet middel**
+
+- [ ] Byg en enkel feedbackfunktion til fejl, dataforslag og nye feature-idéer.
+- [ ] Kræv kontekst i indsendelsen: skærm, klub/række, beskrivelse og eventuelt billede.
+- [ ] Gem feedback centralt med bruger, tidspunkt, status og relaterede dataobjekter.
+- [ ] Klassificér feedback som entydig lavrisiko-fejl, datakontrol, uklar sag eller featureforslag.
+- [ ] Lad entydige lavrisiko-fejl gå til en sikker automatisk rettelses- eller auditkø.
+- [ ] Kræv admin-godkendelse før ændringer med højere risiko publiceres.
+- [ ] Send notifikation med resultatet, når en fejl er rettet, afvist eller kræver mere information.
+- [ ] Opret featureforslag som backlog-items til kort PO-afklaring før udvikling.
+- [ ] Link feedback, rettelse, audit, commit og deploy, så hele forløbet kan spores.
+- [ ] Beskyt mod spam, dubletter og uautoriserede ændringer.
+
+**Accept:** En bruger kan sende et forslag ind, og systemet kan føre det gennem triage, sikker rettelse eller PO-afklaring med sporbar status og passende notifikation.
+
 ## EPIC 6 – Internt web- og driftslag
 
 ### Story 6.1 – Lukket admin- og driftsweb
@@ -265,7 +298,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 ## Aktive risici
 
 - App og web er fortsat to repositories. Der skal altid angives, hvilket repo en ændring vedrører.
-- Klubtjek gemmer endnu kun lokalt i browseren; rettelser slår ikke automatisk igennem i appens stamdata.
+- Klubtjek gemmer centralt og lokalt; godkendte rettelser slår endnu ikke automatisk igennem i appens stamdata.
 - Det automatiske Fixture Check er en separat GitHub-kørsel og må ikke blandes sammen med adminens manuelle Klubtjek.
 - Web-backendets samlede fixture-feed indeholder fortsat internationale kampe, og Klubtjek bruger endnu denne samlede fil i stedet for det danske fixture-feed.
 - Fixture-kildeovergangen er endnu i observationsperiode med Flashscore som fallback.
@@ -274,8 +307,9 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 ## Næste anbefalede rækkefølge
 
-1. Færdiggør central lagring og godkendelse for Klubtjek.
-2. Stabiliser og afslut observationsperioden for danske fixtures.
-3. Gennemgå stadiondata land for land.
-4. Byg admin-backloggen oven på samme centrale datamodel.
-5. Luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
+1. Færdiggør central distribution af godkendte stamdata til appen.
+2. Udløs komplet rækkegennemgang automatisk efter godkendte rækkeændringer.
+3. Stabiliser og afslut observationsperioden for danske fixtures.
+4. Gennemgå stadiondata land for land.
+5. Byg feedbackindbakke og admin-backlog oven på samme centrale driftsmodel.
+6. Luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
