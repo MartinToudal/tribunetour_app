@@ -196,6 +196,24 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 **Accept:** Når admin retter og godkender koordinat eller rækketilhør i Klubtjek, gemmes ændringen i den centrale database med audit-log og kan efterfølgende verificeres i appen.
 
+### Story 4.3 – Central distribution af godkendte stamdata
+
+**Status: Afventer, prioritet høj**
+
+- [ ] Fastlæg én autoritativ model for klubidentitet, stadion, aktiv række, sæson og historiske medlemskaber.
+- [ ] Definér precedence mellem bundne landepakker, centrale stamdata og godkendte Klubtjek-overrides.
+- [ ] Publicér godkendte koordinat- og rækkeændringer i en versioneret, central datakilde.
+- [ ] Lad godkendte ændringer udløse en kontrolleret publicerings- eller synkroniseringsproces automatisk.
+- [ ] Sørg for at en godkendt rækkefejl opdaterer klubbens aktive række uden at slette historikken.
+- [ ] Lad iOS-appen hente centrale rettelser og lægge dem oven på den indbyggede fallback-data.
+- [ ] Bevar offline- og fallback-adfærd, hvis den centrale datakilde ikke kan nås.
+- [ ] Valider ændringer før publicering, herunder gyldig klub, række, land og sæson.
+- [ ] Log version, tidspunkt, kilde, godkendelse og resultat for hver publicering.
+- [ ] Understøt rollback, hvis en godkendt rettelse viser sig at være forkert.
+- [ ] Test end-to-end med Carpi: forkert Serie C-række rettes i Klubtjek, godkendes centralt og vises korrekt i appen.
+
+**Accept:** En admin-godkendt ændring af koordinater eller aktiv række bliver automatisk valideret, publiceret og synlig i appen uden en ny TestFlight-release, mens klubbens historik bevares.
+
 ## EPIC 5 – Backlog og intern drift
 
 ### Story 5.1 – Jira-lignende admin-backlog
