@@ -416,6 +416,20 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 **Accept:** Begge repositories har en dokumenteret, minimal og forståelig branch-/workflowstruktur, mens production og rollback fortsat kan verificeres.
 
+### Story 6.4 – Vercel-forbrug og hostinggrænser
+
+**Status: Åben, prioritet høj**
+
+- [ ] Kortlæg hvilken Vercel-grænse eller forbrugsadvarsel der er nået, og hvilken konto/projekt den vedrører.
+- [ ] Mål buildtid, statisk sidegenerering, deployfrekvens og øvrigt relevant forbrug.
+- [ ] Reducér unødvendig statisk webgenerering, især når offentlig webvisning udfases.
+- [ ] Afklar hvilke interne admin- og backendfunktioner der fortsat skal ligge på Vercel.
+- [ ] Vurdér en hostingmodel, der passer til et lille internt driftslag uden uforudsete omkostninger.
+- [ ] Opsæt en enkel overvågning eller tydelig dokumentation af forbrugsgrænser og varsler.
+- [ ] Verificér at ændringer ikke bryder Klubtjek, fixtures, login/sync eller rollback.
+
+**Accept:** Vercel-forbruget er forstået og under kontrol, og hostingmodellen kan fortsætte uden at ramme uventede grænser eller omkostninger.
+
 ## EPIC 11 – Afvikling af offentlig web
 
 **Værdi:** Brugerne skal have én tydelig produktoplevelse i iOS, mens web kun eksisterer som et sikkert internt driftslag.
