@@ -63,7 +63,7 @@ De eksisterende stories nedenfor bevares, men vurderes fremover inden for disse 
 
 **Værdi:** Vi skal kunne opdage fejl, behandle forslag og holde systemet sundt uden at være afhængige af chat-hukommelse eller ad hoc-arbejde.
 
-**Indhold:** Story 5.1-5.2, Story 6.1-6.3 og Story 7.1.
+**Indhold:** Story 5.1-5.2, Story 6.1-6.3, Story 7.1 og EPIC 11.
 
 ### Værdiepic E – Udvid rækkevidden kontrolleret
 
@@ -382,7 +382,6 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [ ] Adskil interne adminruter fra eventuelle resterende offentlige ruter.
 - [ ] Flyt eller behold nødvendige backend-funktioner i en dokumenteret permanent driftsplacering.
 - [ ] Beslut endelig host- og deploymodel.
-- [ ] Fjern offentlig webvisning, når iOS og driftslaget er uafhængige.
 
 **Accept:** Brugere møder ingen webbaseret produktvisning, mens admin kan bruge nødvendige kontrol- og driftsværktøjer sikkert.
 
@@ -416,6 +415,23 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [ ] Bekræft at oprydning ikke ændrer `main`, Supabase, Vercel eller App Store-buildflowet.
 
 **Accept:** Begge repositories har en dokumenteret, minimal og forståelig branch-/workflowstruktur, mens production og rollback fortsat kan verificeres.
+
+## EPIC 11 – Afvikling af offentlig web
+
+**Værdi:** Brugerne skal have én tydelig produktoplevelse i iOS, mens web kun eksisterer som et sikkert internt driftslag.
+
+### Story 11.1 – Fjern offentlig webvisning
+
+**Status: Afventer, prioritet middel**
+
+- [ ] Kortlæg alle offentlige web-sider, API-ruter og links, der stadig fungerer som produktvisning.
+- [ ] Bekræft at iOS-appen har de nødvendige brugerflows uden afhængighed af offentlig webvisning.
+- [ ] Bevar og afgræns interne adminruter til Klubtjek, backlog og drift.
+- [ ] Fjern eller luk offentlige visningsruter uden at fjerne nødvendige backend-jobs, feeds eller adminfunktioner.
+- [ ] Opdatér domæne-, deploy- og rollback-dokumentation.
+- [ ] Verificér at gamle offentlige URL'er ikke utilsigtet viser brugerdata eller adminindhold.
+
+**Accept:** iOS er den eneste brugervendte produktflade, og web-repositoriet indeholder kun dokumenterede interne admin-/driftsfunktioner og nødvendige backend-komponenter.
 
 ## EPIC 8 – Europæiske turneringer og stadion-scope
 
@@ -509,4 +525,4 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 10. Udvid stadion-scope til alle europæiske medlemslande.
 11. Udvid Danmark med valgbare niveau 5-12 og hele Danmark.
 12. Byg sikker indsendelse og godkendelse af manglende stadions.
-13. Luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
+13. Gennemfør EPIC 11 og luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
