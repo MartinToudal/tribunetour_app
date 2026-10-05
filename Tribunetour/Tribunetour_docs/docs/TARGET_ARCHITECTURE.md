@@ -2,6 +2,8 @@
 
 Senest opdateret: 2026-10-05
 
+**Status:** Godkendt målarkitektur, afventer migrationsplan og implementering.
+
 ## Formål
 
 Dette dokument omsætter de gennemførte PO-interviews til en konkret målarkitektur. Det beskriver, hvad Tribunetour skal være teknisk, før vi bygger nye større funktioner eller laver en større oprydning.

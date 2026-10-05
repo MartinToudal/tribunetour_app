@@ -85,6 +85,8 @@ De eksisterende stories nedenfor bevares, men vurderes fremover inden for disse 
 
 **Indhold:** Story 10.1 samt release-, performance- og platformspunkter fra Story 1.1, Story 2.1-2.2 og Story 6.3.
 
+**PO-beslutning:** Target-arkitekturen er gennemlæst og godkendt som retning. Den skal nu omsættes til en dokumenteret migrationsplan, før vi starter større oprydning eller ny featureudvikling.
+
 ### PO-vurdering før næste større leverance
 
 For hvert åbent item skal vi dokumentere:
@@ -544,7 +546,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 - [x] Dokumentér den faktiske nuværende dataflytning og tydeliggør forskellen mellem godkendt data, distribution og fallback.
 - [x] Udarbejd første udkast til målarkitektur for app, backend, Supabase, repositories og datadistribution.
-- [ ] Godkend målarkitektur og dataejerskab med product owner.
+- [x] Godkend målarkitektur og dataejerskab med product owner.
 - [ ] Kortlæg alle aktive, overgangs- og udfasede flows.
 - [ ] Kortlæg hvad der kan genbruges, hvad der skal migreres, og hvad der bør udfases.
 - [ ] Vurdér en trinvis migrering med fungerende produkt efter hvert trin frem for et big-bang rebuild.
@@ -567,7 +569,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 ## Næste anbefalede rækkefølge
 
 1. Gennemfør App Store-release og efterkontrol af den nu udgivne version.
-2. Færdiggør og godkend målarkitektur, datamodel og migrationsplan i Story 10.2.
+2. Færdiggør datamodel, flow-inventar og migrationsplan i den godkendte target-arkitektur.
 3. Stabiliser og afslut observationsperioden for danske fixtures.
 4. Implementér den halvårlige CSV-baserede rækkevis gennemgang i Story 3.6.
 5. Ryd op i Supabase, Vercel og GitHub efter den besluttede scope-reduktion.
