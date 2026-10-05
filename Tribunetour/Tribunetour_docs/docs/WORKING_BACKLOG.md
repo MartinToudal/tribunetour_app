@@ -63,6 +63,8 @@ De eksisterende stories nedenfor bevares, men vurderes fremover inden for disse 
 
 **Værdi:** Vi skal kunne opdage fejl, behandle forslag og holde systemet sundt uden at være afhængige af chat-hukommelse eller ad hoc-arbejde.
 
+**PO-beslutning:** Førsteprioritet er tryg drift: Forkerte data skal opdages hurtigt, så produktet bevarer brugerens tillid. Dernæst skal rettelser ske én gang i den fælles sandhed. Feedback skal være let at sende ind og kunne triageres til sikker automatik, admin-validering eller PO-behandling som en ny feature.
+
 **Indhold:** Story 5.1-5.2, Story 6.1-6.3, Story 7.1 og EPIC 11.
 
 ### Værdiepic E – Udvid rækkevidden kontrolleret
@@ -354,7 +356,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 ### Story 7.1 – Feedbackindbakke og triage
 
-**Status: Afventer, prioritet middel**
+**Status: Afventer, prioritet høj**
 
 - [ ] Byg en enkel feedbackfunktion til fejl, dataforslag og nye feature-idéer.
 - [ ] Kræv kontekst i indsendelsen: skærm, klub/række, beskrivelse og eventuelt billede.
