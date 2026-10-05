@@ -100,4 +100,4 @@ Første verifikation er gennemført 2026-10-05. Den dækker de centrale flows, m
 - `daily-manual-club-check.yml` har fortsat en planlagt kørsel og er derfor ikke parkeret i praksis endnu.
 - Offentlige web-ruter findes stadig; de er en overgangsrisiko, ikke en allerede fjernet brugerflade.
 
-Fuld verifikation af deploys, secrets, Vercel-konfiguration og alle historiske jobs er fortsat en separat migrationsopgave.
+Fuld verifikation af deploys, secrets, Vercel-konfiguration og alle historiske jobs er fortsat en separat migrationsopgave. Den lokale webcheckout er divergeret fra den registrerede remote-reference, og remote-kontrol kunne ikke gennemføres 2026-10-05 på grund af manglende DNS-adgang til GitHub. Se `REPOSITORY_AND_DEPLOY_INVENTORY.md`.

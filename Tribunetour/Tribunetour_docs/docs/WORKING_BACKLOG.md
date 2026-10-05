@@ -550,6 +550,9 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [x] Udarbejd første inventar over aktive, overgangs- og udfasede flows.
 - [x] Verificér første flow-inventar mod centrale appflows og GitHub-workflows.
 - [ ] Færdiggør repo-, deploy-, secrets- og Vercel-inventar for alle relevante flows.
+- [ ] Sammenhold web-repositoryets remote `main` med lokal checkout og dokumentér divergensen.
+- [ ] Verificér faktisk Vercel production revision, cron-ruter og environment variables uden at dokumentere secret-værdier.
+- [ ] Kortlæg Supabase-tabeller, RPC'er, policies og migrationsafhængigheder før oprydning.
 - [ ] Kortlæg hvad der kan genbruges, hvad der skal migreres, og hvad der bør udfases.
 - [ ] Vurdér en trinvis migrering med fungerende produkt efter hvert trin frem for et big-bang rebuild.
 - [ ] Definér performance-, stabilitets- og rollback-kriterier før større arkitekturændringer.
