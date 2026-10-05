@@ -71,6 +71,8 @@ De eksisterende stories nedenfor bevares, men vurderes fremover inden for disse 
 
 **Værdi:** Flere lande, UEFA-turneringer og danske niveauer skal øge oplevelsen uden at gøre data, performance eller drift ustabil.
 
+**PO-beslutning:** Udvidelsen prioriteres sådan: 1) inspiration gennem UEFA-turneringer, 2) gradvis dækning af europæiske lande, 3) tilstrækkeligt verificeret datakvalitet før et scope åbnes, og 4) fleksible valg af land, turnering og danske niveauer uden at gøre appen tungere eller mere kompleks. Alle fire kriterier skal være opfyldt på sigt.
+
 **Indhold:** Story 8.1-8.2 og Story 9.1, efter at datamotoren og scope-modellen er robuste.
 
 ### Værdiepic F – Udgiv en stabil løsning
