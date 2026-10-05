@@ -59,6 +59,8 @@ De eksisterende stories nedenfor bevares, men vurderes fremover inden for disse 
 
 **Indhold:** Story 3.3-3.4, Story 4.2-4.4 og den tekniske del af Story 8.1-8.2.
 
+**Afhængighed:** Målarkitekturen skal fastlægges, før vi låser central distribution eller ændrer produktionsschema.
+
 ### Værdiepic D – Gør drift og feedback håndterbar
 
 **Værdi:** Vi skal kunne opdage fejl, behandle forslag og holde systemet sundt uden at være afhængige af chat-hukommelse eller ad hoc-arbejde.
@@ -292,7 +294,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 ### Story 4.3 – Central distribution af godkendte stamdata
 
-**Status: Åben, prioritet høj**
+**Status: Afventer målarkitektur, prioritet høj**
 
 - [ ] Fastlæg én autoritativ model for klubidentitet, stadion, aktiv række, sæson og historiske medlemskaber.
 - [ ] Definér precedence mellem bundne landepakker, centrale stamdata og godkendte Klubtjek-overrides.
@@ -313,7 +315,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 ### Story 4.4 – Automatisk komplet rækkegennemgang
 
-**Status: Afventer, prioritet høj**
+**Status: Afventer målarkitektur, prioritet høj**
 
 - [ ] Registrér når en godkendt ændring påvirker en klubs aktive række.
 - [ ] Udløs automatisk en komplet audit af den berørte række, ikke kun af den rettede klub.
@@ -547,16 +549,17 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 ## Næste anbefalede rækkefølge
 
-1. Gennemfør PO-vurdering af alle åbne items efter værdimodellen.
-2. Gennemfør App Store-release, når Mac’en er tilbage på stabil macOS/Xcode.
-3. Færdiggør central distribution af godkendte stamdata til appen.
-4. Udløs komplet rækkegennemgang automatisk efter godkendte rækkeændringer.
-5. Stabiliser og afslut observationsperioden for danske fixtures.
-6. Ryd op i Supabase og GitHub efter den besluttede scope-reduktion.
-7. Gennemgå stadiondata land for land.
-8. Byg feedbackindbakke og admin-backlog oven på samme centrale driftsmodel.
-9. Udvid stadion-scope med UEFA-turneringer.
-10. Udvid stadion-scope til alle europæiske medlemslande.
-11. Udvid Danmark med valgbare niveau 5-12 og hele Danmark.
-12. Byg sikker indsendelse og godkendelse af manglende stadions.
-13. Gennemfør EPIC 11 og luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
+1. Gennemfør App Store-release og efterkontrol af den nu udgivne version.
+2. Færdiggør målarkitektur, datamodel og migrationsplan i Story 10.2.
+3. Beslut source of truth, repository-ejerskab og distributionsmodel ud fra målarkitekturen.
+4. Implementér central distribution af godkendte stamdata til appen.
+5. Udløs komplet rækkegennemgang automatisk efter godkendte rækkeændringer.
+6. Stabiliser og afslut observationsperioden for danske fixtures.
+7. Ryd op i Supabase, Vercel og GitHub efter den besluttede scope-reduktion.
+8. Gennemgå stadiondata land for land.
+9. Byg feedbackindbakke og admin-backlog oven på samme centrale driftsmodel.
+10. Udvid stadion-scope med UEFA-turneringer.
+11. Udvid stadion-scope til alle europæiske medlemslande.
+12. Udvid Danmark med valgbare niveau 5-12 og hele Danmark.
+13. Byg sikker indsendelse og godkendelse af manglende stadions.
+14. Gennemfør EPIC 11 og luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.

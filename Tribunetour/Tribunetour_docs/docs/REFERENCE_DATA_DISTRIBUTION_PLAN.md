@@ -2,6 +2,8 @@
 
 Senest opdateret: 2026-10-05
 
+**Status:** Arkitekturudkast. Dette er ikke en låst implementeringsbeslutning; distributionsmekanismen fastlægges først efter målarkitekturen.
+
 ## Formål
 
 Godkendte ændringer fra Klubtjek skal kunne blive synlige i iOS uden en ny TestFlight-release, samtidig med at appen stadig kan starte og fungere med lokal fallback.
