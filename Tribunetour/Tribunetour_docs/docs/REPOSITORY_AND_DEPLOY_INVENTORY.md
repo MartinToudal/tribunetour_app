@@ -9,7 +9,7 @@ Dette dokument beskriver, hvor Tribunetour faktisk lever, hvilke dele der er ver
 | Område | Lokal placering | Remote | Verificeret status | Mål |
 |---|---|---|---|---|
 | iOS-app og fælles dokumentation | `/Users/martintoudal/Documents/Tribunetour/Tribunetour` | `Tribunetour_app` | Lokal `main` er pushed efter seneste dokumentationsændring | Bevar som eneste produktrepo for iOS og produktdokumentation |
-| Web, fixtures og drift | `/Users/martintoudal/Documents/Tribunetour/Tribunetour/Website repo` | `origin` / `tribunetour-mvp` | Lokal `main` er `ahead 3, behind 46` og har untracked lokale data-/Supabase-filer; må ikke bruges som autoritativ remote-status | Reducér til nødvendige interne/driftsflows og udfas offentlig webvisning |
+| Web, fixtures og drift | `/Users/martintoudal/Documents/Tribunetour/Tribunetour/Website repo` | `origin` / `tribunetour-mvp` | Remote `main` er verificeret som `81bf0cd`; lokal `main` er `ahead 3, behind 47` og har untracked lokale data-/Supabase-filer | Reducér til nødvendige interne/driftsflows og udfas offentlig webvisning |
 | Supabase | Knyttet til web-repoets migrations-/SQL-spor | Remote Supabase-projekt | Login, sync og tidligere Klubtjek-spor eksisterer; fuld oprydning er ikke afsluttet | Bevar login/sync; fjern kun legacy efter afhængighedskontrol |
 
 Den eksisterende lokale ændring i `Tribunetour.xcodeproj/project.pbxproj` er brugerens og må ikke medtages i dokumentationscommits.
@@ -33,7 +33,20 @@ Den lokale webcheckout indeholder:
 - Reference-data-generering og publicering af fixture-feed.
 - Offentlige web-ruter samt admin-/legacy-ruter.
 
-Dette er en lokal checkout-observation. Den er ikke en garanti for den deployede remote-version, fordi checkouten er divergeret fra den registrerede remote-reference.
+Remote `main` indeholder desuden den danske officielle fixture-adapter, dansk feed-validering og admin-klubtjek-flowet. Den lokale checkout må derfor ikke bruges til ændringer eller deploys uden først at blive synkroniseret eller erstattet af en isoleret checkout fra remote.
+
+## Vercel-verifikation
+
+Vercel CLI blev kontrolleret 2026-10-05 uden ændringer:
+
+- Projekt: `tribunetour-mvp`.
+- Production-URL: `https://www.tribunetour.dk`.
+- Seneste production-deploy: `READY`.
+- Deployet commit: `81bf0cde66fbfad19783f6ba6f7930d679a6292b`, samme revision som remote `main`.
+- Node runtime: `22.x`.
+- Linket projekt-id: `prj_43PhEcPuFkp7nbTQ10M6o4BY2M6u`.
+
+Production environment variable-navne er kontrolleret uden at læse værdier. De omfatter blandt andet `CRON_SECRET`, GitHub workflow-dispatch-variabler, Supabase public/service credentials, Resend-mailopsætning og APNS-konfiguration. Legacy premium-mailvariabler findes stadig og skal først fjernes efter afhængighedskontrol.
 
 ## Secrets og deployafhængigheder
 
@@ -56,12 +69,16 @@ Derudover skal remote/deploy-kontrollen afdække:
 
 ## Kendte begrænsninger
 
-Remote-verifikation kunne ikke gennemføres 2026-10-05, fordi miljøet ikke kunne opløse `github.com`. Derfor er følgende endnu ikke godkendt:
+Før remote- og Vercel-kontrollen var følgende ikke godkendt. Den del er nu lukket:
 
-- Remote `main`-revision for web-repositoriet.
-- Faktisk deployed Vercel-revision.
-- Aktive production secrets og cron schedules.
+- Remote `main`-revision for web-repositoriet. **Verificeret: `81bf0cd`.**
+- Faktisk deployed Vercel-revision. **Verificeret: `81bf0cd`.**
+- Navnene på aktive production environment variables. **Verificeret uden værdier.**
+
+Følgende mangler stadig:
+
 - Om remote indeholder workflows eller filer, som den lokale checkout ikke har.
+- En fuld gennemgang af cron-ruternes funktionelle afhængigheder.
 
 ## Beslutning før ændringer
 
