@@ -548,7 +548,8 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [x] Udarbejd første udkast til målarkitektur for app, backend, Supabase, repositories og datadistribution.
 - [x] Godkend målarkitektur og dataejerskab med product owner.
 - [x] Udarbejd første inventar over aktive, overgangs- og udfasede flows.
-- [ ] Verificér flow-inventaret mod den aktuelle kode, workflows og deploys.
+- [x] Verificér første flow-inventar mod centrale appflows og GitHub-workflows.
+- [ ] Færdiggør repo-, deploy-, secrets- og Vercel-inventar for alle relevante flows.
 - [ ] Kortlæg hvad der kan genbruges, hvad der skal migreres, og hvad der bør udfases.
 - [ ] Vurdér en trinvis migrering med fungerende produkt efter hvert trin frem for et big-bang rebuild.
 - [ ] Definér performance-, stabilitets- og rollback-kriterier før større arkitekturændringer.

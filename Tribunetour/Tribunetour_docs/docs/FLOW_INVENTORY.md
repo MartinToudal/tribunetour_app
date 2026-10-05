@@ -26,8 +26,8 @@ Statusser:
 | Min tur/statistik | Aktiv | iOS stores og views | Danmark som hovedscope, internationalt som tilvalg |
 | Login | Aktiv | AppAuth/Supabase Auth | Bevar |
 | Visited, noter, fotos og reviews | Aktiv/overgang | iOS sync-spor og Supabase/CloudKit | Saml ejerskab uden at miste brugerdata |
-| Weekendplan | Udfaset produktflow | `WeekendPlanStore` og relaterede views | Fjernes efter sikker migrering og verifikation |
-| Premium-/league-pack adgang | Udfaset produktflow | `PremiumAccessStatusCard` og adgangsmodeller | Fjernes eller isoleres uden at påvirke gratis scope |
+| Weekendplan | Overgang | `WeekendPlanStore`, `CloudPlanSync` og relaterede views er stadig aktive | Fjernes efter sikker migrering og verifikation |
+| Premium-/league-pack adgang | Overgang | `LeaguePackCatalog`, `PremiumAccessStatusCard` og adgangsmodeller er stadig aktive | Fjernes eller isoleres uden at påvirke gratis scope |
 
 ## Web- og driftsflows
 
@@ -41,7 +41,7 @@ Statusser:
 | Fixture feed-publicering | Aktiv | Web-repo/Vercel | Bevar, indtil fixture-driften er flyttet eller forenklet |
 | Reference-data JSON-generering | Overgang | Web scripts | Generér kun nødvendige artefakter fra CSV-kilden |
 | Admin-backlog UI | Parkeret | Web-repositoriet | Markdown er sandheden indtil videre |
-| Dagligt manuelt klubtjek | Parkeret | GitHub Actions + web | Erstattes af halvårlig rækkevis CSV-gennemgang |
+| Dagligt manuelt klubtjek | Overgang | Planlagt GitHub Action + web | Erstattes af halvårlig rækkevis CSV-gennemgang, hvorefter workflowet kan deaktiveres |
 | Vercel hosting | Overgang | Web-repo/Vercel | Reducér til nødvendige driftsfunktioner |
 
 ## Dataflows
@@ -86,3 +86,18 @@ Inventaret er klar til migrationsarbejde, når hvert flow har:
 - en targetplacering
 - en beslutning om bevar, flyt, isolér eller fjern
 - en test eller verifikation, der kan vise at migrationen er sikker
+
+## Verifikation mod kode og workflows
+
+Første verifikation er gennemført 2026-10-05. Den dækker de centrale flows, men er ikke en fuld linje-for-linje revision af begge repositories.
+
+- `AppState` indlæser Danmark først via bundlede CSV-data og starter fixture-load i baggrunden.
+- `CSVClubImporter` indlæser landepakker on demand.
+- `RemoteFixturesProvider` filtrerer, sæsonguarder og deduplikerer remote fixtures med cache og lokal fallback.
+- `WeekendPlanStore` og `CloudPlanSync` findes stadig i appens runtime-flow og skal derfor migreres, før Plan kan betragtes som udfaset.
+- `LeaguePackCatalog`, premium-adgangsmodeller og relateret admin/backend-kode findes stadig og skal isoleres eller fjernes kontrolleret.
+- `daily-fixture-check.yml`, `fixture-audit.yml` og `daily-manual-club-check.yml` findes stadig i web-repositoriets drift.
+- `daily-manual-club-check.yml` har fortsat en planlagt kørsel og er derfor ikke parkeret i praksis endnu.
+- Offentlige web-ruter findes stadig; de er en overgangsrisiko, ikke en allerede fjernet brugerflade.
+
+Fuld verifikation af deploys, secrets, Vercel-konfiguration og alle historiske jobs er fortsat en separat migrationsopgave.
