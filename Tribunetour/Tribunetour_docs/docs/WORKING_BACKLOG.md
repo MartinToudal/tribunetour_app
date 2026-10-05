@@ -79,6 +79,8 @@ De eksisterende stories nedenfor bevares, men vurderes fremover inden for disse 
 
 **Værdi:** Brugeren skal opleve en stabil app, og vi skal kunne udgive ændringer med forudsigelig risiko.
 
+**PO-beslutning:** Stabil app uden crashes, frysninger og alvorlige UI-fejl er vigtigst, tæt fulgt af hurtig opstart og flydende navigation. Tryg drift med tidlig fejlopdagelse er også et centralt releasekriterium. Den generelle oprydning skal vurderes som en arkitekturfornyelse med en kontrolleret migreringsvej, ikke som en blind totalomskrivning.
+
 **Indhold:** Story 10.1 samt release-, performance- og platformspunkter fra Story 1.1, Story 2.1-2.2 og Story 6.3.
 
 ### PO-vurdering før næste større leverance
@@ -518,6 +520,19 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [ ] Dokumentér release-version, dato og testresultat i systemoverblikket.
 
 **Accept:** Den samlede iOS-løsning kan uploades og godkendes til App Store fra stabil macOS/Xcode uden beta-relaterede uploadfejl.
+
+### Story 10.2 – Kontrolleret arkitekturfornyelse
+
+**Status: Åben, prioritet høj**
+
+- [ ] Dokumentér målarkitektur for app, backend, Supabase, repositories og datadistribution.
+- [ ] Kortlæg hvad der kan genbruges, hvad der skal migreres, og hvad der bør udfases.
+- [ ] Vurdér en trinvis migrering med fungerende produkt efter hvert trin frem for et big-bang rebuild.
+- [ ] Definér performance-, stabilitets- og rollback-kriterier før større arkitekturændringer.
+- [ ] Beslut om app, backend og adminlag skal samles, opdeles eller blot forbindes med en tydelig fælles datamodel.
+- [ ] Lav en migrationsplan, der kan stoppes sikkert efter hvert trin.
+
+**Accept:** Vi har en dokumenteret målarkitektur og en realistisk migrationsplan, før større dele af løsningen omskrives eller flyttes.
 
 ## Aktive risici
 
