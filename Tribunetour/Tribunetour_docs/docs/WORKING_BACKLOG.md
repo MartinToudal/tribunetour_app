@@ -1,6 +1,6 @@
 # Tribunetour Backlog
 
-Senest opdateret: 2026-09-12
+Senest opdateret: 2026-10-05
 
 Dette er den operative backlog og den fælles arbejdssandhed for projektet. Arbejdet registreres som:
 
@@ -525,6 +525,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 **Status: Åben, prioritet høj**
 
+- [x] Dokumentér den faktiske nuværende dataflytning og tydeliggør forskellen mellem godkendt data, distribution og fallback.
 - [ ] Dokumentér målarkitektur for app, backend, Supabase, repositories og datadistribution.
 - [ ] Kortlæg hvad der kan genbruges, hvad der skal migreres, og hvad der bør udfases.
 - [ ] Vurdér en trinvis migrering med fungerende produkt efter hvert trin frem for et big-bang rebuild.

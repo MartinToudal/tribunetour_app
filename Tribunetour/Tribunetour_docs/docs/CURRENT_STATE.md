@@ -1,11 +1,15 @@
 # Current State
 
-Senest opdateret: 2026-08-26
+Senest opdateret: 2026-10-05
 
 Dette dokument er den hurtigste indgang til produktets nuværende retning i Tribunetour.
 
 Hvis du har brug for driftssandhed om repoer, source of truth og leveranceflow, så brug i stedet:
 - `[SYSTEM_OWNERSHIP_AND_OPERATING_MODEL.md](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Tribunetour/Tribunetour_docs/docs/SYSTEM_OWNERSHIP_AND_OPERATING_MODEL.md)`
+
+Hvis du har brug for den faktiske aktuelle dataflytning og datamodel, så brug:
+- `[ARCHITECTURE.md](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Tribunetour/Tribunetour_docs/docs/ARCHITECTURE.md)`
+- `[DATA_MODEL.md](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Tribunetour/Tribunetour_docs/docs/DATA_MODEL.md)`
 
 Hvis noget andet dokument siger noget lidt andet, så gælder:
 - produktretning: dette dokument
