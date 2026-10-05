@@ -2,13 +2,13 @@
 
 Senest opdateret: 2026-10-05
 
-**Status:** Arkitekturudkast. Dette er ikke en låst implementeringsbeslutning; distributionsmekanismen fastlægges først efter målarkitekturen.
+**Status:** Udskudt arkitekturudkast. Denne plan er bevaret som et muligt senere spor, men er ikke den aktuelle kernearkitektur.
 
-## Formål
+## Formål for det parkerede spor
 
 Godkendte ændringer fra Klubtjek skal kunne blive synlige i iOS uden en ny TestFlight-release, samtidig med at appen stadig kan starte og fungere med lokal fallback.
 
-Planen gælder reference-data:
+Planen gælder reference-data, hvis en fremtidig løbende central distribution bliver nødvendig:
 
 - klubber
 - stadions

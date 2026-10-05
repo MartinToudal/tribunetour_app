@@ -39,7 +39,7 @@ En fixture har mindst:
 
 | Område | Indlæsning i appen | Nuværende begrænsning |
 |---|---|---|
-| Klubber/stadions | Bundlet `stadiums.csv` og landepakker | Godkendte centrale rettelser distribueres ikke automatisk endnu |
+| Klubber/stadions | Versionerede `stadiums.csv` og landepakker | Rettelser udgives samlet i en ny app-version |
 | Danske fixtures | Remote JSON, derefter cached remote og `fixtures_denmark.csv` | Remote-feedet publiceres fra web/driftsrepositoriet |
 | Web-reference-data | Genererede JSON-filer og webens loader-lag | App og web har stadig forskellige artefakter |
 | Sæsonhistorik | CSV-landepakker og historiske medlemskaber | Modellen er ikke samlet i én central tabel endnu |
@@ -78,22 +78,15 @@ adminkontrol
   -> central stadium-data eller override
 ```
 
-Det mangler stadig:
-
-```text
-central godkendelse
-  -> versioneret reference-datasæt
-  -> appens remote stamdata
-```
+Klubtjek er ikke længere den planlagte primære distributionsvej. Hvis værktøjet bruges, er det et sekundært admin- og historikspor. Den primære vej er redaktionel CSV-gennemgang og samlet app-release.
 
 ## Source-of-truth-regler
 
-Indtil den centrale distribution er færdig, skal vi skelne mellem:
+Indtil en eventuel fremtidig central distribution bliver relevant, skal vi skelne mellem:
 
-1. **Godkendt indhold:** den senest godkendte reference-data, som vi forretningsmæssigt ønsker.
-2. **Central lagring:** Supabase-data for Klubtjek og godkendte overrides.
-3. **Distribueret artefakt:** web-JSON eller remote-feed, som appen kan hente.
-4. **Lokal fallback:** appens bundlet CSV eller cached remote-data.
+1. **Godkendt indhold:** den senest godkendte reference-data i versionsstyrede CSV-filer.
+2. **Distribueret artefakt:** appens bundlede CSV og genererede web-artefakter.
+3. **Lokal fallback:** cached remote-data for fixtures, hvor det er relevant.
 
 Lokal fallback er sikkerhedsnet, ikke et alternativt redigeringssted.
 
@@ -104,14 +97,14 @@ Lokal fallback er sikkerhedsnet, ikke et alternativt redigeringssted.
 - Historisk rækketilhør må ikke overskrive aktiv række.
 - Fixtures må kun indlæses, når hold- og venue-ID'er kan valideres.
 - Gamle sæsoner må ikke blandes ind i aktuelt dansk kampprogram.
-- En godkendt central rettelse skal kunne spores fra ændringsforslag til appvisning.
+- En CSV-revision skal kunne spores fra rækkevis kontrol til app-release.
 
 ## Næste modelbeslutninger
 
-Story 4.3 skal fastlægge:
+Story 3.6 og Story 10.2 skal fastlægge:
 
-- den autoritative klub-, stadion-, række- og sæsonmodel
-- prioritet mellem central data, landepakker og fallback
-- versionering af reference-datasæt
-- distribution til iOS uden ny TestFlight-release for almindelige stamdatarettelser
-- rollback ved fejl
+- den autoritative klub-, stadion-, række- og sæsonmodel i CSV
+- ID- og historikregler
+- versionering af reference-datasæt og app-releases
+- kontrolfil og validering før release
+- rollback til seneste app-version ved fejl

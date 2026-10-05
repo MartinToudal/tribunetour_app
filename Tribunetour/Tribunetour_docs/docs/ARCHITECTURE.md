@@ -22,8 +22,8 @@ Tribunetour består i praksis af tre tekniske områder:
 
 3. **Supabase**
    - Auth og centrale brugerdatafunktioner.
-   - Central lagring af Klubtjek, ændringsforslag og godkendelser.
-   - Den centrale stamdata-distribution til iOS er endnu ikke færdig.
+   - Eventuel historik for Klubtjek, ændringsforslag og godkendelser.
+   - Ikke en nødvendig runtime-kilde for klub- og stadion-reference-data.
 
 ## Faktisk dataflow
 
@@ -73,32 +73,18 @@ web data/scripts/workflows
 
 Det betyder, at web-repositoriet i dag stadig er produktkritisk for danske fixtures, selv om web ikke længere skal være en brugervendt produktflade.
 
-### Klubtjek
+### Klubtjek, hvis det fortsat anvendes
 
-```text
-admin i web
-  -> Supabase RPC
-  -> review, ændringsforslag og godkendelse
-  -> central stadium-data for understøttede klubber
-```
-
-Den manglende forbindelse er:
-
-```text
-godkendt central rettelse
-  -X-> appens bundled stadiums.csv / landepakker
-```
-
-Derfor kan en rettelse være korrekt gemt centralt og stadig være usynlig i den udgivne app, indtil distributionen er bygget.
+Klubtjek er et eksisterende adminværktøj, men er ikke længere den anbefalede kernearbejdsgang for reference-data. Den foretrukne arbejdsgang er halvårlig gennemgang og rettelse af CSV-filer efterfulgt af samlet validering og app-release.
 
 ## Source of truth pr. domæne
 
 | Domæne | Faktisk autoritativ kilde nu | Vigtig begrænsning |
 |---|---|---|
 | App-UI | iOS-repositoriet | App og web har separate UI-kodebaser |
-| Klub/stadion i iOS | Bundlet `stadiums.csv` og landepakker | Ikke centralt distribueret endnu |
-| Danske fixtures | Senest godkendte web-feed med app-cache/fallback | Afhænger af web-repo og deploy |
-| Klubtjek | Supabase reviews, proposals og overrides | Ikke fuldt distribueret til iOS |
+| Klub/stadion i iOS | Versionerede CSV-filer og landepakker i app-repositoriet | Ændringer udgives samlet i app-release |
+| Danske fixtures | Senest godkendte web-feed med app-cache/fallback | Afhænger fortsat af web-repo og deploy |
+| Klubtjek | Supabase reviews, proposals og overrides, hvis værktøjet bruges | Sekundært historik-/adminspor |
 | Visited, noter, fotos og reviews | Brugerdata via eksisterende sync-spor | Reference-data og brugerdata er forskellige lag |
 | Fixture-audit | Web-scripts og GitHub Actions | Skal fortsat afgrænses til dansk scope |
 | Backlog | `WORKING_BACKLOG.md` i app-repositoriet | Admin-UI er ikke den autoritative backlog endnu |
@@ -116,20 +102,20 @@ Derfor kan en rettelse være korrekt gemt centralt og stadig være usynlig i den
 
 Vi skal ikke starte med en blind totalomskrivning. Første arkitekturmål er:
 
-1. Én canonical model for klub, stadion, aktiv række, sæson, historik og fixture.
-2. Stabilt klub-ID på tværs af app, web, Supabase og brugerdata.
-3. Godkendte Klubtjek-rettelser publiceres i en versioneret central datakilde.
-4. iOS læser central reference-data og beholder lokal fallback.
-5. Web bruges kun til admin, drift, datagenerering og nødvendige jobs.
-6. Alle distributionsled kan vise datasætversion, kilde og seneste opdatering.
+1. Én canonical, versionsstyret CSV-struktur for klub, stadion, aktiv række, sæson og historik.
+2. Stabilt klub-ID på tværs af app, web og brugerdata.
+3. En dokumenteret halvårlig kontrol- og releaseproces for reference-data.
+4. Web bruges kun til nødvendige fixtures, drift og eventuelle historiske adminværktøjer.
+5. Supabase bruges til login, sync og brugerdata, ikke som skjult alternativ til CSV-kilden.
+6. En senere central distribution kan tilføjes, hvis den halvårlige proces ikke længere er tilstrækkelig.
 
 ## Næste arkitekturleverance
 
-Før større nye features skal vi færdiggøre Story 4.3:
+Før større nye features skal vi færdiggøre Story 10.2 og Story 3.6:
 
-- dokumentér den samlede canonical model
-- fastlæg prioritet mellem central data, landepakker og fallback
-- byg første distribution af en godkendt koordinat- eller rækkeændring til iOS
-- test end-to-end med en konkret klubrettelse
+- dokumentér den samlede CSV-baserede canonical model
+- fastlæg ID-, sæson- og historikregler
+- definér kontrolfil, validering og releaseproces for en rækkevis gennemgang
+- test processen på én dansk række fra CSV til app-release
 
 Først når dette fungerer, har vi et sikkert grundlag for at udvide med flere lande, lavere danske niveauer eller rige stadionprofiler.

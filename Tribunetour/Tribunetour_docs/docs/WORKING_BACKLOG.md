@@ -30,6 +30,8 @@ Disse beslutninger er gældende, indtil de ændres eksplicit:
 - Web er ikke en brugervendt produktflade.
 - Web må kun bruges internt til admin- og driftsværktøjer som Klubtjek og backlog.
 - Nødvendige backend-jobs, feeds, audits og API'er bevares, uanset om de ligger i web-repositoriet.
+- Reference-data vedligeholdes som udgangspunkt redaktionelt via versionerede CSV-filer og halvårlige rækkevise gennemgange.
+- Supabase er fortsat relevant for login, sync og brugerdata, men er ikke automatisk den autoritative kilde for klub- og stadiondata.
 
 ## Værdibaseret epic-struktur
 
@@ -53,13 +55,11 @@ De eksisterende stories nedenfor bevares, men vurderes fremover inden for disse 
 
 ### Værdiepic C – Skab en troværdig datamotor
 
-**Værdi:** Rettelser skal kunne gennemføres én gang, kontrolleres, spores og slå igennem konsekvent i appen uden gentagne manuelle lapninger.
+**Værdi:** Reference-data skal kunne vedligeholdes enkelt og kontrolleret, så en rækkevis gennemgang resulterer i ét versionsstyret datasæt og én samlet app-release.
 
-**PO-beslutning:** Førsteprioritet er, at godkendte rettelser fra Klubtjek slår igennem i appen. Næsteprioritet er én fælles sandhed på tværs af app, backend og landepakker. Datamodellen skal gøres synlig, så vi kan se hvor diskrepanser kan opstå. Sporbarhed er nødvendig for egne rettelser og for fremtidig automatik eller brugerindberetninger.
+**PO-beslutning:** Klubtjek og løbende central distribution er ikke en nødvendig kernefunktion på nuværende tidspunkt. Den foretrukne arbejdsgang er en halvårlig rækkevis kontrol mod CSV-kilder, efterfulgt af redaktionelle rettelser, validering og en samlet app-release. Supabase bevares til login, sync og brugerdata.
 
-**Indhold:** Story 3.3-3.4, Story 4.2-4.4 og den tekniske del af Story 8.1-8.2.
-
-**Afhængighed:** Målarkitekturen skal fastlægges, før vi låser central distribution eller ændrer produktionsschema.
+**Indhold:** Story 3.1-3.3, Story 3.6 og den tekniske del af Story 8.1-8.2.
 
 ### Værdiepic D – Gør drift og feedback håndterbar
 
@@ -250,6 +250,21 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 **Accept:** Brugeren kan åbne en konsistent stadionprofil med verificerede fakta, kildeangivne billeder og eventuelt en faktabaseret lydfortælling.
 
+### Story 3.6 – Halvårlig rækkevis datagennemgang
+
+**Status: Åben, prioritet høj**
+
+- [ ] Udarbejd en CSV-baseret kontrolfil pr. række med klub, stadion, koordinater, række og sæson.
+- [ ] Gennemgå hver aktiv række mindst halvårligt.
+- [ ] Markér klub-, stadion-, koordinat- og rækkefejl direkte i kontrolarbejdet.
+- [ ] Ret canonical CSV-data samlet efter gennemgangen.
+- [ ] Valider ID'er, dubletter, koordinater, aktive rækker og historiske medlemskaber før release.
+- [ ] Generér nødvendige web-/fixtureartefakter fra de rettede CSV-filer.
+- [ ] Udgiv ændringer samlet i en ny app-version, når datarevisionen er godkendt.
+- [ ] Gem dato, sæson, kilde og gennemgangsresultat i dokumentationen.
+
+**Accept:** En halvårlig rækkevis gennemgang kan gennemføres fra CSV, og godkendte rettelser lander samlet i appens næste release uden parallel manuel rettelse i flere systemer.
+
 ## EPIC 4 – Manuel klubkontrol
 
 ### Story 4.1 – Daglig klubkontrol
@@ -270,7 +285,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 ### Story 4.2 – Central lagring og godkendelse af klubtjek
 
-**Status: Åben, prioritet høj**
+**Status: Udskudt, prioritet lav**
 
 - [x] Implementér Supabase-schema for kontroller, ændringsforslag og auditstatus.
 - [x] Implementér sikker RPC til at gemme en kontrol og oprette ændringsforslag.
@@ -294,7 +309,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 ### Story 4.3 – Central distribution af godkendte stamdata
 
-**Status: Afventer målarkitektur, prioritet høj**
+**Status: Udskudt, prioritet lav**
 
 - [ ] Fastlæg én autoritativ model for klubidentitet, stadion, aktiv række, sæson og historiske medlemskaber.
 - [ ] Definér precedence mellem bundne landepakker, centrale stamdata og godkendte Klubtjek-overrides.
@@ -315,7 +330,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 ### Story 4.4 – Automatisk komplet rækkegennemgang
 
-**Status: Afventer målarkitektur, prioritet høj**
+**Status: Udskudt, prioritet lav**
 
 - [ ] Registrér når en godkendt ændring påvirker en klubs aktive række.
 - [ ] Udløs automatisk en komplet audit af den berørte række, ikke kun af den rettede klub.
@@ -551,15 +566,13 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 1. Gennemfør App Store-release og efterkontrol af den nu udgivne version.
 2. Færdiggør målarkitektur, datamodel og migrationsplan i Story 10.2.
-3. Beslut source of truth, repository-ejerskab og distributionsmodel ud fra målarkitekturen.
-4. Implementér central distribution af godkendte stamdata til appen.
-5. Udløs komplet rækkegennemgang automatisk efter godkendte rækkeændringer.
-6. Stabiliser og afslut observationsperioden for danske fixtures.
-7. Ryd op i Supabase, Vercel og GitHub efter den besluttede scope-reduktion.
-8. Gennemgå stadiondata land for land.
-9. Byg feedbackindbakke og admin-backlog oven på samme centrale driftsmodel.
-10. Udvid stadion-scope med UEFA-turneringer.
-11. Udvid stadion-scope til alle europæiske medlemslande.
-12. Udvid Danmark med valgbare niveau 5-12 og hele Danmark.
-13. Byg sikker indsendelse og godkendelse af manglende stadions.
-14. Gennemfør EPIC 11 og luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
+3. Implementér den halvårlige CSV-baserede rækkevis gennemgang i Story 3.6.
+4. Stabiliser og afslut observationsperioden for danske fixtures.
+5. Ryd op i Supabase, Vercel og GitHub efter den besluttede scope-reduktion.
+6. Gennemgå stadiondata land for land.
+7. Byg feedbackindbakke og admin-backlog efter den forenklede driftsmodel.
+8. Udvid stadion-scope med UEFA-turneringer.
+9. Udvid stadion-scope til alle europæiske medlemslande.
+10. Udvid Danmark med valgbare niveau 5-12 og hele Danmark.
+11. Byg sikker indsendelse og godkendelse af manglende stadions.
+12. Gennemfør EPIC 11 og luk offentlig webvisning, når driftslaget er dokumenteret og stabilt.
