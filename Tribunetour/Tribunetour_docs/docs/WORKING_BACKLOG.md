@@ -252,7 +252,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 ### Story 3.6 – Halvårlig rækkevis datagennemgang
 
-**Status: Åben, prioritet høj**
+**Status: Afventer målarkitektur, prioritet høj**
 
 - [ ] Udarbejd en CSV-baseret kontrolfil pr. række med klub, stadion, koordinater, række og sæson.
 - [ ] Gennemgå hver aktiv række mindst halvårligt.
@@ -540,17 +540,19 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 ### Story 10.2 – Kontrolleret arkitekturfornyelse
 
-**Status: Åben, prioritet høj**
+**Status: I gang, prioritet høj**
 
 - [x] Dokumentér den faktiske nuværende dataflytning og tydeliggør forskellen mellem godkendt data, distribution og fallback.
-- [ ] Dokumentér målarkitektur for app, backend, Supabase, repositories og datadistribution.
+- [x] Udarbejd første udkast til målarkitektur for app, backend, Supabase, repositories og datadistribution.
+- [ ] Godkend målarkitektur og dataejerskab med product owner.
+- [ ] Kortlæg alle aktive, overgangs- og udfasede flows.
 - [ ] Kortlæg hvad der kan genbruges, hvad der skal migreres, og hvad der bør udfases.
 - [ ] Vurdér en trinvis migrering med fungerende produkt efter hvert trin frem for et big-bang rebuild.
 - [ ] Definér performance-, stabilitets- og rollback-kriterier før større arkitekturændringer.
 - [ ] Beslut om app, backend og adminlag skal samles, opdeles eller blot forbindes med en tydelig fælles datamodel.
 - [ ] Lav en migrationsplan, der kan stoppes sikkert efter hvert trin.
 
-**Accept:** Vi har en dokumenteret målarkitektur og en realistisk migrationsplan, før større dele af løsningen omskrives eller flyttes.
+**Accept:** Vi har en product owner-godkendt målarkitektur og en realistisk migrationsplan, før større dele af løsningen omskrives eller flyttes.
 
 ## Aktive risici
 
@@ -565,9 +567,9 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 ## Næste anbefalede rækkefølge
 
 1. Gennemfør App Store-release og efterkontrol af den nu udgivne version.
-2. Færdiggør målarkitektur, datamodel og migrationsplan i Story 10.2.
-3. Implementér den halvårlige CSV-baserede rækkevis gennemgang i Story 3.6.
-4. Stabiliser og afslut observationsperioden for danske fixtures.
+2. Færdiggør og godkend målarkitektur, datamodel og migrationsplan i Story 10.2.
+3. Stabiliser og afslut observationsperioden for danske fixtures.
+4. Implementér den halvårlige CSV-baserede rækkevis gennemgang i Story 3.6.
 5. Ryd op i Supabase, Vercel og GitHub efter den besluttede scope-reduktion.
 6. Gennemgå stadiondata land for land.
 7. Byg feedbackindbakke og admin-backlog efter den forenklede driftsmodel.

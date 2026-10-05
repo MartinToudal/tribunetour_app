@@ -11,6 +11,9 @@ Hvis du har brug for den faktiske aktuelle dataflytning og datamodel, så brug:
 - `[ARCHITECTURE.md](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Tribunetour/Tribunetour_docs/docs/ARCHITECTURE.md)`
 - `[DATA_MODEL.md](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Tribunetour/Tribunetour_docs/docs/DATA_MODEL.md)`
 
+Hvis du har brug for den besluttede target-retning og migrationsprincipper, så brug:
+- `[TARGET_ARCHITECTURE.md](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Tribunetour/Tribunetour_docs/docs/TARGET_ARCHITECTURE.md)`
+
 Hvis noget andet dokument siger noget lidt andet, så gælder:
 - produktretning: dette dokument
 - drifts- og systemejerskab: `SYSTEM_OWNERSHIP_AND_OPERATING_MODEL.md`
