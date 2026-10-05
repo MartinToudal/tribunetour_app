@@ -547,7 +547,8 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [x] Dokumentér den faktiske nuværende dataflytning og tydeliggør forskellen mellem godkendt data, distribution og fallback.
 - [x] Udarbejd første udkast til målarkitektur for app, backend, Supabase, repositories og datadistribution.
 - [x] Godkend målarkitektur og dataejerskab med product owner.
-- [ ] Kortlæg alle aktive, overgangs- og udfasede flows.
+- [x] Udarbejd første inventar over aktive, overgangs- og udfasede flows.
+- [ ] Verificér flow-inventaret mod den aktuelle kode, workflows og deploys.
 - [ ] Kortlæg hvad der kan genbruges, hvad der skal migreres, og hvad der bør udfases.
 - [ ] Vurdér en trinvis migrering med fungerende produkt efter hvert trin frem for et big-bang rebuild.
 - [ ] Definér performance-, stabilitets- og rollback-kriterier før større arkitekturændringer.

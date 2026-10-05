@@ -14,6 +14,9 @@ Hvis du har brug for den faktiske aktuelle dataflytning og datamodel, så brug:
 Hvis du har brug for den besluttede target-retning og migrationsprincipper, så brug:
 - `[TARGET_ARCHITECTURE.md](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Tribunetour/Tribunetour_docs/docs/TARGET_ARCHITECTURE.md)`
 
+Hvis du har brug for oversigten over aktive, overgangs- og udfasede flows, så brug:
+- `[FLOW_INVENTORY.md](/Users/martintoudal/Documents/Tribunetour/Tribunetour/Tribunetour/Tribunetour_docs/docs/FLOW_INVENTORY.md)`
+
 Hvis noget andet dokument siger noget lidt andet, så gælder:
 - produktretning: dette dokument
 - drifts- og systemejerskab: `SYSTEM_OWNERSHIP_AND_OPERATING_MODEL.md`
