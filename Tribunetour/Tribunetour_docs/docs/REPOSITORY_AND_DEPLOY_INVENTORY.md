@@ -35,6 +35,13 @@ Den lokale webcheckout indeholder:
 
 Remote `main` indeholder desuden den danske officielle fixture-adapter, dansk feed-validering og admin-klubtjek-flowet. Den lokale checkout må derfor ikke bruges til ændringer eller deploys uden først at blive synkroniseret eller erstattet af en isoleret checkout fra remote.
 
+Remote `main` har fire workflows:
+
+- `daily-fixture-check.yml`: dansk dagligt fixture-check og feed-publicering.
+- `fixture-audit.yml`: dansk audit med `due`/`all`-scope.
+- `daily-manual-club-check.yml`: planlagt manuel spotcheck med mail.
+- `compare-danish-fixture-sources.yml`: sammenligning af officielle danske kilder.
+
 ## Vercel-verifikation
 
 Vercel CLI blev kontrolleret 2026-10-05 uden ændringer:
@@ -47,6 +54,14 @@ Vercel CLI blev kontrolleret 2026-10-05 uden ændringer:
 - Linket projekt-id: `prj_43PhEcPuFkp7nbTQ10M6o4BY2M6u`.
 
 Production environment variable-navne er kontrolleret uden at læse værdier. De omfatter blandt andet `CRON_SECRET`, GitHub workflow-dispatch-variabler, Supabase public/service credentials, Resend-mailopsætning og APNS-konfiguration. Legacy premium-mailvariabler findes stadig og skal først fjernes efter afhængighedskontrol.
+
+Vercel-cron-kæden er:
+
+1. `/api/cron/daily-fixture-check` udløser `daily-fixture-check.yml`.
+2. `/api/cron/fixture-audit` udløser `fixture-audit.yml`.
+3. API-ruterne beskytter dispatch med `CRON_SECRET` og bruger GitHub workflow-dispatch credentials.
+
+Det betyder, at fixture-driften har både Vercel-, GitHub-, mail- og repository-afhængigheder, som skal testes samlet før oprydning.
 
 ## Secrets og deployafhængigheder
 
@@ -77,7 +92,6 @@ Før remote- og Vercel-kontrollen var følgende ikke godkendt. Den del er nu luk
 
 Følgende mangler stadig:
 
-- Om remote indeholder workflows eller filer, som den lokale checkout ikke har.
 - En fuld gennemgang af cron-ruternes funktionelle afhængigheder.
 
 ## Beslutning før ændringer

@@ -97,6 +97,7 @@ Første verifikation er gennemført 2026-10-05. Den dækker de centrale flows, m
 - `WeekendPlanStore` og `CloudPlanSync` findes stadig i appens runtime-flow og skal derfor migreres, før Plan kan betragtes som udfaset.
 - `LeaguePackCatalog`, premium-adgangsmodeller og relateret admin/backend-kode findes stadig og skal isoleres eller fjernes kontrolleret.
 - `daily-fixture-check.yml`, `fixture-audit.yml` og `daily-manual-club-check.yml` findes stadig i web-repositoriets drift.
+- Remote har desuden `compare-danish-fixture-sources.yml`, som ikke findes i den lokale divergerede checkout.
 - `daily-manual-club-check.yml` har fortsat en planlagt kørsel og er derfor ikke parkeret i praksis endnu.
 - Offentlige web-ruter findes stadig; de er en overgangsrisiko, ikke en allerede fjernet brugerflade.
 

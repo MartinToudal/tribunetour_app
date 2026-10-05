@@ -552,7 +552,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [x] Færdiggør første repo-, deploy-, secrets- og Vercel-inventar for de relevante flows.
 - [x] Sammenhold web-repositoryets remote `main` med lokal checkout og dokumentér divergensen.
 - [x] Verificér faktisk Vercel production revision og environment variable-navne uden at dokumentere secret-værdier.
-- [ ] Verificér om remote indeholder workflows eller filer, som den lokale checkout ikke har.
+- [x] Verificér om remote indeholder workflows eller filer, som den lokale checkout ikke har.
 - [ ] Gennemgå cron-ruternes funktionelle afhængigheder før oprydning.
 - [ ] Kortlæg Supabase-tabeller, RPC'er, policies og migrationsafhængigheder før oprydning.
 - [ ] Kortlæg hvad der kan genbruges, hvad der skal migreres, og hvad der bør udfases.
