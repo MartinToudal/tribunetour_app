@@ -1,6 +1,6 @@
 # Tribunetour Backlog
 
-Senest opdateret: 2026-10-05
+Senest opdateret: 2026-10-21
 
 Dette er den operative backlog og den fælles arbejdssandhed for projektet. Arbejdet registreres som:
 
@@ -281,6 +281,26 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [ ] Gennemfør en end-to-end test med én koordinat- og én rækketilhørsændring.
 
 **Accept:** Brugeren kan vedligeholde stadiondata i ét regneark, og en godkendt række kan valideres, anvendes sporbar og distribueres uden direkte manuel database-redigering.
+
+### Story 3.8 – Central reference-data-admin
+
+**Status: I gang, prioritet høj**
+
+**Værdi:** Reference-data skal kunne vedligeholdes ét sted på tværs af lande, rækker, klubber og stadions, uden at web-admin bliver en brugervendt produktflade.
+
+- [x] Afgræns web-admin til den godkendte administrator.
+- [x] Vis samlet reference-data med søgning og filtrering.
+- [x] Giv admin mulighed for at rette eksisterende klub/stadion.
+- [x] Giv admin mulighed for at oprette klub/stadion, land og række.
+- [x] Log ændringer centralt med før/efter-værdi og bruger.
+- [x] Normalisér snake_case-databasefelter til webens reference-kontrakt.
+- [ ] Kør Supabase-migrationen og verificér RPC'er i det rigtige projekt.
+- [ ] Saml alle landepakker i den centrale referencekilde uden separat manuel app/web-rettelse.
+- [ ] Tilslut validering, CSV-import og app-distribution til samme release-flow.
+- [ ] Tilføj end-to-end-test for redigér, opret, afvis uden admin og audit-log.
+- [ ] Tilføj tydelig historikvisning i adminfladen.
+
+**Accept:** Admin kan redigere eller oprette reference-data for alle lande og rækker ét sted, og enhver ændring kan spores og valideres før den distribueres til appen.
 
 ## EPIC 4 – Manuel klubkontrol
 
