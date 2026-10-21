@@ -294,6 +294,7 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 - [x] Giv admin mulighed for at oprette klub/stadion, land og række.
 - [x] Log ændringer centralt med før/efter-værdi og bruger.
 - [x] Normalisér snake_case-databasefelter til webens reference-kontrakt.
+- [x] Vis senest centrale opdateringstidspunkt i adminens reference-tabel.
 - [ ] Kør Supabase-migrationen og verificér RPC'er i det rigtige projekt.
 - [ ] Saml alle landepakker i den centrale referencekilde uden separat manuel app/web-rettelse.
 - [ ] Tilslut validering, CSV-import og app-distribution til samme release-flow.
