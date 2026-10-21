@@ -267,6 +267,21 @@ Dette epic handler om den automatiske fixture-kontrol, der afvikles via GitHub A
 
 **Accept:** En halvårlig rækkevis gennemgang kan gennemføres fra CSV, og godkendte rettelser lander samlet i appens næste release uden parallel manuel rettelse i flere systemer.
 
+### Story 3.7 – Regnearksbaseret stadionkontrol
+
+**Status: I gang, prioritet høj**
+
+- [x] Definér et review-regneark med én række pr. eksisterende stadion.
+- [x] Beskyt stabile id'er og tekniske identifikatorer mod almindelige datarettelser.
+- [x] Kræv kilde, tidspunkt og reviewer ved godkendte ændringer.
+- [x] Valider koordinater, id'er og status før anvendelse.
+- [x] Skriv ændringer til canonical `stadiums.csv` med audit-log.
+- [x] Opret daglig GitHub-kørsel, der anvender godkendte rækker.
+- [ ] Tilslut generering af web-artefakter og appens næste distributionsflow.
+- [ ] Gennemfør en end-to-end test med én koordinat- og én rækketilhørsændring.
+
+**Accept:** Brugeren kan vedligeholde stadiondata i ét regneark, og en godkendt række kan valideres, anvendes sporbar og distribueres uden direkte manuel database-redigering.
+
 ## EPIC 4 – Manuel klubkontrol
 
 ### Story 4.1 – Daglig klubkontrol
